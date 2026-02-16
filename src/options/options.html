@@ -45,56 +45,62 @@
 
     <!-- Right: Editor -->
     <main class="editor" id="editor">
-      <div class="editor-empty" id="editor-empty">
-        <p data-i18n="noTemplates">No templates yet. Open settings to create one.</p>
+      <div class="editor-header">
+        <h2 data-i18n="webhookDetail">Webhook Detail</h2>
       </div>
 
-      <div class="editor-form" id="editor-form" style="display: none;">
-        <section class="section">
-          <label for="template-name" data-i18n="templateName">Template Name</label>
-          <input type="text" id="template-name" data-i18n-placeholder="templateNamePlaceholder" placeholder="e.g. Notify Slack">
-        </section>
+      <div class="editor-body">
+        <div class="editor-empty" id="editor-empty">
+          <p data-i18n="noTemplates">No templates yet. Open settings to create one.</p>
+        </div>
 
-        <section class="section">
-          <label for="webhook-url" data-i18n="webhookUrl">Webhook URL</label>
-          <input type="url" id="webhook-url" data-i18n-placeholder="webhookUrlPlaceholder" placeholder="https://example.com/api/webhook">
-        </section>
+        <div class="editor-form" id="editor-form" style="display: none;">
+          <section class="section">
+            <label for="template-name" data-i18n="templateName">Template Name</label>
+            <input type="text" id="template-name" data-i18n-placeholder="templateNamePlaceholder" placeholder="e.g. Notify Slack">
+          </section>
 
-        <section class="section">
-          <label for="http-method" data-i18n="httpMethod">HTTP Method</label>
-          <select id="http-method">
-            <option value="GET">GET</option>
-            <option value="POST" selected>POST</option>
-            <option value="PUT">PUT</option>
-            <option value="PATCH">PATCH</option>
-            <option value="DELETE">DELETE</option>
-          </select>
-        </section>
+          <section class="section">
+            <label for="webhook-url" data-i18n="webhookUrl">Webhook URL</label>
+            <input type="url" id="webhook-url" data-i18n-placeholder="webhookUrlPlaceholder" placeholder="https://example.com/api/webhook">
+          </section>
 
-        <section class="section">
-          <div class="section-header">
-            <label data-i18n="parameters">Parameters</label>
-            <button type="button" id="add-param" class="btn-secondary" data-i18n="addParam">+ Add</button>
+          <section class="section">
+            <label for="http-method" data-i18n="httpMethod">HTTP Method</label>
+            <select id="http-method">
+              <option value="GET">GET</option>
+              <option value="POST" selected>POST</option>
+              <option value="PUT">PUT</option>
+              <option value="PATCH">PATCH</option>
+              <option value="DELETE">DELETE</option>
+            </select>
+          </section>
+
+          <section class="section">
+            <div class="section-header">
+              <label data-i18n="parameters">Parameters</label>
+              <button type="button" id="add-param" class="btn-secondary" data-i18n="addParam">+ Add</button>
+            </div>
+
+            <div class="template-hint">
+              <span data-i18n="templateHint">Available variables:</span>
+              <code>{{page.url}}</code>
+              <code>{{page.title}}</code>
+              <code>{{page.selection}}</code>
+              <code>{{page.meta.description}}</code>
+              <code>{{page.meta.og:title}}</code>
+              <code>{{page.meta.og:description}}</code>
+              <code>{{page.meta.og:image}}</code>
+            </div>
+
+            <div id="params-list"></div>
+          </section>
+
+          <div class="editor-actions">
+            <button type="button" id="delete-template" class="btn-danger" data-i18n="deleteTemplate">Delete</button>
+            <span id="status" class="status"></span>
+            <button type="button" id="save" class="btn-primary" data-i18n="save">Save</button>
           </div>
-
-          <div class="template-hint">
-            <span data-i18n="templateHint">Available variables:</span>
-            <code>{{page.url}}</code>
-            <code>{{page.title}}</code>
-            <code>{{page.selection}}</code>
-            <code>{{page.meta.description}}</code>
-            <code>{{page.meta.og:title}}</code>
-            <code>{{page.meta.og:description}}</code>
-            <code>{{page.meta.og:image}}</code>
-          </div>
-
-          <div id="params-list"></div>
-        </section>
-
-        <div class="editor-actions">
-          <button type="button" id="save" class="btn-primary" data-i18n="save">Save</button>
-          <span id="status" class="status"></span>
-          <button type="button" id="delete-template" class="btn-danger" data-i18n="deleteTemplate">Delete</button>
         </div>
       </div>
     </main>

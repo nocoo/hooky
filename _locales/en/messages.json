@@ -110,6 +110,9 @@
   "templateName": {
     "message": "Template Name"
   },
+  "webhookDetail": {
+    "message": "Webhook Detail"
+  },
   "templateNamePlaceholder": {
     "message": "e.g. Notify Slack"
   },

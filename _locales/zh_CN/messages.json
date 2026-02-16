@@ -110,6 +110,9 @@
   "templateName": {
     "message": "\u6a21\u677f\u540d\u79f0"
   },
+  "webhookDetail": {
+    "message": "Webhook \u8be6\u60c5"
+  },
   "templateNamePlaceholder": {
     "message": "\u5982\uff1a\u901a\u77e5 Slack"
   },
