@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Hooky - Settings</title>
+  <link rel="stylesheet" href="options.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Hooky Settings</h1>
+
+    <section class="section">
+      <label for="webhook-url">Webhook URL</label>
+      <input type="url" id="webhook-url" placeholder="https://example.com/api/webhook">
+    </section>
+
+    <section class="section">
+      <label for="http-method">HTTP Method</label>
+      <select id="http-method">
+        <option value="GET">GET</option>
+        <option value="POST" selected>POST</option>
+        <option value="PUT">PUT</option>
+        <option value="PATCH">PATCH</option>
+        <option value="DELETE">DELETE</option>
+      </select>
+    </section>
+
+    <section class="section">
+      <div class="section-header">
+        <label>Parameters</label>
+        <button type="button" id="add-param" class="btn-secondary">+ Add</button>
+      </div>
+
+      <div class="template-hint">
+        Available variables:
+        <code>{{page.url}}</code>
+        <code>{{page.title}}</code>
+        <code>{{page.selection}}</code>
+        <code>{{page.meta.description}}</code>
+        <code>{{page.meta.og:title}}</code>
+        <code>{{page.meta.og:description}}</code>
+        <code>{{page.meta.og:image}}</code>
+      </div>
+
+      <div id="params-list"></div>
+    </section>
+
+    <div class="actions">
+      <button type="button" id="save" class="btn-primary">Save</button>
+      <span id="status" class="status"></span>
+    </div>
+  </div>
+
+  <script src="options.js" type="module"></script>
+</body>
+</html>
