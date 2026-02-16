@@ -50,6 +50,12 @@ body {
   gap: 8px;
 }
 
+.version {
+  font-size: 11px;
+  font-weight: 400;
+  color: #aaa;
+}
+
 .logo {
   width: 24px;
   height: 24px;
@@ -548,6 +554,10 @@ html[data-theme="dark"] .sidebar-header h2 {
   color: #f0f0f0;
 }
 
+html[data-theme="dark"] .version {
+  color: #666;
+}
+
 html[data-theme="dark"] .editor-header {
   border-bottom-color: #2a2a2a;
 }
@@ -751,6 +761,10 @@ html[data-theme="light"] .layout {
 
   html:not([data-theme]) .sidebar-header h2 {
     color: #f0f0f0;
+  }
+
+  html:not([data-theme]) .version {
+    color: #666;
   }
 
   html:not([data-theme]) .editor-header {

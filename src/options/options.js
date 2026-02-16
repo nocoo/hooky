@@ -265,5 +265,8 @@ themeSelect.addEventListener("change", async () => {
 
 // ─── Start ───
 
+document.getElementById("version").textContent =
+  "v" + chrome.runtime.getManifest().version;
+
 applyI18n();
 migrateFromLegacy().then(() => renderAll());
