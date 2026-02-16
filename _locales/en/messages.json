@@ -80,5 +80,37 @@
   },
   "settingsTooltip": {
     "message": "Settings"
+  },
+  "templates": {
+    "message": "Templates"
+  },
+  "newTemplate": {
+    "message": "New"
+  },
+  "defaultTemplateName": {
+    "message": "Untitled"
+  },
+  "deleteTemplate": {
+    "message": "Delete"
+  },
+  "deleteConfirm": {
+    "message": "Delete \"$NAME$\"?",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "selectTemplate": {
+    "message": "Select a template"
+  },
+  "noTemplates": {
+    "message": "No templates yet. Open settings to create one."
+  },
+  "templateName": {
+    "message": "Template Name"
+  },
+  "templateNamePlaceholder": {
+    "message": "e.g. Notify Slack"
   }
 }

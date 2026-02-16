@@ -73,14 +73,29 @@ function flashBadge(success) {
 }
 
 /**
- * Handle a quick-send trigger: load config, gather page context,
- * execute the webhook, and show badge feedback.
+ * Handle a quick-send trigger: load active template from store,
+ * gather page context, execute the webhook, and show badge feedback.
  *
  * @param {chrome.tabs.Tab} tab - The active tab when the icon was clicked
  */
 export async function handleQuickSend(tab) {
-  const data = await chrome.storage.local.get("webhook");
-  const config = data.webhook;
+  // Import store dynamically to keep this module testable with simple mocks
+  const storeKey = "hooky";
+  const data = await chrome.storage.local.get([storeKey, "webhook"]);
+
+  let config = null;
+
+  if (data[storeKey]) {
+    // New multi-template format
+    const store = data[storeKey];
+    if (store.templates && store.templates.length > 0) {
+      config = store.templates.find((t) => t.id === store.activeTemplateId)
+        || store.templates[0];
+    }
+  } else if (data.webhook) {
+    // Legacy single-webhook format
+    config = data.webhook;
+  }
 
   if (!config || !config.url) return;
 

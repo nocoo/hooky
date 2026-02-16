@@ -13,11 +13,15 @@
     </div>
 
     <div id="no-config" class="empty-state" style="display: none;">
-      <p data-i18n="noConfig">No webhook configured yet.</p>
+      <p data-i18n="noTemplates">No templates yet. Open settings to create one.</p>
       <button type="button" id="go-settings" class="btn-primary" data-i18n="openSettings">Open Settings</button>
     </div>
 
     <div id="webhook-panel" style="display: none;">
+      <div class="template-select">
+        <select id="template-select"></select>
+      </div>
+
       <div class="info-row">
         <span class="method-badge" id="method-badge">POST</span>
         <span class="url-display" id="url-display" title=""></span>

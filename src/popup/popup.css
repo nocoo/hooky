@@ -229,7 +229,29 @@ h1 {
     color: #777;
   }
 
-  .info-row {
+.template-select {
+  margin-bottom: 12px;
+}
+
+.template-select select {
+  width: 100%;
+  padding: 8px 12px;
+  font-size: 14px;
+  font-weight: 500;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  background: #fafafa;
+  color: #333;
+  cursor: pointer;
+}
+
+.template-select select:focus {
+  outline: none;
+  border-color: #4a90d9;
+  box-shadow: 0 0 0 3px rgba(74, 144, 217, 0.1);
+}
+
+.info-row {
     background: #222;
   }
 
@@ -254,5 +276,16 @@ h1 {
 
   .btn-primary:disabled {
     background: #3a5070;
+  }
+
+  .template-select select {
+    background: #222;
+    border-color: #444;
+    color: #e0e0e0;
+  }
+
+  .template-select select:focus {
+    border-color: #5a9de9;
+    box-shadow: 0 0 0 3px rgba(90, 157, 233, 0.15);
   }
 }

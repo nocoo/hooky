@@ -1,8 +1,10 @@
 import { resolveTemplate } from "../template.js";
 import { applyI18n, t } from "../i18n.js";
+import { loadStore, setActiveTemplateId } from "../store.js";
 
 const noConfigEl = document.getElementById("no-config");
 const webhookPanel = document.getElementById("webhook-panel");
+const templateSelect = document.getElementById("template-select");
 const methodBadge = document.getElementById("method-badge");
 const urlDisplay = document.getElementById("url-display");
 const paramsPreview = document.getElementById("params-preview");
@@ -11,7 +13,7 @@ const settingsBtn = document.getElementById("settings-btn");
 const goSettingsBtn = document.getElementById("go-settings");
 const toastEl = document.getElementById("toast");
 
-let currentConfig = null;
+let currentTemplate = null;
 let pageContext = null;
 
 function showToast(message, type = "success") {
@@ -34,7 +36,6 @@ async function getPageContext() {
     });
     return response || { page: { url: tab.url || "", title: tab.title || "", selection: "", meta: {} } };
   } catch {
-    // Content script not loaded (e.g. chrome:// pages) — fallback to tab info
     return {
       page: {
         url: tab.url || "",
@@ -72,33 +73,43 @@ function renderParams(params, context) {
   }
 }
 
+function showTemplate(tpl) {
+  currentTemplate = tpl;
+
+  const method = tpl.method || "POST";
+  methodBadge.textContent = method;
+  methodBadge.className = `method-badge ${method.toLowerCase()}`;
+  urlDisplay.textContent = tpl.url;
+  urlDisplay.title = tpl.url;
+
+  renderParams(tpl.params, pageContext);
+}
+
 function getResolvedParams() {
   const items = paramsPreview.querySelectorAll(".param-item");
   const params = [];
   for (const item of items) {
     const key = item.querySelector(".param-key").textContent;
     const value = item.querySelector("input").value;
-    // Use the user-edited value directly (already resolved)
     params.push({ key, value });
   }
   return params;
 }
 
 async function sendWebhook() {
-  if (!currentConfig) return;
+  if (!currentTemplate) return;
 
   sendBtn.disabled = true;
   sendBtn.textContent = t("sending");
 
   try {
-    // Use the (possibly edited) resolved params directly
     const resolvedParams = getResolvedParams();
-    const config = { ...currentConfig, params: resolvedParams };
+    const config = { ...currentTemplate, params: resolvedParams };
 
     const result = await chrome.runtime.sendMessage({
       type: "EXECUTE_WEBHOOK",
       config,
-      context: { page: {} }, // Context already resolved in param values
+      context: { page: {} },
     });
 
     if (result?.ok) {
@@ -118,10 +129,9 @@ async function sendWebhook() {
 async function init() {
   applyI18n();
 
-  const data = await chrome.storage.local.get("webhook");
-  currentConfig = data.webhook;
+  const store = await loadStore();
 
-  if (!currentConfig || !currentConfig.url) {
+  if (!store.templates || store.templates.length === 0) {
     noConfigEl.style.display = "block";
     webhookPanel.style.display = "none";
     return;
@@ -130,17 +140,35 @@ async function init() {
   noConfigEl.style.display = "none";
   webhookPanel.style.display = "block";
 
-  // Show method + URL
-  const method = currentConfig.method || "POST";
-  methodBadge.textContent = method;
-  methodBadge.className = `method-badge ${method.toLowerCase()}`;
-  urlDisplay.textContent = currentConfig.url;
-  urlDisplay.title = currentConfig.url;
+  // Build template dropdown
+  templateSelect.innerHTML = "";
+  for (const tpl of store.templates) {
+    const option = document.createElement("option");
+    option.value = tpl.id;
+    option.textContent = tpl.name || t("defaultTemplateName");
+    templateSelect.appendChild(option);
+  }
 
-  // Resolve page context and render params
+  // Select active template
+  const activeId = store.activeTemplateId || store.templates[0].id;
+  templateSelect.value = activeId;
+
+  // Get page context first
   pageContext = await getPageContext();
-  renderParams(currentConfig.params, pageContext);
+
+  // Show the active template
+  const activeTpl = store.templates.find((t) => t.id === activeId) || store.templates[0];
+  showTemplate(activeTpl);
 }
+
+templateSelect.addEventListener("change", async () => {
+  const store = await loadStore();
+  const tpl = store.templates.find((t) => t.id === templateSelect.value);
+  if (tpl) {
+    await setActiveTemplateId(tpl.id);
+    showTemplate(tpl);
+  }
+});
 
 settingsBtn.addEventListener("click", openSettings);
 goSettingsBtn.addEventListener("click", openSettings);

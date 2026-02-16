@@ -6,63 +6,85 @@
   <link rel="stylesheet" href="options.css">
 </head>
 <body>
-  <div class="container">
-    <h1 data-i18n="settingsTitle">Hooky Settings</h1>
-
-    <section class="section">
-      <label for="webhook-url" data-i18n="webhookUrl">Webhook URL</label>
-      <input type="url" id="webhook-url" data-i18n-placeholder="webhookUrlPlaceholder" placeholder="https://example.com/api/webhook">
-    </section>
-
-    <section class="section">
-      <label for="http-method" data-i18n="httpMethod">HTTP Method</label>
-      <select id="http-method">
-        <option value="GET">GET</option>
-        <option value="POST" selected>POST</option>
-        <option value="PUT">PUT</option>
-        <option value="PATCH">PATCH</option>
-        <option value="DELETE">DELETE</option>
-      </select>
-    </section>
-
-    <section class="section">
-      <div class="section-header">
-        <label data-i18n="parameters">Parameters</label>
-        <button type="button" id="add-param" class="btn-secondary" data-i18n="addParam">+ Add</button>
+  <div class="layout">
+    <!-- Left: Template list -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <h2 data-i18n="templates">Templates</h2>
+        <button type="button" id="new-template" class="btn-new" data-i18n="newTemplate">New</button>
       </div>
+      <ul id="template-list" class="template-list"></ul>
 
-      <div class="template-hint">
-        <span data-i18n="templateHint">Available variables:</span>
-        <code>{{page.url}}</code>
-        <code>{{page.title}}</code>
-        <code>{{page.selection}}</code>
-        <code>{{page.meta.description}}</code>
-        <code>{{page.meta.og:title}}</code>
-        <code>{{page.meta.og:description}}</code>
-        <code>{{page.meta.og:image}}</code>
-      </div>
-
-      <div id="params-list"></div>
-    </section>
-
-    <section class="section">
-      <div class="toggle-row">
-        <div class="toggle-info">
-          <label for="quick-send" data-i18n="quickSend">Quick Send</label>
-          <p class="toggle-desc" data-i18n="quickSendDesc">Skip the popup and send the webhook immediately when clicking the extension icon.</p>
+      <div class="sidebar-footer">
+        <div class="toggle-row">
+          <div class="toggle-info">
+            <label for="quick-send" data-i18n="quickSend">Quick Send</label>
+            <p class="toggle-desc" data-i18n="quickSendDesc">Skip the popup and send the webhook immediately when clicking the extension icon.</p>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="quick-send">
+            <span class="toggle-slider"></span>
+          </label>
         </div>
-        <label class="toggle-switch">
-          <input type="checkbox" id="quick-send">
-          <span class="toggle-slider"></span>
-        </label>
+        <p class="quick-send-hint" id="quick-send-hint" data-i18n="quickSendHint">When enabled, right-click the extension icon and select "Options" to access settings.</p>
       </div>
-      <p class="quick-send-hint" id="quick-send-hint" data-i18n="quickSendHint">When enabled, right-click the extension icon and select "Options" to access settings.</p>
-    </section>
+    </aside>
 
-    <div class="actions">
-      <button type="button" id="save" class="btn-primary" data-i18n="save">Save</button>
-      <span id="status" class="status"></span>
-    </div>
+    <!-- Right: Editor -->
+    <main class="editor" id="editor">
+      <div class="editor-empty" id="editor-empty">
+        <p data-i18n="noTemplates">No templates yet. Open settings to create one.</p>
+      </div>
+
+      <div class="editor-form" id="editor-form" style="display: none;">
+        <section class="section">
+          <label for="template-name" data-i18n="templateName">Template Name</label>
+          <input type="text" id="template-name" data-i18n-placeholder="templateNamePlaceholder" placeholder="e.g. Notify Slack">
+        </section>
+
+        <section class="section">
+          <label for="webhook-url" data-i18n="webhookUrl">Webhook URL</label>
+          <input type="url" id="webhook-url" data-i18n-placeholder="webhookUrlPlaceholder" placeholder="https://example.com/api/webhook">
+        </section>
+
+        <section class="section">
+          <label for="http-method" data-i18n="httpMethod">HTTP Method</label>
+          <select id="http-method">
+            <option value="GET">GET</option>
+            <option value="POST" selected>POST</option>
+            <option value="PUT">PUT</option>
+            <option value="PATCH">PATCH</option>
+            <option value="DELETE">DELETE</option>
+          </select>
+        </section>
+
+        <section class="section">
+          <div class="section-header">
+            <label data-i18n="parameters">Parameters</label>
+            <button type="button" id="add-param" class="btn-secondary" data-i18n="addParam">+ Add</button>
+          </div>
+
+          <div class="template-hint">
+            <span data-i18n="templateHint">Available variables:</span>
+            <code>{{page.url}}</code>
+            <code>{{page.title}}</code>
+            <code>{{page.selection}}</code>
+            <code>{{page.meta.description}}</code>
+            <code>{{page.meta.og:title}}</code>
+            <code>{{page.meta.og:description}}</code>
+            <code>{{page.meta.og:image}}</code>
+          </div>
+
+          <div id="params-list"></div>
+        </section>
+
+        <div class="editor-actions">
+          <button type="button" id="save" class="btn-primary" data-i18n="save">Save</button>
+          <span id="status" class="status"></span>
+          <button type="button" id="delete-template" class="btn-danger" data-i18n="deleteTemplate">Delete</button>
+        </div>
+      </div>
+    </main>
   </div>
 
   <script src="options.js" type="module"></script>

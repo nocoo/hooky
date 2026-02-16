@@ -1,13 +1,32 @@
 import { applyI18n, t } from "../i18n.js";
+import {
+  loadStore,
+  createTemplate,
+  updateTemplate,
+  deleteTemplate,
+  setQuickSend,
+  migrateFromLegacy,
+} from "../store.js";
 
+const templateListEl = document.getElementById("template-list");
+const newTemplateBtn = document.getElementById("new-template");
+const quickSendToggle = document.getElementById("quick-send");
+const quickSendHint = document.getElementById("quick-send-hint");
+
+const editorEmpty = document.getElementById("editor-empty");
+const editorForm = document.getElementById("editor-form");
+const nameInput = document.getElementById("template-name");
 const urlInput = document.getElementById("webhook-url");
 const methodSelect = document.getElementById("http-method");
 const paramsList = document.getElementById("params-list");
 const addParamBtn = document.getElementById("add-param");
-const quickSendToggle = document.getElementById("quick-send");
-const quickSendHint = document.getElementById("quick-send-hint");
 const saveBtn = document.getElementById("save");
 const statusEl = document.getElementById("status");
+const deleteBtn = document.getElementById("delete-template");
+
+let currentTemplateId = null;
+
+// ─── Param row helpers ───
 
 function createParamRow(key = "", value = "") {
   const row = document.createElement("div");
@@ -49,54 +68,140 @@ function getParams() {
   return params;
 }
 
+// ─── Status flash ───
+
 function showStatus(message) {
   statusEl.textContent = message;
   statusEl.classList.add("visible");
   setTimeout(() => statusEl.classList.remove("visible"), 2000);
 }
 
-function updateQuickSendHint() {
-  quickSendHint.classList.toggle("visible", quickSendToggle.checked);
+// ─── Template list ───
+
+function renderTemplateList(templates, activeId) {
+  templateListEl.innerHTML = "";
+  for (const tpl of templates) {
+    const li = document.createElement("li");
+    li.textContent = tpl.name || t("defaultTemplateName");
+    li.dataset.id = tpl.id;
+    if (tpl.id === activeId) li.classList.add("active");
+    li.addEventListener("click", () => selectTemplate(tpl.id));
+    templateListEl.appendChild(li);
+  }
 }
 
-async function loadConfig() {
-  const data = await chrome.storage.local.get("webhook");
-  const config = data.webhook;
+async function selectTemplate(id) {
+  currentTemplateId = id;
+  const store = await loadStore();
+  const tpl = store.templates.find((t) => t.id === id);
+  if (!tpl) return;
 
-  if (!config) return;
+  // Highlight in list
+  for (const li of templateListEl.children) {
+    li.classList.toggle("active", li.dataset.id === id);
+  }
 
-  urlInput.value = config.url || "";
-  methodSelect.value = config.method || "POST";
-  quickSendToggle.checked = config.quickSend || false;
-  updateQuickSendHint();
+  // Show editor
+  editorEmpty.style.display = "none";
+  editorForm.style.display = "block";
+
+  // Fill form
+  nameInput.value = tpl.name || "";
+  urlInput.value = tpl.url || "";
+  methodSelect.value = tpl.method || "POST";
 
   paramsList.innerHTML = "";
-  if (config.params) {
-    for (const { key, value } of config.params) {
+  if (tpl.params) {
+    for (const { key, value } of tpl.params) {
       paramsList.appendChild(createParamRow(key, value));
     }
   }
 }
 
-async function saveConfig() {
-  const webhook = {
+// ─── Save ───
+
+async function saveCurrentTemplate() {
+  if (!currentTemplateId) return;
+
+  const changes = {
+    name: nameInput.value.trim() || t("defaultTemplateName"),
     url: urlInput.value.trim(),
     method: methodSelect.value,
     params: getParams(),
-    quickSend: quickSendToggle.checked,
   };
 
-  await chrome.storage.local.set({ webhook });
+  await updateTemplate(currentTemplateId, changes);
+
+  // Update sidebar name
+  const li = templateListEl.querySelector(`[data-id="${currentTemplateId}"]`);
+  if (li) li.textContent = changes.name;
+
   showStatus(t("saved"));
 }
+
+// ─── Delete ───
+
+async function deleteCurrentTemplate() {
+  if (!currentTemplateId) return;
+
+  const store = await loadStore();
+  const tpl = store.templates.find((t) => t.id === currentTemplateId);
+  const name = tpl?.name || t("defaultTemplateName");
+
+  if (!confirm(t("deleteConfirm", [name]))) return;
+
+  await deleteTemplate(currentTemplateId);
+  currentTemplateId = null;
+  await renderAll();
+}
+
+// ─── Quick Send ───
+
+function updateQuickSendHint() {
+  quickSendHint.classList.toggle("visible", quickSendToggle.checked);
+}
+
+// ─── Init ───
+
+async function renderAll() {
+  const store = await loadStore();
+  renderTemplateList(store.templates, store.activeTemplateId);
+  quickSendToggle.checked = store.quickSend;
+  updateQuickSendHint();
+
+  if (store.templates.length > 0) {
+    // Select the first template if none is selected
+    const targetId = currentTemplateId && store.templates.find((t) => t.id === currentTemplateId)
+      ? currentTemplateId
+      : store.templates[0].id;
+    await selectTemplate(targetId);
+  } else {
+    editorEmpty.style.display = "flex";
+    editorForm.style.display = "none";
+  }
+}
+
+// ─── Events ───
+
+newTemplateBtn.addEventListener("click", async () => {
+  const tpl = await createTemplate(t("defaultTemplateName"));
+  currentTemplateId = tpl.id;
+  await renderAll();
+});
 
 addParamBtn.addEventListener("click", () => {
   paramsList.appendChild(createParamRow());
 });
 
-quickSendToggle.addEventListener("change", updateQuickSendHint);
+saveBtn.addEventListener("click", saveCurrentTemplate);
+deleteBtn.addEventListener("click", deleteCurrentTemplate);
 
-saveBtn.addEventListener("click", saveConfig);
+quickSendToggle.addEventListener("change", async () => {
+  await setQuickSend(quickSendToggle.checked);
+  updateQuickSendHint();
+});
+
+// ─── Start ───
 
 applyI18n();
-loadConfig();
+migrateFromLegacy().then(() => renderAll());
