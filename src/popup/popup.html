@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Hooky</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>Hooky</h1>
+      <button type="button" id="settings-btn" class="btn-icon" title="Settings">&#9881;</button>
+    </div>
+
+    <div id="no-config" class="empty-state" style="display: none;">
+      <p>No webhook configured yet.</p>
+      <button type="button" id="go-settings" class="btn-primary">Open Settings</button>
+    </div>
+
+    <div id="webhook-panel" style="display: none;">
+      <div class="info-row">
+        <span class="method-badge" id="method-badge">POST</span>
+        <span class="url-display" id="url-display" title=""></span>
+      </div>
+
+      <div id="params-preview" class="params-preview"></div>
+
+      <div class="actions">
+        <button type="button" id="send-btn" class="btn-primary btn-send">Send</button>
+      </div>
+    </div>
+
+    <div id="toast" class="toast"></div>
+  </div>
+
+  <script src="popup.js" type="module"></script>
+</body>
+</html>
