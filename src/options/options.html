@@ -21,7 +21,7 @@
         <h3 data-i18n="settings">Settings</h3>
 
         <div class="setting-row">
-          <label for="theme-select" data-i18n="theme">Theme</label>
+          <label for="theme-select"><span class="setting-icon">🎨</span> <span data-i18n="theme">Theme</span></label>
           <select id="theme-select" class="setting-select">
             <option value="system" data-i18n="themeSystem">System</option>
             <option value="light" data-i18n="themeLight">Light</option>
@@ -31,7 +31,7 @@
 
         <div class="toggle-row">
           <div class="toggle-info">
-            <label for="quick-send" data-i18n="quickSend">Quick Send</label>
+            <label for="quick-send"><span class="setting-icon">⚡</span> <span data-i18n="quickSend">Quick Send</span></label>
             <p class="toggle-desc" data-i18n="quickSendDesc">Skip the popup and send the webhook immediately when clicking the extension icon.</p>
           </div>
           <label class="toggle-switch">
@@ -94,6 +94,19 @@
             </div>
 
             <div id="params-list"></div>
+          </section>
+
+          <section class="section editor-quick-send" id="editor-quick-send-section">
+            <div class="toggle-row">
+              <div class="toggle-info">
+                <label for="editor-quick-send"><span class="setting-icon">⚡</span> <span data-i18n="editorQuickSend">Use this template for Quick Send</span></label>
+                <p class="toggle-desc" data-i18n="editorQuickSendDesc">When enabled, clicking the extension icon will immediately send this template's webhook without opening the popup.</p>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" id="editor-quick-send">
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
           </section>
 
           <div class="editor-actions">

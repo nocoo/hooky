@@ -135,6 +135,12 @@
     "message": "\u8bbe\u4e3a\u5feb\u901f\u53d1\u9001\u76ee\u6807"
   },
   "quickSendTargetActive": {
-    "message": "\u5f53\u524d\u5feb\u901f\u53d1\u9001\u76ee\u6807"
+    "message": "当前快速发送目标"
+  },
+  "editorQuickSend": {
+    "message": "将此模板用于快速发送"
+  },
+  "editorQuickSendDesc": {
+    "message": "开启后，点击扩展图标将立即发送此模板的 Webhook，无需打开弹窗。"
   }
 }

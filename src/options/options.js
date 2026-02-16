@@ -19,6 +19,7 @@ const themeSelect = document.getElementById("theme-select");
 
 const editorEmpty = document.getElementById("editor-empty");
 const editorForm = document.getElementById("editor-form");
+const editorQuickSendToggle = document.getElementById("editor-quick-send");
 const nameInput = document.getElementById("template-name");
 const urlInput = document.getElementById("webhook-url");
 const methodSelect = document.getElementById("http-method");
@@ -141,6 +142,10 @@ async function selectTemplate(id) {
       paramsList.appendChild(createParamRow(key, value));
     }
   }
+
+  // Sync editor Quick Send toggle
+  editorQuickSendToggle.checked =
+    store.quickSend && store.quickSendTemplateId === id;
 }
 
 // ─── Save ───
@@ -232,6 +237,21 @@ deleteBtn.addEventListener("click", deleteCurrentTemplate);
 quickSendToggle.addEventListener("change", async () => {
   await setQuickSend(quickSendToggle.checked);
   updateQuickSendHint();
+  // Sync editor toggle
+  const store = await loadStore();
+  editorQuickSendToggle.checked =
+    store.quickSend && store.quickSendTemplateId === currentTemplateId;
+});
+
+editorQuickSendToggle.addEventListener("change", async () => {
+  const checked = editorQuickSendToggle.checked;
+  await setQuickSend(checked);
+  if (checked) {
+    await setQuickSendTemplateId(currentTemplateId);
+  } else {
+    await setQuickSendTemplateId(null);
+  }
+  await renderAll();
 });
 
 themeSelect.addEventListener("change", async () => {

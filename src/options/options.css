@@ -281,6 +281,21 @@ select {
 }
 
 /* ─── Editor actions ─── */
+.editor-quick-send {
+  background: #f8f6fa;
+  border: 1px solid #e6d8f0;
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.editor-quick-send .toggle-row {
+  padding: 0;
+}
+
+.editor-quick-send .toggle-info label {
+  color: #555;
+}
+
 .editor-actions {
   display: flex;
   align-items: center;
@@ -439,6 +454,11 @@ select {
 }
 
 /* ─── Settings section ─── */
+.setting-icon {
+  font-size: 13px;
+  margin-right: 2px;
+}
+
 .sidebar-footer h3 {
   font-size: 13px;
   font-weight: 600;
@@ -667,6 +687,15 @@ html[data-theme="dark"] .quick-send-hint {
   border-color: #4a4000;
 }
 
+html[data-theme="dark"] .editor-quick-send {
+  background: #1e1a22;
+  border-color: #3d2a55;
+}
+
+html[data-theme="dark"] .editor-quick-send .toggle-info label {
+  color: #ccc;
+}
+
 /* Explicit light: override system dark preference */
 html[data-theme="light"] body {
   background: #f5f5f5;
@@ -853,5 +882,14 @@ html[data-theme="light"] .layout {
     color: #d4a017;
     background: #2a2500;
     border-color: #4a4000;
+  }
+
+  html:not([data-theme]) .editor-quick-send {
+    background: #1e1a22;
+    border-color: #3d2a55;
+  }
+
+  html:not([data-theme]) .editor-quick-send .toggle-info label {
+    color: #ccc;
   }
 }
