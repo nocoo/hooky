@@ -380,4 +380,317 @@ describe("popup.js", () => {
     const item = document.querySelector(".param-item");
     expect(item.querySelector(".param-key").textContent).toBe("msg");
   });
+
+  it("should send webhook with resolved params", async () => {
+    setupChromeMock({
+      hooky: {
+        templates: [
+          {
+            id: "t1", name: "Test", url: "https://h.com", method: "POST",
+            params: [
+              { key: "url", value: "{{page.url}}" },
+              { key: "msg", value: "hi" },
+            ],
+          },
+        ],
+        activeTemplateId: "t1",
+        theme: "system",
+      },
+    });
+    chrome.runtime.sendMessage.mockResolvedValue({ ok: true, status: 200 });
+
+    await import("../src/popup/popup.js");
+
+    await vi.waitFor(() => {
+      const items = document.querySelectorAll(".param-item");
+      expect(items).toHaveLength(2);
+    });
+
+    document.getElementById("send-btn").click();
+
+    await vi.waitFor(() => {
+      expect(chrome.runtime.sendMessage).toHaveBeenCalledWith(
+        expect.objectContaining({
+          type: "EXECUTE_WEBHOOK",
+          config: expect.objectContaining({
+            params: expect.arrayContaining([
+              expect.objectContaining({ key: "url" }),
+              expect.objectContaining({ key: "msg", value: "hi" }),
+            ]),
+          }),
+        }),
+      );
+    });
+  });
+
+  it("should show error message from result.error", async () => {
+    setupChromeMock({
+      hooky: {
+        templates: [
+          { id: "t1", name: "Test", url: "https://h.com", method: "POST", params: [] },
+        ],
+        activeTemplateId: "t1",
+        theme: "system",
+      },
+    });
+    chrome.runtime.sendMessage.mockResolvedValue({
+      ok: false,
+      status: 400,
+      error: "Bad Request",
+    });
+
+    await import("../src/popup/popup.js");
+
+    await vi.waitFor(() => {
+      expect(document.getElementById("webhook-panel").style.display).toBe("block");
+    });
+
+    document.getElementById("send-btn").click();
+
+    await vi.waitFor(() => {
+      const toast = document.getElementById("toast");
+      expect(toast.textContent).toBe("Bad Request");
+    });
+  });
+
+  it("should handle null tab id in getPageContext", async () => {
+    setupChromeMock({
+      hooky: {
+        templates: [
+          {
+            id: "t1", name: "Test", url: "https://h.com", method: "POST",
+            params: [{ key: "url", value: "{{page.url}}" }],
+          },
+        ],
+        activeTemplateId: "t1",
+        theme: "system",
+      },
+    });
+    // Tab with no id
+    chrome.tabs.query.mockResolvedValue([{ url: "about:blank", title: "New Tab" }]);
+
+    await import("../src/popup/popup.js");
+
+    await vi.waitFor(() => {
+      const items = document.querySelectorAll(".param-item");
+      expect(items).toHaveLength(1);
+    });
+  });
+
+  it("should fallback to first template when activeTemplateId is missing", async () => {
+    setupChromeMock({
+      hooky: {
+        templates: [
+          { id: "t1", name: "First", url: "https://first.com", method: "GET", params: [] },
+        ],
+        theme: "system",
+      },
+    });
+
+    await import("../src/popup/popup.js");
+
+    await vi.waitFor(() => {
+      expect(document.getElementById("method-badge").textContent).toBe("GET");
+    });
+  });
+
+  it("should use null response fallback from content script", async () => {
+    setupChromeMock({
+      hooky: {
+        templates: [
+          {
+            id: "t1", name: "Test", url: "https://h.com", method: "POST",
+            params: [{ key: "title", value: "{{page.title}}" }],
+          },
+        ],
+        activeTemplateId: "t1",
+        theme: "system",
+      },
+    });
+    // Content script returns null
+    chrome.tabs.sendMessage.mockResolvedValue(null);
+    chrome.tabs.query.mockResolvedValue([{ id: 1, url: "https://example.com", title: "Example Tab" }]);
+
+    await import("../src/popup/popup.js");
+
+    await vi.waitFor(() => {
+      const items = document.querySelectorAll(".param-item");
+      expect(items).toHaveLength(1);
+    });
+
+    // Should fall back to tab title
+    const input = document.querySelector(".param-item input");
+    expect(input.value).toBe("Example Tab");
+  });
+
+  it("should handle template with no method (defaults to POST)", async () => {
+    setupChromeMock({
+      hooky: {
+        templates: [
+          { id: "t1", name: "Test", url: "https://h.com", params: [] },
+        ],
+        activeTemplateId: "t1",
+        theme: "system",
+      },
+    });
+
+    await import("../src/popup/popup.js");
+
+    await vi.waitFor(() => {
+      expect(document.getElementById("method-badge").textContent).toBe("POST");
+    });
+  });
+
+  it("should handle template with no name (uses default)", async () => {
+    setupChromeMock({
+      hooky: {
+        templates: [
+          { id: "t1", name: "", url: "https://h.com", method: "GET", params: [] },
+        ],
+        activeTemplateId: "t1",
+        theme: "system",
+      },
+    });
+
+    await import("../src/popup/popup.js");
+
+    await vi.waitFor(() => {
+      const select = document.getElementById("template-select");
+      expect(select.children[0].textContent).toBe("Untitled");
+    });
+  });
+
+  it("should handle store with no theme (defaults to system)", async () => {
+    setupChromeMock({
+      hooky: {
+        templates: [
+          { id: "t1", name: "Test", url: "https://h.com", method: "POST", params: [] },
+        ],
+        activeTemplateId: "t1",
+      },
+    });
+
+    await import("../src/popup/popup.js");
+
+    await vi.waitFor(() => {
+      expect(document.getElementById("webhook-panel").style.display).toBe("block");
+    });
+    // theme should default to system (no data-theme attribute)
+    expect(document.documentElement.hasAttribute("data-theme")).toBe(false);
+  });
+
+  it("should handle store with no templates key", async () => {
+    setupChromeMock({
+      hooky: {},
+    });
+
+    await import("../src/popup/popup.js");
+
+    await vi.waitFor(() => {
+      expect(document.getElementById("no-config").style.display).toBe("block");
+    });
+  });
+
+  it("should handle failed webhook with no status", async () => {
+    setupChromeMock({
+      hooky: {
+        templates: [
+          { id: "t1", name: "Test", url: "https://h.com", method: "POST", params: [] },
+        ],
+        activeTemplateId: "t1",
+        theme: "system",
+      },
+    });
+    chrome.runtime.sendMessage.mockResolvedValue({ ok: false });
+
+    await import("../src/popup/popup.js");
+
+    await vi.waitFor(() => {
+      expect(document.getElementById("webhook-panel").style.display).toBe("block");
+    });
+
+    document.getElementById("send-btn").click();
+
+    await vi.waitFor(() => {
+      const toast = document.getElementById("toast");
+      expect(toast.classList.contains("error")).toBe(true);
+    });
+  });
+
+  it("should handle catch branch with error without message", async () => {
+    setupChromeMock({
+      hooky: {
+        templates: [
+          { id: "t1", name: "Test", url: "https://h.com", method: "POST", params: [] },
+        ],
+        activeTemplateId: "t1",
+        theme: "system",
+      },
+    });
+    chrome.runtime.sendMessage.mockRejectedValue({});
+
+    await import("../src/popup/popup.js");
+
+    await vi.waitFor(() => {
+      expect(document.getElementById("webhook-panel").style.display).toBe("block");
+    });
+
+    document.getElementById("send-btn").click();
+
+    await vi.waitFor(() => {
+      const toast = document.getElementById("toast");
+      expect(toast.classList.contains("error")).toBe(true);
+    });
+  });
+
+  it("should handle template with null params", async () => {
+    setupChromeMock({
+      hooky: {
+        templates: [
+          { id: "t1", name: "Test", url: "https://h.com", method: "POST", params: null },
+        ],
+        activeTemplateId: "t1",
+        theme: "system",
+      },
+    });
+
+    await import("../src/popup/popup.js");
+
+    await vi.waitFor(() => {
+      expect(document.getElementById("webhook-panel").style.display).toBe("block");
+    });
+    expect(document.querySelectorAll(".param-item")).toHaveLength(0);
+  });
+
+  it("should handle template select change to non-existent template", async () => {
+    setupChromeMock({
+      hooky: {
+        templates: [
+          { id: "t1", name: "Hook A", url: "https://a.com", method: "GET", params: [] },
+        ],
+        activeTemplateId: "t1",
+        theme: "system",
+      },
+    });
+
+    await import("../src/popup/popup.js");
+
+    await vi.waitFor(() => {
+      expect(document.getElementById("method-badge").textContent).toBe("GET");
+    });
+
+    // Change to non-existent value
+    const select = document.getElementById("template-select");
+    select.value = "non-existent";
+    select.dispatchEvent(new Event("change"));
+
+    // Wait for the change handler's loadStore() to resolve
+    await vi.waitFor(() => {
+      // loadStore is called (second call: first from init, second from change handler)
+      expect(chrome.storage.local.get.mock.calls.length).toBeGreaterThanOrEqual(2);
+    });
+
+    // Should not crash, method badge should remain unchanged
+    expect(document.getElementById("method-badge").textContent).toBe("GET");
+  });
 });

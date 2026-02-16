@@ -445,4 +445,186 @@ describe("options.js", () => {
       expect(chrome.storage.local.get).toHaveBeenCalled();
     });
   });
+
+  it("should toggle lightning button to set quick send template", async () => {
+    setupChromeMock(makeStore({ quickSendTemplateId: null }));
+    await import("../src/options/options.js");
+
+    await vi.waitFor(() => {
+      const lightning = document.querySelector(".btn-lightning");
+      expect(lightning).toBeTruthy();
+    });
+
+    const lightning = document.querySelector(".btn-lightning");
+    expect(lightning.classList.contains("active")).toBe(false);
+
+    // Click to set as quick send target
+    lightning.click();
+
+    await vi.waitFor(() => {
+      expect(chrome.storage.local.set).toHaveBeenCalled();
+    });
+  });
+
+  it("should toggle lightning button to unset quick send template", async () => {
+    setupChromeMock(makeStore({ quickSendTemplateId: "t1" }));
+    await import("../src/options/options.js");
+
+    await vi.waitFor(() => {
+      const lightning = document.querySelector(".btn-lightning");
+      expect(lightning.classList.contains("active")).toBe(true);
+    });
+
+    // Click to unset quick send target
+    document.querySelector(".btn-lightning").click();
+
+    await vi.waitFor(() => {
+      // Should have called setQuickSendTemplateId(null)
+      const setCalls = chrome.storage.local.set.mock.calls;
+      const hasNullQuickSend = setCalls.some(
+        (call) => call[0].hooky?.quickSendTemplateId === null,
+      );
+      expect(hasNullQuickSend).toBe(true);
+    });
+  });
+
+  it("should uncheck editor quick send toggle", async () => {
+    setupChromeMock(makeStore({ quickSend: true, quickSendTemplateId: "t1" }));
+    await import("../src/options/options.js");
+
+    await vi.waitFor(() => {
+      expect(document.getElementById("editor-form").style.display).toBe("block");
+    });
+
+    const editorToggle = document.getElementById("editor-quick-send");
+    editorToggle.checked = false;
+    editorToggle.dispatchEvent(new Event("change"));
+
+    await vi.waitFor(() => {
+      // Should call setQuickSendTemplateId(null) — the else branch
+      const setCalls = chrome.storage.local.set.mock.calls;
+      const hasNullQuickSend = setCalls.some(
+        (call) => call[0].hooky?.quickSendTemplateId === null,
+      );
+      expect(hasNullQuickSend).toBe(true);
+    });
+  });
+
+  it("should use default name when template name is empty", async () => {
+    setupChromeMock(makeStore({
+      templates: [{ id: "t1", name: "", url: "https://a.com", method: "POST", params: [] }],
+    }));
+    await import("../src/options/options.js");
+
+    await vi.waitFor(() => {
+      const nameSpan = document.querySelector(".template-name");
+      expect(nameSpan.textContent).toBe("Untitled");
+    });
+  });
+
+  it("should keep currentTemplateId across renderAll when template still exists", async () => {
+    setupChromeMock(makeStore({
+      templates: [
+        { id: "t1", name: "Hook A", url: "https://a.com", method: "POST", params: [] },
+        { id: "t2", name: "Hook B", url: "https://b.com", method: "GET", params: [] },
+      ],
+    }));
+    await import("../src/options/options.js");
+
+    // Wait for first template to load
+    await vi.waitFor(() => {
+      expect(document.getElementById("template-name").value).toBe("Hook A");
+    });
+
+    // Select second template
+    const items = document.querySelectorAll(".template-name");
+    items[1].click();
+
+    await vi.waitFor(() => {
+      expect(document.getElementById("template-name").value).toBe("Hook B");
+    });
+  });
+
+  it("should fallback to defaults for template with missing url and method", async () => {
+    setupChromeMock(makeStore({
+      templates: [{ id: "t1", name: "No URL", url: undefined, method: undefined, params: [] }],
+    }));
+    await import("../src/options/options.js");
+
+    await vi.waitFor(() => {
+      expect(document.getElementById("template-name").value).toBe("No URL");
+    });
+
+    expect(document.getElementById("webhook-url").value).toBe("");
+    expect(document.getElementById("http-method").value).toBe("POST");
+  });
+
+  it("should handle template with null params in editor", async () => {
+    setupChromeMock(makeStore({
+      templates: [{ id: "t1", name: "No Params", url: "https://x.com", method: "GET", params: null }],
+    }));
+    await import("../src/options/options.js");
+
+    await vi.waitFor(() => {
+      expect(document.getElementById("template-name").value).toBe("No Params");
+    });
+
+    expect(document.querySelectorAll("#params-list .param-row")).toHaveLength(0);
+  });
+
+  it("should use default name when saving with empty name", async () => {
+    setupChromeMock(makeStore());
+    await import("../src/options/options.js");
+
+    await vi.waitFor(() => {
+      expect(document.getElementById("template-name").value).toBe("Hook A");
+    });
+
+    // Clear the name
+    document.getElementById("template-name").value = "";
+    document.getElementById("save").click();
+
+    await vi.waitFor(() => {
+      const setCalls = chrome.storage.local.set.mock.calls;
+      const saved = setCalls.find(
+        (call) => call[0].hooky?.templates?.[0]?.name === "Untitled",
+      );
+      expect(saved).toBeTruthy();
+    });
+  });
+
+  it("should fallback to system when store has no theme", async () => {
+    setupChromeMock(makeStore({ theme: undefined }));
+    await import("../src/options/options.js");
+
+    await vi.waitFor(() => {
+      expect(document.getElementById("theme-select").value).toBe("system");
+    });
+  });
+
+  it("should handle delete template name fallback", async () => {
+    setupChromeMock(makeStore({
+      templates: [{ id: "t1", name: "", url: "https://a.com", method: "POST", params: [] }],
+    }));
+    global.confirm = vi.fn(() => true);
+
+    await import("../src/options/options.js");
+
+    await vi.waitFor(() => {
+      expect(document.getElementById("editor-form").style.display).toBe("block");
+    });
+
+    chrome.storage.local.get.mockResolvedValue(makeStore({ templates: [] }));
+    document.getElementById("delete-template").click();
+
+    await vi.waitFor(() => {
+      // The mock returns raw "Delete $1?" since it doesn't substitute
+      // but we can verify confirm was called with a string containing "Delete"
+      expect(global.confirm).toHaveBeenCalled();
+      const confirmArg = global.confirm.mock.calls[0][0];
+      expect(confirmArg).toContain("Delete");
+    });
+
+    delete global.confirm;
+  });
 });

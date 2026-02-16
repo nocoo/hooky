@@ -275,4 +275,98 @@ describe("handleQuickSend", () => {
       body: "{}",
     });
   });
+
+  it("should handle tab without id (no content script possible)", async () => {
+    const config = {
+      url: "https://api.example.com/hook",
+      method: "POST",
+      params: [{ key: "url", value: "{{page.url}}" }],
+    };
+    storageMock.local.get.mockResolvedValue({ webhook: config });
+
+    // Tab with no id — e.g. some special pages
+    const tab = { url: "chrome://extensions", title: "Extensions" };
+    await handleQuickSend(tab);
+
+    expect(fetchMock).toHaveBeenCalledWith("https://api.example.com/hook", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ url: "chrome://extensions" }),
+    });
+  });
+
+  it("should handle null tab gracefully", async () => {
+    const config = {
+      url: "https://api.example.com/hook",
+      method: "POST",
+      params: [],
+    };
+    storageMock.local.get.mockResolvedValue({ webhook: config });
+
+    await handleQuickSend(null);
+
+    expect(fetchMock).toHaveBeenCalled();
+  });
+
+  it("should handle tab with no url or title", async () => {
+    const config = {
+      url: "https://api.example.com/hook",
+      method: "POST",
+      params: [{ key: "url", value: "{{page.url}}" }],
+    };
+    storageMock.local.get.mockResolvedValue({ webhook: config });
+
+    const tab = { id: undefined };
+    await handleQuickSend(tab);
+
+    expect(fetchMock).toHaveBeenCalledWith("https://api.example.com/hook", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ url: "" }),
+    });
+  });
+
+  it("should handle null response from content script", async () => {
+    const config = {
+      url: "https://api.example.com/hook",
+      method: "POST",
+      params: [{ key: "title", value: "{{page.title}}" }],
+    };
+    storageMock.local.get.mockResolvedValue({ webhook: config });
+    tabsMock.sendMessage.mockResolvedValue(null);
+
+    const tab = { id: 1, url: "https://example.com", title: "Tab Title" };
+    await handleQuickSend(tab);
+
+    // Should fall back to tab info
+    expect(fetchMock).toHaveBeenCalledWith("https://api.example.com/hook", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ title: "Tab Title" }),
+    });
+  });
+
+  it("should do nothing when hooky store has empty templates", async () => {
+    storageMock.local.get.mockResolvedValue({
+      hooky: { templates: [] },
+    });
+
+    const tab = { id: 1, url: "https://example.com", title: "Example" };
+    await handleQuickSend(tab);
+
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it("should do nothing when hooky template has no url", async () => {
+    storageMock.local.get.mockResolvedValue({
+      hooky: {
+        templates: [{ id: "t1", name: "No URL", url: "", method: "POST", params: [] }],
+      },
+    });
+
+    const tab = { id: 1, url: "https://example.com", title: "Example" };
+    await handleQuickSend(tab);
+
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
 });

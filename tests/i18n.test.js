@@ -75,4 +75,18 @@ describe("applyI18n", () => {
     applyI18n();
     expect(document.querySelector("p").textContent).toBe("Keep me");
   });
+
+  it("should not overwrite placeholder when message is empty", () => {
+    document.body.innerHTML =
+      '<input data-i18n-placeholder="unknownKey" placeholder="Keep me">';
+    applyI18n();
+    expect(document.querySelector("input").placeholder).toBe("Keep me");
+  });
+
+  it("should not overwrite title when message is empty", () => {
+    document.body.innerHTML =
+      '<button data-i18n-title="unknownKey" title="Keep me">X</button>';
+    applyI18n();
+    expect(document.querySelector("button").title).toBe("Keep me");
+  });
 });

@@ -182,6 +182,14 @@ describe("store", () => {
       const active = await getActiveTemplate();
       expect(active).toBeNull();
     });
+    it("should return null when activeTemplateId references non-existent template", async () => {
+      await createTemplate("Test");
+      const store = await loadStore();
+      store.activeTemplateId = "non-existent-id";
+      await saveStore(store);
+      const active = await getActiveTemplate();
+      expect(active).toBeNull();
+    });
   });
 
   describe("setActiveTemplateId", () => {
@@ -209,6 +217,11 @@ describe("store", () => {
 
   describe("theme", () => {
     it("should default to system", async () => {
+      expect(await getTheme()).toBe("system");
+    });
+
+    it("should fallback to system when theme is empty string", async () => {
+      storage.hooky = { templates: [], activeTemplateId: null, quickSend: false, quickSendTemplateId: null, theme: "" };
       expect(await getTheme()).toBe("system");
     });
 
@@ -306,6 +319,22 @@ describe("store", () => {
       await migrateFromLegacy();
       const store = await loadStore();
       expect(store.templates).toHaveLength(0);
+    });
+
+    it("should handle legacy data with missing fields", async () => {
+      storage.webhook = {
+        url: undefined,
+        // method, params, quickSend all missing
+      };
+
+      await migrateFromLegacy();
+      const store = await loadStore();
+
+      expect(store.templates).toHaveLength(1);
+      expect(store.templates[0].url).toBe("");
+      expect(store.templates[0].method).toBe("POST");
+      expect(store.templates[0].params).toEqual([]);
+      expect(store.quickSend).toBe(false);
     });
   });
 });

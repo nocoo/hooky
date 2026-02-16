@@ -273,4 +273,79 @@ describe("handleContextMenuClick", () => {
       },
     );
   });
+
+  it("should handle tab without id in getPageContext", async () => {
+    const templates = [
+      { id: "t1", name: "Test", url: "https://hook.com", method: "POST", params: [{ key: "url", value: "{{page.url}}" }] },
+    ];
+    storageMock.local.get.mockResolvedValue({
+      hooky: { templates, activeTemplateId: "t1", quickSend: false, theme: "system" },
+    });
+
+    const info = { menuItemId: "hooky-t1" };
+    // Tab without id
+    const tab = { url: "chrome://extensions", title: "Extensions" };
+
+    await handleContextMenuClick(info, tab);
+
+    expect(fetchMock).toHaveBeenCalledWith("https://hook.com", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ url: "chrome://extensions" }),
+    });
+  });
+
+  it("should handle null response from content script", async () => {
+    const templates = [
+      { id: "t1", name: "Test", url: "https://hook.com", method: "POST", params: [{ key: "title", value: "{{page.title}}" }] },
+    ];
+    storageMock.local.get.mockResolvedValue({
+      hooky: { templates, activeTemplateId: "t1", quickSend: false, theme: "system" },
+    });
+    tabsMock.sendMessage.mockResolvedValue(null);
+
+    const info = { menuItemId: "hooky-t1" };
+    const tab = { id: 1, url: "https://example.com", title: "Tab Title" };
+
+    await handleContextMenuClick(info, tab);
+
+    expect(fetchMock).toHaveBeenCalledWith("https://hook.com", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ title: "Tab Title" }),
+    });
+  });
+
+  it("should do nothing when store has no templates key", async () => {
+    storageMock.local.get.mockResolvedValue({
+      hooky: {},
+    });
+
+    const info = { menuItemId: "hooky-t1" };
+    const tab = { id: 1, url: "https://example.com", title: "Example" };
+
+    await handleContextMenuClick(info, tab);
+
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it("should handle tab with missing url and title", async () => {
+    const templates = [
+      { id: "t1", name: "Test", url: "https://hook.com", method: "POST", params: [{ key: "url", value: "{{page.url}}" }] },
+    ];
+    storageMock.local.get.mockResolvedValue({
+      hooky: { templates, activeTemplateId: "t1", quickSend: false, theme: "system" },
+    });
+
+    const info = { menuItemId: "hooky-t1" };
+    const tab = {};
+
+    await handleContextMenuClick(info, tab);
+
+    expect(fetchMock).toHaveBeenCalledWith("https://hook.com", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ url: "" }),
+    });
+  });
 });
