@@ -1,4 +1,5 @@
 import { executeWebhook } from "./webhook.js";
+import { getPageContext } from "./pagecontext.js";
 
 const PARENT_ID = "hooky-parent";
 const PREFIX = "hooky-";
@@ -32,35 +33,6 @@ export async function buildContextMenus(templates) {
       title: tpl.name || "Untitled",
       contexts: CONTEXTS,
     });
-  }
-}
-
-/**
- * Collect page context from a tab, falling back to basic tab info
- * when the content script is unavailable.
- *
- * @param {chrome.tabs.Tab} tab
- * @returns {Promise<object>} context with { page: { url, title, selection, meta } }
- */
-async function getPageContext(tab) {
-  const fallback = {
-    page: {
-      url: tab?.url || "",
-      title: tab?.title || "",
-      selection: "",
-      meta: {},
-    },
-  };
-
-  if (!tab?.id) return fallback;
-
-  try {
-    const response = await chrome.tabs.sendMessage(tab.id, {
-      type: "GET_PAGE_CONTEXT",
-    });
-    return response || fallback;
-  } catch {
-    return fallback;
   }
 }
 

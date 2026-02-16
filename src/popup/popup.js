@@ -2,6 +2,7 @@ import { resolveTemplate } from "../template.js";
 import { applyI18n, t } from "../i18n.js";
 import { loadStore, setActiveTemplateId } from "../store.js";
 import { applyTheme } from "../theme.js";
+import { getPageContext } from "../pagecontext.js";
 
 const noConfigEl = document.getElementById("no-config");
 const webhookPanel = document.getElementById("webhook-panel");
@@ -27,25 +28,9 @@ function openSettings() {
   chrome.runtime.openOptionsPage();
 }
 
-async function getPageContext() {
+async function getPopupPageContext() {
   const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-  if (!tab?.id) return { page: { url: "", title: "", selection: "", meta: {} } };
-
-  try {
-    const response = await chrome.tabs.sendMessage(tab.id, {
-      type: "GET_PAGE_CONTEXT",
-    });
-    return response || { page: { url: tab.url || "", title: tab.title || "", selection: "", meta: {} } };
-  } catch {
-    return {
-      page: {
-        url: tab.url || "",
-        title: tab.title || "",
-        selection: "",
-        meta: {},
-      },
-    };
-  }
+  return getPageContext(tab);
 }
 
 function renderParams(params, context) {
@@ -158,7 +143,7 @@ async function init() {
   templateSelect.value = activeId;
 
   // Get page context first
-  pageContext = await getPageContext();
+  pageContext = await getPopupPageContext();
 
   // Show the active template
   const activeTpl = store.templates.find((t) => t.id === activeId) || store.templates[0];

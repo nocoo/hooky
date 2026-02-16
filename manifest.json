@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "description": "__MSG_extDescription__",
   "default_locale": "en",
-  "permissions": ["activeTab", "storage", "contextMenus"],
+  "permissions": ["activeTab", "storage", "contextMenus", "scripting"],
   "action": {
     "default_popup": "src/popup/popup.html",
     "default_icon": {
@@ -24,13 +24,6 @@
     "service_worker": "src/background.js",
     "type": "module"
   },
-  "content_scripts": [
-    {
-      "matches": ["<all_urls>"],
-      "js": ["src/content.js"],
-      "run_at": "document_idle"
-    }
-  ],
   "icons": {
     "16": "src/icons/icon16.png",
     "32": "src/icons/icon32.png",

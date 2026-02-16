@@ -1,5 +1,12 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
+
+// Mock the pagecontext module
+vi.mock("../src/pagecontext.js", () => ({
+  getPageContext: vi.fn(),
+}));
+
 import { buildContextMenus, handleContextMenuClick } from "../src/contextmenu.js";
+import { getPageContext } from "../src/pagecontext.js";
 
 describe("buildContextMenus", () => {
   let createMock;
@@ -87,9 +94,10 @@ describe("buildContextMenus", () => {
 describe("handleContextMenuClick", () => {
   let fetchMock;
   let storageMock;
-  let tabsMock;
 
   beforeEach(() => {
+    vi.clearAllMocks();
+
     fetchMock = vi.fn().mockResolvedValue({ ok: true, status: 200 });
     global.fetch = fetchMock;
 
@@ -98,13 +106,9 @@ describe("handleContextMenuClick", () => {
         get: vi.fn(),
       },
     };
-    tabsMock = {
-      sendMessage: vi.fn(),
-    };
 
     global.chrome = {
       storage: storageMock,
-      tabs: tabsMock,
       action: {
         setBadgeText: vi.fn(),
         setBadgeBackgroundColor: vi.fn(),
@@ -115,6 +119,11 @@ describe("handleContextMenuClick", () => {
       },
       runtime: { lastError: null },
     };
+
+    // Default: return fallback context
+    getPageContext.mockResolvedValue({
+      page: { url: "", title: "", selection: "", meta: {} },
+    });
   });
 
   it("should ignore clicks on non-hooky menu items", async () => {
@@ -142,13 +151,17 @@ describe("handleContextMenuClick", () => {
     storageMock.local.get.mockResolvedValue({
       hooky: { templates, activeTemplateId: "t1", quickSend: false, theme: "system" },
     });
-    tabsMock.sendMessage.mockRejectedValue(new Error("No content script"));
+
+    getPageContext.mockResolvedValue({
+      page: { url: "https://example.com", title: "Example", selection: "", meta: {} },
+    });
 
     const info = { menuItemId: "hooky-t1" };
     const tab = { id: 1, url: "https://example.com", title: "Example" };
 
     await handleContextMenuClick(info, tab);
 
+    expect(getPageContext).toHaveBeenCalledWith(tab);
     expect(fetchMock).toHaveBeenCalledWith("https://slack.com/hook", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -163,7 +176,6 @@ describe("handleContextMenuClick", () => {
     storageMock.local.get.mockResolvedValue({
       hooky: { templates, activeTemplateId: "t1", quickSend: false, theme: "system" },
     });
-    tabsMock.sendMessage.mockRejectedValue(new Error("No content script"));
     fetchMock.mockResolvedValue({ ok: true, status: 200 });
 
     const info = { menuItemId: "hooky-t1" };
@@ -182,7 +194,6 @@ describe("handleContextMenuClick", () => {
     storageMock.local.get.mockResolvedValue({
       hooky: { templates, activeTemplateId: "t1", quickSend: false, theme: "system" },
     });
-    tabsMock.sendMessage.mockRejectedValue(new Error("No content script"));
     fetchMock.mockResolvedValue({ ok: false, status: 500 });
 
     const info = { menuItemId: "hooky-t1" };
@@ -234,10 +245,9 @@ describe("handleContextMenuClick", () => {
       hooky: { templates, activeTemplateId: "t1", quickSend: false, theme: "system" },
     });
 
-    const pageContext = {
+    getPageContext.mockResolvedValue({
       page: { url: "https://example.com", title: "My Page", selection: "highlighted text", meta: {} },
-    };
-    tabsMock.sendMessage.mockResolvedValue(pageContext);
+    });
 
     const info = { menuItemId: "hooky-t1" };
     const tab = { id: 1, url: "https://example.com", title: "My Page" };
@@ -258,7 +268,10 @@ describe("handleContextMenuClick", () => {
     storageMock.local.get.mockResolvedValue({
       hooky: { templates, activeTemplateId: "t1", quickSend: false, theme: "system" },
     });
-    tabsMock.sendMessage.mockRejectedValue(new Error("No content script"));
+
+    getPageContext.mockResolvedValue({
+      page: { url: "https://example.com", title: "Example", selection: "", meta: {} },
+    });
 
     const info = { menuItemId: "hooky-t1" };
     const tab = { id: 1, url: "https://example.com", title: "Example" };
@@ -282,8 +295,11 @@ describe("handleContextMenuClick", () => {
       hooky: { templates, activeTemplateId: "t1", quickSend: false, theme: "system" },
     });
 
+    getPageContext.mockResolvedValue({
+      page: { url: "chrome://extensions", title: "Extensions", selection: "", meta: {} },
+    });
+
     const info = { menuItemId: "hooky-t1" };
-    // Tab without id
     const tab = { url: "chrome://extensions", title: "Extensions" };
 
     await handleContextMenuClick(info, tab);
@@ -295,14 +311,17 @@ describe("handleContextMenuClick", () => {
     });
   });
 
-  it("should handle null response from content script", async () => {
+  it("should handle fallback context from pagecontext module", async () => {
     const templates = [
       { id: "t1", name: "Test", url: "https://hook.com", method: "POST", params: [{ key: "title", value: "{{page.title}}" }] },
     ];
     storageMock.local.get.mockResolvedValue({
       hooky: { templates, activeTemplateId: "t1", quickSend: false, theme: "system" },
     });
-    tabsMock.sendMessage.mockResolvedValue(null);
+
+    getPageContext.mockResolvedValue({
+      page: { url: "https://example.com", title: "Tab Title", selection: "", meta: {} },
+    });
 
     const info = { menuItemId: "hooky-t1" };
     const tab = { id: 1, url: "https://example.com", title: "Tab Title" };
@@ -335,6 +354,10 @@ describe("handleContextMenuClick", () => {
     ];
     storageMock.local.get.mockResolvedValue({
       hooky: { templates, activeTemplateId: "t1", quickSend: false, theme: "system" },
+    });
+
+    getPageContext.mockResolvedValue({
+      page: { url: "", title: "", selection: "", meta: {} },
     });
 
     const info = { menuItemId: "hooky-t1" };

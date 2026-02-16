@@ -1,4 +1,5 @@
 import { executeWebhook } from "./webhook.js";
+import { getPageContext } from "./pagecontext.js";
 
 const POPUP_PATH = "src/popup/popup.html";
 const BADGE_CLEAR_DELAY = 3000;
@@ -12,51 +13,6 @@ const BADGE_CLEAR_DELAY = 3000;
  */
 export function applyQuickSendMode(enabled) {
   chrome.action.setPopup({ popup: enabled ? "" : POPUP_PATH });
-}
-
-/**
- * Collect page context from a tab, falling back to basic tab info
- * when the content script is unavailable.
- *
- * @param {chrome.tabs.Tab} tab
- * @returns {Promise<object>} context with { page: { url, title, selection, meta } }
- */
-async function getPageContext(tab) {
-  if (!tab?.id) {
-    return {
-      page: {
-        url: tab?.url || "",
-        title: tab?.title || "",
-        selection: "",
-        meta: {},
-      },
-    };
-  }
-
-  try {
-    const response = await chrome.tabs.sendMessage(tab.id, {
-      type: "GET_PAGE_CONTEXT",
-    });
-    return (
-      response || {
-        page: {
-          url: tab.url || "",
-          title: tab.title || "",
-          selection: "",
-          meta: {},
-        },
-      }
-    );
-  } catch {
-    return {
-      page: {
-        url: tab.url || "",
-        title: tab.title || "",
-        selection: "",
-        meta: {},
-      },
-    };
-  }
 }
 
 /**

@@ -1,127 +1,93 @@
-import { describe, it, expect, vi } from "vitest";
+// @vitest-environment jsdom
+import { describe, it, expect, beforeEach } from "vitest";
+import { extractPageContext } from "../src/pagecontext.js";
 
-/**
- * Since content.js relies on DOM and chrome APIs, we extract the
- * pure logic into a testable function and mock the browser environment.
- */
-
-// Extracted pure logic for testing
-function getPageContext(doc, win) {
-  const meta = {};
-
-  const metaDescription = doc.querySelector('meta[name="description"]');
-  if (metaDescription) {
-    meta.description = metaDescription.getAttribute("content") || "";
-  }
-
-  const ogTags = doc.querySelectorAll('meta[property^="og:"]');
-  for (const tag of ogTags) {
-    const property = tag.getAttribute("property");
-    const content = tag.getAttribute("content");
-    if (property && content) {
-      meta[property] = content;
-    }
-  }
-
-  return {
-    page: {
-      url: win.location.href,
-      title: doc.title,
-      selection: win.getSelection?.()?.toString() || "",
-      meta,
-    },
-  };
-}
-
-describe("getPageContext", () => {
-  function createMockDoc({ title = "", metaDesc = null, ogTags = [] } = {}) {
-    const metaDescEl = metaDesc
-      ? { getAttribute: (attr) => (attr === "content" ? metaDesc : null) }
-      : null;
-
-    const ogElements = ogTags.map(([prop, content]) => ({
-      getAttribute: (attr) => {
-        if (attr === "property") return prop;
-        if (attr === "content") return content;
-        return null;
-      },
-    }));
-
-    return {
-      title,
-      querySelector: vi.fn((selector) => {
-        if (selector === 'meta[name="description"]') return metaDescEl;
-        return null;
-      }),
-      querySelectorAll: vi.fn((selector) => {
-        if (selector === 'meta[property^="og:"]') return ogElements;
-        return [];
-      }),
-    };
-  }
-
-  function createMockWin({ href = "", selection = "" } = {}) {
-    return {
-      location: { href },
-      getSelection: vi.fn(() => ({ toString: () => selection })),
-    };
-  }
+describe("extractPageContext", () => {
+  beforeEach(() => {
+    document.title = "";
+    document.head.innerHTML = "";
+  });
 
   it("should extract basic page info", () => {
-    const doc = createMockDoc({ title: "Test Page" });
-    const win = createMockWin({ href: "https://example.com" });
-
-    const ctx = getPageContext(doc, win);
-    expect(ctx.page.url).toBe("https://example.com");
+    document.title = "Test Page";
+    const ctx = extractPageContext();
+    expect(ctx.page.url).toBe(location.href);
     expect(ctx.page.title).toBe("Test Page");
     expect(ctx.page.selection).toBe("");
     expect(ctx.page.meta).toEqual({});
   });
 
   it("should extract selected text", () => {
-    const doc = createMockDoc({ title: "Page" });
-    const win = createMockWin({
-      href: "https://x.com",
-      selection: "selected text",
-    });
-
-    const ctx = getPageContext(doc, win);
-    expect(ctx.page.selection).toBe("selected text");
+    document.title = "Page";
+    // jsdom's getSelection returns an empty selection by default
+    const ctx = extractPageContext();
+    expect(ctx.page.selection).toBe("");
   });
 
   it("should extract meta description", () => {
-    const doc = createMockDoc({
-      title: "Page",
-      metaDesc: "A description",
-    });
-    const win = createMockWin({ href: "https://x.com" });
+    document.title = "Page";
+    const meta = document.createElement("meta");
+    meta.setAttribute("name", "description");
+    meta.setAttribute("content", "A description");
+    document.head.appendChild(meta);
 
-    const ctx = getPageContext(doc, win);
+    const ctx = extractPageContext();
     expect(ctx.page.meta.description).toBe("A description");
   });
 
   it("should extract OG tags", () => {
-    const doc = createMockDoc({
-      title: "Page",
-      ogTags: [
-        ["og:title", "OG Title"],
-        ["og:description", "OG Desc"],
-        ["og:image", "https://img.com/pic.png"],
-      ],
-    });
-    const win = createMockWin({ href: "https://x.com" });
+    document.title = "Page";
+    const tags = [
+      ["og:title", "OG Title"],
+      ["og:description", "OG Desc"],
+      ["og:image", "https://img.com/pic.png"],
+    ];
 
-    const ctx = getPageContext(doc, win);
+    for (const [prop, content] of tags) {
+      const meta = document.createElement("meta");
+      meta.setAttribute("property", prop);
+      meta.setAttribute("content", content);
+      document.head.appendChild(meta);
+    }
+
+    const ctx = extractPageContext();
     expect(ctx.page.meta["og:title"]).toBe("OG Title");
     expect(ctx.page.meta["og:description"]).toBe("OG Desc");
     expect(ctx.page.meta["og:image"]).toBe("https://img.com/pic.png");
   });
 
-  it("should handle missing getSelection", () => {
-    const doc = createMockDoc({ title: "Page" });
-    const win = { location: { href: "https://x.com" }, getSelection: null };
+  it("should handle empty meta description content", () => {
+    const meta = document.createElement("meta");
+    meta.setAttribute("name", "description");
+    meta.setAttribute("content", "");
+    document.head.appendChild(meta);
 
-    const ctx = getPageContext(doc, win);
-    expect(ctx.page.selection).toBe("");
+    const ctx = extractPageContext();
+    expect(ctx.page.meta.description).toBe("");
+  });
+
+  it("should skip OG tags with missing property or content", () => {
+    // OG tag with property but no content attribute
+    const meta1 = document.createElement("meta");
+    meta1.setAttribute("property", "og:title");
+    document.head.appendChild(meta1);
+
+    // OG tag with content but empty property (shouldn't match selector anyway)
+    const meta2 = document.createElement("meta");
+    meta2.setAttribute("property", "og:image");
+    meta2.setAttribute("content", "https://img.com/pic.png");
+    document.head.appendChild(meta2);
+
+    const ctx = extractPageContext();
+    // meta1 has no content attr so it gets null, should be skipped
+    expect(ctx.page.meta["og:title"]).toBeUndefined();
+    // meta2 has both property and content
+    expect(ctx.page.meta["og:image"]).toBe("https://img.com/pic.png");
+  });
+
+  it("should handle page with no meta tags at all", () => {
+    document.title = "Empty Page";
+    const ctx = extractPageContext();
+    expect(ctx.page.meta).toEqual({});
   });
 });

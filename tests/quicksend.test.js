@@ -1,5 +1,12 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
+
+// Mock the pagecontext module
+vi.mock("../src/pagecontext.js", () => ({
+  getPageContext: vi.fn(),
+}));
+
 import { handleQuickSend, applyQuickSendMode } from "../src/quicksend.js";
+import { getPageContext } from "../src/pagecontext.js";
 
 describe("applyQuickSendMode", () => {
   let setPopupMock;
@@ -28,36 +35,36 @@ describe("applyQuickSendMode", () => {
 
 describe("handleQuickSend", () => {
   let fetchMock;
-  let sendMessageMock;
   let storageMock;
-  let tabsMock;
 
   beforeEach(() => {
+    vi.clearAllMocks();
+
     fetchMock = vi.fn().mockResolvedValue({ ok: true, status: 200 });
     global.fetch = fetchMock;
 
-    sendMessageMock = vi.fn();
     storageMock = {
       local: {
         get: vi.fn(),
       },
     };
-    tabsMock = {
-      sendMessage: vi.fn(),
-    };
 
     global.chrome = {
       runtime: {
-        sendMessage: sendMessageMock,
+        sendMessage: vi.fn(),
       },
       storage: storageMock,
-      tabs: tabsMock,
       action: {
         setPopup: vi.fn(),
         setBadgeText: vi.fn(),
         setBadgeBackgroundColor: vi.fn(),
       },
     };
+
+    // Default: return fallback context
+    getPageContext.mockResolvedValue({
+      page: { url: "", title: "", selection: "", meta: {} },
+    });
   });
 
   it("should do nothing when no webhook config exists", async () => {
@@ -80,7 +87,7 @@ describe("handleQuickSend", () => {
     expect(fetchMock).not.toHaveBeenCalled();
   });
 
-  it("should execute webhook with page context from content script", async () => {
+  it("should execute webhook with page context from injected script", async () => {
     const config = {
       url: "https://api.example.com/hook",
       method: "POST",
@@ -96,14 +103,12 @@ describe("handleQuickSend", () => {
         meta: { description: "A test page" },
       },
     };
-    tabsMock.sendMessage.mockResolvedValue(pageContext);
+    getPageContext.mockResolvedValue(pageContext);
 
     const tab = { id: 1, url: "https://example.com/page", title: "Test Page" };
     await handleQuickSend(tab);
 
-    expect(tabsMock.sendMessage).toHaveBeenCalledWith(1, {
-      type: "GET_PAGE_CONTEXT",
-    });
+    expect(getPageContext).toHaveBeenCalledWith(tab);
     expect(fetchMock).toHaveBeenCalledWith("https://api.example.com/hook", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -111,7 +116,7 @@ describe("handleQuickSend", () => {
     });
   });
 
-  it("should fallback to tab info when content script fails", async () => {
+  it("should fallback to tab info when script injection fails", async () => {
     const config = {
       url: "https://api.example.com/hook",
       method: "POST",
@@ -121,7 +126,11 @@ describe("handleQuickSend", () => {
       ],
     };
     storageMock.local.get.mockResolvedValue({ webhook: config });
-    tabsMock.sendMessage.mockRejectedValue(new Error("No content script"));
+
+    // getPageContext handles errors internally and returns fallback
+    getPageContext.mockResolvedValue({
+      page: { url: "https://example.com", title: "Example", selection: "", meta: {} },
+    });
 
     const tab = { id: 1, url: "https://example.com", title: "Example" };
     await handleQuickSend(tab);
@@ -143,7 +152,6 @@ describe("handleQuickSend", () => {
       params: [],
     };
     storageMock.local.get.mockResolvedValue({ webhook: config });
-    tabsMock.sendMessage.mockRejectedValue(new Error("No content script"));
     fetchMock.mockResolvedValue({ ok: true, status: 200 });
 
     const tab = { id: 1, url: "https://example.com", title: "Example" };
@@ -162,7 +170,6 @@ describe("handleQuickSend", () => {
       params: [],
     };
     storageMock.local.get.mockResolvedValue({ webhook: config });
-    tabsMock.sendMessage.mockRejectedValue(new Error("No content script"));
     fetchMock.mockResolvedValue({ ok: false, status: 500 });
 
     const tab = { id: 1, url: "https://example.com", title: "Example" };
@@ -181,7 +188,6 @@ describe("handleQuickSend", () => {
       params: [],
     };
     storageMock.local.get.mockResolvedValue({ webhook: config });
-    tabsMock.sendMessage.mockRejectedValue(new Error("No content script"));
     fetchMock.mockRejectedValue(new Error("Network error"));
 
     const tab = { id: 1, url: "https://example.com", title: "Example" };
@@ -197,7 +203,10 @@ describe("handleQuickSend", () => {
       params: [{ key: "page", value: "{{page.url}}" }],
     };
     storageMock.local.get.mockResolvedValue({ webhook: config });
-    tabsMock.sendMessage.mockRejectedValue(new Error("No content script"));
+
+    getPageContext.mockResolvedValue({
+      page: { url: "https://example.com", title: "Example", selection: "", meta: {} },
+    });
 
     const tab = { id: 1, url: "https://example.com", title: "Example" };
     await handleQuickSend(tab);
@@ -221,7 +230,6 @@ describe("handleQuickSend", () => {
       quickSendTemplateId: "t2",
     };
     storageMock.local.get.mockResolvedValue({ hooky: store });
-    tabsMock.sendMessage.mockRejectedValue(new Error("No content script"));
 
     const tab = { id: 1, url: "https://example.com", title: "Example" };
     await handleQuickSend(tab);
@@ -243,7 +251,6 @@ describe("handleQuickSend", () => {
       quickSendTemplateId: null,
     };
     storageMock.local.get.mockResolvedValue({ hooky: store });
-    tabsMock.sendMessage.mockRejectedValue(new Error("No content script"));
 
     const tab = { id: 1, url: "https://example.com", title: "Example" };
     await handleQuickSend(tab);
@@ -264,7 +271,6 @@ describe("handleQuickSend", () => {
       quickSendTemplateId: "deleted-id",
     };
     storageMock.local.get.mockResolvedValue({ hooky: store });
-    tabsMock.sendMessage.mockRejectedValue(new Error("No content script"));
 
     const tab = { id: 1, url: "https://example.com", title: "Example" };
     await handleQuickSend(tab);
@@ -276,7 +282,7 @@ describe("handleQuickSend", () => {
     });
   });
 
-  it("should handle tab without id (no content script possible)", async () => {
+  it("should handle tab without id (no script injection possible)", async () => {
     const config = {
       url: "https://api.example.com/hook",
       method: "POST",
@@ -284,7 +290,11 @@ describe("handleQuickSend", () => {
     };
     storageMock.local.get.mockResolvedValue({ webhook: config });
 
-    // Tab with no id — e.g. some special pages
+    // getPageContext returns fallback when tab has no id
+    getPageContext.mockResolvedValue({
+      page: { url: "chrome://extensions", title: "Extensions", selection: "", meta: {} },
+    });
+
     const tab = { url: "chrome://extensions", title: "Extensions" };
     await handleQuickSend(tab);
 
@@ -305,6 +315,7 @@ describe("handleQuickSend", () => {
 
     await handleQuickSend(null);
 
+    expect(getPageContext).toHaveBeenCalledWith(null);
     expect(fetchMock).toHaveBeenCalled();
   });
 
@@ -323,26 +334,6 @@ describe("handleQuickSend", () => {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ url: "" }),
-    });
-  });
-
-  it("should handle null response from content script", async () => {
-    const config = {
-      url: "https://api.example.com/hook",
-      method: "POST",
-      params: [{ key: "title", value: "{{page.title}}" }],
-    };
-    storageMock.local.get.mockResolvedValue({ webhook: config });
-    tabsMock.sendMessage.mockResolvedValue(null);
-
-    const tab = { id: 1, url: "https://example.com", title: "Tab Title" };
-    await handleQuickSend(tab);
-
-    // Should fall back to tab info
-    expect(fetchMock).toHaveBeenCalledWith("https://api.example.com/hook", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ title: "Tab Title" }),
     });
   });
 

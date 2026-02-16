@@ -1,6 +1,11 @@
 // @vitest-environment jsdom
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 
+// Mock the pagecontext module before any imports
+vi.mock("../src/pagecontext.js", () => ({
+  getPageContext: vi.fn(),
+}));
+
 // Set up DOM structure that popup.js expects at import time
 function setupPopupDOM() {
   document.body.innerHTML = `
@@ -29,14 +34,6 @@ function setupChromeMock(storeData = {}) {
       query: vi.fn().mockResolvedValue([
         { id: 1, url: "https://example.com", title: "Example" },
       ]),
-      sendMessage: vi.fn().mockResolvedValue({
-        page: {
-          url: "https://example.com",
-          title: "Example",
-          selection: "",
-          meta: {},
-        },
-      }),
     },
     storage: {
       local: {
@@ -61,6 +58,24 @@ function setupChromeMock(storeData = {}) {
   };
 }
 
+/**
+ * Helper to set up the getPageContext mock before importing popup.js.
+ * Must be called after setupChromeMock so that chrome.tabs.query is ready.
+ */
+async function setupPageContextMock(contextData) {
+  const { getPageContext } = await import("../src/pagecontext.js");
+  getPageContext.mockResolvedValue(
+    contextData || {
+      page: {
+        url: "https://example.com",
+        title: "Example",
+        selection: "",
+        meta: {},
+      },
+    },
+  );
+}
+
 describe("popup.js", () => {
   beforeEach(() => {
     vi.resetModules();
@@ -75,9 +90,9 @@ describe("popup.js", () => {
 
   it("should show no-config when store has no templates", async () => {
     setupChromeMock({ hooky: { templates: [], theme: "system" } });
+    await setupPageContextMock();
     await import("../src/popup/popup.js");
 
-    // Wait for init() to complete
     await vi.waitFor(() => {
       expect(document.getElementById("no-config").style.display).toBe("block");
     });
@@ -94,6 +109,7 @@ describe("popup.js", () => {
         theme: "system",
       },
     });
+    await setupPageContextMock();
     await import("../src/popup/popup.js");
 
     await vi.waitFor(() => {
@@ -113,6 +129,7 @@ describe("popup.js", () => {
         theme: "system",
       },
     });
+    await setupPageContextMock();
     await import("../src/popup/popup.js");
 
     await vi.waitFor(() => {
@@ -135,6 +152,7 @@ describe("popup.js", () => {
         theme: "system",
       },
     });
+    await setupPageContextMock();
     await import("../src/popup/popup.js");
 
     await vi.waitFor(() => {
@@ -159,6 +177,7 @@ describe("popup.js", () => {
         theme: "system",
       },
     });
+    await setupPageContextMock();
     await import("../src/popup/popup.js");
 
     await vi.waitFor(() => {
@@ -174,6 +193,7 @@ describe("popup.js", () => {
 
   it("should open settings page when settings button is clicked", async () => {
     setupChromeMock({ hooky: { templates: [], theme: "system" } });
+    await setupPageContextMock();
     await import("../src/popup/popup.js");
 
     await vi.waitFor(() => {
@@ -186,6 +206,7 @@ describe("popup.js", () => {
 
   it("should open settings page when go-settings button is clicked", async () => {
     setupChromeMock({ hooky: { templates: [], theme: "system" } });
+    await setupPageContextMock();
     await import("../src/popup/popup.js");
 
     await vi.waitFor(() => {
@@ -207,6 +228,7 @@ describe("popup.js", () => {
       },
     });
     chrome.runtime.sendMessage.mockResolvedValue({ ok: true, status: 200 });
+    await setupPageContextMock();
 
     await import("../src/popup/popup.js");
 
@@ -236,6 +258,7 @@ describe("popup.js", () => {
       },
     });
     chrome.runtime.sendMessage.mockResolvedValue({ ok: false, status: 500 });
+    await setupPageContextMock();
 
     await import("../src/popup/popup.js");
 
@@ -265,6 +288,7 @@ describe("popup.js", () => {
         theme: "system",
       },
     });
+    await setupPageContextMock();
 
     await import("../src/popup/popup.js");
 
@@ -282,7 +306,7 @@ describe("popup.js", () => {
     expect(document.getElementById("url-display").textContent).toBe("https://b.com");
   });
 
-  it("should fallback to tab info when content script is unavailable", async () => {
+  it("should fallback to tab info when script injection is unavailable", async () => {
     setupChromeMock({
       hooky: {
         templates: [
@@ -295,8 +319,10 @@ describe("popup.js", () => {
         theme: "system",
       },
     });
-    // Simulate content script not available
-    chrome.tabs.sendMessage.mockRejectedValue(new Error("Could not establish connection"));
+    // getPageContext returns fallback with tab info
+    await setupPageContextMock({
+      page: { url: "https://example.com", title: "Example", selection: "", meta: {} },
+    });
 
     await import("../src/popup/popup.js");
 
@@ -321,6 +347,7 @@ describe("popup.js", () => {
       },
     });
     chrome.runtime.sendMessage.mockRejectedValue(new Error("Network error"));
+    await setupPageContextMock();
 
     await import("../src/popup/popup.js");
 
@@ -339,6 +366,7 @@ describe("popup.js", () => {
 
   it("should not send when no template is active", async () => {
     setupChromeMock({ hooky: { templates: [], theme: "system" } });
+    await setupPageContextMock();
 
     await import("../src/popup/popup.js");
 
@@ -369,6 +397,7 @@ describe("popup.js", () => {
         theme: "system",
       },
     });
+    await setupPageContextMock();
 
     await import("../src/popup/popup.js");
 
@@ -398,6 +427,7 @@ describe("popup.js", () => {
       },
     });
     chrome.runtime.sendMessage.mockResolvedValue({ ok: true, status: 200 });
+    await setupPageContextMock();
 
     await import("../src/popup/popup.js");
 
@@ -438,6 +468,7 @@ describe("popup.js", () => {
       status: 400,
       error: "Bad Request",
     });
+    await setupPageContextMock();
 
     await import("../src/popup/popup.js");
 
@@ -453,7 +484,7 @@ describe("popup.js", () => {
     });
   });
 
-  it("should handle null tab id in getPageContext", async () => {
+  it("should handle null tab id in getPopupPageContext", async () => {
     setupChromeMock({
       hooky: {
         templates: [
@@ -468,6 +499,11 @@ describe("popup.js", () => {
     });
     // Tab with no id
     chrome.tabs.query.mockResolvedValue([{ url: "about:blank", title: "New Tab" }]);
+
+    // getPageContext will receive tab without id and return fallback
+    await setupPageContextMock({
+      page: { url: "", title: "", selection: "", meta: {} },
+    });
 
     await import("../src/popup/popup.js");
 
@@ -486,6 +522,7 @@ describe("popup.js", () => {
         theme: "system",
       },
     });
+    await setupPageContextMock();
 
     await import("../src/popup/popup.js");
 
@@ -494,7 +531,7 @@ describe("popup.js", () => {
     });
   });
 
-  it("should use null response fallback from content script", async () => {
+  it("should use fallback context from pagecontext module", async () => {
     setupChromeMock({
       hooky: {
         templates: [
@@ -507,9 +544,12 @@ describe("popup.js", () => {
         theme: "system",
       },
     });
-    // Content script returns null
-    chrome.tabs.sendMessage.mockResolvedValue(null);
     chrome.tabs.query.mockResolvedValue([{ id: 1, url: "https://example.com", title: "Example Tab" }]);
+
+    // getPageContext returns fallback with tab title
+    await setupPageContextMock({
+      page: { url: "https://example.com", title: "Example Tab", selection: "", meta: {} },
+    });
 
     await import("../src/popup/popup.js");
 
@@ -518,7 +558,7 @@ describe("popup.js", () => {
       expect(items).toHaveLength(1);
     });
 
-    // Should fall back to tab title
+    // Should use tab title from fallback
     const input = document.querySelector(".param-item input");
     expect(input.value).toBe("Example Tab");
   });
@@ -533,6 +573,7 @@ describe("popup.js", () => {
         theme: "system",
       },
     });
+    await setupPageContextMock();
 
     await import("../src/popup/popup.js");
 
@@ -551,6 +592,7 @@ describe("popup.js", () => {
         theme: "system",
       },
     });
+    await setupPageContextMock();
 
     await import("../src/popup/popup.js");
 
@@ -569,6 +611,7 @@ describe("popup.js", () => {
         activeTemplateId: "t1",
       },
     });
+    await setupPageContextMock();
 
     await import("../src/popup/popup.js");
 
@@ -583,6 +626,7 @@ describe("popup.js", () => {
     setupChromeMock({
       hooky: {},
     });
+    await setupPageContextMock();
 
     await import("../src/popup/popup.js");
 
@@ -602,6 +646,7 @@ describe("popup.js", () => {
       },
     });
     chrome.runtime.sendMessage.mockResolvedValue({ ok: false });
+    await setupPageContextMock();
 
     await import("../src/popup/popup.js");
 
@@ -628,6 +673,7 @@ describe("popup.js", () => {
       },
     });
     chrome.runtime.sendMessage.mockRejectedValue({});
+    await setupPageContextMock();
 
     await import("../src/popup/popup.js");
 
@@ -653,6 +699,7 @@ describe("popup.js", () => {
         theme: "system",
       },
     });
+    await setupPageContextMock();
 
     await import("../src/popup/popup.js");
 
@@ -672,6 +719,7 @@ describe("popup.js", () => {
         theme: "system",
       },
     });
+    await setupPageContextMock();
 
     await import("../src/popup/popup.js");
 
