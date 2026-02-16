@@ -35,7 +35,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 20px 16px 12px;
+  padding: 16px;
   border-bottom: 1px solid #e8e8e8;
 }
 
@@ -78,7 +78,7 @@ body {
 }
 
 .template-list li {
-  padding: 10px 16px;
+  padding: 10px 16px 10px 13px;
   font-size: 14px;
   cursor: pointer;
   color: #555;
@@ -102,14 +102,14 @@ body {
 
 .sidebar-footer {
   border-top: 1px solid #e8e8e8;
-  padding: 12px 16px;
+  padding: 16px;
 }
 
 /* ─── Editor ─── */
 .editor {
   flex: 1;
   overflow-y: auto;
-  padding: 28px 32px;
+  padding: 32px;
 }
 
 .editor-empty {
@@ -126,7 +126,7 @@ body {
 }
 
 .section {
-  margin-bottom: 20px;
+  margin-bottom: 24px;
 }
 
 .section-header {
