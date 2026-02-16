@@ -19,6 +19,7 @@ const themeSelect = document.getElementById("theme-select");
 
 const editorEmpty = document.getElementById("editor-empty");
 const editorForm = document.getElementById("editor-form");
+const editorActions = document.getElementById("editor-actions");
 const editorQuickSendToggle = document.getElementById("editor-quick-send");
 const nameInput = document.getElementById("template-name");
 const urlInput = document.getElementById("webhook-url");
@@ -130,6 +131,7 @@ async function selectTemplate(id) {
   // Show editor
   editorEmpty.style.display = "none";
   editorForm.style.display = "block";
+  editorActions.style.display = "flex";
 
   // Fill form
   nameInput.value = tpl.name || "";
@@ -216,6 +218,7 @@ async function renderAll() {
   } else {
     editorEmpty.style.display = "flex";
     editorForm.style.display = "none";
+    editorActions.style.display = "none";
   }
 }
 
