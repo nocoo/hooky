@@ -27,6 +27,15 @@ h1 {
   font-size: 20px;
   font-weight: 600;
   color: #111;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.logo {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
 }
 
 .btn-icon {
@@ -201,6 +210,29 @@ h1 {
   transform: translateX(-50%) translateY(0);
 }
 
+/* ─── Template Select ─── */
+.template-select {
+  margin-bottom: 12px;
+}
+
+.template-select select {
+  width: 100%;
+  padding: 8px 12px;
+  font-size: 14px;
+  font-weight: 500;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  background: #fafafa;
+  color: #333;
+  cursor: pointer;
+}
+
+.template-select select:focus {
+  outline: none;
+  border-color: #4a90d9;
+  box-shadow: 0 0 0 3px rgba(74, 144, 217, 0.1);
+}
+
 /* ─── Dark Mode ─── */
 @media (prefers-color-scheme: dark) {
   body {
@@ -229,29 +261,7 @@ h1 {
     color: #777;
   }
 
-.template-select {
-  margin-bottom: 12px;
-}
-
-.template-select select {
-  width: 100%;
-  padding: 8px 12px;
-  font-size: 14px;
-  font-weight: 500;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  background: #fafafa;
-  color: #333;
-  cursor: pointer;
-}
-
-.template-select select:focus {
-  outline: none;
-  border-color: #4a90d9;
-  box-shadow: 0 0 0 3px rgba(74, 144, 217, 0.1);
-}
-
-.info-row {
+  .info-row {
     background: #222;
   }
 
