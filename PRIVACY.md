@@ -35,6 +35,7 @@ Hooky only makes HTTP requests to **URLs that you explicitly configure** in your
 | Permission | Purpose |
 |---|---|
 | `activeTab` | Read the current page URL, title, and selected text to fill template variables |
+| `scripting` | Inject a page context extraction function into the active tab on demand |
 | `storage` | Save your webhook templates and settings locally |
 | `contextMenus` | Add the "Hooky" right-click menu |
 
