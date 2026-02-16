@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Generate all icon sizes from hooky-max.png (900x900 source).
+# Generate all icon sizes from assets/hooky-max.png (900x900 source).
 # Uses macOS built-in `sips` — no external dependencies required.
 #
 # Sizes:
@@ -13,7 +13,7 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 ROOT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
-SOURCE="$ROOT_DIR/hooky-max.png"
+SOURCE="$ROOT_DIR/assets/hooky-max.png"
 ICON_DIR="$ROOT_DIR/src/icons"
 
 if [ ! -f "$SOURCE" ]; then

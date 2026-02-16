@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="hooky-max.png" width="128" height="128" alt="Hooky logo">
+  <img src="assets/hooky-max.png" width="128" height="128" alt="Hooky logo">
 </p>
 
 <h1 align="center">Hooky</h1>
@@ -99,6 +99,7 @@ All files        |   98.09 |    93.22 |   92.68 |   99.53 |
 ```
 hooky/
 ├── 🌐 _locales/           # i18n messages (en, zh_CN)
+├── 🖼️ assets/              # Logo, store descriptions, promo images
 ├── 🐶 .husky/             # Git hooks (pre-commit, pre-push)
 ├── 🔧 scripts/            # Utility scripts (icon generation)
 ├── 📦 src/
@@ -140,8 +141,8 @@ This produces `dist/hooky-<version>.zip` containing only the runtime files neede
 
 | Asset | Location | Status |
 |---|---|---|
-| 📝 Description (EN) | `store/description-en.txt` | ✅ |
-| 📝 Description (ZH) | `store/description-zh.txt` | ✅ |
+| 📝 Description (EN) | `assets/description-en.txt` | ✅ |
+| 📝 Description (ZH) | `assets/description-zh.txt` | ✅ |
 | 🔒 Privacy Policy | [`PRIVACY.md`](PRIVACY.md) | ✅ |
 | 🖼️ Store Icon (128×128) | `src/icons/icon128.png` | ✅ |
 | 🖼️ Promo Tile (440×280) | — | ⬜ Manual |
@@ -152,7 +153,7 @@ This produces `dist/hooky-<version>.zip` containing only the runtime files neede
 1. Register at the [Chrome Web Store Developer Dashboard](https://chrome.google.com/webstore/devconsole) ($5 one-time fee)
 2. Run `bun run build` to generate the ZIP
 3. Upload `dist/hooky-<version>.zip`
-4. Fill in listing details using the descriptions in `store/`
+4. Fill in listing details using the descriptions in `assets/`
 5. Set privacy policy URL to `https://github.com/nocoo/hooky/blob/main/PRIVACY.md`
 6. Upload promo tile (440×280) and at least 1 screenshot (1280×800 or 640×400)
 7. Submit for review (typically 1–3 business days)
