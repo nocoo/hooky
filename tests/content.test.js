@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 
 /**
  * Since content.js relies on DOM and chrome APIs, we extract the
@@ -35,8 +35,6 @@ function getPageContext(doc, win) {
 
 describe("getPageContext", () => {
   function createMockDoc({ title = "", metaDesc = null, ogTags = [] } = {}) {
-    const elements = new Map();
-
     const metaDescEl = metaDesc
       ? { getAttribute: (attr) => (attr === "content" ? metaDesc : null) }
       : null;
