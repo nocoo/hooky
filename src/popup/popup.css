@@ -6,13 +6,13 @@
 
 body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  width: 360px;
+  width: 380px;
   background: #fff;
   color: #333;
 }
 
 .container {
-  padding: 16px;
+  padding: 20px;
   position: relative;
 }
 
@@ -20,11 +20,11 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 16px;
+  margin-bottom: 18px;
 }
 
 h1 {
-  font-size: 18px;
+  font-size: 20px;
   font-weight: 600;
   color: #111;
 }
@@ -32,48 +32,55 @@ h1 {
 .btn-icon {
   background: none;
   border: none;
-  font-size: 18px;
+  font-size: 22px;
   cursor: pointer;
   color: #888;
-  padding: 4px;
-  border-radius: 4px;
+  padding: 6px 8px;
+  border-radius: 6px;
+  line-height: 1;
+  transition: background 0.15s, color 0.15s;
 }
 
 .btn-icon:hover {
   background: #f0f0f0;
-  color: #555;
+  color: #444;
+}
+
+.btn-icon:active {
+  background: #e4e4e4;
 }
 
 .empty-state {
   text-align: center;
-  padding: 24px 0;
+  padding: 32px 0;
   color: #888;
 }
 
 .empty-state p {
-  margin-bottom: 12px;
-  font-size: 14px;
+  margin-bottom: 16px;
+  font-size: 15px;
 }
 
 .info-row {
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin-bottom: 12px;
-  padding: 8px 10px;
+  gap: 10px;
+  margin-bottom: 16px;
+  padding: 10px 12px;
   background: #f8f8f8;
-  border-radius: 6px;
+  border-radius: 8px;
 }
 
 .method-badge {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
-  padding: 3px 8px;
-  border-radius: 4px;
+  padding: 4px 10px;
+  border-radius: 5px;
   color: #fff;
   background: #4a90d9;
   text-transform: uppercase;
   flex-shrink: 0;
+  letter-spacing: 0.3px;
 }
 
 .method-badge.get { background: #4a9; }
@@ -83,7 +90,7 @@ h1 {
 .method-badge.delete { background: #cc4444; }
 
 .url-display {
-  font-size: 12px;
+  font-size: 13px;
   color: #666;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -91,18 +98,18 @@ h1 {
 }
 
 .params-preview {
-  margin-bottom: 12px;
+  margin-bottom: 16px;
 }
 
 .param-item {
   display: flex;
-  gap: 8px;
-  margin-bottom: 6px;
+  gap: 10px;
+  margin-bottom: 8px;
   align-items: center;
 }
 
 .param-item .param-key {
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 500;
   color: #555;
   min-width: 80px;
@@ -111,59 +118,67 @@ h1 {
 
 .param-item input {
   flex: 1;
-  padding: 6px 8px;
-  font-size: 12px;
+  padding: 8px 10px;
+  font-size: 13px;
   border: 1px solid #e0e0e0;
-  border-radius: 4px;
+  border-radius: 6px;
   background: #fafafa;
 }
 
 .param-item input:focus {
   outline: none;
   border-color: #4a90d9;
-  box-shadow: 0 0 0 2px rgba(74, 144, 217, 0.1);
+  box-shadow: 0 0 0 2px rgba(74, 144, 217, 0.12);
 }
 
 .actions {
   display: flex;
   justify-content: flex-end;
+  margin-top: 4px;
 }
 
 .btn-primary {
-  padding: 8px 20px;
-  font-size: 13px;
+  padding: 10px 24px;
+  font-size: 14px;
   font-weight: 500;
   color: #fff;
   background: #4a90d9;
   border: none;
-  border-radius: 6px;
+  border-radius: 8px;
   cursor: pointer;
-  transition: background 0.15s;
+  transition: background 0.15s, transform 0.1s;
 }
 
 .btn-primary:hover {
   background: #3a7bc8;
 }
 
+.btn-primary:active {
+  transform: scale(0.98);
+}
+
 .btn-primary:disabled {
   background: #b0c8e8;
   cursor: not-allowed;
+  transform: none;
 }
 
 .btn-send {
   width: 100%;
-  padding: 10px;
-  font-size: 14px;
+  padding: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
 }
 
 .toast {
   position: fixed;
-  bottom: 16px;
+  bottom: 20px;
   left: 50%;
   transform: translateX(-50%) translateY(60px);
-  padding: 8px 16px;
-  border-radius: 6px;
-  font-size: 13px;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 14px;
   font-weight: 500;
   color: #fff;
   opacity: 0;

@@ -93,8 +93,8 @@ select {
 
 .param-row input {
   flex: 1;
-  padding: 8px 10px;
-  font-size: 13px;
+  padding: 10px 12px;
+  font-size: 14px;
   border: 1px solid #ddd;
   border-radius: 6px;
   background: #fafafa;
@@ -110,15 +110,20 @@ select {
   background: none;
   border: none;
   color: #cc4444;
-  font-size: 18px;
+  font-size: 20px;
   cursor: pointer;
-  padding: 4px 8px;
-  border-radius: 4px;
+  padding: 6px 10px;
+  border-radius: 6px;
   line-height: 1;
+  transition: background 0.15s;
 }
 
 .param-row .btn-remove:hover {
   background: #fee;
+}
+
+.param-row .btn-remove:active {
+  background: #fdd;
 }
 
 .actions {
@@ -129,24 +134,28 @@ select {
 }
 
 .btn-primary {
-  padding: 10px 24px;
-  font-size: 14px;
+  padding: 11px 28px;
+  font-size: 15px;
   font-weight: 500;
   color: #fff;
   background: #4a90d9;
   border: none;
-  border-radius: 6px;
+  border-radius: 8px;
   cursor: pointer;
-  transition: background 0.15s;
+  transition: background 0.15s, transform 0.1s;
 }
 
 .btn-primary:hover {
   background: #3a7bc8;
 }
 
+.btn-primary:active {
+  transform: scale(0.98);
+}
+
 .btn-secondary {
-  padding: 6px 14px;
-  font-size: 13px;
+  padding: 8px 16px;
+  font-size: 14px;
   font-weight: 500;
   color: #4a90d9;
   background: #eef4fc;
@@ -158,6 +167,10 @@ select {
 
 .btn-secondary:hover {
   background: #dbe9f8;
+}
+
+.btn-secondary:active {
+  background: #cde0f4;
 }
 
 .status {
