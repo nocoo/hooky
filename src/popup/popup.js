@@ -1,6 +1,7 @@
 import { resolveTemplate } from "../template.js";
 import { applyI18n, t } from "../i18n.js";
 import { loadStore, setActiveTemplateId } from "../store.js";
+import { applyTheme } from "../theme.js";
 
 const noConfigEl = document.getElementById("no-config");
 const webhookPanel = document.getElementById("webhook-panel");
@@ -130,6 +131,9 @@ async function init() {
   applyI18n();
 
   const store = await loadStore();
+
+  // Apply theme
+  applyTheme(store.theme || "system");
 
   if (!store.templates || store.templates.length === 0) {
     noConfigEl.style.display = "block";

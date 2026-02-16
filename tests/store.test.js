@@ -10,6 +10,8 @@ import {
   setActiveTemplateId,
   getQuickSend,
   setQuickSend,
+  getTheme,
+  setTheme,
   migrateFromLegacy,
 } from "../src/store.js";
 
@@ -45,6 +47,7 @@ describe("store", () => {
         templates: [],
         activeTemplateId: null,
         quickSend: false,
+        theme: "system",
       });
     });
 
@@ -198,6 +201,21 @@ describe("store", () => {
       expect(await getQuickSend()).toBe(true);
       await setQuickSend(false);
       expect(await getQuickSend()).toBe(false);
+    });
+  });
+
+  describe("theme", () => {
+    it("should default to system", async () => {
+      expect(await getTheme()).toBe("system");
+    });
+
+    it("should save and retrieve theme setting", async () => {
+      await setTheme("dark");
+      expect(await getTheme()).toBe("dark");
+      await setTheme("light");
+      expect(await getTheme()).toBe("light");
+      await setTheme("system");
+      expect(await getTheme()).toBe("system");
     });
   });
 

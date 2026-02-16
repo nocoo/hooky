@@ -112,5 +112,20 @@
   },
   "templateNamePlaceholder": {
     "message": "e.g. Notify Slack"
+  },
+  "settings": {
+    "message": "Settings"
+  },
+  "theme": {
+    "message": "Theme"
+  },
+  "themeSystem": {
+    "message": "System"
+  },
+  "themeLight": {
+    "message": "Light"
+  },
+  "themeDark": {
+    "message": "Dark"
   }
 }

@@ -7,6 +7,7 @@
  *     templates: [ { id, name, url, method, params } ],
  *     activeTemplateId: string | null,
  *     quickSend: boolean,
+ *     theme: "system" | "light" | "dark",
  *   }
  * }
  */
@@ -23,7 +24,7 @@ function generateId() {
  */
 export async function loadStore() {
   const data = await chrome.storage.local.get(STORE_KEY);
-  return data[STORE_KEY] || { templates: [], activeTemplateId: null, quickSend: false };
+  return data[STORE_KEY] || { templates: [], activeTemplateId: null, quickSend: false, theme: "system" };
 }
 
 /**
@@ -138,6 +139,27 @@ export async function getQuickSend() {
 export async function setQuickSend(enabled) {
   const store = await loadStore();
   store.quickSend = enabled;
+  await saveStore(store);
+}
+
+/**
+ * Get the theme setting.
+ *
+ * @returns {Promise<string>} "system" | "light" | "dark"
+ */
+export async function getTheme() {
+  const store = await loadStore();
+  return store.theme || "system";
+}
+
+/**
+ * Set the theme setting.
+ *
+ * @param {string} theme - "system" | "light" | "dark"
+ */
+export async function setTheme(theme) {
+  const store = await loadStore();
+  store.theme = theme;
   await saveStore(store);
 }
 

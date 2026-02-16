@@ -5,13 +5,16 @@ import {
   updateTemplate,
   deleteTemplate,
   setQuickSend,
+  setTheme,
   migrateFromLegacy,
 } from "../store.js";
+import { applyTheme } from "../theme.js";
 
 const templateListEl = document.getElementById("template-list");
 const newTemplateBtn = document.getElementById("new-template");
 const quickSendToggle = document.getElementById("quick-send");
 const quickSendHint = document.getElementById("quick-send-hint");
+const themeSelect = document.getElementById("theme-select");
 
 const editorEmpty = document.getElementById("editor-empty");
 const editorForm = document.getElementById("editor-form");
@@ -169,6 +172,11 @@ async function renderAll() {
   quickSendToggle.checked = store.quickSend;
   updateQuickSendHint();
 
+  // Apply theme
+  const theme = store.theme || "system";
+  themeSelect.value = theme;
+  applyTheme(theme);
+
   if (store.templates.length > 0) {
     // Select the first template if none is selected
     const targetId = currentTemplateId && store.templates.find((t) => t.id === currentTemplateId)
@@ -199,6 +207,12 @@ deleteBtn.addEventListener("click", deleteCurrentTemplate);
 quickSendToggle.addEventListener("change", async () => {
   await setQuickSend(quickSendToggle.checked);
   updateQuickSendHint();
+});
+
+themeSelect.addEventListener("change", async () => {
+  const theme = themeSelect.value;
+  await setTheme(theme);
+  applyTheme(theme);
 });
 
 // ─── Start ───

@@ -112,5 +112,20 @@
   },
   "templateNamePlaceholder": {
     "message": "\u5982\uff1a\u901a\u77e5 Slack"
+  },
+  "settings": {
+    "message": "\u8bbe\u7f6e"
+  },
+  "theme": {
+    "message": "\u4e3b\u9898"
+  },
+  "themeSystem": {
+    "message": "\u8ddf\u968f\u7cfb\u7edf"
+  },
+  "themeLight": {
+    "message": "\u6d45\u8272"
+  },
+  "themeDark": {
+    "message": "\u6df1\u8272"
   }
 }
