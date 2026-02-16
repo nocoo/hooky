@@ -1,0 +1,45 @@
+Hooky — Déclenchez des webhooks en un clic avec le contexte de la page.
+
+Créez des modèles de webhook, remplissez-les avec les données de la page en temps réel, et déclenchez-les depuis la barre d'outils, le menu contextuel ou le mode d'envoi rapide.
+
+🪝 MODÈLES DE WEBHOOK
+Créez plusieurs modèles de webhook nommés, chacun avec sa propre URL, méthode HTTP (GET/POST/PUT/PATCH/DELETE) et paramètres clé-valeur. Passez de l'un à l'autre instantanément.
+
+🔀 VARIABLES DE MODÈLE
+Injectez le contexte de la page en temps réel dans vos paramètres de webhook grâce aux variables :
+• {{page.url}} — URL de la page actuelle
+• {{page.title}} — titre de la page
+• {{page.selection}} — texte sélectionné
+• {{page.meta.description}} — méta-description
+• {{page.meta.og:title}} — titre Open Graph
+• {{page.meta.og:description}} — description Open Graph
+• {{page.meta.og:image}} — URL de l'image Open Graph
+
+⚡ ENVOI RAPIDE
+Désignez un modèle comme cible d'envoi rapide. Une fois activé, un clic sur l'icône de la barre d'outils déclenche immédiatement le webhook — sans popup. Un badge affiche ✓ ou ✗ pour confirmer le résultat.
+
+📋 MENU CONTEXTUEL
+Faites un clic droit sur n'importe quelle page pour voir tous vos modèles dans le menu « Hooky ». Sélectionnez-en un et déclenchez-le d'un clic.
+
+🎨 THÈMES
+Choisissez entre le thème système, clair ou sombre.
+
+🌐 LANGUES
+Disponible en 10 langues : English, 简体中文, 繁體中文, 日本語, 한국어, Français, Deutsch, Español, Português (BR), Русский.
+
+🔒 CONFIDENTIALITÉ
+Hooky ne collecte, ne stocke et ne transmet aucune donnée utilisateur. Toute la configuration est stockée localement dans votre navigateur via chrome.storage.local. Les requêtes webhook sont envoyées uniquement aux URL que vous configurez.
+
+─────
+
+CAS D'UTILISATION
+• Sauvegarder des articles vers Notion, Raindrop ou toute API
+• Envoyer des URL de pages à des bots Slack, Discord ou Telegram
+• Déclencher des pipelines CI/CD avec les métadonnées de la page
+• Journaliser votre activité de navigation vers un webhook personnel
+• Ajouter des pages en favoris vers un backend personnalisé
+
+PERMISSIONS
+• activeTab — lire l'URL et le titre de la page pour les variables de modèle
+• storage — sauvegarder vos modèles de webhook localement
+• contextMenus — ajouter « Hooky » au menu contextuel

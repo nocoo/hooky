@@ -35,7 +35,7 @@
 - ⚡ **Quick Send** — click the toolbar icon to instantly fire a designated template; badge flashes ✓ or ✗ for feedback
 - 📋 **Context menu** — right-click on any page to trigger webhooks from the "Hooky" menu
 - 🎨 **Themes** — system / light / dark
-- 🌐 **i18n** — English and 简体中文 via `chrome.i18n`
+- 🌐 **i18n** — 10 languages: English, 简体中文, 繁體中文, 日本語, 한국어, Français, Deutsch, Español, Português (BR), Русский
 
 ## 🚀 Getting Started
 
@@ -98,7 +98,7 @@ All files        |   98.09 |    93.22 |   92.68 |   99.53 |
 
 ```
 hooky/
-├── 🌐 _locales/           # i18n messages (en, zh_CN)
+├── 🌐 _locales/           # i18n messages (10 languages)
 ├── 🖼️ assets/              # Logo, store descriptions, promo images
 ├── 🐶 .husky/             # Git hooks (pre-commit, pre-push)
 ├── 🔧 scripts/            # Utility scripts (icon generation)
@@ -143,6 +143,14 @@ This produces `dist/hooky-<version>.zip` containing only the runtime files neede
 |---|---|---|
 | 📝 Description (EN) | `assets/description-en.txt` | ✅ |
 | 📝 Description (ZH) | `assets/description-zh.txt` | ✅ |
+| 📝 Description (JA) | `assets/description-ja.txt` | ✅ |
+| 📝 Description (KO) | `assets/description-ko.txt` | ✅ |
+| 📝 Description (ZH-TW) | `assets/description-zh-tw.txt` | ✅ |
+| 📝 Description (FR) | `assets/description-fr.txt` | ✅ |
+| 📝 Description (DE) | `assets/description-de.txt` | ✅ |
+| 📝 Description (ES) | `assets/description-es.txt` | ✅ |
+| 📝 Description (PT-BR) | `assets/description-pt-br.txt` | ✅ |
+| 📝 Description (RU) | `assets/description-ru.txt` | ✅ |
 | 🔒 Privacy Policy | [`PRIVACY.md`](PRIVACY.md) | ✅ |
 | 🖼️ Store Icon (128×128) | `src/icons/icon128.png` | ✅ |
 | 🖼️ Promo Tile (440×280) | — | ⬜ Manual |

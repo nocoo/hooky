@@ -1,0 +1,146 @@
+{
+  "extName": {
+    "message": "Hooky"
+  },
+  "extDescription": {
+    "message": "원클릭 Webhook 트리거, 페이지 컨텍스트 및 템플릿 변수 지원"
+  },
+  "settingsTitle": {
+    "message": "Hooky 설정"
+  },
+  "webhookUrl": {
+    "message": "Webhook URL"
+  },
+  "webhookUrlPlaceholder": {
+    "message": "https://example.com/api/webhook"
+  },
+  "httpMethod": {
+    "message": "HTTP 메서드"
+  },
+  "parameters": {
+    "message": "매개변수"
+  },
+  "addParam": {
+    "message": "+ 추가"
+  },
+  "templateHint": {
+    "message": "사용 가능한 변수:"
+  },
+  "paramKeyPlaceholder": {
+    "message": "키"
+  },
+  "paramValuePlaceholder": {
+    "message": "값 (예: {{page.url}})"
+  },
+  "quickSend": {
+    "message": "빠른 전송"
+  },
+  "quickSendDesc": {
+    "message": "팝업을 건너뛰고 확장 프로그램 아이콘을 클릭하면 즉시 Webhook을 전송합니다."
+  },
+  "quickSendHint": {
+    "message": "활성화하면 확장 프로그램 아이콘을 마우스 오른쪽 버튼으로 클릭하고 '옵션'을 선택하여 설정에 액세스할 수 있습니다."
+  },
+  "save": {
+    "message": "저장"
+  },
+  "saved": {
+    "message": "저장됨!"
+  },
+  "noConfig": {
+    "message": "아직 Webhook이 설정되지 않았습니다."
+  },
+  "openSettings": {
+    "message": "설정 열기"
+  },
+  "send": {
+    "message": "전송"
+  },
+  "sending": {
+    "message": "전송 중..."
+  },
+  "successStatus": {
+    "message": "성공 ($STATUS$)",
+    "placeholders": {
+      "status": {
+        "content": "$1"
+      }
+    }
+  },
+  "failedStatus": {
+    "message": "실패 ($STATUS$)",
+    "placeholders": {
+      "status": {
+        "content": "$1"
+      }
+    }
+  },
+  "requestFailed": {
+    "message": "요청 실패"
+  },
+  "settingsTooltip": {
+    "message": "설정"
+  },
+  "templates": {
+    "message": "템플릿"
+  },
+  "newTemplate": {
+    "message": "새로 만들기"
+  },
+  "defaultTemplateName": {
+    "message": "제목 없음"
+  },
+  "deleteTemplate": {
+    "message": "삭제"
+  },
+  "deleteConfirm": {
+    "message": "\"$NAME$\"을(를) 삭제하시겠습니까?",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "selectTemplate": {
+    "message": "템플릿 선택"
+  },
+  "noTemplates": {
+    "message": "아직 템플릿이 없습니다. 설정에서 만들어 주세요."
+  },
+  "templateName": {
+    "message": "템플릿 이름"
+  },
+  "webhookDetail": {
+    "message": "Webhook 상세"
+  },
+  "templateNamePlaceholder": {
+    "message": "예: Slack에 알림"
+  },
+  "settings": {
+    "message": "설정"
+  },
+  "theme": {
+    "message": "테마"
+  },
+  "themeSystem": {
+    "message": "시스템"
+  },
+  "themeLight": {
+    "message": "라이트"
+  },
+  "themeDark": {
+    "message": "다크"
+  },
+  "quickSendTarget": {
+    "message": "빠른 전송 대상으로 설정"
+  },
+  "quickSendTargetActive": {
+    "message": "현재 빠른 전송 대상"
+  },
+  "editorQuickSend": {
+    "message": "이 템플릿을 빠른 전송에 사용"
+  },
+  "editorQuickSendDesc": {
+    "message": "활성화하면 확장 프로그램 아이콘을 클릭하면 팝업 없이 이 템플릿의 Webhook이 즉시 전송됩니다."
+  }
+}

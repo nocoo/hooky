@@ -1,0 +1,45 @@
+Hooky — 一鍵觸發 Webhook，自動攜帶頁面上下文。
+
+建立 Webhook 範本，自動填入當前頁面資料，從工具列、右鍵選單或快速傳送模式一鍵觸發。
+
+🪝 WEBHOOK 範本
+建立多個命名的 Webhook 範本，每個範本可獨立設定 URL、HTTP 方法（GET/POST/PUT/PATCH/DELETE）和鍵值參數，隨時切換。
+
+🔀 範本變數
+使用範本變數將即時頁面資訊注入到 Webhook 參數中：
+• {{page.url}} — 當前頁面 URL
+• {{page.title}} — 頁面標題
+• {{page.selection}} — 選取的文字
+• {{page.meta.description}} — Meta 描述
+• {{page.meta.og:title}} — Open Graph 標題
+• {{page.meta.og:description}} — Open Graph 描述
+• {{page.meta.og:image}} — Open Graph 圖片網址
+
+⚡ 快速傳送
+將某個範本設為快速傳送目標。啟用後，點擊工具列圖示即可立即傳送 Webhook — 無需彈窗，無需額外操作。徽章會閃爍 ✓ 或 ✗ 來回饋結果。
+
+📋 右鍵選單
+在任意頁面右鍵，即可在「Hooky」選單中看到所有範本，單擊即可觸發。
+
+🎨 主題
+支援跟隨系統、淺色和深色主題。
+
+🌐 語言
+支援 10 種語言：English、简体中文、繁體中文、日本語、한국어、Français、Deutsch、Español、Português (BR)、Русский。
+
+🔒 隱私
+Hooky 不收集、不儲存、不傳輸任何使用者資料。所有設定僅保存在瀏覽器本地（chrome.storage.local）。Webhook 請求僅傳送到您自行設定的 URL。
+
+─────
+
+使用情境
+• 儲存文章到 Notion、Raindrop 或任意 API
+• 將頁面 URL 傳送到 Slack、Discord 或 Telegram 機器人
+• 用頁面中繼資料觸發 CI/CD 流水線
+• 將瀏覽記錄傳送到個人 Webhook
+• 收藏頁面到自訂後端
+
+權限說明
+• activeTab — 讀取當前頁面 URL 和標題以填入範本變數
+• storage — 在本地儲存您的 Webhook 範本
+• contextMenus — 在右鍵選單中新增「Hooky」入口

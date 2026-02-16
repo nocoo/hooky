@@ -1,0 +1,146 @@
+{
+  "extName": {
+    "message": "Hooky"
+  },
+  "extDescription": {
+    "message": "Dispara webhooks con un clic, con contexto de página y variables de plantilla"
+  },
+  "settingsTitle": {
+    "message": "Configuración de Hooky"
+  },
+  "webhookUrl": {
+    "message": "URL del Webhook"
+  },
+  "webhookUrlPlaceholder": {
+    "message": "https://example.com/api/webhook"
+  },
+  "httpMethod": {
+    "message": "Método HTTP"
+  },
+  "parameters": {
+    "message": "Parámetros"
+  },
+  "addParam": {
+    "message": "+ Agregar"
+  },
+  "templateHint": {
+    "message": "Variables disponibles:"
+  },
+  "paramKeyPlaceholder": {
+    "message": "Clave"
+  },
+  "paramValuePlaceholder": {
+    "message": "Valor (ej. {{page.url}})"
+  },
+  "quickSend": {
+    "message": "Envío rápido"
+  },
+  "quickSendDesc": {
+    "message": "Omite el popup y envía el webhook inmediatamente al hacer clic en el icono de la extensión."
+  },
+  "quickSendHint": {
+    "message": "Cuando está activado, haz clic derecho en el icono de la extensión y selecciona \"Opciones\" para acceder a la configuración."
+  },
+  "save": {
+    "message": "Guardar"
+  },
+  "saved": {
+    "message": "¡Guardado!"
+  },
+  "noConfig": {
+    "message": "Aún no se ha configurado ningún webhook."
+  },
+  "openSettings": {
+    "message": "Abrir configuración"
+  },
+  "send": {
+    "message": "Enviar"
+  },
+  "sending": {
+    "message": "Enviando..."
+  },
+  "successStatus": {
+    "message": "Éxito ($STATUS$)",
+    "placeholders": {
+      "status": {
+        "content": "$1"
+      }
+    }
+  },
+  "failedStatus": {
+    "message": "Fallido ($STATUS$)",
+    "placeholders": {
+      "status": {
+        "content": "$1"
+      }
+    }
+  },
+  "requestFailed": {
+    "message": "Error en la solicitud"
+  },
+  "settingsTooltip": {
+    "message": "Configuración"
+  },
+  "templates": {
+    "message": "Plantillas"
+  },
+  "newTemplate": {
+    "message": "Nueva"
+  },
+  "defaultTemplateName": {
+    "message": "Sin título"
+  },
+  "deleteTemplate": {
+    "message": "Eliminar"
+  },
+  "deleteConfirm": {
+    "message": "¿Eliminar \"$NAME$\"?",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "selectTemplate": {
+    "message": "Seleccionar plantilla"
+  },
+  "noTemplates": {
+    "message": "Aún no hay plantillas. Abre la configuración para crear una."
+  },
+  "templateName": {
+    "message": "Nombre de plantilla"
+  },
+  "webhookDetail": {
+    "message": "Detalles del Webhook"
+  },
+  "templateNamePlaceholder": {
+    "message": "ej. Notificar a Slack"
+  },
+  "settings": {
+    "message": "Configuración"
+  },
+  "theme": {
+    "message": "Tema"
+  },
+  "themeSystem": {
+    "message": "Sistema"
+  },
+  "themeLight": {
+    "message": "Claro"
+  },
+  "themeDark": {
+    "message": "Oscuro"
+  },
+  "quickSendTarget": {
+    "message": "Establecer como destino de envío rápido"
+  },
+  "quickSendTargetActive": {
+    "message": "Destino de envío rápido actual"
+  },
+  "editorQuickSend": {
+    "message": "Usar esta plantilla para envío rápido"
+  },
+  "editorQuickSendDesc": {
+    "message": "Cuando está activado, al hacer clic en el icono de la extensión se enviará inmediatamente el webhook de esta plantilla sin abrir el popup."
+  }
+}

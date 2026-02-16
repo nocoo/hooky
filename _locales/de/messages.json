@@ -1,0 +1,146 @@
+{
+  "extName": {
+    "message": "Hooky"
+  },
+  "extDescription": {
+    "message": "Webhook per Klick auslösen — mit Seitenkontext und Vorlagenvariablen"
+  },
+  "settingsTitle": {
+    "message": "Hooky Einstellungen"
+  },
+  "webhookUrl": {
+    "message": "Webhook-URL"
+  },
+  "webhookUrlPlaceholder": {
+    "message": "https://example.com/api/webhook"
+  },
+  "httpMethod": {
+    "message": "HTTP-Methode"
+  },
+  "parameters": {
+    "message": "Parameter"
+  },
+  "addParam": {
+    "message": "+ Hinzufügen"
+  },
+  "templateHint": {
+    "message": "Verfügbare Variablen:"
+  },
+  "paramKeyPlaceholder": {
+    "message": "Schlüssel"
+  },
+  "paramValuePlaceholder": {
+    "message": "Wert (z. B. {{page.url}})"
+  },
+  "quickSend": {
+    "message": "Schnellversand"
+  },
+  "quickSendDesc": {
+    "message": "Überspringt das Popup und sendet den Webhook sofort beim Klick auf das Erweiterungssymbol."
+  },
+  "quickSendHint": {
+    "message": "Wenn aktiviert, klicken Sie mit der rechten Maustaste auf das Erweiterungssymbol und wählen Sie „Optionen", um die Einstellungen aufzurufen."
+  },
+  "save": {
+    "message": "Speichern"
+  },
+  "saved": {
+    "message": "Gespeichert!"
+  },
+  "noConfig": {
+    "message": "Noch kein Webhook konfiguriert."
+  },
+  "openSettings": {
+    "message": "Einstellungen öffnen"
+  },
+  "send": {
+    "message": "Senden"
+  },
+  "sending": {
+    "message": "Wird gesendet..."
+  },
+  "successStatus": {
+    "message": "Erfolg ($STATUS$)",
+    "placeholders": {
+      "status": {
+        "content": "$1"
+      }
+    }
+  },
+  "failedStatus": {
+    "message": "Fehlgeschlagen ($STATUS$)",
+    "placeholders": {
+      "status": {
+        "content": "$1"
+      }
+    }
+  },
+  "requestFailed": {
+    "message": "Anfrage fehlgeschlagen"
+  },
+  "settingsTooltip": {
+    "message": "Einstellungen"
+  },
+  "templates": {
+    "message": "Vorlagen"
+  },
+  "newTemplate": {
+    "message": "Neu"
+  },
+  "defaultTemplateName": {
+    "message": "Unbenannt"
+  },
+  "deleteTemplate": {
+    "message": "Löschen"
+  },
+  "deleteConfirm": {
+    "message": "„$NAME$" löschen?",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "selectTemplate": {
+    "message": "Vorlage auswählen"
+  },
+  "noTemplates": {
+    "message": "Noch keine Vorlagen. Öffnen Sie die Einstellungen, um eine zu erstellen."
+  },
+  "templateName": {
+    "message": "Vorlagenname"
+  },
+  "webhookDetail": {
+    "message": "Webhook-Details"
+  },
+  "templateNamePlaceholder": {
+    "message": "z. B. Slack benachrichtigen"
+  },
+  "settings": {
+    "message": "Einstellungen"
+  },
+  "theme": {
+    "message": "Design"
+  },
+  "themeSystem": {
+    "message": "System"
+  },
+  "themeLight": {
+    "message": "Hell"
+  },
+  "themeDark": {
+    "message": "Dunkel"
+  },
+  "quickSendTarget": {
+    "message": "Als Schnellversand-Ziel festlegen"
+  },
+  "quickSendTargetActive": {
+    "message": "Aktuelles Schnellversand-Ziel"
+  },
+  "editorQuickSend": {
+    "message": "Diese Vorlage für Schnellversand verwenden"
+  },
+  "editorQuickSendDesc": {
+    "message": "Wenn aktiviert, wird beim Klick auf das Erweiterungssymbol sofort der Webhook dieser Vorlage gesendet, ohne das Popup zu öffnen."
+  }
+}

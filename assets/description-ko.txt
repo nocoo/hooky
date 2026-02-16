@@ -1,0 +1,45 @@
+Hooky — 원클릭 Webhook 트리거, 페이지 컨텍스트 자동 전달.
+
+Webhook 템플릿을 만들고, 현재 페이지 데이터를 자동으로 채워서 도구 모음, 우클릭 메뉴 또는 빠른 전송 모드에서 원클릭으로 전송하세요.
+
+🪝 WEBHOOK 템플릿
+이름이 지정된 여러 Webhook 템플릿을 만들 수 있습니다. 각 템플릿에 URL, HTTP 메서드(GET/POST/PUT/PATCH/DELETE), 키-값 매개변수를 개별 설정 가능.
+
+🔀 템플릿 변수
+템플릿 변수를 사용하여 실시간 페이지 정보를 Webhook 매개변수에 삽입:
+• {{page.url}} — 현재 페이지 URL
+• {{page.title}} — 페이지 제목
+• {{page.selection}} — 선택한 텍스트
+• {{page.meta.description}} — 메타 설명
+• {{page.meta.og:title}} — Open Graph 제목
+• {{page.meta.og:description}} — Open Graph 설명
+• {{page.meta.og:image}} — Open Graph 이미지 URL
+
+⚡ 빠른 전송
+템플릿을 빠른 전송 대상으로 지정하세요. 활성화하면 도구 모음 아이콘을 클릭하는 것만으로 Webhook이 즉시 전송됩니다. 배지가 ✓ 또는 ✗로 결과를 피드백합니다.
+
+📋 컨텍스트 메뉴
+아무 페이지에서 우클릭하면 "Hooky" 메뉴에 모든 템플릿이 표시되며, 한 번의 클릭으로 전송할 수 있습니다.
+
+🎨 테마
+시스템, 라이트, 다크 테마 중 선택 가능.
+
+🌐 언어
+10개 언어 지원: English, 简体中文, 繁體中文, 日本語, 한국어, Français, Deutsch, Español, Português (BR), Русский.
+
+🔒 개인정보
+Hooky는 사용자 데이터를 수집, 저장 또는 전송하지 않습니다. 모든 설정은 브라우저 로컬(chrome.storage.local)에 저장됩니다. Webhook 요청은 사용자가 설정한 URL로만 전송됩니다.
+
+─────
+
+활용 사례
+• 기사를 Notion, Raindrop 또는 원하는 API에 저장
+• 페이지 URL을 Slack, Discord 또는 Telegram 봇에 전송
+• 페이지 메타데이터로 CI/CD 파이프라인 트리거
+• 브라우징 활동을 개인 Webhook에 기록
+• 페이지를 커스텀 백엔드에 북마크
+
+권한
+• activeTab — 템플릿 변수용 현재 페이지 URL 및 제목 읽기
+• storage — Webhook 템플릿을 로컬에 저장
+• contextMenus — 우클릭 메뉴에 "Hooky" 추가

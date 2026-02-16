@@ -1,0 +1,45 @@
+Hooky — ワンクリックで Webhook を送信、ページコンテキストを自動取得。
+
+Webhook テンプレートを作成し、ページデータを自動入力して、ツールバー、右クリックメニュー、またはクイック送信モードからワンクリックで送信。
+
+🪝 WEBHOOK テンプレート
+複数の名前付き Webhook テンプレートを作成。URL、HTTP メソッド（GET/POST/PUT/PATCH/DELETE）、キー・バリューパラメータをそれぞれ個別に設定可能。
+
+🔀 テンプレート変数
+テンプレート変数でリアルタイムのページ情報を Webhook パラメータに挿入：
+• {{page.url}} — 現在のページ URL
+• {{page.title}} — ページタイトル
+• {{page.selection}} — 選択テキスト
+• {{page.meta.description}} — Meta description
+• {{page.meta.og:title}} — Open Graph タイトル
+• {{page.meta.og:description}} — Open Graph 説明
+• {{page.meta.og:image}} — Open Graph 画像 URL
+
+⚡ クイック送信
+テンプレートをクイック送信ターゲットに指定。有効にすると、ツールバーアイコンをクリックするだけで Webhook を即座に送信。バッジが ✓ または ✗ で結果をフィードバック。
+
+📋 コンテキストメニュー
+任意のページで右クリックすると「Hooky」メニューにすべてのテンプレートが表示され、ワンクリックで送信。
+
+🎨 テーマ
+システム、ライト、ダークの 3 種類から選択。
+
+🌐 言語
+10 言語対応：English、简体中文、繁體中文、日本語、한국어、Français、Deutsch、Español、Português (BR)、Русский。
+
+🔒 プライバシー
+Hooky はユーザーデータの収集・保存・送信を一切行いません。設定はすべてブラウザのローカル（chrome.storage.local）に保存されます。Webhook リクエストはユーザーが設定した URL にのみ送信されます。
+
+─────
+
+ユースケース
+• 記事を Notion、Raindrop、または任意の API に保存
+• ページ URL を Slack、Discord、Telegram ボットに送信
+• ページメタデータで CI/CD パイプラインをトリガー
+• ブラウジング履歴をパーソナル Webhook に記録
+• ページをカスタムバックエンドにブックマーク
+
+権限
+• activeTab — テンプレート変数用に現在のページ URL とタイトルを取得
+• storage — Webhook テンプレートをローカルに保存
+• contextMenus — 右クリックメニューに「Hooky」を追加

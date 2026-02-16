@@ -1,0 +1,146 @@
+{
+  "extName": {
+    "message": "Hooky"
+  },
+  "extDescription": {
+    "message": "一鍵觸發 Webhook，支援頁面上下文和範本變數"
+  },
+  "settingsTitle": {
+    "message": "Hooky 設定"
+  },
+  "webhookUrl": {
+    "message": "Webhook 網址"
+  },
+  "webhookUrlPlaceholder": {
+    "message": "https://example.com/api/webhook"
+  },
+  "httpMethod": {
+    "message": "HTTP 方法"
+  },
+  "parameters": {
+    "message": "參數"
+  },
+  "addParam": {
+    "message": "+ 新增"
+  },
+  "templateHint": {
+    "message": "可用變數："
+  },
+  "paramKeyPlaceholder": {
+    "message": "鍵"
+  },
+  "paramValuePlaceholder": {
+    "message": "值（如 {{page.url}}）"
+  },
+  "quickSend": {
+    "message": "快速傳送"
+  },
+  "quickSendDesc": {
+    "message": "跳過彈窗，點擊擴充功能圖示時立即傳送 Webhook。"
+  },
+  "quickSendHint": {
+    "message": "啟用後，右鍵點擊擴充功能圖示並選擇「選項」即可進入設定。"
+  },
+  "save": {
+    "message": "儲存"
+  },
+  "saved": {
+    "message": "已儲存！"
+  },
+  "noConfig": {
+    "message": "尚未設定 Webhook。"
+  },
+  "openSettings": {
+    "message": "開啟設定"
+  },
+  "send": {
+    "message": "傳送"
+  },
+  "sending": {
+    "message": "傳送中..."
+  },
+  "successStatus": {
+    "message": "成功 ($STATUS$)",
+    "placeholders": {
+      "status": {
+        "content": "$1"
+      }
+    }
+  },
+  "failedStatus": {
+    "message": "失敗 ($STATUS$)",
+    "placeholders": {
+      "status": {
+        "content": "$1"
+      }
+    }
+  },
+  "requestFailed": {
+    "message": "請求失敗"
+  },
+  "settingsTooltip": {
+    "message": "設定"
+  },
+  "templates": {
+    "message": "範本"
+  },
+  "newTemplate": {
+    "message": "新增"
+  },
+  "defaultTemplateName": {
+    "message": "未命名"
+  },
+  "deleteTemplate": {
+    "message": "刪除"
+  },
+  "deleteConfirm": {
+    "message": "刪除「$NAME$」？",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "selectTemplate": {
+    "message": "選擇範本"
+  },
+  "noTemplates": {
+    "message": "還沒有範本，請先在設定中建立。"
+  },
+  "templateName": {
+    "message": "範本名稱"
+  },
+  "webhookDetail": {
+    "message": "Webhook 詳情"
+  },
+  "templateNamePlaceholder": {
+    "message": "如：通知 Slack"
+  },
+  "settings": {
+    "message": "設定"
+  },
+  "theme": {
+    "message": "主題"
+  },
+  "themeSystem": {
+    "message": "跟隨系統"
+  },
+  "themeLight": {
+    "message": "淺色"
+  },
+  "themeDark": {
+    "message": "深色"
+  },
+  "quickSendTarget": {
+    "message": "設為快速傳送目標"
+  },
+  "quickSendTargetActive": {
+    "message": "目前的快速傳送目標"
+  },
+  "editorQuickSend": {
+    "message": "將此範本用於快速傳送"
+  },
+  "editorQuickSendDesc": {
+    "message": "啟用後，點擊擴充功能圖示將立即傳送此範本的 Webhook，無需開啟彈窗。"
+  }
+}

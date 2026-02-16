@@ -1,0 +1,45 @@
+Hooky — Dispara webhooks con un clic, con contexto de página.
+
+Crea plantillas de webhook, rellénalas automáticamente con datos de la página y dispáralas desde la barra de herramientas, el menú contextual o el modo de envío rápido.
+
+🪝 PLANTILLAS DE WEBHOOK
+Crea múltiples plantillas de webhook con nombre, cada una con su propia URL, método HTTP (GET/POST/PUT/PATCH/DELETE) y parámetros clave-valor. Cambia entre ellas al instante.
+
+🔀 VARIABLES DE PLANTILLA
+Inyecta el contexto de la página en tiempo real en los parámetros del webhook:
+• {{page.url}} — URL de la página actual
+• {{page.title}} — título de la página
+• {{page.selection}} — texto seleccionado
+• {{page.meta.description}} — meta descripción
+• {{page.meta.og:title}} — título Open Graph
+• {{page.meta.og:description}} — descripción Open Graph
+• {{page.meta.og:image}} — URL de imagen Open Graph
+
+⚡ ENVÍO RÁPIDO
+Designa una plantilla como destino de envío rápido. Al activarlo, hacer clic en el icono de la barra de herramientas dispara el webhook inmediatamente — sin popup. Un badge muestra ✓ o ✗ para confirmar el resultado.
+
+📋 MENÚ CONTEXTUAL
+Haz clic derecho en cualquier página para ver todas tus plantillas en el menú "Hooky". Selecciona una y dispárala con un solo clic.
+
+🎨 TEMAS
+Elige entre tema del sistema, claro u oscuro.
+
+🌐 IDIOMAS
+Disponible en 10 idiomas: English, 简体中文, 繁體中文, 日本語, 한국어, Français, Deutsch, Español, Português (BR), Русский.
+
+🔒 PRIVACIDAD
+Hooky no recopila, almacena ni transmite datos de usuario. Toda la configuración se guarda localmente en tu navegador a través de chrome.storage.local. Las solicitudes webhook solo se envían a las URL que configures.
+
+─────
+
+CASOS DE USO
+• Guardar artículos en Notion, Raindrop o cualquier API
+• Enviar URLs de páginas a bots de Slack, Discord o Telegram
+• Activar pipelines CI/CD con metadatos de la página
+• Registrar actividad de navegación en un webhook personal
+• Marcar páginas en un backend personalizado
+
+PERMISOS
+• activeTab — leer la URL y el título de la página actual para las variables de plantilla
+• storage — guardar tus plantillas de webhook localmente
+• contextMenus — agregar "Hooky" al menú contextual

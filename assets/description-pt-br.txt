@@ -1,0 +1,45 @@
+Hooky — Dispare webhooks com um clique, com contexto da página.
+
+Crie modelos de webhook, preencha-os automaticamente com dados da página e dispare-os pela barra de ferramentas, menu de contexto ou modo de envio rápido.
+
+🪝 MODELOS DE WEBHOOK
+Crie vários modelos de webhook nomeados, cada um com sua própria URL, método HTTP (GET/POST/PUT/PATCH/DELETE) e parâmetros chave-valor. Alterne entre eles instantaneamente.
+
+🔀 VARIÁVEIS DE MODELO
+Injete o contexto da página em tempo real nos parâmetros do webhook:
+• {{page.url}} — URL da página atual
+• {{page.title}} — título da página
+• {{page.selection}} — texto selecionado
+• {{page.meta.description}} — meta descrição
+• {{page.meta.og:title}} — título Open Graph
+• {{page.meta.og:description}} — descrição Open Graph
+• {{page.meta.og:image}} — URL da imagem Open Graph
+
+⚡ ENVIO RÁPIDO
+Designe um modelo como destino de envio rápido. Quando ativado, clicar no ícone da barra de ferramentas dispara o webhook imediatamente — sem popup. Um badge exibe ✓ ou ✗ para confirmar o resultado.
+
+📋 MENU DE CONTEXTO
+Clique com o botão direito em qualquer página para ver todos os seus modelos no menu "Hooky". Selecione um e dispare-o com um clique.
+
+🎨 TEMAS
+Escolha entre tema do sistema, claro ou escuro.
+
+🌐 IDIOMAS
+Disponível em 10 idiomas: English, 简体中文, 繁體中文, 日本語, 한국어, Français, Deutsch, Español, Português (BR), Русский.
+
+🔒 PRIVACIDADE
+Hooky não coleta, armazena ou transmite dados do usuário. Toda a configuração é armazenada localmente no navegador via chrome.storage.local. As requisições webhook são enviadas apenas para as URLs que você configurar.
+
+─────
+
+CASOS DE USO
+• Salvar artigos no Notion, Raindrop ou qualquer API
+• Enviar URLs de páginas para bots do Slack, Discord ou Telegram
+• Acionar pipelines CI/CD com metadados da página
+• Registrar atividade de navegação em um webhook pessoal
+• Salvar páginas em um backend personalizado
+
+PERMISSÕES
+• activeTab — ler a URL e o título da página atual para variáveis de modelo
+• storage — salvar seus modelos de webhook localmente
+• contextMenus — adicionar "Hooky" ao menu de contexto

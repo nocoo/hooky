@@ -25,7 +25,7 @@ Right-click on any page to see all your templates in the "Hooky" menu. Pick one 
 Choose between system, light, or dark theme.
 
 🌐 LANGUAGES
-Available in English and 简体中文.
+Available in 10 languages: English, 简体中文, 繁體中文, 日本語, 한국어, Français, Deutsch, Español, Português (BR), Русский.
 
 🔒 PRIVACY
 Hooky does not collect, store, or transmit any user data. All configuration is stored locally in your browser via chrome.storage.local. Webhook requests are sent only to URLs you configure.
