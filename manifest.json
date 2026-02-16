@@ -1,8 +1,9 @@
 {
   "manifest_version": 3,
-  "name": "Hooky",
+  "name": "__MSG_extName__",
   "version": "1.0.0",
-  "description": "One-click webhook trigger with page context and template variables",
+  "description": "__MSG_extDescription__",
+  "default_locale": "en",
   "permissions": ["activeTab", "storage"],
   "action": {
     "default_popup": "src/popup/popup.html",

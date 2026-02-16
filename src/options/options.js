@@ -1,8 +1,11 @@
+import { applyI18n, t } from "../i18n.js";
+
 const urlInput = document.getElementById("webhook-url");
 const methodSelect = document.getElementById("http-method");
 const paramsList = document.getElementById("params-list");
 const addParamBtn = document.getElementById("add-param");
 const quickSendToggle = document.getElementById("quick-send");
+const quickSendHint = document.getElementById("quick-send-hint");
 const saveBtn = document.getElementById("save");
 const statusEl = document.getElementById("status");
 
@@ -12,13 +15,13 @@ function createParamRow(key = "", value = "") {
 
   const keyInput = document.createElement("input");
   keyInput.type = "text";
-  keyInput.placeholder = "Key";
+  keyInput.placeholder = t("paramKeyPlaceholder");
   keyInput.value = key;
   keyInput.className = "param-key";
 
   const valueInput = document.createElement("input");
   valueInput.type = "text";
-  valueInput.placeholder = "Value (e.g. {{page.url}})";
+  valueInput.placeholder = t("paramValuePlaceholder");
   valueInput.value = value;
   valueInput.className = "param-value";
 
@@ -52,6 +55,10 @@ function showStatus(message) {
   setTimeout(() => statusEl.classList.remove("visible"), 2000);
 }
 
+function updateQuickSendHint() {
+  quickSendHint.classList.toggle("visible", quickSendToggle.checked);
+}
+
 async function loadConfig() {
   const data = await chrome.storage.local.get("webhook");
   const config = data.webhook;
@@ -61,6 +68,7 @@ async function loadConfig() {
   urlInput.value = config.url || "";
   methodSelect.value = config.method || "POST";
   quickSendToggle.checked = config.quickSend || false;
+  updateQuickSendHint();
 
   paramsList.innerHTML = "";
   if (config.params) {
@@ -79,13 +87,16 @@ async function saveConfig() {
   };
 
   await chrome.storage.local.set({ webhook });
-  showStatus("Saved!");
+  showStatus(t("saved"));
 }
 
 addParamBtn.addEventListener("click", () => {
   paramsList.appendChild(createParamRow());
 });
 
+quickSendToggle.addEventListener("change", updateQuickSendHint);
+
 saveBtn.addEventListener("click", saveConfig);
 
+applyI18n();
 loadConfig();

@@ -1,0 +1,84 @@
+{
+  "extName": {
+    "message": "Hooky"
+  },
+  "extDescription": {
+    "message": "\u4e00\u952e\u89e6\u53d1 Webhook\uff0c\u652f\u6301\u9875\u9762\u4e0a\u4e0b\u6587\u548c\u6a21\u677f\u53d8\u91cf"
+  },
+  "settingsTitle": {
+    "message": "Hooky \u8bbe\u7f6e"
+  },
+  "webhookUrl": {
+    "message": "Webhook \u5730\u5740"
+  },
+  "webhookUrlPlaceholder": {
+    "message": "https://example.com/api/webhook"
+  },
+  "httpMethod": {
+    "message": "HTTP \u65b9\u6cd5"
+  },
+  "parameters": {
+    "message": "\u53c2\u6570"
+  },
+  "addParam": {
+    "message": "+ \u6dfb\u52a0"
+  },
+  "templateHint": {
+    "message": "\u53ef\u7528\u53d8\u91cf\uff1a"
+  },
+  "paramKeyPlaceholder": {
+    "message": "\u952e"
+  },
+  "paramValuePlaceholder": {
+    "message": "\u503c\uff08\u5982 {{page.url}}\uff09"
+  },
+  "quickSend": {
+    "message": "\u5feb\u901f\u53d1\u9001"
+  },
+  "quickSendDesc": {
+    "message": "\u8df3\u8fc7\u5f39\u7a97\uff0c\u70b9\u51fb\u6269\u5c55\u56fe\u6807\u65f6\u7acb\u5373\u53d1\u9001 Webhook\u3002"
+  },
+  "quickSendHint": {
+    "message": "\u5f00\u542f\u540e\uff0c\u53f3\u952e\u70b9\u51fb\u6269\u5c55\u56fe\u6807\u5e76\u9009\u62e9\u201c\u9009\u9879\u201d\u5373\u53ef\u8fdb\u5165\u8bbe\u7f6e\u3002"
+  },
+  "save": {
+    "message": "\u4fdd\u5b58"
+  },
+  "saved": {
+    "message": "\u5df2\u4fdd\u5b58\uff01"
+  },
+  "noConfig": {
+    "message": "\u5c1a\u672a\u914d\u7f6e Webhook\u3002"
+  },
+  "openSettings": {
+    "message": "\u6253\u5f00\u8bbe\u7f6e"
+  },
+  "send": {
+    "message": "\u53d1\u9001"
+  },
+  "sending": {
+    "message": "\u53d1\u9001\u4e2d..."
+  },
+  "successStatus": {
+    "message": "\u6210\u529f ($STATUS$)",
+    "placeholders": {
+      "status": {
+        "content": "$1"
+      }
+    }
+  },
+  "failedStatus": {
+    "message": "\u5931\u8d25 ($STATUS$)",
+    "placeholders": {
+      "status": {
+        "content": "$1"
+      }
+    }
+  },
+  "requestFailed": {
+    "message": "\u8bf7\u6c42\u5931\u8d25"
+  },
+  "settingsTooltip": {
+    "message": "\u8bbe\u7f6e"
+  }
+}

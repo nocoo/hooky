@@ -1,0 +1,84 @@
+{
+  "extName": {
+    "message": "Hooky"
+  },
+  "extDescription": {
+    "message": "One-click webhook trigger with page context and template variables"
+  },
+  "settingsTitle": {
+    "message": "Hooky Settings"
+  },
+  "webhookUrl": {
+    "message": "Webhook URL"
+  },
+  "webhookUrlPlaceholder": {
+    "message": "https://example.com/api/webhook"
+  },
+  "httpMethod": {
+    "message": "HTTP Method"
+  },
+  "parameters": {
+    "message": "Parameters"
+  },
+  "addParam": {
+    "message": "+ Add"
+  },
+  "templateHint": {
+    "message": "Available variables:"
+  },
+  "paramKeyPlaceholder": {
+    "message": "Key"
+  },
+  "paramValuePlaceholder": {
+    "message": "Value (e.g. {{page.url}})"
+  },
+  "quickSend": {
+    "message": "Quick Send"
+  },
+  "quickSendDesc": {
+    "message": "Skip the popup and send the webhook immediately when clicking the extension icon."
+  },
+  "quickSendHint": {
+    "message": "When enabled, right-click the extension icon and select \"Options\" to access settings."
+  },
+  "save": {
+    "message": "Save"
+  },
+  "saved": {
+    "message": "Saved!"
+  },
+  "noConfig": {
+    "message": "No webhook configured yet."
+  },
+  "openSettings": {
+    "message": "Open Settings"
+  },
+  "send": {
+    "message": "Send"
+  },
+  "sending": {
+    "message": "Sending..."
+  },
+  "successStatus": {
+    "message": "Success ($STATUS$)",
+    "placeholders": {
+      "status": {
+        "content": "$1"
+      }
+    }
+  },
+  "failedStatus": {
+    "message": "Failed ($STATUS$)",
+    "placeholders": {
+      "status": {
+        "content": "$1"
+      }
+    }
+  },
+  "requestFailed": {
+    "message": "Request failed"
+  },
+  "settingsTooltip": {
+    "message": "Settings"
+  }
+}

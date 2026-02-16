@@ -1,4 +1,5 @@
 import { resolveTemplate } from "../template.js";
+import { applyI18n, t } from "../i18n.js";
 
 const noConfigEl = document.getElementById("no-config");
 const webhookPanel = document.getElementById("webhook-panel");
@@ -87,7 +88,7 @@ async function sendWebhook() {
   if (!currentConfig) return;
 
   sendBtn.disabled = true;
-  sendBtn.textContent = "Sending...";
+  sendBtn.textContent = t("sending");
 
   try {
     // Use the (possibly edited) resolved params directly
@@ -101,20 +102,22 @@ async function sendWebhook() {
     });
 
     if (result?.ok) {
-      showToast(`Success (${result.status})`, "success");
+      showToast(t("successStatus", [String(result.status)]), "success");
     } else {
-      const msg = result?.error || `Failed (${result?.status || "unknown"})`;
+      const msg = result?.error || t("failedStatus", [String(result?.status || "unknown")]);
       showToast(msg, "error");
     }
   } catch (err) {
-    showToast(err.message || "Request failed", "error");
+    showToast(err.message || t("requestFailed"), "error");
   } finally {
     sendBtn.disabled = false;
-    sendBtn.textContent = "Send";
+    sendBtn.textContent = t("send");
   }
 }
 
 async function init() {
+  applyI18n();
+
   const data = await chrome.storage.local.get("webhook");
   currentConfig = data.webhook;
 

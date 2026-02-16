@@ -2,20 +2,20 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Hooky - Settings</title>
+  <title data-i18n="settingsTitle">Hooky Settings</title>
   <link rel="stylesheet" href="options.css">
 </head>
 <body>
   <div class="container">
-    <h1>Hooky Settings</h1>
+    <h1 data-i18n="settingsTitle">Hooky Settings</h1>
 
     <section class="section">
-      <label for="webhook-url">Webhook URL</label>
-      <input type="url" id="webhook-url" placeholder="https://example.com/api/webhook">
+      <label for="webhook-url" data-i18n="webhookUrl">Webhook URL</label>
+      <input type="url" id="webhook-url" data-i18n-placeholder="webhookUrlPlaceholder" placeholder="https://example.com/api/webhook">
     </section>
 
     <section class="section">
-      <label for="http-method">HTTP Method</label>
+      <label for="http-method" data-i18n="httpMethod">HTTP Method</label>
       <select id="http-method">
         <option value="GET">GET</option>
         <option value="POST" selected>POST</option>
@@ -27,12 +27,12 @@
 
     <section class="section">
       <div class="section-header">
-        <label>Parameters</label>
-        <button type="button" id="add-param" class="btn-secondary">+ Add</button>
+        <label data-i18n="parameters">Parameters</label>
+        <button type="button" id="add-param" class="btn-secondary" data-i18n="addParam">+ Add</button>
       </div>
 
       <div class="template-hint">
-        Available variables:
+        <span data-i18n="templateHint">Available variables:</span>
         <code>{{page.url}}</code>
         <code>{{page.title}}</code>
         <code>{{page.selection}}</code>
@@ -48,18 +48,19 @@
     <section class="section">
       <div class="toggle-row">
         <div class="toggle-info">
-          <label for="quick-send">Quick Send</label>
-          <p class="toggle-desc">Skip the popup and send the webhook immediately when clicking the extension icon.</p>
+          <label for="quick-send" data-i18n="quickSend">Quick Send</label>
+          <p class="toggle-desc" data-i18n="quickSendDesc">Skip the popup and send the webhook immediately when clicking the extension icon.</p>
         </div>
         <label class="toggle-switch">
           <input type="checkbox" id="quick-send">
           <span class="toggle-slider"></span>
         </label>
       </div>
+      <p class="quick-send-hint" id="quick-send-hint" data-i18n="quickSendHint">When enabled, right-click the extension icon and select "Options" to access settings.</p>
     </section>
 
     <div class="actions">
-      <button type="button" id="save" class="btn-primary">Save</button>
+      <button type="button" id="save" class="btn-primary" data-i18n="save">Save</button>
       <span id="status" class="status"></span>
     </div>
   </div>
