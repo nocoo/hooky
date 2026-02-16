@@ -71,6 +71,7 @@ bun install
 | `bun run test:coverage` | 📊 Run tests with V8 coverage report (90% threshold) |
 | `bun run lint` | 🔍 Lint `src/` and `tests/` with ESLint |
 | `bun run test:e2e` | 🌐 Run Puppeteer E2E tests |
+| `bun run build` | 📦 Package extension into `dist/hooky-<version>.zip` |
 
 ### Git Hooks (Husky) 🐶
 
@@ -122,6 +123,39 @@ hooky/
 ├── eslint.config.mjs      # ESLint flat config
 └── package.json           # Scripts & dev dependencies
 ```
+
+---
+
+## 📦 Publishing to Chrome Web Store
+
+### Build
+
+```sh
+bun run build
+```
+
+This produces `dist/hooky-<version>.zip` containing only the runtime files needed by Chrome.
+
+### Store Assets
+
+| Asset | Location | Status |
+|---|---|---|
+| 📝 Description (EN) | `store/description-en.txt` | ✅ |
+| 📝 Description (ZH) | `store/description-zh.txt` | ✅ |
+| 🔒 Privacy Policy | [`PRIVACY.md`](PRIVACY.md) | ✅ |
+| 🖼️ Store Icon (128×128) | `src/icons/icon128.png` | ✅ |
+| 🖼️ Promo Tile (440×280) | — | ⬜ Manual |
+| 📸 Screenshots (1280×800) | — | ⬜ Manual |
+
+### Steps
+
+1. Register at the [Chrome Web Store Developer Dashboard](https://chrome.google.com/webstore/devconsole) ($5 one-time fee)
+2. Run `bun run build` to generate the ZIP
+3. Upload `dist/hooky-<version>.zip`
+4. Fill in listing details using the descriptions in `store/`
+5. Set privacy policy URL to `https://github.com/nocoo/hooky/blob/main/PRIVACY.md`
+6. Upload promo tile (440×280) and at least 1 screenshot (1280×800 or 640×400)
+7. Submit for review (typically 1–3 business days)
 
 ---
 
