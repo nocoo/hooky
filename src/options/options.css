@@ -37,6 +37,7 @@ body {
   justify-content: space-between;
   padding: 16px;
   border-bottom: 1px solid #e8e8e8;
+  min-height: 57px;
 }
 
 .sidebar-header h2 {
@@ -152,6 +153,7 @@ body {
   align-items: center;
   padding: 16px 24px;
   border-bottom: 1px solid #e8e8e8;
+  min-height: 57px;
 }
 
 .editor-header h2 {
@@ -176,7 +178,7 @@ body {
 }
 
 .editor-form {
-  max-width: 540px;
+  max-width: 100%;
 }
 
 .section {
