@@ -1,10 +1,10 @@
 /**
- * E2E test for Hooky Chrome Extension.
+ * E2E test for Hooky Chrome Extension (multi-template version).
  *
  * Launches Chromium with the extension loaded and verifies:
  * 1. Extension loads without errors
- * 2. Options page renders and saves configuration
- * 3. Popup page renders and shows configured webhook
+ * 2. Options page renders, creates a template, and saves configuration
+ * 3. Popup page renders with template dropdown and sends webhook
  */
 
 const puppeteer = require("puppeteer");
@@ -50,7 +50,6 @@ function stopWebhookServer() {
 }
 
 async function getExtensionId(browser) {
-  // In Manifest V3, service workers appear as targets
   const targets = browser.targets();
   const extensionTarget = targets.find(
     (t) => t.type() === "service_worker" && t.url().includes("chrome-extension://"),
@@ -91,7 +90,7 @@ async function runTests() {
   try {
     console.log("\nLaunching browser with extension...");
     browser = await puppeteer.launch({
-      headless: false, // Extensions require non-headless mode
+      headless: false,
       args: [
         `--disable-extensions-except=${EXTENSION_PATH}`,
         `--load-extension=${EXTENSION_PATH}`,
@@ -111,8 +110,35 @@ async function runTests() {
       `chrome-extension://${extensionId}/src/options/options.html`,
       { waitUntil: "domcontentloaded", timeout: TIMEOUT },
     );
+    await new Promise((r) => setTimeout(r, 500)); // Wait for migration + render
 
-    // Verify elements exist
+    // Initially: empty state (no templates)
+    const emptyVisible = await optionsPage.$eval(
+      "#editor-empty",
+      (el) => getComputedStyle(el).display !== "none",
+    );
+    assert(emptyVisible, "Options page: Empty state shown initially");
+
+    // Template list should be empty
+    const templateListEl = await optionsPage.$("#template-list");
+    assert(!!templateListEl, "Options page: Template list exists");
+
+    // Click "New" to create a template
+    await optionsPage.click("#new-template");
+    await new Promise((r) => setTimeout(r, 500)); // Wait for creation + re-render
+
+    // Editor form should now be visible
+    const formVisible = await optionsPage.$eval(
+      "#editor-form",
+      (el) => el.style.display !== "none",
+    );
+    assert(formVisible, "Options page: Editor form visible after creating template");
+
+    // Template list should have one item
+    const listItems = await optionsPage.$$("#template-list li");
+    assert(listItems.length === 1, "Options page: Template list has one entry");
+
+    // Verify elements exist in editor
     const urlInput = await optionsPage.$("#webhook-url");
     assert(!!urlInput, "Options page: URL input exists");
 
@@ -122,7 +148,12 @@ async function runTests() {
     const addParamBtn = await optionsPage.$("#add-param");
     assert(!!addParamBtn, "Options page: Add param button exists");
 
-    // Fill in configuration
+    // Fill in template name
+    const nameInput = await optionsPage.$("#template-name");
+    await nameInput.click({ clickCount: 3 }); // Select all existing text
+    await nameInput.type("E2E Test Hook");
+
+    // Fill in URL
     await optionsPage.type("#webhook-url", `http://127.0.0.1:${port}/hook`);
     await optionsPage.select("#http-method", "POST");
 
@@ -140,6 +171,7 @@ async function runTests() {
     await optionsPage.click("#save");
     await new Promise((r) => setTimeout(r, 500)); // Wait for save
 
+    // Status shows "Saved!" (the status element gets a visible class)
     const statusText = await optionsPage.$eval("#status", (el) => el.textContent);
     assert(statusText === "Saved!", "Options page: Config saved successfully");
 
@@ -155,19 +187,29 @@ async function runTests() {
 
     await new Promise((r) => setTimeout(r, 500)); // Wait for config load
 
-    // Check if webhook panel is visible
+    // Webhook panel should be visible (templates exist now)
     const panelDisplay = await popupPage.$eval(
       "#webhook-panel",
       (el) => el.style.display,
     );
     assert(panelDisplay === "block", "Popup: Webhook panel is visible");
 
+    // Template dropdown should exist and have one option
+    const selectOptions = await popupPage.$$eval(
+      "#template-select option",
+      (opts) => opts.map((o) => o.textContent),
+    );
+    assert(selectOptions.length === 1, "Popup: Template select has one option");
+    assert(selectOptions[0] === "E2E Test Hook", "Popup: Template select shows correct name");
+
+    // Method badge
     const methodText = await popupPage.$eval(
       "#method-badge",
       (el) => el.textContent,
     );
     assert(methodText === "POST", "Popup: Method badge shows POST");
 
+    // URL display
     const urlText = await popupPage.$eval(
       "#url-display",
       (el) => el.textContent,
