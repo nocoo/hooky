@@ -39,7 +39,7 @@
     "message": "Überspringt das Popup und sendet den Webhook sofort beim Klick auf das Erweiterungssymbol."
   },
   "quickSendHint": {
-    "message": "Wenn aktiviert, klicken Sie mit der rechten Maustaste auf das Erweiterungssymbol und wählen Sie „Optionen", um die Einstellungen aufzurufen."
+    "message": "Wenn aktiviert, klicken Sie mit der rechten Maustaste auf das Erweiterungssymbol und wählen Sie «Optionen», um die Einstellungen aufzurufen."
   },
   "save": {
     "message": "Speichern"
@@ -94,7 +94,7 @@
     "message": "Löschen"
   },
   "deleteConfirm": {
-    "message": "„$NAME$" löschen?",
+    "message": "«$NAME$» löschen?",
     "placeholders": {
       "name": {
         "content": "$1"
