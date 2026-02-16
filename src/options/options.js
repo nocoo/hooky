@@ -2,6 +2,7 @@ const urlInput = document.getElementById("webhook-url");
 const methodSelect = document.getElementById("http-method");
 const paramsList = document.getElementById("params-list");
 const addParamBtn = document.getElementById("add-param");
+const quickSendToggle = document.getElementById("quick-send");
 const saveBtn = document.getElementById("save");
 const statusEl = document.getElementById("status");
 
@@ -59,6 +60,7 @@ async function loadConfig() {
 
   urlInput.value = config.url || "";
   methodSelect.value = config.method || "POST";
+  quickSendToggle.checked = config.quickSend || false;
 
   paramsList.innerHTML = "";
   if (config.params) {
@@ -73,6 +75,7 @@ async function saveConfig() {
     url: urlInput.value.trim(),
     method: methodSelect.value,
     params: getParams(),
+    quickSend: quickSendToggle.checked,
   };
 
   await chrome.storage.local.set({ webhook });
