@@ -1,0 +1,45 @@
+Hooky — One-click webhook trigger with page context.
+
+Create webhook templates, fill them with live page data, and fire them from your browser toolbar, right-click menu, or Quick Send mode.
+
+🪝 WEBHOOK TEMPLATES
+Create multiple named webhook templates, each with its own URL, HTTP method (GET/POST/PUT/PATCH/DELETE), and key-value parameters. Switch between them instantly.
+
+🔀 TEMPLATE VARIABLES
+Inject live page context into your webhook parameters using template variables:
+• {{page.url}} — current page URL
+• {{page.title}} — page title
+• {{page.selection}} — selected text
+• {{page.meta.description}} — meta description
+• {{page.meta.og:title}} — Open Graph title
+• {{page.meta.og:description}} — Open Graph description
+• {{page.meta.og:image}} — Open Graph image URL
+
+⚡ QUICK SEND
+Designate one template as your Quick Send target. When enabled, clicking the toolbar icon fires the webhook immediately — no popup, no clicks. A badge flashes ✓ or ✗ to confirm the result.
+
+📋 CONTEXT MENU
+Right-click on any page to see all your templates in the "Hooky" menu. Pick one and fire it with a single click.
+
+🎨 THEMES
+Choose between system, light, or dark theme.
+
+🌐 LANGUAGES
+Available in English and 简体中文.
+
+🔒 PRIVACY
+Hooky does not collect, store, or transmit any user data. All configuration is stored locally in your browser via chrome.storage.local. Webhook requests are sent only to URLs you configure.
+
+─────
+
+USE CASES
+• Save articles to Notion, Raindrop, or any API
+• Send page URLs to Slack, Discord, or Telegram bots
+• Trigger CI/CD pipelines with page metadata
+• Log browsing activity to a personal webhook
+• Bookmark pages to a custom backend
+
+PERMISSIONS
+• activeTab — read current page URL and title for template variables
+• storage — save your webhook templates locally
+• contextMenus — add "Hooky" to the right-click menu

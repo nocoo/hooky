@@ -1,0 +1,45 @@
+Hooky — 一键触发 Webhook，自动携带页面上下文。
+
+创建 Webhook 模板，自动填充当前页面数据，从工具栏、右键菜单或快速发送模式一键触发。
+
+🪝 WEBHOOK 模板
+创建多个命名的 Webhook 模板，每个模板可独立配置 URL、HTTP 方法（GET/POST/PUT/PATCH/DELETE）和键值参数，随时切换。
+
+🔀 模板变量
+使用模板变量将实时页面信息注入到 Webhook 参数中：
+• {{page.url}} — 当前页面 URL
+• {{page.title}} — 页面标题
+• {{page.selection}} — 选中的文本
+• {{page.meta.description}} — Meta 描述
+• {{page.meta.og:title}} — Open Graph 标题
+• {{page.meta.og:description}} — Open Graph 描述
+• {{page.meta.og:image}} — Open Graph 图片地址
+
+⚡ 快速发送
+将某个模板设为快速发送目标。开启后，点击工具栏图标即可立即发送 Webhook — 无需弹窗，无需额外操作。徽章会闪烁 ✓ 或 ✗ 来反馈结果。
+
+📋 右键菜单
+在任意页面右键，即可在「Hooky」菜单中看到所有模板，单击即可触发。
+
+🎨 主题
+支持跟随系统、浅色和深色主题。
+
+🌐 语言
+支持 English 和简体中文。
+
+🔒 隐私
+Hooky 不收集、不存储、不传输任何用户数据。所有配置仅保存在浏览器本地（chrome.storage.local）。Webhook 请求仅发送到您自行配置的 URL。
+
+─────
+
+使用场景
+• 保存文章到 Notion、Raindrop 或任意 API
+• 将页面 URL 发送到 Slack、Discord 或 Telegram 机器人
+• 用页面元数据触发 CI/CD 流水线
+• 将浏览记录发送到个人 Webhook
+• 收藏页面到自定义后端
+
+权限说明
+• activeTab — 读取当前页面 URL 和标题以填充模板变量
+• storage — 在本地保存您的 Webhook 模板
+• contextMenus — 在右键菜单中添加「Hooky」入口
