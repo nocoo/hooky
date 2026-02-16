@@ -10,6 +10,8 @@ import {
   setActiveTemplateId,
   getQuickSend,
   setQuickSend,
+  getQuickSendTemplateId,
+  setQuickSendTemplateId,
   getTheme,
   setTheme,
   migrateFromLegacy,
@@ -47,6 +49,7 @@ describe("store", () => {
         templates: [],
         activeTemplateId: null,
         quickSend: false,
+        quickSendTemplateId: null,
         theme: "system",
       });
     });
@@ -216,6 +219,52 @@ describe("store", () => {
       expect(await getTheme()).toBe("light");
       await setTheme("system");
       expect(await getTheme()).toBe("system");
+    });
+  });
+
+  describe("quickSendTemplateId", () => {
+    it("should default to null", async () => {
+      expect(await getQuickSendTemplateId()).toBeNull();
+    });
+
+    it("should save and retrieve quickSendTemplateId", async () => {
+      const tpl = await createTemplate("Test");
+      await setQuickSendTemplateId(tpl.id);
+      expect(await getQuickSendTemplateId()).toBe(tpl.id);
+    });
+
+    it("should persist when quickSend toggled off and on", async () => {
+      const tpl = await createTemplate("Persist");
+      await setQuickSendTemplateId(tpl.id);
+      await setQuickSend(true);
+      await setQuickSend(false);
+      expect(await getQuickSendTemplateId()).toBe(tpl.id);
+      await setQuickSend(true);
+      expect(await getQuickSendTemplateId()).toBe(tpl.id);
+    });
+
+    it("should clear when designated template is deleted", async () => {
+      const t1 = await createTemplate("A");
+      const t2 = await createTemplate("B");
+      await setQuickSendTemplateId(t1.id);
+      expect(await getQuickSendTemplateId()).toBe(t1.id);
+      await deleteTemplate(t1.id);
+      expect(await getQuickSendTemplateId()).toBeNull();
+    });
+
+    it("should not clear when a different template is deleted", async () => {
+      const t1 = await createTemplate("A");
+      const t2 = await createTemplate("B");
+      await setQuickSendTemplateId(t1.id);
+      await deleteTemplate(t2.id);
+      expect(await getQuickSendTemplateId()).toBe(t1.id);
+    });
+
+    it("should allow clearing by setting null", async () => {
+      const tpl = await createTemplate("Test");
+      await setQuickSendTemplateId(tpl.id);
+      await setQuickSendTemplateId(null);
+      expect(await getQuickSendTemplateId()).toBeNull();
     });
   });
 

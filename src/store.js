@@ -7,6 +7,7 @@
  *     templates: [ { id, name, url, method, params } ],
  *     activeTemplateId: string | null,
  *     quickSend: boolean,
+ *     quickSendTemplateId: string | null,
  *     theme: "system" | "light" | "dark",
  *   }
  * }
@@ -20,11 +21,11 @@ function generateId() {
 
 /**
  * Load the full store from chrome.storage.local.
- * @returns {Promise<{templates: Array, activeTemplateId: string|null, quickSend: boolean}>}
+ * @returns {Promise<{templates: Array, activeTemplateId: string|null, quickSend: boolean, quickSendTemplateId: string|null}>}
  */
 export async function loadStore() {
   const data = await chrome.storage.local.get(STORE_KEY);
-  return data[STORE_KEY] || { templates: [], activeTemplateId: null, quickSend: false, theme: "system" };
+  return data[STORE_KEY] || { templates: [], activeTemplateId: null, quickSend: false, quickSendTemplateId: null, theme: "system" };
 }
 
 /**
@@ -85,6 +86,9 @@ export async function deleteTemplate(id) {
   if (store.activeTemplateId === id) {
     store.activeTemplateId = store.templates.length > 0 ? store.templates[0].id : null;
   }
+  if (store.quickSendTemplateId === id) {
+    store.quickSendTemplateId = null;
+  }
   await saveStore(store);
 }
 
@@ -139,6 +143,28 @@ export async function getQuickSend() {
 export async function setQuickSend(enabled) {
   const store = await loadStore();
   store.quickSend = enabled;
+  await saveStore(store);
+}
+
+/**
+ * Get the quickSendTemplateId — the designated template for quick send.
+ *
+ * @returns {Promise<string|null>}
+ */
+export async function getQuickSendTemplateId() {
+  const store = await loadStore();
+  return store.quickSendTemplateId || null;
+}
+
+/**
+ * Set the quickSendTemplateId — designate a template for quick send.
+ * Persists independently of the quickSend toggle.
+ *
+ * @param {string|null} id
+ */
+export async function setQuickSendTemplateId(id) {
+  const store = await loadStore();
+  store.quickSendTemplateId = id;
   await saveStore(store);
 }
 
