@@ -6,6 +6,7 @@
   "scripts": {
     "test": "vitest run",
     "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
     "lint": "eslint src/ tests/",
     "test:e2e": "node tests/e2e/extension.e2e.js",
     "prepare": "husky"
@@ -24,6 +25,7 @@
   "homepage": "https://github.com/nocoo/hooky#readme",
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "@vitest/coverage-v8": "^4.0.18",
     "eslint": "^10.0.0",
     "globals": "^17.3.0",
     "husky": "^9.1.7",
