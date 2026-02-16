@@ -89,7 +89,9 @@ export async function handleQuickSend(tab) {
     // New multi-template format
     const store = data[storeKey];
     if (store.templates && store.templates.length > 0) {
-      config = store.templates.find((t) => t.id === store.activeTemplateId)
+      // Prefer the designated quick send template, fall back to first template
+      config = (store.quickSendTemplateId
+        && store.templates.find((t) => t.id === store.quickSendTemplateId))
         || store.templates[0];
     }
   } else if (data.webhook) {

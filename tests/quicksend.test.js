@@ -211,22 +211,68 @@ describe("handleQuickSend", () => {
     );
   });
 
-  it("should handle tab without id by using fallback context", async () => {
-    const config = {
-      url: "https://api.example.com/hook",
-      method: "POST",
-      params: [{ key: "url", value: "{{page.url}}" }],
+  it("should use quickSendTemplateId when set in new format", async () => {
+    const store = {
+      templates: [
+        { id: "t1", name: "A", url: "https://a.com/hook", method: "POST", params: [] },
+        { id: "t2", name: "B", url: "https://b.com/hook", method: "POST", params: [] },
+      ],
+      activeTemplateId: "t1",
+      quickSendTemplateId: "t2",
     };
-    storageMock.local.get.mockResolvedValue({ webhook: config });
+    storageMock.local.get.mockResolvedValue({ hooky: store });
+    tabsMock.sendMessage.mockRejectedValue(new Error("No content script"));
 
-    const tab = { url: "chrome://extensions", title: "Extensions" };
+    const tab = { id: 1, url: "https://example.com", title: "Example" };
     await handleQuickSend(tab);
 
-    expect(tabsMock.sendMessage).not.toHaveBeenCalled();
-    expect(fetchMock).toHaveBeenCalledWith("https://api.example.com/hook", {
+    expect(fetchMock).toHaveBeenCalledWith("https://b.com/hook", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ url: "chrome://extensions" }),
+      body: "{}",
+    });
+  });
+
+  it("should fall back to first template when quickSendTemplateId is null", async () => {
+    const store = {
+      templates: [
+        { id: "t1", name: "A", url: "https://a.com/hook", method: "POST", params: [] },
+        { id: "t2", name: "B", url: "https://b.com/hook", method: "POST", params: [] },
+      ],
+      activeTemplateId: "t1",
+      quickSendTemplateId: null,
+    };
+    storageMock.local.get.mockResolvedValue({ hooky: store });
+    tabsMock.sendMessage.mockRejectedValue(new Error("No content script"));
+
+    const tab = { id: 1, url: "https://example.com", title: "Example" };
+    await handleQuickSend(tab);
+
+    expect(fetchMock).toHaveBeenCalledWith("https://a.com/hook", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: "{}",
+    });
+  });
+
+  it("should fall back to first template when quickSendTemplateId references deleted template", async () => {
+    const store = {
+      templates: [
+        { id: "t1", name: "A", url: "https://a.com/hook", method: "POST", params: [] },
+      ],
+      activeTemplateId: "t1",
+      quickSendTemplateId: "deleted-id",
+    };
+    storageMock.local.get.mockResolvedValue({ hooky: store });
+    tabsMock.sendMessage.mockRejectedValue(new Error("No content script"));
+
+    const tab = { id: 1, url: "https://example.com", title: "Example" };
+    await handleQuickSend(tab);
+
+    expect(fetchMock).toHaveBeenCalledWith("https://a.com/hook", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: "{}",
     });
   });
 });
