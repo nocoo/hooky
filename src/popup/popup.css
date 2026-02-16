@@ -86,14 +86,14 @@ h1 {
   padding: 4px 10px;
   border-radius: 5px;
   color: #fff;
-  background: #4a90d9;
+  background: #9666b7;
   text-transform: uppercase;
   flex-shrink: 0;
   letter-spacing: 0.3px;
 }
 
 .method-badge.get { background: #4a9; }
-.method-badge.post { background: #4a90d9; }
+.method-badge.post { background: #9666b7; }
 .method-badge.put { background: #e89830; }
 .method-badge.patch { background: #9b59b6; }
 .method-badge.delete { background: #cc4444; }
@@ -137,8 +137,8 @@ h1 {
 
 .param-item input:focus {
   outline: none;
-  border-color: #4a90d9;
-  box-shadow: 0 0 0 2px rgba(74, 144, 217, 0.12);
+  border-color: #9666b7;
+  box-shadow: 0 0 0 2px rgba(150, 102, 183, 0.12);
 }
 
 .actions {
@@ -151,7 +151,7 @@ h1 {
   font-size: 14px;
   font-weight: 500;
   color: #fff;
-  background: #4a90d9;
+  background: #9666b7;
   border: none;
   border-radius: 8px;
   cursor: pointer;
@@ -159,7 +159,7 @@ h1 {
 }
 
 .btn-primary:hover {
-  background: #3a7bc8;
+  background: #7d52a0;
 }
 
 .btn-primary:active {
@@ -167,7 +167,7 @@ h1 {
 }
 
 .btn-primary:disabled {
-  background: #b0c8e8;
+  background: #c4a8d8;
   cursor: not-allowed;
   transform: none;
 }
@@ -228,8 +228,8 @@ h1 {
 
 .template-select select:focus {
   outline: none;
-  border-color: #4a90d9;
-  box-shadow: 0 0 0 3px rgba(74, 144, 217, 0.1);
+  border-color: #9666b7;
+  box-shadow: 0 0 0 3px rgba(150, 102, 183, 0.1);
 }
 
 /* ─── Dark Mode ─── */
@@ -281,12 +281,12 @@ html[data-theme="dark"] .param-item input {
 }
 
 html[data-theme="dark"] .param-item input:focus {
-  border-color: #5a9de9;
-  box-shadow: 0 0 0 2px rgba(90, 157, 233, 0.15);
+  border-color: #a97bcf;
+  box-shadow: 0 0 0 2px rgba(169, 123, 207, 0.15);
 }
 
 html[data-theme="dark"] .btn-primary:disabled {
-  background: #3a5070;
+  background: #4d3565;
 }
 
 html[data-theme="dark"] .template-select select {
@@ -296,8 +296,8 @@ html[data-theme="dark"] .template-select select {
 }
 
 html[data-theme="dark"] .template-select select:focus {
-  border-color: #5a9de9;
-  box-shadow: 0 0 0 3px rgba(90, 157, 233, 0.15);
+  border-color: #a97bcf;
+  box-shadow: 0 0 0 3px rgba(169, 123, 207, 0.15);
 }
 
 /* Explicit light: override system dark preference */
@@ -353,12 +353,12 @@ html[data-theme="light"] body {
   }
 
   html:not([data-theme]) .param-item input:focus {
-    border-color: #5a9de9;
-    box-shadow: 0 0 0 2px rgba(90, 157, 233, 0.15);
+    border-color: #a97bcf;
+    box-shadow: 0 0 0 2px rgba(169, 123, 207, 0.15);
   }
 
   html:not([data-theme]) .btn-primary:disabled {
-    background: #3a5070;
+    background: #4d3565;
   }
 
   html:not([data-theme]) .template-select select {
@@ -368,7 +368,7 @@ html[data-theme="light"] body {
   }
 
   html:not([data-theme]) .template-select select:focus {
-    border-color: #5a9de9;
-    box-shadow: 0 0 0 3px rgba(90, 157, 233, 0.15);
+    border-color: #a97bcf;
+    box-shadow: 0 0 0 3px rgba(169, 123, 207, 0.15);
   }
 }

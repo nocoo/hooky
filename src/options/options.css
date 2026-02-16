@@ -58,16 +58,16 @@ body {
   padding: 5px 12px;
   font-size: 13px;
   font-weight: 500;
-  color: #4a90d9;
-  background: #eef4fc;
-  border: 1px solid #c8ddf2;
+  color: #9666b7;
+  background: #f3eef8;
+  border: 1px solid #d4c0e4;
   border-radius: 6px;
   cursor: pointer;
   transition: background 0.15s;
 }
 
 .btn-new:hover {
-  background: #dbe9f8;
+  background: #e6d8f0;
 }
 
 .template-list {
@@ -128,10 +128,10 @@ body {
 }
 
 .template-list li.active {
-  background: #eef4fc;
-  color: #2a6ab8;
+  background: #f3eef8;
+  color: #7d52a0;
   font-weight: 500;
-  border-left-color: #4a90d9;
+  border-left-color: #9666b7;
 }
 
 .sidebar-footer {
@@ -214,8 +214,8 @@ select {
 input:focus,
 select:focus {
   outline: none;
-  border-color: #4a90d9;
-  box-shadow: 0 0 0 3px rgba(74, 144, 217, 0.1);
+  border-color: #9666b7;
+  box-shadow: 0 0 0 3px rgba(150, 102, 183, 0.1);
 }
 
 select {
@@ -256,8 +256,8 @@ select {
 
 .param-row input:focus {
   outline: none;
-  border-color: #4a90d9;
-  box-shadow: 0 0 0 3px rgba(74, 144, 217, 0.1);
+  border-color: #9666b7;
+  box-shadow: 0 0 0 3px rgba(150, 102, 183, 0.1);
 }
 
 .param-row .btn-remove {
@@ -294,7 +294,7 @@ select {
   font-size: 15px;
   font-weight: 500;
   color: #fff;
-  background: #4a90d9;
+  background: #9666b7;
   border: none;
   border-radius: 8px;
   cursor: pointer;
@@ -302,7 +302,7 @@ select {
 }
 
 .btn-primary:hover {
-  background: #3a7bc8;
+  background: #7d52a0;
 }
 
 .btn-primary:active {
@@ -313,20 +313,20 @@ select {
   padding: 8px 16px;
   font-size: 14px;
   font-weight: 500;
-  color: #4a90d9;
-  background: #eef4fc;
-  border: 1px solid #c8ddf2;
+  color: #9666b7;
+  background: #f3eef8;
+  border: 1px solid #d4c0e4;
   border-radius: 6px;
   cursor: pointer;
   transition: background 0.15s;
 }
 
 .btn-secondary:hover {
-  background: #dbe9f8;
+  background: #e6d8f0;
 }
 
 .btn-secondary:active {
-  background: #cde0f4;
+  background: #daceea;
 }
 
 .btn-danger {
@@ -427,7 +427,7 @@ select {
 }
 
 .toggle-switch input:checked + .toggle-slider {
-  background: #4a90d9;
+  background: #9666b7;
 }
 
 .toggle-switch input:checked + .toggle-slider::before {
@@ -435,7 +435,7 @@ select {
 }
 
 .toggle-switch input:focus + .toggle-slider {
-  box-shadow: 0 0 0 3px rgba(74, 144, 217, 0.15);
+  box-shadow: 0 0 0 3px rgba(150, 102, 183, 0.15);
 }
 
 /* ─── Settings section ─── */
@@ -531,13 +531,13 @@ html[data-theme="dark"] .setting-row > label {
 }
 
 html[data-theme="dark"] .btn-new {
-  color: #7ab3ee;
-  background: #1a2a3a;
-  border-color: #2a4060;
+  color: #be94dc;
+  background: #2a1e35;
+  border-color: #3d2a55;
 }
 
 html[data-theme="dark"] .btn-new:hover {
-  background: #223a50;
+  background: #332545;
 }
 
 html[data-theme="dark"] .template-list li {
@@ -549,9 +549,9 @@ html[data-theme="dark"] .template-list li:hover {
 }
 
 html[data-theme="dark"] .template-list li.active {
-  background: #1a2a3a;
-  color: #7ab3ee;
-  border-left-color: #5a9de9;
+  background: #2a1e35;
+  color: #be94dc;
+  border-left-color: #a97bcf;
 }
 
 html[data-theme="dark"] .template-list li .btn-lightning {
@@ -589,8 +589,8 @@ html[data-theme="dark"] select {
 
 html[data-theme="dark"] input:focus,
 html[data-theme="dark"] select:focus {
-  border-color: #5a9de9;
-  box-shadow: 0 0 0 3px rgba(90, 157, 233, 0.15);
+  border-color: #a97bcf;
+  box-shadow: 0 0 0 3px rgba(169, 123, 207, 0.15);
 }
 
 html[data-theme="dark"] .template-hint {
@@ -609,8 +609,8 @@ html[data-theme="dark"] .param-row input {
 }
 
 html[data-theme="dark"] .param-row input:focus {
-  border-color: #5a9de9;
-  box-shadow: 0 0 0 3px rgba(90, 157, 233, 0.15);
+  border-color: #a97bcf;
+  box-shadow: 0 0 0 3px rgba(169, 123, 207, 0.15);
 }
 
 html[data-theme="dark"] .param-row .btn-remove:hover {
@@ -622,17 +622,17 @@ html[data-theme="dark"] .param-row .btn-remove:active {
 }
 
 html[data-theme="dark"] .btn-secondary {
-  color: #7ab3ee;
-  background: #1a2a3a;
-  border-color: #2a4060;
+  color: #be94dc;
+  background: #2a1e35;
+  border-color: #3d2a55;
 }
 
 html[data-theme="dark"] .btn-secondary:hover {
-  background: #223a50;
+  background: #332545;
 }
 
 html[data-theme="dark"] .btn-secondary:active {
-  background: #2a4460;
+  background: #3a2d50;
 }
 
 html[data-theme="dark"] .btn-danger {
@@ -719,13 +719,13 @@ html[data-theme="light"] .layout {
   }
 
   html:not([data-theme]) .btn-new {
-    color: #7ab3ee;
-    background: #1a2a3a;
-    border-color: #2a4060;
+    color: #be94dc;
+    background: #2a1e35;
+    border-color: #3d2a55;
   }
 
   html:not([data-theme]) .btn-new:hover {
-    background: #223a50;
+    background: #332545;
   }
 
   html:not([data-theme]) .template-list li {
@@ -737,9 +737,9 @@ html[data-theme="light"] .layout {
   }
 
   html:not([data-theme]) .template-list li.active {
-    background: #1a2a3a;
-    color: #7ab3ee;
-    border-left-color: #5a9de9;
+    background: #2a1e35;
+    color: #be94dc;
+    border-left-color: #a97bcf;
   }
 
   html:not([data-theme]) .template-list li .btn-lightning {
@@ -777,8 +777,8 @@ html[data-theme="light"] .layout {
 
   html:not([data-theme]) input:focus,
   html:not([data-theme]) select:focus {
-    border-color: #5a9de9;
-    box-shadow: 0 0 0 3px rgba(90, 157, 233, 0.15);
+    border-color: #a97bcf;
+    box-shadow: 0 0 0 3px rgba(169, 123, 207, 0.15);
   }
 
   html:not([data-theme]) .template-hint {
@@ -797,8 +797,8 @@ html[data-theme="light"] .layout {
   }
 
   html:not([data-theme]) .param-row input:focus {
-    border-color: #5a9de9;
-    box-shadow: 0 0 0 3px rgba(90, 157, 233, 0.15);
+    border-color: #a97bcf;
+    box-shadow: 0 0 0 3px rgba(169, 123, 207, 0.15);
   }
 
   html:not([data-theme]) .param-row .btn-remove:hover {
@@ -810,17 +810,17 @@ html[data-theme="light"] .layout {
   }
 
   html:not([data-theme]) .btn-secondary {
-    color: #7ab3ee;
-    background: #1a2a3a;
-    border-color: #2a4060;
+    color: #be94dc;
+    background: #2a1e35;
+    border-color: #3d2a55;
   }
 
   html:not([data-theme]) .btn-secondary:hover {
-    background: #223a50;
+    background: #332545;
   }
 
   html:not([data-theme]) .btn-secondary:active {
-    background: #2a4460;
+    background: #3a2d50;
   }
 
   html:not([data-theme]) .btn-danger {
