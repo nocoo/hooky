@@ -78,15 +78,49 @@ body {
 }
 
 .template-list li {
+  display: flex;
+  align-items: center;
   padding: 10px 16px 10px 13px;
   font-size: 14px;
   cursor: pointer;
   color: #555;
   border-left: 3px solid transparent;
   transition: background 0.1s, border-color 0.1s;
+}
+
+.template-list li .template-name {
+  flex: 1;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.template-list li .btn-lightning {
+  flex-shrink: 0;
+  background: none;
+  border: none;
+  font-size: 14px;
+  cursor: pointer;
+  padding: 2px 4px;
+  border-radius: 4px;
+  opacity: 0;
+  color: #ccc;
+  transition: opacity 0.15s, color 0.15s, background 0.15s;
+  line-height: 1;
+}
+
+.template-list li:hover .btn-lightning,
+.template-list li .btn-lightning.active {
+  opacity: 1;
+}
+
+.template-list li .btn-lightning:hover {
+  background: rgba(0, 0, 0, 0.05);
+  color: #e6a817;
+}
+
+.template-list li .btn-lightning.active {
+  color: #e6a817;
 }
 
 .template-list li:hover {
@@ -492,6 +526,19 @@ html[data-theme="dark"] .template-list li.active {
   border-left-color: #5a9de9;
 }
 
+html[data-theme="dark"] .template-list li .btn-lightning {
+  color: #555;
+}
+
+html[data-theme="dark"] .template-list li .btn-lightning:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: #e6a817;
+}
+
+html[data-theme="dark"] .template-list li .btn-lightning.active {
+  color: #e6a817;
+}
+
 html[data-theme="dark"] .sidebar-footer {
   border-top-color: #2a2a2a;
 }
@@ -657,6 +704,19 @@ html[data-theme="light"] .layout {
     background: #1a2a3a;
     color: #7ab3ee;
     border-left-color: #5a9de9;
+  }
+
+  html:not([data-theme]) .template-list li .btn-lightning {
+    color: #555;
+  }
+
+  html:not([data-theme]) .template-list li .btn-lightning:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: #e6a817;
+  }
+
+  html:not([data-theme]) .template-list li .btn-lightning.active {
+    color: #e6a817;
   }
 
   html:not([data-theme]) .sidebar-footer {

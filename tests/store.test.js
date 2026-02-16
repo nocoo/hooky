@@ -245,7 +245,7 @@ describe("store", () => {
 
     it("should clear when designated template is deleted", async () => {
       const t1 = await createTemplate("A");
-      const t2 = await createTemplate("B");
+      await createTemplate("B");
       await setQuickSendTemplateId(t1.id);
       expect(await getQuickSendTemplateId()).toBe(t1.id);
       await deleteTemplate(t1.id);

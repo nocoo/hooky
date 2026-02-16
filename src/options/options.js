@@ -5,6 +5,7 @@ import {
   updateTemplate,
   deleteTemplate,
   setQuickSend,
+  setQuickSendTemplateId,
   setTheme,
   migrateFromLegacy,
 } from "../store.js";
@@ -81,14 +82,35 @@ function showStatus(message) {
 
 // ─── Template list ───
 
-function renderTemplateList(templates, activeId) {
+function renderTemplateList(templates, activeId, quickSendId) {
   templateListEl.innerHTML = "";
   for (const tpl of templates) {
     const li = document.createElement("li");
-    li.textContent = tpl.name || t("defaultTemplateName");
     li.dataset.id = tpl.id;
     if (tpl.id === activeId) li.classList.add("active");
-    li.addEventListener("click", () => selectTemplate(tpl.id));
+
+    const nameSpan = document.createElement("span");
+    nameSpan.className = "template-name";
+    nameSpan.textContent = tpl.name || t("defaultTemplateName");
+    nameSpan.addEventListener("click", () => selectTemplate(tpl.id));
+
+    const lightningBtn = document.createElement("button");
+    lightningBtn.type = "button";
+    lightningBtn.className = "btn-lightning";
+    if (tpl.id === quickSendId) lightningBtn.classList.add("active");
+    lightningBtn.textContent = "\u26a1";
+    lightningBtn.title = tpl.id === quickSendId
+      ? t("quickSendTargetActive")
+      : t("quickSendTarget");
+    lightningBtn.addEventListener("click", async (e) => {
+      e.stopPropagation();
+      const newId = tpl.id === quickSendId ? null : tpl.id;
+      await setQuickSendTemplateId(newId);
+      await renderAll();
+    });
+
+    li.appendChild(nameSpan);
+    li.appendChild(lightningBtn);
     templateListEl.appendChild(li);
   }
 }
@@ -137,7 +159,10 @@ async function saveCurrentTemplate() {
 
   // Update sidebar name
   const li = templateListEl.querySelector(`[data-id="${currentTemplateId}"]`);
-  if (li) li.textContent = changes.name;
+  if (li) {
+    const nameSpan = li.querySelector(".template-name");
+    if (nameSpan) nameSpan.textContent = changes.name;
+  }
 
   showStatus(t("saved"));
 }
@@ -168,7 +193,7 @@ function updateQuickSendHint() {
 
 async function renderAll() {
   const store = await loadStore();
-  renderTemplateList(store.templates, store.activeTemplateId);
+  renderTemplateList(store.templates, store.activeTemplateId, store.quickSendTemplateId);
   quickSendToggle.checked = store.quickSend;
   updateQuickSendHint();
 
