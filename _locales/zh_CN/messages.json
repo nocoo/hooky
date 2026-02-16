@@ -127,5 +127,11 @@
   },
   "themeDark": {
     "message": "\u6df1\u8272"
+  },
+  "quickSendTarget": {
+    "message": "\u8bbe\u4e3a\u5feb\u901f\u53d1\u9001\u76ee\u6807"
+  },
+  "quickSendTargetActive": {
+    "message": "\u5f53\u524d\u5feb\u901f\u53d1\u9001\u76ee\u6807"
   }
 }
