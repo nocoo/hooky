@@ -8,6 +8,7 @@
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "lint": "eslint src/ tests/",
+    "build": "bash scripts/build.sh",
     "test:e2e": "node tests/e2e/extension.e2e.js",
     "prepare": "husky"
   },
