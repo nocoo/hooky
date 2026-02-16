@@ -153,8 +153,8 @@ This produces `dist/hooky-<version>.zip` containing only the runtime files neede
 | 📝 Description (RU) | `assets/description-ru.txt` | ✅ |
 | 🔒 Privacy Policy | [`PRIVACY.md`](PRIVACY.md) | ✅ |
 | 🖼️ Store Icon (128×128) | `src/icons/icon128.png` | ✅ |
-| 🖼️ Promo Tile (440×280) | — | ⬜ Manual |
-| 📸 Screenshots (1280×800) | — | ⬜ Manual |
+| 🖼️ Promo Tile (440×280) | `assets/hooky-banner-440x280.png` | ✅ |
+| 📸 Screenshot (1280×800) | `assets/hooky-screenshot-1280x800.png` | ✅ |
 
 ### Steps
 
