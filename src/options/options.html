@@ -13,7 +13,6 @@
     <aside class="sidebar">
       <div class="sidebar-header">
         <h2><img src="../icons/icon48.png" srcset="../icons/icon24.png 1x, ../icons/icon48.png 2x" alt="Hooky" width="24" height="24" class="logo">Hooky <span class="version" id="version"></span></h2>
-        <button type="button" id="new-template" class="btn-icon" title="New">+</button>
       </div>
 
       <!-- Nav panel: Webhooks (expandable with list) -->
@@ -27,18 +26,29 @@
         </div>
       </div>
 
-      <!-- Nav panel: Rules (entry only) -->
+      <!-- Nav panel: Rules (expandable with list) -->
       <div class="sidebar-panel" id="panel-rules">
         <button type="button" class="sidebar-nav-btn" data-panel="panel-rules">
-          <span data-i18n="quickSendRules">Quick Send Rules</span>
+          <span data-i18n="rules">Rules</span>
+          <svg class="sidebar-chevron" width="10" height="6" viewBox="0 0 10 6"><polyline points="1 1 5 5 9 1" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </button>
+        <div class="sidebar-panel-content">
+          <ul id="rules-list" class="sidebar-list"></ul>
+        </div>
       </div>
 
-      <!-- Nav panel: Settings (entry only) -->
+      <!-- Nav panel: Settings (expandable with list) -->
       <div class="sidebar-panel" id="panel-settings">
         <button type="button" class="sidebar-nav-btn" data-panel="panel-settings">
           <span data-i18n="settings">Settings</span>
+          <svg class="sidebar-chevron" width="10" height="6" viewBox="0 0 10 6"><polyline points="1 1 5 5 9 1" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </button>
+        <div class="sidebar-panel-content">
+          <ul id="settings-list" class="sidebar-list">
+            <li data-settings="theme"><span data-i18n="theme">Theme</span></li>
+            <li data-settings="quicksend"><span data-i18n="quickSend">Quick Send</span></li>
+          </ul>
+        </div>
       </div>
     </aside>
 
@@ -154,14 +164,10 @@
           </section>
         </div>
 
-        <!-- Rules manager (shown when Rules nav is selected) -->
+        <!-- Rules manager (shown when Rules nav is selected, no rule selected) -->
         <div class="editor-form" id="rules-manager" style="display: none;">
-          <div class="rules-manager-header">
-            <p data-i18n="quickSendRulesDesc">Automatically select which template to send based on the current page. Rules are evaluated in order; the first match wins.</p>
-            <button type="button" id="add-rule" class="btn-secondary" data-i18n="addRule">+ Add Rule</button>
-          </div>
-          <ul id="rules-list" class="rules-list"></ul>
-          <p class="no-rules" id="no-rules" data-i18n="noRules">No rules configured. Quick Send will use the default template.</p>
+          <p class="editor-desc" data-i18n="quickSendRulesDesc">Automatically select which template to send based on the current page. Rules are evaluated in order; the first match wins.</p>
+          <p class="no-items" id="no-rules" data-i18n="noRules">No rules configured. Quick Send will use the default template.</p>
         </div>
 
         <!-- Settings form (shown when Settings nav is selected) -->

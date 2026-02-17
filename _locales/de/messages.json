@@ -199,5 +199,11 @@
   },
   "settingsDetail": {
     "message": "Einstellungen"
+  },
+  "rules": {
+    "message": "Rules"
+  },
+  "newWebhook": {
+    "message": "+ New Webhook"
   }
 }

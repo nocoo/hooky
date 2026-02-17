@@ -17,7 +17,6 @@ import { applyTheme } from "../theme.js";
 // ─── DOM refs ───
 
 const templateListEl = document.getElementById("template-list");
-const newTemplateBtn = document.getElementById("new-template");
 const quickSendToggle = document.getElementById("quick-send");
 const quickSendHint = document.getElementById("quick-send-hint");
 const themeSelect = document.getElementById("theme-select");
@@ -39,10 +38,10 @@ const saveBtn = document.getElementById("save");
 const statusEl = document.getElementById("status");
 const deleteBtn = document.getElementById("delete-template");
 
-// Rules (now in right pane)
+// Sidebar lists
 const rulesListEl = document.getElementById("rules-list");
+const settingsListEl = document.getElementById("settings-list");
 const noRulesEl = document.getElementById("no-rules");
-const addRuleBtn = document.getElementById("add-rule");
 
 // Rule editor fields
 const ruleFieldSelect = document.getElementById("rule-field");
@@ -53,6 +52,7 @@ const ruleEnabledToggle = document.getElementById("rule-enabled");
 
 let currentTemplateId = null;
 let currentRuleId = null;
+let currentSettingsItem = null;
 let editorMode = null; // "template" | "rule" | "rules-list" | "settings" | null
 
 // ─── Sidebar navigation ───
@@ -86,6 +86,13 @@ function initSidebar() {
       }
     });
   }
+
+  // Settings list items (static in HTML)
+  for (const li of settingsListEl.children) {
+    li.addEventListener("click", () => {
+      selectSettingsItem(li.dataset.settings);
+    });
+  }
 }
 
 async function navigateToWebhooks() {
@@ -101,11 +108,14 @@ async function navigateToWebhooks() {
 
 async function navigateToRules() {
   const store = await loadStore();
+  renderRulesList(store.quickSendRules);
   showRulesManager(store);
 }
 
 async function navigateToSettings() {
   const store = await loadStore();
+  currentSettingsItem = currentSettingsItem || "theme";
+  selectSettingsItem(currentSettingsItem);
   showSettings(store);
 }
 
@@ -165,6 +175,7 @@ function showEditorEmpty() {
   editorMode = null;
   currentTemplateId = null;
   currentRuleId = null;
+  currentSettingsItem = null;
   editorEmpty.style.display = "flex";
   editorForm.style.display = "none";
   ruleEditorForm.style.display = "none";
@@ -177,6 +188,7 @@ function showEditorEmpty() {
 function showTemplateEditor() {
   editorMode = "template";
   currentRuleId = null;
+  currentSettingsItem = null;
   editorEmpty.style.display = "none";
   editorForm.style.display = "block";
   ruleEditorForm.style.display = "none";
@@ -189,6 +201,7 @@ function showTemplateEditor() {
 function showRuleEditor() {
   editorMode = "rule";
   currentTemplateId = null;
+  currentSettingsItem = null;
   editorEmpty.style.display = "none";
   editorForm.style.display = "none";
   ruleEditorForm.style.display = "block";
@@ -202,6 +215,7 @@ function showRulesManager(store) {
   editorMode = "rules-list";
   currentTemplateId = null;
   currentRuleId = null;
+  currentSettingsItem = null;
   editorEmpty.style.display = "none";
   editorForm.style.display = "none";
   ruleEditorForm.style.display = "none";
@@ -209,7 +223,14 @@ function showRulesManager(store) {
   settingsFormEl.style.display = "none";
   editorActions.style.display = "none";
   editorTitle.textContent = t("quickSendRules");
-  renderRulesList(store.quickSendRules);
+
+  // Show/hide no-rules message
+  const rules = store.quickSendRules || [];
+  if (rules.length === 0) {
+    noRulesEl.classList.remove("hidden");
+  } else {
+    noRulesEl.classList.add("hidden");
+  }
 }
 
 function showSettings(store) {
@@ -232,10 +253,37 @@ function showSettings(store) {
   applyTheme(theme);
 }
 
+// ─── Settings items ───
+
+function selectSettingsItem(itemKey) {
+  currentSettingsItem = itemKey;
+  for (const li of settingsListEl.children) {
+    li.classList.toggle("active", li.dataset.settings === itemKey);
+  }
+}
+
 // ─── Template list ───
 
 function renderTemplateList(templates, activeId, quickSendId) {
   templateListEl.innerHTML = "";
+
+  // "+ New Webhook" action item (always first)
+  const newLi = document.createElement("li");
+  newLi.className = "new-item";
+  newLi.id = "new-template";
+
+  const newIcon = document.createElement("span");
+  newIcon.className = "new-icon";
+  newIcon.textContent = "+";
+
+  const newText = document.createElement("span");
+  newText.textContent = t("newWebhook");
+
+  newLi.appendChild(newIcon);
+  newLi.appendChild(newText);
+  newLi.addEventListener("click", handleNewTemplate);
+  templateListEl.appendChild(newLi);
+
   for (const tpl of templates) {
     const li = document.createElement("li");
     li.dataset.id = tpl.id;
@@ -265,6 +313,14 @@ function renderTemplateList(templates, activeId, quickSendId) {
     li.appendChild(lightningBtn);
     templateListEl.appendChild(li);
   }
+}
+
+async function handleNewTemplate() {
+  const tpl = await createTemplate(t("defaultTemplateName"));
+  currentTemplateId = tpl.id;
+  editorMode = "template";
+  openPanel("panel-webhooks");
+  await renderAll();
 }
 
 async function selectTemplate(id) {
@@ -305,16 +361,27 @@ async function selectTemplate(id) {
     store.quickSend && store.quickSendTemplateId === id;
 }
 
-// ─── Rules list ───
+// ─── Rules list (sidebar) ───
 
 function renderRulesList(rules) {
   rulesListEl.innerHTML = "";
 
-  if (rules.length === 0) {
-    noRulesEl.classList.remove("hidden");
-  } else {
-    noRulesEl.classList.add("hidden");
-  }
+  // "+ New Rule" action item (always first)
+  const newLi = document.createElement("li");
+  newLi.className = "new-item";
+  newLi.id = "add-rule";
+
+  const newIcon = document.createElement("span");
+  newIcon.className = "new-icon";
+  newIcon.textContent = "+";
+
+  const newText = document.createElement("span");
+  newText.textContent = t("addRule");
+
+  newLi.appendChild(newIcon);
+  newLi.appendChild(newText);
+  newLi.addEventListener("click", handleNewRule);
+  rulesListEl.appendChild(newLi);
 
   for (const rule of rules) {
     const li = document.createElement("li");
@@ -346,6 +413,21 @@ function renderRulesList(rules) {
 
     rulesListEl.appendChild(li);
   }
+}
+
+async function handleNewRule() {
+  const store = await loadStore();
+  if (store.templates.length === 0) return; // need at least one template
+  const rule = await addQuickSendRule({
+    field: "url",
+    operator: "contains",
+    value: "",
+    templateId: store.templates[0].id,
+  });
+  currentRuleId = rule.id;
+  editorMode = "rule";
+  openPanel("panel-rules");
+  await renderAll();
 }
 
 function getOperatorLabel(op) {
@@ -526,6 +608,7 @@ async function renderAll() {
       showRulesManager(store);
     }
   } else if (editorMode === "rules-list") {
+    renderRulesList(store.quickSendRules);
     showRulesManager(store);
   } else if (editorMode === "settings") {
     showSettings(store);
@@ -540,31 +623,6 @@ async function renderAll() {
 }
 
 // ─── Events ───
-
-newTemplateBtn.addEventListener("click", async () => {
-  const tpl = await createTemplate(t("defaultTemplateName"));
-  currentTemplateId = tpl.id;
-  editorMode = "template";
-  // Open webhooks panel
-  openPanel("panel-webhooks");
-  await renderAll();
-});
-
-addRuleBtn.addEventListener("click", async () => {
-  const store = await loadStore();
-  if (store.templates.length === 0) return; // need at least one template
-  const rule = await addQuickSendRule({
-    field: "url",
-    operator: "contains",
-    value: "",
-    templateId: store.templates[0].id,
-  });
-  currentRuleId = rule.id;
-  editorMode = "rule";
-  // Keep rules panel active
-  openPanel("panel-rules");
-  await renderAll();
-});
 
 addParamBtn.addEventListener("click", () => {
   paramsList.appendChild(createParamRow());

@@ -7,7 +7,6 @@ function setupOptionsDOM() {
       <aside class="sidebar">
         <div class="sidebar-header">
           <h2>Hooky <span class="version" id="version"></span></h2>
-          <button type="button" id="new-template" class="btn-icon">+</button>
         </div>
         <div class="sidebar-panel active" id="panel-webhooks">
           <button type="button" class="sidebar-nav-btn" data-panel="panel-webhooks">
@@ -21,12 +20,23 @@ function setupOptionsDOM() {
         <div class="sidebar-panel" id="panel-rules">
           <button type="button" class="sidebar-nav-btn" data-panel="panel-rules">
             <span>Rules</span>
+            <svg class="sidebar-chevron" width="10" height="6" viewBox="0 0 10 6"></svg>
           </button>
+          <div class="sidebar-panel-content">
+            <ul id="rules-list" class="sidebar-list"></ul>
+          </div>
         </div>
         <div class="sidebar-panel" id="panel-settings">
           <button type="button" class="sidebar-nav-btn" data-panel="panel-settings">
             <span>Settings</span>
+            <svg class="sidebar-chevron" width="10" height="6" viewBox="0 0 10 6"></svg>
           </button>
+          <div class="sidebar-panel-content">
+            <ul id="settings-list" class="sidebar-list">
+              <li data-settings="theme"><span>Theme</span></li>
+              <li data-settings="quicksend"><span>Quick Send</span></li>
+            </ul>
+          </div>
         </div>
       </aside>
       <main class="editor" id="editor">
@@ -66,9 +76,8 @@ function setupOptionsDOM() {
             <input type="checkbox" id="rule-enabled" checked>
           </div>
           <div class="editor-form" id="rules-manager" style="display: none;">
-            <button id="add-rule" class="btn-secondary">+ Add Rule</button>
-            <ul id="rules-list" class="rules-list"></ul>
-            <p class="no-rules" id="no-rules">No rules configured.</p>
+            <p class="editor-desc">Rules description</p>
+            <p class="no-items" id="no-rules">No rules configured.</p>
           </div>
           <div class="editor-form" id="settings-form" style="display: none;">
             <div class="settings-body">
@@ -128,6 +137,8 @@ function setupChromeMock(storeData = {}) {
           ruleOperatorEndsWith: "ends with",
           ruleOperatorMatches: "matches (regex)",
           noRules: "No rules configured.",
+          newWebhook: "+ New Webhook",
+          addRule: "+ Add Rule",
         };
         return messages[key] || key;
       }),
@@ -157,6 +168,16 @@ function makeStore(overrides = {}) {
   };
 }
 
+// Helper: get template items (excluding the "+ New Webhook" action item)
+function getTemplateItems() {
+  return document.querySelectorAll("#template-list li:not(.new-item)");
+}
+
+// Helper: get rule items (excluding the "+ New Rule" action item)
+function getRuleItems() {
+  return document.querySelectorAll("#rules-list li:not(.new-item)");
+}
+
 describe("options.js", () => {
   beforeEach(() => {
     vi.resetModules();
@@ -178,7 +199,7 @@ describe("options.js", () => {
     });
   });
 
-  it("should render template list", async () => {
+  it("should render template list with new-webhook action item", async () => {
     setupChromeMock(makeStore({
       templates: [
         { id: "t1", name: "Hook A", url: "https://a.com", method: "POST", params: [] },
@@ -189,11 +210,15 @@ describe("options.js", () => {
     await import("../src/options/options.js");
 
     await vi.waitFor(() => {
-      const items = document.querySelectorAll("#template-list li");
+      const items = getTemplateItems();
       expect(items).toHaveLength(2);
     });
 
-    const items = document.querySelectorAll("#template-list li");
+    // First item is "+ New Webhook"
+    const allItems = document.querySelectorAll("#template-list li");
+    expect(allItems[0].classList.contains("new-item")).toBe(true);
+
+    const items = getTemplateItems();
     expect(items[0].querySelector(".template-name").textContent).toBe("Hook A");
     expect(items[1].querySelector(".template-name").textContent).toBe("Hook B");
   });
@@ -236,7 +261,7 @@ describe("options.js", () => {
     expect(document.getElementById("editor-actions").style.display).toBe("none");
   });
 
-  it("should create a new template when + button is clicked", async () => {
+  it("should create a new template when + New Webhook item is clicked", async () => {
     const store = makeStore();
     setupChromeMock(store);
 
@@ -259,7 +284,7 @@ describe("options.js", () => {
     await import("../src/options/options.js");
 
     await vi.waitFor(() => {
-      expect(document.querySelectorAll("#template-list li")).toHaveLength(1);
+      expect(getTemplateItems()).toHaveLength(1);
     });
 
     document.getElementById("new-template").click();
@@ -314,7 +339,7 @@ describe("options.js", () => {
     expect(document.querySelectorAll("#params-list .param-row")).toHaveLength(2);
   });
 
-  it("should remove a param row when × button is clicked", async () => {
+  it("should remove a param row when x button is clicked", async () => {
     setupChromeMock(makeStore());
     await import("../src/options/options.js");
 
@@ -478,8 +503,8 @@ describe("options.js", () => {
       expect(document.getElementById("template-name").value).toBe("Hook A");
     });
 
-    // Click on the second template
-    const items = document.querySelectorAll(".template-name");
+    // Click on the second template (skip new-item)
+    const items = document.querySelectorAll("#template-list li:not(.new-item) .template-name");
     items[1].click();
 
     await vi.waitFor(() => {
@@ -611,7 +636,7 @@ describe("options.js", () => {
     await import("../src/options/options.js");
 
     await vi.waitFor(() => {
-      const nameSpan = document.querySelector(".template-name");
+      const nameSpan = document.querySelector("#template-list li:not(.new-item) .template-name");
       expect(nameSpan.textContent).toBe("Untitled");
     });
   });
@@ -631,7 +656,7 @@ describe("options.js", () => {
     });
 
     // Select second template
-    const items = document.querySelectorAll(".template-name");
+    const items = document.querySelectorAll("#template-list li:not(.new-item) .template-name");
     items[1].click();
 
     await vi.waitFor(() => {
@@ -818,10 +843,11 @@ describe("options.js", () => {
       expect(document.getElementById("rules-manager").style.display).toBe("block");
     });
     expect(document.getElementById("no-rules").classList.contains("hidden")).toBe(false);
-    expect(document.querySelectorAll("#rules-list li")).toHaveLength(0);
+    // Only the "+ New Rule" action item should be in the sidebar list
+    expect(getRuleItems()).toHaveLength(0);
   });
 
-  it("should render rules list in right pane", async () => {
+  it("should render rules list in sidebar", async () => {
     setupChromeMock(makeStore({
       quickSendRules: [
         { id: "r1", field: "url", operator: "contains", value: "github.com", templateId: "t1", enabled: true },
@@ -838,11 +864,11 @@ describe("options.js", () => {
     document.querySelector('[data-panel="panel-rules"]').click();
 
     await vi.waitFor(() => {
-      const items = document.querySelectorAll("#rules-list li");
+      const items = getRuleItems();
       expect(items).toHaveLength(2);
     });
 
-    const items = document.querySelectorAll("#rules-list li");
+    const items = getRuleItems();
     expect(items[0].querySelector(".rule-field").textContent).toBe("URL");
     expect(items[0].querySelector(".rule-operator").textContent).toContain("contains");
     expect(items[0].querySelector(".rule-value").textContent).toBe("github.com");
@@ -886,11 +912,11 @@ describe("options.js", () => {
     document.querySelector('[data-panel="panel-rules"]').click();
 
     await vi.waitFor(() => {
-      expect(document.querySelectorAll("#rules-list li")).toHaveLength(1);
+      expect(getRuleItems()).toHaveLength(1);
     });
 
-    // Click on the rule
-    document.querySelector("#rules-list li").click();
+    // Click on the rule (not the new-item)
+    getRuleItems()[0].click();
 
     await vi.waitFor(() => {
       expect(document.getElementById("rule-editor-form").style.display).toBe("block");
@@ -903,7 +929,7 @@ describe("options.js", () => {
     expect(document.getElementById("editor-title").textContent).toBe("Rule Detail");
   });
 
-  it("should add a new rule when add-rule button is clicked", async () => {
+  it("should add a new rule when + New Rule item is clicked", async () => {
     const store = makeStore();
     setupChromeMock(store);
 
@@ -921,7 +947,7 @@ describe("options.js", () => {
     await import("../src/options/options.js");
 
     await vi.waitFor(() => {
-      expect(document.querySelectorAll("#template-list li")).toHaveLength(1);
+      expect(getTemplateItems()).toHaveLength(1);
     });
 
     // Navigate to rules panel first
@@ -955,10 +981,10 @@ describe("options.js", () => {
     document.querySelector('[data-panel="panel-rules"]').click();
 
     await vi.waitFor(() => {
-      expect(document.querySelectorAll("#rules-list li")).toHaveLength(1);
+      expect(getRuleItems()).toHaveLength(1);
     });
 
-    document.querySelector("#rules-list li").click();
+    getRuleItems()[0].click();
 
     await vi.waitFor(() => {
       expect(document.getElementById("rule-editor-form").style.display).toBe("block");
@@ -997,10 +1023,10 @@ describe("options.js", () => {
     document.querySelector('[data-panel="panel-rules"]').click();
 
     await vi.waitFor(() => {
-      expect(document.querySelectorAll("#rules-list li")).toHaveLength(1);
+      expect(getRuleItems()).toHaveLength(1);
     });
 
-    document.querySelector("#rules-list li").click();
+    getRuleItems()[0].click();
 
     await vi.waitFor(() => {
       expect(document.getElementById("rule-editor-form").style.display).toBe("block");
@@ -1037,10 +1063,10 @@ describe("options.js", () => {
     document.querySelector('[data-panel="panel-rules"]').click();
 
     await vi.waitFor(() => {
-      expect(document.querySelectorAll("#rules-list li")).toHaveLength(1);
+      expect(getRuleItems()).toHaveLength(1);
     });
 
-    document.querySelector("#rules-list li").click();
+    getRuleItems()[0].click();
 
     await vi.waitFor(() => {
       expect(document.getElementById("rule-editor-form").style.display).toBe("block");
@@ -1072,10 +1098,10 @@ describe("options.js", () => {
     document.querySelector('[data-panel="panel-rules"]').click();
 
     await vi.waitFor(() => {
-      expect(document.querySelectorAll("#rules-list li")).toHaveLength(1);
+      expect(getRuleItems()).toHaveLength(1);
     });
 
-    document.querySelector("#rules-list li").click();
+    getRuleItems()[0].click();
 
     await vi.waitFor(() => {
       expect(document.getElementById("rule-editor-form").style.display).toBe("block");
@@ -1106,6 +1132,33 @@ describe("options.js", () => {
     expect(document.getElementById("editor-title").textContent).toBe("Settings");
   });
 
+  it("should highlight settings list item when clicked", async () => {
+    setupChromeMock(makeStore());
+    await import("../src/options/options.js");
+
+    await vi.waitFor(() => {
+      expect(document.getElementById("editor-form").style.display).toBe("block");
+    });
+
+    // Click settings panel
+    document.querySelector('[data-panel="panel-settings"]').click();
+
+    await vi.waitFor(() => {
+      expect(document.getElementById("settings-form").style.display).toBe("block");
+    });
+
+    // Theme item should be active by default
+    const themeItem = document.querySelector('[data-settings="theme"]');
+    expect(themeItem.classList.contains("active")).toBe(true);
+
+    // Click Quick Send item
+    const qsItem = document.querySelector('[data-settings="quicksend"]');
+    qsItem.click();
+
+    expect(qsItem.classList.contains("active")).toBe(true);
+    expect(themeItem.classList.contains("active")).toBe(false);
+  });
+
   it("should navigate back to webhooks from settings", async () => {
     setupChromeMock(makeStore());
     await import("../src/options/options.js");
@@ -1128,5 +1181,42 @@ describe("options.js", () => {
       expect(document.getElementById("editor-form").style.display).toBe("block");
     });
     expect(document.getElementById("settings-form").style.display).toBe("none");
+  });
+
+  it("should show + New Webhook as first item in template list", async () => {
+    setupChromeMock(makeStore());
+    await import("../src/options/options.js");
+
+    await vi.waitFor(() => {
+      expect(getTemplateItems()).toHaveLength(1);
+    });
+
+    const firstItem = document.querySelector("#template-list li");
+    expect(firstItem.classList.contains("new-item")).toBe(true);
+    expect(firstItem.id).toBe("new-template");
+  });
+
+  it("should show + New Rule as first item in rules list", async () => {
+    setupChromeMock(makeStore({
+      quickSendRules: [
+        { id: "r1", field: "url", operator: "contains", value: "test", templateId: "t1", enabled: true },
+      ],
+    }));
+    await import("../src/options/options.js");
+
+    await vi.waitFor(() => {
+      expect(document.getElementById("editor-form").style.display).toBe("block");
+    });
+
+    // Navigate to rules
+    document.querySelector('[data-panel="panel-rules"]').click();
+
+    await vi.waitFor(() => {
+      expect(getRuleItems()).toHaveLength(1);
+    });
+
+    const firstItem = document.querySelector("#rules-list li");
+    expect(firstItem.classList.contains("new-item")).toBe(true);
+    expect(firstItem.id).toBe("add-rule");
   });
 });
