@@ -12,7 +12,7 @@
   <img src="https://img.shields.io/badge/manifest-v3-blue" alt="Manifest V3">
   <img src="https://img.shields.io/badge/coverage-95%25-brightgreen" alt="Coverage 95%">
   <img src="https://img.shields.io/badge/tests-258_passing-brightgreen" alt="258 tests passing">
-  <img src="https://img.shields.io/badge/license-ISC-blue" alt="License ISC">
+  <img src="https://img.shields.io/badge/license-MIT-blue" alt="License MIT">
 </p>
 
 ---
@@ -171,4 +171,4 @@ This produces `dist/hooky-<version>.zip` containing only the runtime files neede
 
 ## 📄 License
 
-[ISC](LICENSE)
+[MIT](LICENSE)
