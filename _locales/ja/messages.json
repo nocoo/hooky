@@ -32,15 +32,6 @@
   "paramValuePlaceholder": {
     "message": "値（例: {{page.url}}）"
   },
-  "quickSend": {
-    "message": "クイック送信"
-  },
-  "quickSendDesc": {
-    "message": "ポップアップをスキップし、拡張機能アイコンをクリックするだけで Webhook を即座に送信します。"
-  },
-  "quickSendHint": {
-    "message": "有効にすると、拡張機能アイコンを右クリックして「オプション」を選択すると設定にアクセスできます。"
-  },
   "save": {
     "message": "保存"
   },
@@ -130,18 +121,6 @@
   },
   "themeDark": {
     "message": "ダーク"
-  },
-  "quickSendTarget": {
-    "message": "クイック送信のターゲットに設定"
-  },
-  "quickSendTargetActive": {
-    "message": "現在のクイック送信ターゲット"
-  },
-  "editorQuickSend": {
-    "message": "このテンプレートをクイック送信に使用"
-  },
-  "editorQuickSendDesc": {
-    "message": "有効にすると、拡張機能アイコンをクリックするだけでこのテンプレートの Webhook を即座に送信します。ポップアップは表示されません。"
   },
   "quickSendRules": {
     "message": "クイック送信ルール"

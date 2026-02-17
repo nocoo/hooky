@@ -32,15 +32,6 @@
   "paramValuePlaceholder": {
     "message": "Wert (z. B. {{page.url}})"
   },
-  "quickSend": {
-    "message": "Schnellversand"
-  },
-  "quickSendDesc": {
-    "message": "Überspringt das Popup und sendet den Webhook sofort beim Klick auf das Erweiterungssymbol."
-  },
-  "quickSendHint": {
-    "message": "Wenn aktiviert, klicken Sie mit der rechten Maustaste auf das Erweiterungssymbol und wählen Sie «Optionen», um die Einstellungen aufzurufen."
-  },
   "save": {
     "message": "Speichern"
   },
@@ -130,18 +121,6 @@
   },
   "themeDark": {
     "message": "Dunkel"
-  },
-  "quickSendTarget": {
-    "message": "Als Schnellversand-Ziel festlegen"
-  },
-  "quickSendTargetActive": {
-    "message": "Aktuelles Schnellversand-Ziel"
-  },
-  "editorQuickSend": {
-    "message": "Diese Vorlage für Schnellversand verwenden"
-  },
-  "editorQuickSendDesc": {
-    "message": "Wenn aktiviert, wird beim Klick auf das Erweiterungssymbol sofort der Webhook dieser Vorlage gesendet, ohne das Popup zu öffnen."
   },
   "quickSendRules": {
     "message": "Schnellversand-Regeln"

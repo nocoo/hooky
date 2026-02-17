@@ -32,15 +32,6 @@
   "paramValuePlaceholder": {
     "message": "Value (e.g. {{page.url}})"
   },
-  "quickSend": {
-    "message": "Quick Send"
-  },
-  "quickSendDesc": {
-    "message": "Skip the popup and send the webhook immediately when clicking the extension icon."
-  },
-  "quickSendHint": {
-    "message": "When enabled, right-click the extension icon and select \"Options\" to access settings."
-  },
   "save": {
     "message": "Save"
   },
@@ -130,18 +121,6 @@
   },
   "themeDark": {
     "message": "Dark"
-  },
-  "quickSendTarget": {
-    "message": "Set as Quick Send target"
-  },
-  "quickSendTargetActive": {
-    "message": "Current Quick Send target"
-  },
-  "editorQuickSend": {
-    "message": "Use this template for Quick Send"
-  },
-  "editorQuickSendDesc": {
-    "message": "When enabled, clicking the extension icon will immediately send this template's webhook without opening the popup."
   },
   "quickSendRules": {
     "message": "Quick Send Rules"

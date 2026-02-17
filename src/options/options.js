@@ -4,8 +4,6 @@ import {
   createTemplate,
   updateTemplate,
   deleteTemplate,
-  setQuickSend,
-  setQuickSendTemplateId,
   setTheme,
   migrateFromLegacy,
   addQuickSendRule,
@@ -17,8 +15,6 @@ import { applyTheme } from "../theme.js";
 // ─── DOM refs ───
 
 const templateListEl = document.getElementById("template-list");
-const quickSendToggle = document.getElementById("quick-send");
-const quickSendHint = document.getElementById("quick-send-hint");
 const themeSelect = document.getElementById("theme-select");
 
 const editorTitle = document.getElementById("editor-title");
@@ -28,7 +24,6 @@ const ruleEditorForm = document.getElementById("rule-editor-form");
 const rulesManager = document.getElementById("rules-manager");
 const settingsFormEl = document.getElementById("settings-form");
 const editorActions = document.getElementById("editor-actions");
-const editorQuickSendToggle = document.getElementById("editor-quick-send");
 const nameInput = document.getElementById("template-name");
 const urlInput = document.getElementById("webhook-url");
 const methodSelect = document.getElementById("http-method");
@@ -246,8 +241,6 @@ function showSettings(store) {
   editorTitle.textContent = t("settingsDetail");
 
   // Sync settings state
-  quickSendToggle.checked = store.quickSend;
-  updateQuickSendHint();
   const theme = store.theme || "system";
   themeSelect.value = theme;
   applyTheme(theme);
@@ -339,10 +332,6 @@ async function selectTemplate(id) {
       paramsList.appendChild(createParamRow(key, value));
     }
   }
-
-  // Sync editor Quick Send toggle
-  editorQuickSendToggle.checked =
-    store.quickSend && store.quickSendTemplateId === id;
 }
 
 // ─── Rules list (sidebar) ───
@@ -557,12 +546,6 @@ async function handleDelete() {
   }
 }
 
-// ─── Quick Send ───
-
-function updateQuickSendHint() {
-  quickSendHint.classList.toggle("visible", quickSendToggle.checked);
-}
-
 // ─── Panel helpers ───
 
 function openPanel(panelId) {
@@ -620,28 +603,6 @@ addParamBtn.addEventListener("click", () => {
 
 saveBtn.addEventListener("click", handleSave);
 deleteBtn.addEventListener("click", handleDelete);
-
-quickSendToggle.addEventListener("change", async () => {
-  await setQuickSend(quickSendToggle.checked);
-  updateQuickSendHint();
-  // Sync editor toggle
-  if (editorMode === "template" && currentTemplateId) {
-    const store = await loadStore();
-    editorQuickSendToggle.checked =
-      store.quickSend && store.quickSendTemplateId === currentTemplateId;
-  }
-});
-
-editorQuickSendToggle.addEventListener("change", async () => {
-  const checked = editorQuickSendToggle.checked;
-  await setQuickSend(checked);
-  if (checked) {
-    await setQuickSendTemplateId(currentTemplateId);
-  } else {
-    await setQuickSendTemplateId(null);
-  }
-  await renderAll();
-});
 
 themeSelect.addEventListener("change", async () => {
   const theme = themeSelect.value;

@@ -6,8 +6,6 @@
  *   hooky: {
  *     templates: [ { id, name, url, method, params } ],
  *     activeTemplateId: string | null,
- *     quickSend: boolean,
- *     quickSendTemplateId: string | null,
  *     quickSendRules: [ { id, field, operator, value, templateId, enabled } ],
  *     theme: "system" | "light" | "dark",
  *   }
@@ -22,11 +20,11 @@ function generateId() {
 
 /**
  * Load the full store from chrome.storage.local.
- * @returns {Promise<{templates: Array, activeTemplateId: string|null, quickSend: boolean, quickSendTemplateId: string|null}>}
+ * @returns {Promise<{templates: Array, activeTemplateId: string|null, quickSendRules: Array, theme: string}>}
  */
 export async function loadStore() {
   const data = await chrome.storage.local.get(STORE_KEY);
-  const store = data[STORE_KEY] || { templates: [], activeTemplateId: null, quickSend: false, quickSendTemplateId: null, quickSendRules: [], theme: "system" };
+  const store = data[STORE_KEY] || { templates: [], activeTemplateId: null, quickSendRules: [], theme: "system" };
   if (!store.quickSendRules) store.quickSendRules = [];
   return store;
 }
@@ -89,9 +87,6 @@ export async function deleteTemplate(id) {
   if (store.activeTemplateId === id) {
     store.activeTemplateId = store.templates.length > 0 ? store.templates[0].id : null;
   }
-  if (store.quickSendTemplateId === id) {
-    store.quickSendTemplateId = null;
-  }
   if (store.quickSendRules) {
     store.quickSendRules = store.quickSendRules.filter((r) => r.templateId !== id);
   }
@@ -128,49 +123,6 @@ export async function getActiveTemplate() {
 export async function setActiveTemplateId(id) {
   const store = await loadStore();
   store.activeTemplateId = id;
-  await saveStore(store);
-}
-
-/**
- * Get the quickSend global flag.
- *
- * @returns {Promise<boolean>}
- */
-export async function getQuickSend() {
-  const store = await loadStore();
-  return store.quickSend;
-}
-
-/**
- * Set the quickSend global flag.
- *
- * @param {boolean} enabled
- */
-export async function setQuickSend(enabled) {
-  const store = await loadStore();
-  store.quickSend = enabled;
-  await saveStore(store);
-}
-
-/**
- * Get the quickSendTemplateId — the designated template for quick send.
- *
- * @returns {Promise<string|null>}
- */
-export async function getQuickSendTemplateId() {
-  const store = await loadStore();
-  return store.quickSendTemplateId || null;
-}
-
-/**
- * Set the quickSendTemplateId — designate a template for quick send.
- * Persists independently of the quickSend toggle.
- *
- * @param {string|null} id
- */
-export async function setQuickSendTemplateId(id) {
-  const store = await loadStore();
-  store.quickSendTemplateId = id;
   await saveStore(store);
 }
 
@@ -285,6 +237,5 @@ export async function migrateFromLegacy() {
   };
   store.templates.push(tpl);
   store.activeTemplateId = tpl.id;
-  store.quickSend = legacy.quickSend || false;
   await saveStore(store);
 }

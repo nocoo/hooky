@@ -33,6 +33,7 @@ beforeEach(() => {
       setPopup: vi.fn(),
       setBadgeText: vi.fn(),
       setBadgeBackgroundColor: vi.fn(),
+      openPopup: vi.fn(),
     },
     contextMenus: {
       onClicked: {
@@ -76,34 +77,27 @@ describe("background.js", () => {
     expect(onMenuClickedListeners).toHaveLength(1);
   });
 
-  it("should load store and apply quick send mode on startup", async () => {
+  it("should build context menus on startup", async () => {
     chrome.storage.local.get.mockResolvedValue({
       hooky: {
-        quickSend: true,
         templates: [{ id: "t1", name: "Test", url: "https://x.com" }],
       },
     });
     await loadBackground();
 
     expect(chrome.storage.local.get).toHaveBeenCalledWith("hooky");
-    // applyQuickSendMode(true) should set popup to ""
-    expect(chrome.action.setPopup).toHaveBeenCalledWith({ popup: "" });
-    // buildContextMenus should be called with templates
     expect(chrome.contextMenus.removeAll).toHaveBeenCalled();
   });
 
-  it("should apply quick send mode=false when store has quickSend=false", async () => {
+  it("should not call setPopup on startup (popup always disabled)", async () => {
     chrome.storage.local.get.mockResolvedValue({
       hooky: {
-        quickSend: false,
-        templates: [],
+        templates: [{ id: "t1", name: "Test", url: "https://x.com" }],
       },
     });
     await loadBackground();
 
-    expect(chrome.action.setPopup).toHaveBeenCalledWith({
-      popup: "src/popup/popup.html",
-    });
+    expect(chrome.action.setPopup).not.toHaveBeenCalled();
   });
 
   it("should handle EXECUTE_WEBHOOK message", async () => {
@@ -154,37 +148,52 @@ describe("background.js", () => {
     expect(sendResponse).not.toHaveBeenCalled();
   });
 
-  it("should react to storage changes for hooky key", async () => {
+  it("should rebuild context menus on storage changes", async () => {
     chrome.storage.local.get.mockResolvedValue({});
     await loadBackground();
 
     // Reset mocks to track only the onChanged handler's calls
-    chrome.action.setPopup.mockClear();
     chrome.contextMenus.removeAll.mockClear();
 
     const listener = onChangedListeners[0];
     listener({
       hooky: {
         newValue: {
-          quickSend: true,
           templates: [{ id: "a", name: "A", url: "https://a.com" }],
         },
       },
     });
 
-    expect(chrome.action.setPopup).toHaveBeenCalledWith({ popup: "" });
     expect(chrome.contextMenus.removeAll).toHaveBeenCalled();
   });
 
-  it("should ignore storage changes without hooky key", async () => {
+  it("should not call setPopup on storage changes (popup always disabled)", async () => {
     chrome.storage.local.get.mockResolvedValue({});
     await loadBackground();
 
     chrome.action.setPopup.mockClear();
 
     const listener = onChangedListeners[0];
-    listener({ otherKey: { newValue: {} } });
+    listener({
+      hooky: {
+        newValue: {
+          templates: [{ id: "a", name: "A", url: "https://a.com" }],
+        },
+      },
+    });
 
     expect(chrome.action.setPopup).not.toHaveBeenCalled();
+  });
+
+  it("should ignore storage changes without hooky key", async () => {
+    chrome.storage.local.get.mockResolvedValue({});
+    await loadBackground();
+
+    chrome.contextMenus.removeAll.mockClear();
+
+    const listener = onChangedListeners[0];
+    listener({ otherKey: { newValue: {} } });
+
+    expect(chrome.contextMenus.removeAll).not.toHaveBeenCalled();
   });
 });

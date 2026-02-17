@@ -32,15 +32,6 @@
   "paramValuePlaceholder": {
     "message": "值（如 {{page.url}}）"
   },
-  "quickSend": {
-    "message": "快速傳送"
-  },
-  "quickSendDesc": {
-    "message": "跳過彈窗，點擊擴充功能圖示時立即傳送 Webhook。"
-  },
-  "quickSendHint": {
-    "message": "啟用後，右鍵點擊擴充功能圖示並選擇「選項」即可進入設定。"
-  },
   "save": {
     "message": "儲存"
   },
@@ -130,18 +121,6 @@
   },
   "themeDark": {
     "message": "深色"
-  },
-  "quickSendTarget": {
-    "message": "設為快速傳送目標"
-  },
-  "quickSendTargetActive": {
-    "message": "目前的快速傳送目標"
-  },
-  "editorQuickSend": {
-    "message": "將此範本用於快速傳送"
-  },
-  "editorQuickSendDesc": {
-    "message": "啟用後，點擊擴充功能圖示將立即傳送此範本的 Webhook，無需開啟彈窗。"
   },
   "quickSendRules": {
     "message": "快速傳送規則"

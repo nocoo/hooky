@@ -49,7 +49,6 @@
         <div class="sidebar-panel-content">
           <ul id="settings-list" class="sidebar-list">
             <li data-settings="theme"><span data-i18n="theme">Theme</span></li>
-            <li data-settings="quicksend"><span data-i18n="quickSend">Quick Send</span></li>
           </ul>
         </div>
       </div>
@@ -107,19 +106,6 @@
             </div>
 
             <div id="params-list"></div>
-          </section>
-
-          <section class="section editor-quick-send" id="editor-quick-send-section">
-            <div class="toggle-row">
-              <div class="toggle-info">
-                <label for="editor-quick-send"><span class="setting-icon">⚡</span> <span data-i18n="editorQuickSend">Use this template for Quick Send</span></label>
-                <p class="toggle-desc" data-i18n="editorQuickSendDesc">When enabled, clicking the extension icon will immediately send this template's webhook without opening the popup.</p>
-              </div>
-              <label class="toggle-switch">
-                <input type="checkbox" id="editor-quick-send">
-                <span class="toggle-slider"></span>
-              </label>
-            </div>
           </section>
         </div>
 
@@ -184,18 +170,6 @@
                 <option value="dark" data-i18n="themeDark">Dark</option>
               </select>
             </div>
-
-            <div class="toggle-row">
-              <div class="toggle-info">
-                <label for="quick-send"><span class="setting-icon">⚡</span> <span data-i18n="quickSend">Quick Send</span></label>
-                <p class="toggle-desc" data-i18n="quickSendDesc">Skip the popup and send the webhook immediately when clicking the extension icon.</p>
-              </div>
-              <label class="toggle-switch">
-                <input type="checkbox" id="quick-send">
-                <span class="toggle-slider"></span>
-              </label>
-            </div>
-            <p class="quick-send-hint" id="quick-send-hint" data-i18n="quickSendHint">When enabled, right-click the extension icon and select "Options" to access settings.</p>
           </div>
         </div>
       </div>

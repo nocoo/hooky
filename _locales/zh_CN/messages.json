@@ -32,15 +32,6 @@
   "paramValuePlaceholder": {
     "message": "\u503c\uff08\u5982 {{page.url}}\uff09"
   },
-  "quickSend": {
-    "message": "\u5feb\u901f\u53d1\u9001"
-  },
-  "quickSendDesc": {
-    "message": "\u8df3\u8fc7\u5f39\u7a97\uff0c\u70b9\u51fb\u6269\u5c55\u56fe\u6807\u65f6\u7acb\u5373\u53d1\u9001 Webhook\u3002"
-  },
-  "quickSendHint": {
-    "message": "\u5f00\u542f\u540e\uff0c\u53f3\u952e\u70b9\u51fb\u6269\u5c55\u56fe\u6807\u5e76\u9009\u62e9\u201c\u9009\u9879\u201d\u5373\u53ef\u8fdb\u5165\u8bbe\u7f6e\u3002"
-  },
   "save": {
     "message": "\u4fdd\u5b58"
   },
@@ -130,18 +121,6 @@
   },
   "themeDark": {
     "message": "\u6df1\u8272"
-  },
-  "quickSendTarget": {
-    "message": "\u8bbe\u4e3a\u5feb\u901f\u53d1\u9001\u76ee\u6807"
-  },
-  "quickSendTargetActive": {
-    "message": "当前快速发送目标"
-  },
-  "editorQuickSend": {
-    "message": "将此模板用于快速发送"
-  },
-  "editorQuickSendDesc": {
-    "message": "开启后，点击扩展图标将立即发送此模板的 Webhook，无需打开弹窗。"
   },
   "quickSendRules": {
     "message": "快速发送规则"

@@ -8,10 +8,6 @@ import {
   getTemplate,
   getActiveTemplate,
   setActiveTemplateId,
-  getQuickSend,
-  setQuickSend,
-  getQuickSendTemplateId,
-  setQuickSendTemplateId,
   getQuickSendRules,
   addQuickSendRule,
   updateQuickSendRule,
@@ -53,8 +49,6 @@ describe("store", () => {
       expect(store).toEqual({
         templates: [],
         activeTemplateId: null,
-        quickSend: false,
-        quickSendTemplateId: null,
         quickSendRules: [],
         theme: "system",
       });
@@ -66,7 +60,6 @@ describe("store", () => {
           { id: "t1", name: "Test", url: "https://x.com", method: "POST", params: [] },
         ],
         activeTemplateId: "t1",
-        quickSend: true,
       };
       await saveStore(data);
       const loaded = await loadStore();
@@ -208,26 +201,13 @@ describe("store", () => {
     });
   });
 
-  describe("quickSend", () => {
-    it("should default to false", async () => {
-      expect(await getQuickSend()).toBe(false);
-    });
-
-    it("should save and retrieve quickSend flag", async () => {
-      await setQuickSend(true);
-      expect(await getQuickSend()).toBe(true);
-      await setQuickSend(false);
-      expect(await getQuickSend()).toBe(false);
-    });
-  });
-
   describe("theme", () => {
     it("should default to system", async () => {
       expect(await getTheme()).toBe("system");
     });
 
     it("should fallback to system when theme is empty string", async () => {
-      storage.hooky = { templates: [], activeTemplateId: null, quickSend: false, quickSendTemplateId: null, theme: "" };
+      storage.hooky = { templates: [], activeTemplateId: null, theme: "" };
       expect(await getTheme()).toBe("system");
     });
 
@@ -238,52 +218,6 @@ describe("store", () => {
       expect(await getTheme()).toBe("light");
       await setTheme("system");
       expect(await getTheme()).toBe("system");
-    });
-  });
-
-  describe("quickSendTemplateId", () => {
-    it("should default to null", async () => {
-      expect(await getQuickSendTemplateId()).toBeNull();
-    });
-
-    it("should save and retrieve quickSendTemplateId", async () => {
-      const tpl = await createTemplate("Test");
-      await setQuickSendTemplateId(tpl.id);
-      expect(await getQuickSendTemplateId()).toBe(tpl.id);
-    });
-
-    it("should persist when quickSend toggled off and on", async () => {
-      const tpl = await createTemplate("Persist");
-      await setQuickSendTemplateId(tpl.id);
-      await setQuickSend(true);
-      await setQuickSend(false);
-      expect(await getQuickSendTemplateId()).toBe(tpl.id);
-      await setQuickSend(true);
-      expect(await getQuickSendTemplateId()).toBe(tpl.id);
-    });
-
-    it("should clear when designated template is deleted", async () => {
-      const t1 = await createTemplate("A");
-      await createTemplate("B");
-      await setQuickSendTemplateId(t1.id);
-      expect(await getQuickSendTemplateId()).toBe(t1.id);
-      await deleteTemplate(t1.id);
-      expect(await getQuickSendTemplateId()).toBeNull();
-    });
-
-    it("should not clear when a different template is deleted", async () => {
-      const t1 = await createTemplate("A");
-      const t2 = await createTemplate("B");
-      await setQuickSendTemplateId(t1.id);
-      await deleteTemplate(t2.id);
-      expect(await getQuickSendTemplateId()).toBe(t1.id);
-    });
-
-    it("should allow clearing by setting null", async () => {
-      const tpl = await createTemplate("Test");
-      await setQuickSendTemplateId(tpl.id);
-      await setQuickSendTemplateId(null);
-      expect(await getQuickSendTemplateId()).toBeNull();
     });
   });
 
@@ -381,7 +315,6 @@ describe("store", () => {
         url: "https://old.com/hook",
         method: "POST",
         params: [{ key: "x", value: "y" }],
-        quickSend: true,
       };
 
       await migrateFromLegacy();
@@ -392,7 +325,6 @@ describe("store", () => {
       expect(store.templates[0].method).toBe("POST");
       expect(store.templates[0].params).toEqual([{ key: "x", value: "y" }]);
       expect(store.activeTemplateId).toBe(store.templates[0].id);
-      expect(store.quickSend).toBe(true);
     });
 
     it("should not migrate if templates already exist", async () => {
@@ -401,7 +333,6 @@ describe("store", () => {
         url: "https://old.com/hook",
         method: "POST",
         params: [],
-        quickSend: false,
       };
       await migrateFromLegacy();
       const store = await loadStore();
@@ -428,7 +359,6 @@ describe("store", () => {
       expect(store.templates[0].url).toBe("");
       expect(store.templates[0].method).toBe("POST");
       expect(store.templates[0].params).toEqual([]);
-      expect(store.quickSend).toBe(false);
     });
   });
 });

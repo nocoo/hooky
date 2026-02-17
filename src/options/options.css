@@ -421,21 +421,6 @@ select {
 }
 
 /* ─── Editor actions ─── */
-.editor-quick-send {
-  background: #f8f6fa;
-  border: 1px solid #e6d8f0;
-  border-radius: 8px;
-  padding: 16px;
-}
-
-.editor-quick-send .toggle-row {
-  padding: 0;
-}
-
-.editor-quick-send .toggle-info label {
-  color: #555;
-}
-
 .editor-actions {
   display: flex;
   align-items: center;
@@ -622,23 +607,6 @@ select {
   min-width: 100px;
   padding: 6px 10px;
   font-size: 13px;
-}
-
-/* ─── Quick Send hint ─── */
-.quick-send-hint {
-  font-size: 11px;
-  color: #b08000;
-  background: #fff8e6;
-  border: 1px solid #f0e0a0;
-  border-radius: 6px;
-  padding: 6px 10px;
-  margin-top: 6px;
-  line-height: 1.4;
-  display: none;
-}
-
-.quick-send-hint.visible {
-  display: block;
 }
 
 /* ─── Dark Mode ─── */
@@ -864,21 +832,6 @@ html[data-theme="dark"] .toggle-desc {
 
 html[data-theme="dark"] .toggle-slider {
   background: #555;
-}
-
-html[data-theme="dark"] .quick-send-hint {
-  color: #d4a017;
-  background: #2a2500;
-  border-color: #4a4000;
-}
-
-html[data-theme="dark"] .editor-quick-send {
-  background: #1e1a22;
-  border-color: #3d2a55;
-}
-
-html[data-theme="dark"] .editor-quick-send .toggle-info label {
-  color: #ccc;
 }
 
 /* Explicit light: override system dark preference */
@@ -1113,20 +1066,5 @@ html[data-theme="light"] .layout {
 
   html:not([data-theme]) .toggle-slider {
     background: #555;
-  }
-
-  html:not([data-theme]) .quick-send-hint {
-    color: #d4a017;
-    background: #2a2500;
-    border-color: #4a4000;
-  }
-
-  html:not([data-theme]) .editor-quick-send {
-    background: #1e1a22;
-    border-color: #3d2a55;
-  }
-
-  html:not([data-theme]) .editor-quick-send .toggle-info label {
-    color: #ccc;
   }
 }

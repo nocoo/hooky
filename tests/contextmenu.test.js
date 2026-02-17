@@ -149,7 +149,7 @@ describe("handleContextMenuClick", () => {
       { id: "t1", name: "Slack", url: "https://slack.com/hook", method: "POST", params: [{ key: "url", value: "{{page.url}}" }] },
     ];
     storageMock.local.get.mockResolvedValue({
-      hooky: { templates, activeTemplateId: "t1", quickSend: false, theme: "system" },
+      hooky: { templates, activeTemplateId: "t1", theme: "system" },
     });
 
     getPageContext.mockResolvedValue({
@@ -174,7 +174,7 @@ describe("handleContextMenuClick", () => {
       { id: "t1", name: "Slack", url: "https://slack.com/hook", method: "POST", params: [] },
     ];
     storageMock.local.get.mockResolvedValue({
-      hooky: { templates, activeTemplateId: "t1", quickSend: false, theme: "system" },
+      hooky: { templates, activeTemplateId: "t1", theme: "system" },
     });
     fetchMock.mockResolvedValue({ ok: true, status: 200 });
 
@@ -192,7 +192,7 @@ describe("handleContextMenuClick", () => {
       { id: "t1", name: "Slack", url: "https://slack.com/hook", method: "POST", params: [] },
     ];
     storageMock.local.get.mockResolvedValue({
-      hooky: { templates, activeTemplateId: "t1", quickSend: false, theme: "system" },
+      hooky: { templates, activeTemplateId: "t1", theme: "system" },
     });
     fetchMock.mockResolvedValue({ ok: false, status: 500 });
 
@@ -207,7 +207,7 @@ describe("handleContextMenuClick", () => {
 
   it("should do nothing when template id not found in store", async () => {
     storageMock.local.get.mockResolvedValue({
-      hooky: { templates: [], activeTemplateId: null, quickSend: false, theme: "system" },
+      hooky: { templates: [], activeTemplateId: null, theme: "system" },
     });
 
     const info = { menuItemId: "hooky-nonexistent" };
@@ -223,7 +223,7 @@ describe("handleContextMenuClick", () => {
       { id: "t1", name: "Empty", url: "", method: "POST", params: [] },
     ];
     storageMock.local.get.mockResolvedValue({
-      hooky: { templates, activeTemplateId: "t1", quickSend: false, theme: "system" },
+      hooky: { templates, activeTemplateId: "t1", theme: "system" },
     });
 
     const info = { menuItemId: "hooky-t1" };
@@ -242,7 +242,7 @@ describe("handleContextMenuClick", () => {
       },
     ];
     storageMock.local.get.mockResolvedValue({
-      hooky: { templates, activeTemplateId: "t1", quickSend: false, theme: "system" },
+      hooky: { templates, activeTemplateId: "t1", theme: "system" },
     });
 
     getPageContext.mockResolvedValue({
@@ -266,7 +266,7 @@ describe("handleContextMenuClick", () => {
       { id: "t1", name: "API", url: "https://api.com/hook", method: "GET", params: [{ key: "q", value: "{{page.url}}" }] },
     ];
     storageMock.local.get.mockResolvedValue({
-      hooky: { templates, activeTemplateId: "t1", quickSend: false, theme: "system" },
+      hooky: { templates, activeTemplateId: "t1", theme: "system" },
     });
 
     getPageContext.mockResolvedValue({
@@ -292,7 +292,7 @@ describe("handleContextMenuClick", () => {
       { id: "t1", name: "Test", url: "https://hook.com", method: "POST", params: [{ key: "url", value: "{{page.url}}" }] },
     ];
     storageMock.local.get.mockResolvedValue({
-      hooky: { templates, activeTemplateId: "t1", quickSend: false, theme: "system" },
+      hooky: { templates, activeTemplateId: "t1", theme: "system" },
     });
 
     getPageContext.mockResolvedValue({
@@ -316,7 +316,7 @@ describe("handleContextMenuClick", () => {
       { id: "t1", name: "Test", url: "https://hook.com", method: "POST", params: [{ key: "title", value: "{{page.title}}" }] },
     ];
     storageMock.local.get.mockResolvedValue({
-      hooky: { templates, activeTemplateId: "t1", quickSend: false, theme: "system" },
+      hooky: { templates, activeTemplateId: "t1", theme: "system" },
     });
 
     getPageContext.mockResolvedValue({
@@ -353,7 +353,7 @@ describe("handleContextMenuClick", () => {
       { id: "t1", name: "Test", url: "https://hook.com", method: "POST", params: [{ key: "url", value: "{{page.url}}" }] },
     ];
     storageMock.local.get.mockResolvedValue({
-      hooky: { templates, activeTemplateId: "t1", quickSend: false, theme: "system" },
+      hooky: { templates, activeTemplateId: "t1", theme: "system" },
     });
 
     getPageContext.mockResolvedValue({

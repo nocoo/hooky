@@ -32,10 +32,9 @@ function setupOptionsDOM() {
             <svg class="sidebar-chevron" width="10" height="6" viewBox="0 0 10 6"></svg>
           </button>
           <div class="sidebar-panel-content">
-            <ul id="settings-list" class="sidebar-list">
-              <li data-settings="theme"><span>Theme</span></li>
-              <li data-settings="quicksend"><span>Quick Send</span></li>
-            </ul>
+          <ul id="settings-list" class="sidebar-list">
+            <li data-settings="theme"><span>Theme</span></li>
+          </ul>
           </div>
         </div>
       </aside>
@@ -57,7 +56,6 @@ function setupOptionsDOM() {
             </select>
             <div id="params-list"></div>
             <button id="add-param">+ Add</button>
-            <input type="checkbox" id="editor-quick-send">
           </div>
           <div class="editor-form" id="rule-editor-form" style="display: none;">
             <select id="rule-field">
@@ -86,8 +84,6 @@ function setupOptionsDOM() {
                 <option value="light">Light</option>
                 <option value="dark">Dark</option>
               </select>
-              <input type="checkbox" id="quick-send">
-              <p id="quick-send-hint"></p>
             </div>
           </div>
         </div>
@@ -122,7 +118,6 @@ function setupChromeMock(storeData = {}) {
           paramValuePlaceholder: "Value",
           settings: "Settings",
           theme: "Theme",
-          quickSend: "Quick Send",
           webhookDetail: "Webhook Detail",
           ruleDetail: "Rule Detail",
           quickSendRules: "Quick Send Rules",
@@ -157,8 +152,6 @@ function makeStore(overrides = {}) {
         },
       ],
       activeTemplateId: "t1",
-      quickSend: false,
-      quickSendTemplateId: null,
       quickSendRules: [],
       theme: "system",
       ...overrides,
@@ -366,35 +359,6 @@ describe("options.js", () => {
     });
   });
 
-  it("should toggle quick send hint visibility", async () => {
-    setupChromeMock(makeStore());
-    await import("../src/options/options.js");
-
-    await vi.waitFor(() => {
-      expect(document.getElementById("editor-form").style.display).toBe("block");
-    });
-
-    // Navigate to settings first
-    const settingsTrigger = document.querySelector('[data-panel="panel-settings"]');
-    settingsTrigger.click();
-
-    await vi.waitFor(() => {
-      expect(document.getElementById("settings-form").style.display).toBe("block");
-    });
-
-    const toggle = document.getElementById("quick-send");
-    const hint = document.getElementById("quick-send-hint");
-
-    expect(hint.classList.contains("visible")).toBe(false);
-
-    toggle.checked = true;
-    toggle.dispatchEvent(new Event("change"));
-
-    await vi.waitFor(() => {
-      expect(hint.classList.contains("visible")).toBe(true);
-    });
-  });
-
   it("should handle theme change", async () => {
     setupChromeMock(makeStore());
     await import("../src/options/options.js");
@@ -499,23 +463,6 @@ describe("options.js", () => {
     expect(document.getElementById("http-method").value).toBe("GET");
   });
 
-  it("should handle editor quick send toggle", async () => {
-    setupChromeMock(makeStore());
-    await import("../src/options/options.js");
-
-    await vi.waitFor(() => {
-      expect(document.getElementById("editor-form").style.display).toBe("block");
-    });
-
-    const editorToggle = document.getElementById("editor-quick-send");
-    editorToggle.checked = true;
-    editorToggle.dispatchEvent(new Event("change"));
-
-    await vi.waitFor(() => {
-      expect(chrome.storage.local.set).toHaveBeenCalled();
-    });
-  });
-
   it("should apply system theme by default", async () => {
     setupChromeMock(makeStore());
     await import("../src/options/options.js");
@@ -547,28 +494,6 @@ describe("options.js", () => {
     // migrateFromLegacy runs, which calls storage.local.get
     await vi.waitFor(() => {
       expect(chrome.storage.local.get).toHaveBeenCalled();
-    });
-  });
-
-  it("should uncheck editor quick send toggle", async () => {
-    setupChromeMock(makeStore({ quickSend: true, quickSendTemplateId: "t1" }));
-    await import("../src/options/options.js");
-
-    await vi.waitFor(() => {
-      expect(document.getElementById("editor-form").style.display).toBe("block");
-    });
-
-    const editorToggle = document.getElementById("editor-quick-send");
-    editorToggle.checked = false;
-    editorToggle.dispatchEvent(new Event("change"));
-
-    await vi.waitFor(() => {
-      // Should call setQuickSendTemplateId(null) — the else branch
-      const setCalls = chrome.storage.local.set.mock.calls;
-      const hasNullQuickSend = setCalls.some(
-        (call) => call[0].hooky?.quickSendTemplateId === null,
-      );
-      expect(hasNullQuickSend).toBe(true);
     });
   });
 
@@ -1090,16 +1015,9 @@ describe("options.js", () => {
       expect(document.getElementById("settings-form").style.display).toBe("block");
     });
 
-    // Theme item should be active by default
+    // Theme item should be active by default (it's the only settings item now)
     const themeItem = document.querySelector('[data-settings="theme"]');
     expect(themeItem.classList.contains("active")).toBe(true);
-
-    // Click Quick Send item
-    const qsItem = document.querySelector('[data-settings="quicksend"]');
-    qsItem.click();
-
-    expect(qsItem.classList.contains("active")).toBe(true);
-    expect(themeItem.classList.contains("active")).toBe(false);
   });
 
   it("should navigate back to webhooks from settings", async () => {
@@ -1163,30 +1081,6 @@ describe("options.js", () => {
     expect(firstItem.id).toBe("add-rule");
   });
 
-  it("should sync editor quick send toggle when quick send is changed in settings", async () => {
-    setupChromeMock(makeStore({ quickSend: false, quickSendTemplateId: "t1" }));
-    await import("../src/options/options.js");
-
-    await vi.waitFor(() => {
-      expect(document.getElementById("editor-form").style.display).toBe("block");
-    });
-
-    // Toggle quick send while template is selected (editorMode = "template")
-    const toggle = document.getElementById("quick-send");
-    toggle.checked = true;
-    toggle.dispatchEvent(new Event("change"));
-
-    await vi.waitFor(() => {
-      expect(chrome.storage.local.set).toHaveBeenCalled();
-    });
-
-    // Editor quick send toggle should reflect the new state
-    const editorToggle = document.getElementById("editor-quick-send");
-    await vi.waitFor(() => {
-      expect(editorToggle.checked).toBe(true);
-    });
-  });
-
   it("should preserve settings view when renderAll is called in settings mode", async () => {
     const store = makeStore();
     setupChromeMock(store);
@@ -1209,5 +1103,261 @@ describe("options.js", () => {
     expect(newTemplateItem).toBeTruthy();
     // Settings form should still be visible
     expect(document.getElementById("settings-form").style.display).toBe("block");
+  });
+
+  it("should show empty state when deleting last template in template mode", async () => {
+    const store = makeStore();
+    setupChromeMock(store);
+    global.confirm = vi.fn(() => true);
+
+    await import("../src/options/options.js");
+
+    await vi.waitFor(() => {
+      expect(document.getElementById("editor-form").style.display).toBe("block");
+    });
+
+    // After delete, no templates remain — renderAll in template mode → showEditorEmpty
+    chrome.storage.local.get.mockResolvedValue(makeStore({ templates: [], activeTemplateId: null }));
+    document.getElementById("delete-template").click();
+
+    await vi.waitFor(() => {
+      expect(document.getElementById("editor-empty").style.display).toBe("flex");
+    });
+
+    delete global.confirm;
+  });
+
+  it("should select current rule when renderAll is called in rule mode", async () => {
+    const storeWithRule = makeStore({
+      quickSendRules: [
+        { id: "r1", field: "url", operator: "contains", value: "github.com", templateId: "t1", enabled: true },
+        { id: "r2", field: "title", operator: "equals", value: "Home", templateId: "t1", enabled: true },
+      ],
+    });
+    setupChromeMock(storeWithRule);
+    await import("../src/options/options.js");
+
+    await vi.waitFor(() => {
+      expect(document.getElementById("editor-form").style.display).toBe("block");
+    });
+
+    // Navigate to rules, select a rule
+    document.querySelector('[data-panel="panel-rules"]').click();
+
+    await vi.waitFor(() => {
+      expect(getRuleItems()).toHaveLength(2);
+    });
+
+    // Select second rule
+    getRuleItems()[1].click();
+
+    await vi.waitFor(() => {
+      expect(document.getElementById("rule-editor-form").style.display).toBe("block");
+      expect(document.getElementById("rule-value").value).toBe("Home");
+    });
+
+    // Save triggers renderAll in rule mode with currentRuleId = "r2"
+    document.getElementById("save").click();
+
+    await vi.waitFor(() => {
+      // Wait for save to fully complete (status flash is the last step)
+      const status = document.getElementById("status");
+      expect(status.classList.contains("visible")).toBe(true);
+      // After save+renderAll, rule editor should still be visible with same rule
+      expect(document.getElementById("rule-editor-form").style.display).toBe("block");
+      expect(document.getElementById("rule-value").value).toBe("Home");
+    });
+  });
+
+  it("should fall back to first rule when current rule is deleted and others remain", async () => {
+    const storeWithRules = makeStore({
+      quickSendRules: [
+        { id: "r1", field: "url", operator: "contains", value: "github.com", templateId: "t1", enabled: true },
+        { id: "r2", field: "title", operator: "equals", value: "Home", templateId: "t1", enabled: true },
+      ],
+    });
+    setupChromeMock(storeWithRules);
+    await import("../src/options/options.js");
+
+    await vi.waitFor(() => {
+      expect(document.getElementById("editor-form").style.display).toBe("block");
+    });
+
+    // Navigate to rules, select second rule
+    document.querySelector('[data-panel="panel-rules"]').click();
+
+    await vi.waitFor(() => {
+      expect(getRuleItems()).toHaveLength(2);
+    });
+
+    getRuleItems()[1].click();
+
+    await vi.waitFor(() => {
+      expect(document.getElementById("rule-editor-form").style.display).toBe("block");
+    });
+
+    // Delete second rule — r1 remains, should fall back to r1
+    chrome.storage.local.get.mockResolvedValue(makeStore({
+      quickSendRules: [
+        { id: "r1", field: "url", operator: "contains", value: "github.com", templateId: "t1", enabled: true },
+      ],
+    }));
+
+    document.getElementById("delete-template").click();
+
+    // After delete with editorMode="rules-list", should show rules manager
+    await vi.waitFor(() => {
+      expect(document.getElementById("rules-manager").style.display).toBe("block");
+    });
+  });
+
+  it("should show rules manager when last rule is deleted in rule mode", async () => {
+    const storeWithRule = makeStore({
+      quickSendRules: [
+        { id: "r1", field: "url", operator: "contains", value: "test", templateId: "t1", enabled: true },
+      ],
+    });
+    setupChromeMock(storeWithRule);
+    await import("../src/options/options.js");
+
+    await vi.waitFor(() => {
+      expect(document.getElementById("editor-form").style.display).toBe("block");
+    });
+
+    // Navigate to rules, select the rule
+    document.querySelector('[data-panel="panel-rules"]').click();
+
+    await vi.waitFor(() => {
+      expect(getRuleItems()).toHaveLength(1);
+    });
+
+    getRuleItems()[0].click();
+
+    await vi.waitFor(() => {
+      expect(document.getElementById("rule-editor-form").style.display).toBe("block");
+    });
+
+    // Delete the only rule — should go to rules-list mode and show rules manager
+    chrome.storage.local.get.mockResolvedValue(makeStore({ quickSendRules: [] }));
+
+    document.getElementById("delete-template").click();
+
+    await vi.waitFor(() => {
+      expect(document.getElementById("rules-manager").style.display).toBe("block");
+      expect(document.getElementById("no-rules").classList.contains("hidden")).toBe(false);
+    });
+  });
+
+  it("should handle new rule when no templates exist", async () => {
+    setupChromeMock(makeStore({ templates: [] }));
+    await import("../src/options/options.js");
+
+    await vi.waitFor(() => {
+      expect(document.getElementById("editor-empty").style.display).toBe("flex");
+    });
+
+    // Navigate to rules panel
+    document.querySelector('[data-panel="panel-rules"]').click();
+
+    await vi.waitFor(() => {
+      expect(document.getElementById("rules-manager").style.display).toBe("block");
+    });
+
+    // Click add rule — should be no-op since no templates
+    document.getElementById("add-rule").click();
+
+    // No set calls should be made
+    expect(chrome.storage.local.set).not.toHaveBeenCalled();
+  });
+
+  it("should handle getOperatorLabel for unknown operator", async () => {
+    setupChromeMock(makeStore({
+      quickSendRules: [
+        { id: "r1", field: "url", operator: "unknownOp", value: "test", templateId: "t1", enabled: true },
+      ],
+    }));
+    await import("../src/options/options.js");
+
+    await vi.waitFor(() => {
+      expect(document.getElementById("editor-form").style.display).toBe("block");
+    });
+
+    // Navigate to rules
+    document.querySelector('[data-panel="panel-rules"]').click();
+
+    await vi.waitFor(() => {
+      const items = getRuleItems();
+      expect(items).toHaveLength(1);
+      // Unknown operator should fall back to raw operator name
+      expect(items[0].querySelector(".rule-operator").textContent).toContain("unknownOp");
+    });
+  });
+
+  it("should handle rule with empty value in sidebar", async () => {
+    setupChromeMock(makeStore({
+      quickSendRules: [
+        { id: "r1", field: "url", operator: "contains", value: "", templateId: "t1", enabled: true },
+      ],
+    }));
+    await import("../src/options/options.js");
+
+    await vi.waitFor(() => {
+      expect(document.getElementById("editor-form").style.display).toBe("block");
+    });
+
+    // Navigate to rules
+    document.querySelector('[data-panel="panel-rules"]').click();
+
+    await vi.waitFor(() => {
+      const items = getRuleItems();
+      expect(items).toHaveLength(1);
+      expect(items[0].querySelector(".rule-value").textContent).toBe("...");
+    });
+  });
+
+  it("should not save when no template or rule is selected", async () => {
+    setupChromeMock(makeStore({ templates: [] }));
+    await import("../src/options/options.js");
+
+    await vi.waitFor(() => {
+      expect(document.getElementById("editor-empty").style.display).toBe("flex");
+    });
+
+    // Click save when nothing is selected — should be no-op
+    document.getElementById("save").click();
+
+    expect(chrome.storage.local.set).not.toHaveBeenCalled();
+  });
+
+  it("should use default template name in rule template dropdown for unnamed template", async () => {
+    setupChromeMock(makeStore({
+      templates: [
+        { id: "t1", name: "", url: "https://a.com", method: "POST", params: [] },
+      ],
+      quickSendRules: [
+        { id: "r1", field: "url", operator: "contains", value: "test", templateId: "t1", enabled: true },
+      ],
+    }));
+    await import("../src/options/options.js");
+
+    await vi.waitFor(() => {
+      expect(document.getElementById("editor-form").style.display).toBe("block");
+    });
+
+    // Navigate to rules, select the rule
+    document.querySelector('[data-panel="panel-rules"]').click();
+
+    await vi.waitFor(() => {
+      expect(getRuleItems()).toHaveLength(1);
+    });
+
+    getRuleItems()[0].click();
+
+    await vi.waitFor(() => {
+      expect(document.getElementById("rule-editor-form").style.display).toBe("block");
+    });
+
+    const options = document.querySelectorAll("#rule-template option");
+    expect(options[0].textContent).toBe("Untitled");
   });
 });

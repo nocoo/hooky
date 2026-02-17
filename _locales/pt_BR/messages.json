@@ -32,15 +32,6 @@
   "paramValuePlaceholder": {
     "message": "Valor (ex. {{page.url}})"
   },
-  "quickSend": {
-    "message": "Envio rápido"
-  },
-  "quickSendDesc": {
-    "message": "Pule o popup e envie o webhook imediatamente ao clicar no ícone da extensão."
-  },
-  "quickSendHint": {
-    "message": "Quando ativado, clique com o botão direito no ícone da extensão e selecione \"Opções\" para acessar as configurações."
-  },
   "save": {
     "message": "Salvar"
   },
@@ -130,18 +121,6 @@
   },
   "themeDark": {
     "message": "Escuro"
-  },
-  "quickSendTarget": {
-    "message": "Definir como destino de envio rápido"
-  },
-  "quickSendTargetActive": {
-    "message": "Destino de envio rápido atual"
-  },
-  "editorQuickSend": {
-    "message": "Usar este modelo para envio rápido"
-  },
-  "editorQuickSendDesc": {
-    "message": "Quando ativado, clicar no ícone da extensão enviará imediatamente o webhook deste modelo sem abrir o popup."
   },
   "quickSendRules": {
     "message": "Regras de envio rápido"
