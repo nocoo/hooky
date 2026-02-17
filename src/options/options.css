@@ -74,7 +74,7 @@ body {
 .sidebar-nav-btn {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   width: 100%;
   padding: 0 16px;
   height: 40px;
@@ -110,23 +110,36 @@ body {
   transition: transform 0.25s ease;
 }
 
+.sidebar-icon {
+  flex-shrink: 0;
+  opacity: 0.6;
+}
+
+.sidebar-panel.active > .sidebar-nav-btn .sidebar-icon {
+  opacity: 1;
+}
+
 .sidebar-panel.active > .sidebar-nav-btn .sidebar-chevron {
   transform: rotate(180deg);
   color: rgba(255, 255, 255, 0.7);
 }
 
 .sidebar-panel-content {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.25s ease;
+}
+
+.sidebar-panel-content > * {
   overflow: hidden;
-  max-height: 0;
-  opacity: 0;
-  transition: max-height 0.3s ease, opacity 0.25s ease;
 }
 
 .sidebar-panel.active > .sidebar-panel-content {
-  max-height: 2000px;
-  opacity: 1;
+  grid-template-rows: 1fr;
+}
+
+.sidebar-panel.active > .sidebar-panel-content > * {
   overflow-y: auto;
-  flex: 1;
 }
 
 /* ─── L2 items: shared base for template-list, sidebar-list ─── */
@@ -163,10 +176,11 @@ body {
   border-left-color: #9666b7;
 }
 
-/* New-webhook action item */
+/* New-webhook action item (icon only) */
 .template-list li.new-item {
   color: #9666b7;
   font-weight: 500;
+  justify-content: center;
 }
 
 .template-list li.new-item:hover {
@@ -174,8 +188,7 @@ body {
 }
 
 .template-list li.new-item .new-icon {
-  margin-right: 4px;
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 600;
   line-height: 1;
 }
@@ -186,34 +199,6 @@ body {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-}
-
-.template-list li .btn-lightning {
-  flex-shrink: 0;
-  background: none;
-  border: none;
-  font-size: 14px;
-  cursor: pointer;
-  padding: 2px 4px;
-  border-radius: 4px;
-  opacity: 0;
-  color: #ccc;
-  transition: opacity 0.15s, color 0.15s, background 0.15s;
-  line-height: 1;
-}
-
-.template-list li:hover .btn-lightning,
-.template-list li .btn-lightning.active {
-  opacity: 1;
-}
-
-.template-list li .btn-lightning:hover {
-  background: rgba(0, 0, 0, 0.05);
-  color: #e6a817;
-}
-
-.template-list li .btn-lightning.active {
-  color: #e6a817;
 }
 
 /* ─── Sidebar rules list ─── */
@@ -238,10 +223,11 @@ body {
   color: #555;
 }
 
-/* New-rule action item */
+/* New-rule action item (icon only) */
 .sidebar-list li.new-item {
   color: #9666b7;
   font-weight: 500;
+  justify-content: center;
 }
 
 .sidebar-list li.new-item:hover {
@@ -249,8 +235,7 @@ body {
 }
 
 .sidebar-list li.new-item .new-icon {
-  margin-right: 4px;
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 600;
   line-height: 1;
 }
@@ -763,19 +748,6 @@ html[data-theme="dark"] .sidebar-list li.new-item:hover {
   background: #2a1e35;
 }
 
-html[data-theme="dark"] .template-list li .btn-lightning {
-  color: #555;
-}
-
-html[data-theme="dark"] .template-list li .btn-lightning:hover {
-  background: rgba(255, 255, 255, 0.05);
-  color: #e6a817;
-}
-
-html[data-theme="dark"] .template-list li .btn-lightning.active {
-  color: #e6a817;
-}
-
 html[data-theme="dark"] .sidebar-list li .rule-summary .rule-field {
   color: #be94dc;
 }
@@ -1023,19 +995,6 @@ html[data-theme="light"] .layout {
   html:not([data-theme]) .template-list li.new-item:hover,
   html:not([data-theme]) .sidebar-list li.new-item:hover {
     background: #2a1e35;
-  }
-
-  html:not([data-theme]) .template-list li .btn-lightning {
-    color: #555;
-  }
-
-  html:not([data-theme]) .template-list li .btn-lightning:hover {
-    background: rgba(255, 255, 255, 0.05);
-    color: #e6a817;
-  }
-
-  html:not([data-theme]) .template-list li .btn-lightning.active {
-    color: #e6a817;
   }
 
   html:not([data-theme]) .sidebar-list li .rule-summary .rule-field {

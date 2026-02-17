@@ -264,23 +264,20 @@ function selectSettingsItem(itemKey) {
 
 // ─── Template list ───
 
-function renderTemplateList(templates, activeId, quickSendId) {
+function renderTemplateList(templates, activeId) {
   templateListEl.innerHTML = "";
 
-  // "+ New Webhook" action item (always first)
+  // "+ New Webhook" action item (always first, icon only)
   const newLi = document.createElement("li");
   newLi.className = "new-item";
   newLi.id = "new-template";
+  newLi.title = t("newWebhook");
 
   const newIcon = document.createElement("span");
   newIcon.className = "new-icon";
   newIcon.textContent = "+";
 
-  const newText = document.createElement("span");
-  newText.textContent = t("newWebhook");
-
   newLi.appendChild(newIcon);
-  newLi.appendChild(newText);
   newLi.addEventListener("click", handleNewTemplate);
   templateListEl.appendChild(newLi);
 
@@ -292,25 +289,9 @@ function renderTemplateList(templates, activeId, quickSendId) {
     const nameSpan = document.createElement("span");
     nameSpan.className = "template-name";
     nameSpan.textContent = tpl.name || t("defaultTemplateName");
-    nameSpan.addEventListener("click", () => selectTemplate(tpl.id));
-
-    const lightningBtn = document.createElement("button");
-    lightningBtn.type = "button";
-    lightningBtn.className = "btn-lightning";
-    if (tpl.id === quickSendId) lightningBtn.classList.add("active");
-    lightningBtn.textContent = "\u26a1";
-    lightningBtn.title = tpl.id === quickSendId
-      ? t("quickSendTargetActive")
-      : t("quickSendTarget");
-    lightningBtn.addEventListener("click", async (e) => {
-      e.stopPropagation();
-      const newId = tpl.id === quickSendId ? null : tpl.id;
-      await setQuickSendTemplateId(newId);
-      await renderAll();
-    });
 
     li.appendChild(nameSpan);
-    li.appendChild(lightningBtn);
+    li.addEventListener("click", () => selectTemplate(tpl.id));
     templateListEl.appendChild(li);
   }
 }
@@ -366,20 +347,17 @@ async function selectTemplate(id) {
 function renderRulesList(rules) {
   rulesListEl.innerHTML = "";
 
-  // "+ New Rule" action item (always first)
+  // "+ New Rule" action item (always first, icon only)
   const newLi = document.createElement("li");
   newLi.className = "new-item";
   newLi.id = "add-rule";
+  newLi.title = t("addRule");
 
   const newIcon = document.createElement("span");
   newIcon.className = "new-icon";
   newIcon.textContent = "+";
 
-  const newText = document.createElement("span");
-  newText.textContent = t("addRule");
-
   newLi.appendChild(newIcon);
-  newLi.appendChild(newText);
   newLi.addEventListener("click", handleNewRule);
   rulesListEl.appendChild(newLi);
 
@@ -588,7 +566,7 @@ function openPanel(panelId) {
 
 async function renderAll() {
   const store = await loadStore();
-  renderTemplateList(store.templates, currentTemplateId, store.quickSendTemplateId);
+  renderTemplateList(store.templates, currentTemplateId);
 
   if (editorMode === "template") {
     if (currentTemplateId && store.templates.find((t) => t.id === currentTemplateId)) {

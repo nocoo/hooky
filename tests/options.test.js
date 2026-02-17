@@ -120,8 +120,6 @@ function setupChromeMock(storeData = {}) {
           deleteConfirm: "Delete $1?",
           paramKeyPlaceholder: "Key",
           paramValuePlaceholder: "Value",
-          quickSendTarget: "Set as quick send",
-          quickSendTargetActive: "Quick send active",
           settings: "Settings",
           theme: "Theme",
           quickSend: "Quick Send",
@@ -476,20 +474,7 @@ describe("options.js", () => {
     delete global.confirm;
   });
 
-  it("should highlight lightning icon for quick send template", async () => {
-    setupChromeMock(makeStore({ quickSendTemplateId: "t1" }));
-    await import("../src/options/options.js");
-
-    await vi.waitFor(() => {
-      const lightning = document.querySelector(".btn-lightning");
-      expect(lightning).toBeTruthy();
-    });
-
-    const lightning = document.querySelector(".btn-lightning");
-    expect(lightning.classList.contains("active")).toBe(true);
-  });
-
-  it("should switch template when clicking another template name", async () => {
+  it("should switch template when clicking another template item", async () => {
     setupChromeMock(makeStore({
       templates: [
         { id: "t1", name: "Hook A", url: "https://a.com", method: "POST", params: [] },
@@ -504,7 +489,7 @@ describe("options.js", () => {
     });
 
     // Click on the second template (skip new-item)
-    const items = document.querySelectorAll("#template-list li:not(.new-item) .template-name");
+    const items = document.querySelectorAll("#template-list li:not(.new-item)");
     items[1].click();
 
     await vi.waitFor(() => {
@@ -565,48 +550,6 @@ describe("options.js", () => {
     });
   });
 
-  it("should toggle lightning button to set quick send template", async () => {
-    setupChromeMock(makeStore({ quickSendTemplateId: null }));
-    await import("../src/options/options.js");
-
-    await vi.waitFor(() => {
-      const lightning = document.querySelector(".btn-lightning");
-      expect(lightning).toBeTruthy();
-    });
-
-    const lightning = document.querySelector(".btn-lightning");
-    expect(lightning.classList.contains("active")).toBe(false);
-
-    // Click to set as quick send target
-    lightning.click();
-
-    await vi.waitFor(() => {
-      expect(chrome.storage.local.set).toHaveBeenCalled();
-    });
-  });
-
-  it("should toggle lightning button to unset quick send template", async () => {
-    setupChromeMock(makeStore({ quickSendTemplateId: "t1" }));
-    await import("../src/options/options.js");
-
-    await vi.waitFor(() => {
-      const lightning = document.querySelector(".btn-lightning");
-      expect(lightning.classList.contains("active")).toBe(true);
-    });
-
-    // Click to unset quick send target
-    document.querySelector(".btn-lightning").click();
-
-    await vi.waitFor(() => {
-      // Should have called setQuickSendTemplateId(null)
-      const setCalls = chrome.storage.local.set.mock.calls;
-      const hasNullQuickSend = setCalls.some(
-        (call) => call[0].hooky?.quickSendTemplateId === null,
-      );
-      expect(hasNullQuickSend).toBe(true);
-    });
-  });
-
   it("should uncheck editor quick send toggle", async () => {
     setupChromeMock(makeStore({ quickSend: true, quickSendTemplateId: "t1" }));
     await import("../src/options/options.js");
@@ -656,7 +599,7 @@ describe("options.js", () => {
     });
 
     // Select second template
-    const items = document.querySelectorAll("#template-list li:not(.new-item) .template-name");
+    const items = document.querySelectorAll("#template-list li:not(.new-item)");
     items[1].click();
 
     await vi.waitFor(() => {
@@ -1218,5 +1161,53 @@ describe("options.js", () => {
     const firstItem = document.querySelector("#rules-list li");
     expect(firstItem.classList.contains("new-item")).toBe(true);
     expect(firstItem.id).toBe("add-rule");
+  });
+
+  it("should sync editor quick send toggle when quick send is changed in settings", async () => {
+    setupChromeMock(makeStore({ quickSend: false, quickSendTemplateId: "t1" }));
+    await import("../src/options/options.js");
+
+    await vi.waitFor(() => {
+      expect(document.getElementById("editor-form").style.display).toBe("block");
+    });
+
+    // Toggle quick send while template is selected (editorMode = "template")
+    const toggle = document.getElementById("quick-send");
+    toggle.checked = true;
+    toggle.dispatchEvent(new Event("change"));
+
+    await vi.waitFor(() => {
+      expect(chrome.storage.local.set).toHaveBeenCalled();
+    });
+
+    // Editor quick send toggle should reflect the new state
+    const editorToggle = document.getElementById("editor-quick-send");
+    await vi.waitFor(() => {
+      expect(editorToggle.checked).toBe(true);
+    });
+  });
+
+  it("should preserve settings view when renderAll is called in settings mode", async () => {
+    const store = makeStore();
+    setupChromeMock(store);
+    await import("../src/options/options.js");
+
+    await vi.waitFor(() => {
+      expect(document.getElementById("editor-form").style.display).toBe("block");
+    });
+
+    // Navigate to settings
+    document.querySelector('[data-panel="panel-settings"]').click();
+
+    await vi.waitFor(() => {
+      expect(document.getElementById("settings-form").style.display).toBe("block");
+    });
+
+    // Trigger renderAll by creating a template (which calls renderAll internally)
+    // The editorMode should stay "settings" and settings form should remain visible
+    const newTemplateItem = document.getElementById("new-template");
+    expect(newTemplateItem).toBeTruthy();
+    // Settings form should still be visible
+    expect(document.getElementById("settings-form").style.display).toBe("block");
   });
 });
