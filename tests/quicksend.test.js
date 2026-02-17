@@ -58,6 +58,7 @@ describe("handleQuickSend", () => {
         setPopup: vi.fn(),
         setBadgeText: vi.fn(),
         setBadgeBackgroundColor: vi.fn(),
+        openPopup: vi.fn(),
       },
     };
 
@@ -359,5 +360,259 @@ describe("handleQuickSend", () => {
     await handleQuickSend(tab);
 
     expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  describe("quick send rules", () => {
+    it("should use matching rule template instead of quickSendTemplateId", async () => {
+      const store = {
+        templates: [
+          { id: "t1", name: "Discord", url: "https://discord.com/hook", method: "POST", params: [] },
+          { id: "t2", name: "Slack", url: "https://slack.com/hook", method: "POST", params: [] },
+        ],
+        quickSendTemplateId: "t2",
+        quickSendRules: [
+          { id: "r1", field: "url", operator: "contains", value: "github.com", templateId: "t1", enabled: true },
+        ],
+      };
+      storageMock.local.get.mockResolvedValue({ hooky: store });
+
+      getPageContext.mockResolvedValue({
+        page: { url: "https://github.com/nocoo/hooky", title: "Hooky", selection: "", meta: {} },
+      });
+
+      const tab = { id: 1, url: "https://github.com/nocoo/hooky", title: "Hooky" };
+      await handleQuickSend(tab);
+
+      expect(fetchMock).toHaveBeenCalledWith("https://discord.com/hook", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: "{}",
+      });
+    });
+
+    it("should fall back to quickSendTemplateId when no rules match", async () => {
+      const store = {
+        templates: [
+          { id: "t1", name: "Discord", url: "https://discord.com/hook", method: "POST", params: [] },
+          { id: "t2", name: "Slack", url: "https://slack.com/hook", method: "POST", params: [] },
+        ],
+        quickSendTemplateId: "t2",
+        quickSendRules: [
+          { id: "r1", field: "url", operator: "contains", value: "github.com", templateId: "t1", enabled: true },
+        ],
+      };
+      storageMock.local.get.mockResolvedValue({ hooky: store });
+
+      getPageContext.mockResolvedValue({
+        page: { url: "https://example.com", title: "Example", selection: "", meta: {} },
+      });
+
+      const tab = { id: 1, url: "https://example.com", title: "Example" };
+      await handleQuickSend(tab);
+
+      expect(fetchMock).toHaveBeenCalledWith("https://slack.com/hook", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: "{}",
+      });
+    });
+
+    it("should open popup when no rules match and no fallback template", async () => {
+      const store = {
+        templates: [
+          { id: "t1", name: "Discord", url: "https://discord.com/hook", method: "POST", params: [] },
+        ],
+        quickSendTemplateId: null,
+        quickSendRules: [
+          { id: "r1", field: "url", operator: "contains", value: "github.com", templateId: "t1", enabled: true },
+        ],
+      };
+      storageMock.local.get.mockResolvedValue({ hooky: store });
+
+      getPageContext.mockResolvedValue({
+        page: { url: "https://example.com", title: "Example", selection: "", meta: {} },
+      });
+
+      const tab = { id: 1, url: "https://example.com", title: "Example" };
+      await handleQuickSend(tab);
+
+      expect(fetchMock).not.toHaveBeenCalled();
+      expect(chrome.action.setPopup).toHaveBeenCalledWith({ popup: "src/popup/popup.html" });
+      expect(chrome.action.openPopup).toHaveBeenCalled();
+    });
+
+    it("should skip disabled rules and fall back", async () => {
+      const store = {
+        templates: [
+          { id: "t1", name: "Discord", url: "https://discord.com/hook", method: "POST", params: [] },
+          { id: "t2", name: "Slack", url: "https://slack.com/hook", method: "POST", params: [] },
+        ],
+        quickSendTemplateId: "t2",
+        quickSendRules: [
+          { id: "r1", field: "url", operator: "contains", value: "github.com", templateId: "t1", enabled: false },
+        ],
+      };
+      storageMock.local.get.mockResolvedValue({ hooky: store });
+
+      getPageContext.mockResolvedValue({
+        page: { url: "https://github.com/nocoo/hooky", title: "Hooky", selection: "", meta: {} },
+      });
+
+      const tab = { id: 1, url: "https://github.com/nocoo/hooky", title: "Hooky" };
+      await handleQuickSend(tab);
+
+      // Rule is disabled, so falls back to quickSendTemplateId (t2 = Slack)
+      expect(fetchMock).toHaveBeenCalledWith("https://slack.com/hook", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: "{}",
+      });
+    });
+
+    it("should match by title field", async () => {
+      const store = {
+        templates: [
+          { id: "t1", name: "Discord", url: "https://discord.com/hook", method: "POST", params: [] },
+        ],
+        quickSendTemplateId: null,
+        quickSendRules: [
+          { id: "r1", field: "title", operator: "contains", value: "Pull Request", templateId: "t1", enabled: true },
+        ],
+      };
+      storageMock.local.get.mockResolvedValue({ hooky: store });
+
+      getPageContext.mockResolvedValue({
+        page: { url: "https://github.com/x/y/pull/1", title: "My Pull Request #1", selection: "", meta: {} },
+      });
+
+      const tab = { id: 1, url: "https://github.com/x/y/pull/1", title: "My Pull Request #1" };
+      await handleQuickSend(tab);
+
+      expect(fetchMock).toHaveBeenCalledWith("https://discord.com/hook", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: "{}",
+      });
+    });
+
+    it("should use first matching rule when multiple rules match", async () => {
+      const store = {
+        templates: [
+          { id: "t1", name: "Discord", url: "https://discord.com/hook", method: "POST", params: [] },
+          { id: "t2", name: "Slack", url: "https://slack.com/hook", method: "POST", params: [] },
+        ],
+        quickSendTemplateId: null,
+        quickSendRules: [
+          { id: "r1", field: "url", operator: "contains", value: "github.com", templateId: "t1", enabled: true },
+          { id: "r2", field: "url", operator: "contains", value: "github", templateId: "t2", enabled: true },
+        ],
+      };
+      storageMock.local.get.mockResolvedValue({ hooky: store });
+
+      getPageContext.mockResolvedValue({
+        page: { url: "https://github.com/test", title: "Test", selection: "", meta: {} },
+      });
+
+      const tab = { id: 1, url: "https://github.com/test", title: "Test" };
+      await handleQuickSend(tab);
+
+      expect(fetchMock).toHaveBeenCalledWith("https://discord.com/hook", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: "{}",
+      });
+    });
+
+    it("should skip rule when its template was deleted", async () => {
+      const store = {
+        templates: [
+          { id: "t2", name: "Slack", url: "https://slack.com/hook", method: "POST", params: [] },
+        ],
+        quickSendTemplateId: "t2",
+        quickSendRules: [
+          { id: "r1", field: "url", operator: "contains", value: "github.com", templateId: "deleted-id", enabled: true },
+        ],
+      };
+      storageMock.local.get.mockResolvedValue({ hooky: store });
+
+      getPageContext.mockResolvedValue({
+        page: { url: "https://github.com/test", title: "Test", selection: "", meta: {} },
+      });
+
+      const tab = { id: 1, url: "https://github.com/test", title: "Test" };
+      await handleQuickSend(tab);
+
+      // Rule matched but template doesn't exist, fall back to quickSendTemplateId
+      expect(fetchMock).toHaveBeenCalledWith("https://slack.com/hook", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: "{}",
+      });
+    });
+
+    it("should work with empty rules array (backward compatible)", async () => {
+      const store = {
+        templates: [
+          { id: "t1", name: "A", url: "https://a.com/hook", method: "POST", params: [] },
+        ],
+        quickSendTemplateId: "t1",
+        quickSendRules: [],
+      };
+      storageMock.local.get.mockResolvedValue({ hooky: store });
+
+      const tab = { id: 1, url: "https://example.com", title: "Example" };
+      await handleQuickSend(tab);
+
+      expect(fetchMock).toHaveBeenCalledWith("https://a.com/hook", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: "{}",
+      });
+    });
+
+    it("should work without quickSendRules field (backward compatible)", async () => {
+      const store = {
+        templates: [
+          { id: "t1", name: "A", url: "https://a.com/hook", method: "POST", params: [] },
+        ],
+        quickSendTemplateId: "t1",
+        // no quickSendRules field at all
+      };
+      storageMock.local.get.mockResolvedValue({ hooky: store });
+
+      const tab = { id: 1, url: "https://example.com", title: "Example" };
+      await handleQuickSend(tab);
+
+      expect(fetchMock).toHaveBeenCalledWith("https://a.com/hook", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: "{}",
+      });
+    });
+
+    it("should restore quick send mode after popup fallback", async () => {
+      const store = {
+        templates: [
+          { id: "t1", name: "A", url: "https://a.com/hook", method: "POST", params: [] },
+        ],
+        quickSendTemplateId: null,
+        quickSendRules: [
+          { id: "r1", field: "url", operator: "contains", value: "github.com", templateId: "t1", enabled: true },
+        ],
+        quickSend: true,
+      };
+      storageMock.local.get.mockResolvedValue({ hooky: store });
+
+      getPageContext.mockResolvedValue({
+        page: { url: "https://example.com", title: "Example", selection: "", meta: {} },
+      });
+
+      const tab = { id: 1, url: "https://example.com", title: "Example" };
+      await handleQuickSend(tab);
+
+      // Should open popup temporarily
+      expect(chrome.action.setPopup).toHaveBeenCalledWith({ popup: "src/popup/popup.html" });
+      expect(chrome.action.openPopup).toHaveBeenCalled();
+    });
   });
 });
