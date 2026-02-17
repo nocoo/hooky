@@ -47,3 +47,4 @@ PERMISOS
 • activeTab — leer la URL y el título de la página actual para las variables de plantilla
 • storage — guardar tus plantillas de webhook y reglas localmente
 • contextMenus — agregar "Hooky" al menú contextual
+• Permisos de host (todas las URL) — permite enviar solicitudes webhook a cualquier URL que configures. La mayoría de los endpoints webhook están diseñados para comunicación servidor a servidor y no manejan solicitudes CORS preflight del navegador. Sin este permiso, las solicitudes POST con cuerpo JSON serían bloqueadas por el navegador. Hooky solo envía solicitudes a las URL que configuras explícitamente

@@ -47,3 +47,4 @@ PERMISSÕES
 • activeTab — ler a URL e o título da página atual para variáveis de modelo
 • storage — salvar seus modelos de webhook e regras localmente
 • contextMenus — adicionar "Hooky" ao menu de contexto
+• Permissões de host (todas as URLs) — permite enviar requisições webhook para qualquer URL que você configurar. A maioria dos endpoints de webhook são projetados para comunicação servidor a servidor e não lidam com requisições CORS preflight do navegador. Sem essa permissão, requisições POST com corpo JSON seriam bloqueadas pelo navegador. Hooky só envia requisições para as URLs que você configurar explicitamente

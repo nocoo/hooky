@@ -47,3 +47,4 @@ Hooky는 사용자 데이터를 수집, 저장 또는 전송하지 않습니다.
 • activeTab — 템플릿 변수용 현재 페이지 URL 및 제목 읽기
 • storage — Webhook 템플릿과 규칙을 로컬에 저장
 • contextMenus — 우클릭 메뉴에 "Hooky" 추가
+• 호스트 권한(모든 URL) — 설정한 모든 URL로 Webhook 요청을 보낼 수 있도록 합니다. 대부분의 Webhook 엔드포인트는 서버 간 통신용으로 설계되어 브라우저의 CORS 사전 요청을 처리하지 않습니다. 이 권한이 없으면 JSON 본문이 포함된 POST 요청이 브라우저에 의해 차단됩니다. Hooky는 명시적으로 설정한 URL로만 요청을 보냅니다

@@ -47,3 +47,4 @@ BERECHTIGUNGEN
 • activeTab — aktuelle Seiten-URL und -Titel für Vorlagenvariablen lesen
 • storage — Ihre Webhook-Vorlagen und Regeln lokal speichern
 • contextMenus — „Hooky" zum Kontextmenü hinzufügen
+• Host-Berechtigungen (alle URLs) — ermöglicht das Senden von Webhook-Anfragen an jede von Ihnen konfigurierte URL. Die meisten Webhook-Endpunkte sind für Server-zu-Server-Kommunikation konzipiert und verarbeiten keine CORS-Preflight-Anfragen des Browsers. Ohne diese Berechtigung würden POST-Anfragen mit JSON-Body vom Browser blockiert. Hooky sendet Anfragen nur an die von Ihnen explizit festgelegten URLs

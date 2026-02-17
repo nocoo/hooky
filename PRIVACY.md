@@ -34,10 +34,11 @@ Hooky only makes HTTP requests to **URLs that you explicitly configure** in your
 
 | Permission | Purpose |
 |---|---|
-| `activeTab` | Read the current page URL, title, and selected text to fill template variables |
+| `activeTab` | Read the current page URL, title, selected text, and meta tags when you trigger a webhook. This permission is scoped to the active tab only and does not grant access to other tabs or browsing history. |
 | `scripting` | Inject a page context extraction function into the active tab on demand |
 | `storage` | Save your webhook templates and settings locally |
 | `contextMenus` | Add the "Hooky" right-click menu |
+| `host_permissions: <all_urls>` | Send webhook requests to any URL you configure. Most webhook endpoints are designed for server-to-server communication and do not handle browser CORS preflight requests. Without this permission, POST requests with JSON content types would be silently blocked by the browser. Hooky only makes requests to URLs you explicitly set in your templates. |
 
 ## Page Content Access
 

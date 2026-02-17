@@ -147,7 +147,8 @@ For power users:
 
 • Built with Manifest V3 — the latest Chrome extension platform
 • Vanilla JavaScript — no frameworks, no bloat, fast load times
-• Minimal permissions — only activeTab, storage, and contextMenus
+• Minimal permissions — only activeTab, storage, contextMenus, and host permissions for sending requests
+• Host permissions (<all_urls>) — required because most webhook endpoints are designed for server-to-server use and do not handle browser CORS preflight requests; without this, POST requests with JSON bodies would be silently blocked
 • Content script runs on demand via activeTab — does not slow down page load
 • POST/PUT/PATCH requests send a JSON body with Content-Type: application/json
 • GET/DELETE requests append parameters as URL query strings
@@ -164,6 +165,8 @@ Hooky requests only the minimum permissions needed to function:
 
 • contextMenus — allows Hooky to add the "Hooky" entry to the browser's right-click context menu, showing your webhook templates as sub-items.
 
+• host permissions (<all_urls>) — allows Hooky to send webhook requests to any URL you configure in your templates. This is required because most webhook endpoints are designed for server-to-server communication and do not handle browser CORS preflight requests. Without this permission, POST requests with JSON content types would be silently blocked by the browser. Hooky only makes requests to URLs you explicitly set — it never contacts any other server.
+
 Hooky does not request permissions for browsing history, bookmarks, downloads, or any other sensitive browser data.
 
 ━━━━━━━━━━━━━━━━━━━━
@@ -178,6 +181,9 @@ Hooky is open source. If you encounter any issues, have feature requests, or wan
 ━━━━━━━━━━━━━━━━━━━━
 
 VERSION HISTORY
+
+1.1.1 — Host Permissions Fix
+• Add host_permissions for all URLs to fix CORS preflight failures with webhook endpoints
 
 1.1.0 — Quick Send Rules
 • Quick Send rules: automatically select which template to fire based on page URL or title

@@ -47,3 +47,4 @@ Hooky 不收集、不儲存、不傳輸任何使用者資料。所有設定僅�
 • activeTab — 讀取當前頁面 URL 和標題以填入範本變數
 • storage — 在本地儲存您的 Webhook 範本和規則
 • contextMenus — 在右鍵選單中新增「Hooky」入口
+• 主機權限（所有 URL）— 允許向您設定的任意 URL 傳送 Webhook 請求。大多數 Webhook 端點專為伺服器間通訊設計，不處理瀏覽器 CORS 預檢請求，缺少此權限會導致 POST 請求被瀏覽器攔截。Hooky 僅向您明確設定的 URL 傳送請求
