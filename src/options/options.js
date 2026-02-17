@@ -267,17 +267,20 @@ function selectSettingsItem(itemKey) {
 function renderTemplateList(templates, activeId) {
   templateListEl.innerHTML = "";
 
-  // "+ New Webhook" action item (always first, icon only)
+  // "+ New Webhook" action item (always first)
   const newLi = document.createElement("li");
   newLi.className = "new-item";
   newLi.id = "new-template";
-  newLi.title = t("newWebhook");
 
   const newIcon = document.createElement("span");
   newIcon.className = "new-icon";
   newIcon.textContent = "+";
 
+  const newLabel = document.createElement("span");
+  newLabel.textContent = t("newWebhook");
+
   newLi.appendChild(newIcon);
+  newLi.appendChild(newLabel);
   newLi.addEventListener("click", handleNewTemplate);
   templateListEl.appendChild(newLi);
 
@@ -347,17 +350,20 @@ async function selectTemplate(id) {
 function renderRulesList(rules) {
   rulesListEl.innerHTML = "";
 
-  // "+ New Rule" action item (always first, icon only)
+  // "+ Add Rule" action item (always first)
   const newLi = document.createElement("li");
   newLi.className = "new-item";
   newLi.id = "add-rule";
-  newLi.title = t("addRule");
 
   const newIcon = document.createElement("span");
   newIcon.className = "new-icon";
   newIcon.textContent = "+";
 
+  const newLabel = document.createElement("span");
+  newLabel.textContent = t("addRule");
+
   newLi.appendChild(newIcon);
+  newLi.appendChild(newLabel);
   newLi.addEventListener("click", handleNewRule);
   rulesListEl.appendChild(newLi);
 

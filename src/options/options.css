@@ -146,7 +146,7 @@ body {
 .template-list,
 .sidebar-list {
   list-style: none;
-  padding: 4px 0;
+  padding: 0;
   margin: 0;
 }
 
@@ -176,11 +176,11 @@ body {
   border-left-color: #9666b7;
 }
 
-/* New-webhook action item (icon only) */
+/* New-webhook action item */
 .template-list li.new-item {
   color: #9666b7;
   font-weight: 500;
-  justify-content: center;
+  gap: 4px;
 }
 
 .template-list li.new-item:hover {
@@ -223,11 +223,11 @@ body {
   color: #555;
 }
 
-/* New-rule action item (icon only) */
+/* New-rule action item */
 .sidebar-list li.new-item {
   color: #9666b7;
   font-weight: 500;
-  justify-content: center;
+  gap: 4px;
 }
 
 .sidebar-list li.new-item:hover {
