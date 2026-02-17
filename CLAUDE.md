@@ -52,6 +52,7 @@ Uses `chrome.scripting.executeScript()` to inject `extractPageContext()` from `s
 | template | `src/template.js` | Variable resolution engine |
 | params | `src/params.js` | Request body/URL builder |
 | webhook | `src/webhook.js` | HTTP request executor |
+| rules | `src/rules.js` | Rule engine (matchRule, findMatchingRule) |
 | quicksend | `src/quicksend.js` | Quick Send mode + badge feedback |
 | contextmenu | `src/contextmenu.js` | Right-click menu management |
 | background | `src/background.js` | Service worker orchestration |
@@ -65,11 +66,11 @@ Uses `chrome.scripting.executeScript()` to inject `extractPageContext()` from `s
 
 - Uses `chrome.i18n` API exclusively (no runtime switching)
 - 10 locales: `en`, `zh_CN`, `zh_TW`, `ja`, `ko`, `fr`, `de`, `es`, `pt_BR`, `ru`
-- 37 message keys, 2 with placeholders (`successStatus`, `failedStatus` use `$STATUS$`; `deleteConfirm` uses `$NAME$`)
+- 57 message keys, 2 with placeholders (`successStatus`, `failedStatus` use `$STATUS$`; `deleteConfirm` uses `$NAME$`)
 
 ## Testing
 
-- 199 unit tests across 13 test files
+- 257 unit tests across 14 test files
 - Coverage thresholds: 90% for statements, branches, functions, lines
 - `jsdom` environment used for DOM tests (via `// @vitest-environment jsdom` directive)
 - DOM-dependent modules (popup.js, options.js) do `document.getElementById()` at top level — tests must set up DOM before importing, using `vi.resetModules()`
@@ -77,9 +78,9 @@ Uses `chrome.scripting.executeScript()` to inject `extractPageContext()` from `s
 
 ## Quality Gates
 
-- Pre-commit: `bun run test` (199 unit tests)
+- Pre-commit: `bun run test` (257 unit tests)
 - Pre-push: `bun run test && bun run lint`
-- Coverage: 98% statements / 96% branches / 93% functions / 99% lines
+- Coverage: 98% statements / 92% branches / 95% functions / 99% lines
 
 ## Version & Release Process
 
@@ -120,3 +121,6 @@ Uses `chrome.scripting.executeScript()` to inject `extractPageContext()` from `s
 - **V8 coverage branch counting**: `||`, `?.`, and `&&` operators each count as branches. Defensive fallbacks like `x || ''` create uncoverable branches when x is always truthy in tests.
 - **Content script limitations**: `chrome.scripting.executeScript` with `activeTab` is more reliable than persistent content_scripts, and avoids needing host permissions.
 - **Top-level DOM access**: Modules that call `document.getElementById()` at import time require DOM fixtures before `import()` in tests.
+- **ESM exports in src/**: All source files must use ESM `export` syntax (not `module.exports`) since ESLint config sets `sourceType: "module"` for `src/**/*.js`.
+- **deleteCurrentRule editorMode**: After deleting a rule, keep `editorMode` as `"rule"` (not `null`) so `renderAll()` stays in rule context and shows empty state or selects next rule. Setting it to `null` causes `renderAll()` to fall through to template selection.
+- **E2E CORS preflight**: Chrome extension popup sends CORS preflight (OPTIONS) for cross-origin POST requests. The E2E webhook server must handle OPTIONS with proper CORS headers, otherwise the actual POST never completes.
