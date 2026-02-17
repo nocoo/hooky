@@ -26,6 +26,8 @@ const editorTitle = document.getElementById("editor-title");
 const editorEmpty = document.getElementById("editor-empty");
 const editorForm = document.getElementById("editor-form");
 const ruleEditorForm = document.getElementById("rule-editor-form");
+const rulesManager = document.getElementById("rules-manager");
+const settingsFormEl = document.getElementById("settings-form");
 const editorActions = document.getElementById("editor-actions");
 const editorQuickSendToggle = document.getElementById("editor-quick-send");
 const nameInput = document.getElementById("template-name");
@@ -37,7 +39,7 @@ const saveBtn = document.getElementById("save");
 const statusEl = document.getElementById("status");
 const deleteBtn = document.getElementById("delete-template");
 
-// Rules sidebar
+// Rules (now in right pane)
 const rulesListEl = document.getElementById("rules-list");
 const noRulesEl = document.getElementById("no-rules");
 const addRuleBtn = document.getElementById("add-rule");
@@ -51,32 +53,60 @@ const ruleEnabledToggle = document.getElementById("rule-enabled");
 
 let currentTemplateId = null;
 let currentRuleId = null;
-let editorMode = null; // "template" | "rule" | null
+let editorMode = null; // "template" | "rule" | "rules-list" | "settings" | null
 
-// ─── Accordion ───
+// ─── Sidebar navigation ───
 
-function initAccordion() {
-  const triggers = document.querySelectorAll(".accordion-trigger");
-  for (const trigger of triggers) {
-    trigger.addEventListener("click", (e) => {
-      // Don't toggle accordion when clicking action buttons inside trigger
-      if (e.target.closest(".accordion-actions")) return;
-      const panelId = trigger.dataset.panel;
+function initSidebar() {
+  const navBtns = document.querySelectorAll(".sidebar-nav-btn");
+  for (const btn of navBtns) {
+    btn.addEventListener("click", () => {
+      const panelId = btn.dataset.panel;
       const panel = document.getElementById(panelId);
       if (!panel) return;
 
-      if (panel.classList.contains("active")) return; // already open, no-op
+      if (panel.classList.contains("active")) return; // already active, no-op
 
-      // Close all panels
-      const panels = document.querySelectorAll(".accordion-panel");
+      // Deactivate all panels
+      const panels = document.querySelectorAll(".sidebar-panel");
       for (const p of panels) {
         p.classList.remove("active");
       }
 
-      // Open clicked panel
+      // Activate clicked panel
       panel.classList.add("active");
+
+      // Navigate to the correct right-pane view
+      if (panelId === "panel-webhooks") {
+        navigateToWebhooks();
+      } else if (panelId === "panel-rules") {
+        navigateToRules();
+      } else if (panelId === "panel-settings") {
+        navigateToSettings();
+      }
     });
   }
+}
+
+async function navigateToWebhooks() {
+  const store = await loadStore();
+  if (currentTemplateId && store.templates.find((t) => t.id === currentTemplateId)) {
+    await selectTemplate(currentTemplateId);
+  } else if (store.templates.length > 0) {
+    await selectTemplate(store.templates[0].id);
+  } else {
+    showEditorEmpty();
+  }
+}
+
+async function navigateToRules() {
+  const store = await loadStore();
+  showRulesManager(store);
+}
+
+async function navigateToSettings() {
+  const store = await loadStore();
+  showSettings(store);
 }
 
 // ─── Param row helpers ───
@@ -138,6 +168,8 @@ function showEditorEmpty() {
   editorEmpty.style.display = "flex";
   editorForm.style.display = "none";
   ruleEditorForm.style.display = "none";
+  rulesManager.style.display = "none";
+  settingsFormEl.style.display = "none";
   editorActions.style.display = "none";
   editorTitle.textContent = t("webhookDetail");
 }
@@ -148,6 +180,8 @@ function showTemplateEditor() {
   editorEmpty.style.display = "none";
   editorForm.style.display = "block";
   ruleEditorForm.style.display = "none";
+  rulesManager.style.display = "none";
+  settingsFormEl.style.display = "none";
   editorActions.style.display = "flex";
   editorTitle.textContent = t("webhookDetail");
 }
@@ -158,8 +192,44 @@ function showRuleEditor() {
   editorEmpty.style.display = "none";
   editorForm.style.display = "none";
   ruleEditorForm.style.display = "block";
+  rulesManager.style.display = "none";
+  settingsFormEl.style.display = "none";
   editorActions.style.display = "flex";
   editorTitle.textContent = t("ruleDetail");
+}
+
+function showRulesManager(store) {
+  editorMode = "rules-list";
+  currentTemplateId = null;
+  currentRuleId = null;
+  editorEmpty.style.display = "none";
+  editorForm.style.display = "none";
+  ruleEditorForm.style.display = "none";
+  rulesManager.style.display = "block";
+  settingsFormEl.style.display = "none";
+  editorActions.style.display = "none";
+  editorTitle.textContent = t("quickSendRules");
+  renderRulesList(store.quickSendRules);
+}
+
+function showSettings(store) {
+  editorMode = "settings";
+  currentTemplateId = null;
+  currentRuleId = null;
+  editorEmpty.style.display = "none";
+  editorForm.style.display = "none";
+  ruleEditorForm.style.display = "none";
+  rulesManager.style.display = "none";
+  settingsFormEl.style.display = "block";
+  editorActions.style.display = "none";
+  editorTitle.textContent = t("settingsDetail");
+
+  // Sync settings state
+  quickSendToggle.checked = store.quickSend;
+  updateQuickSendHint();
+  const theme = store.theme || "system";
+  themeSelect.value = theme;
+  applyTheme(theme);
 }
 
 // ─── Template list ───
@@ -202,6 +272,9 @@ async function selectTemplate(id) {
   const store = await loadStore();
   const tpl = store.templates.find((t) => t.id === id);
   if (!tpl) return;
+
+  // Ensure webhooks panel is active in sidebar
+  openPanel("panel-webhooks");
 
   showTemplateEditor();
 
@@ -399,8 +472,8 @@ async function deleteCurrentRule() {
 
   await deleteQuickSendRule(currentRuleId);
   currentRuleId = null;
-  // Keep editorMode as "rule" so renderAll() stays in rule context
-  // and shows empty state or selects next rule
+  // Stay in rules context — show rules manager
+  editorMode = "rules-list";
   await renderAll();
 }
 
@@ -418,19 +491,22 @@ function updateQuickSendHint() {
   quickSendHint.classList.toggle("visible", quickSendToggle.checked);
 }
 
+// ─── Panel helpers ───
+
+function openPanel(panelId) {
+  const panels = document.querySelectorAll(".sidebar-panel");
+  for (const p of panels) {
+    p.classList.remove("active");
+  }
+  const panel = document.getElementById(panelId);
+  if (panel) panel.classList.add("active");
+}
+
 // ─── Init ───
 
 async function renderAll() {
   const store = await loadStore();
   renderTemplateList(store.templates, currentTemplateId, store.quickSendTemplateId);
-  renderRulesList(store.quickSendRules);
-  quickSendToggle.checked = store.quickSend;
-  updateQuickSendHint();
-
-  // Apply theme
-  const theme = store.theme || "system";
-  themeSelect.value = theme;
-  applyTheme(theme);
 
   if (editorMode === "template") {
     if (currentTemplateId && store.templates.find((t) => t.id === currentTemplateId)) {
@@ -441,13 +517,18 @@ async function renderAll() {
       showEditorEmpty();
     }
   } else if (editorMode === "rule") {
+    renderRulesList(store.quickSendRules);
     if (currentRuleId && store.quickSendRules.find((r) => r.id === currentRuleId)) {
       await selectRule(currentRuleId);
     } else if (store.quickSendRules.length > 0) {
       await selectRule(store.quickSendRules[0].id);
     } else {
-      showEditorEmpty();
+      showRulesManager(store);
     }
+  } else if (editorMode === "rules-list") {
+    showRulesManager(store);
+  } else if (editorMode === "settings") {
+    showSettings(store);
   } else {
     // Initial load — select first template if available
     if (store.templates.length > 0) {
@@ -460,18 +541,16 @@ async function renderAll() {
 
 // ─── Events ───
 
-newTemplateBtn.addEventListener("click", async (e) => {
-  e.stopPropagation();
+newTemplateBtn.addEventListener("click", async () => {
   const tpl = await createTemplate(t("defaultTemplateName"));
   currentTemplateId = tpl.id;
   editorMode = "template";
-  // Open templates panel
-  openPanel("panel-templates");
+  // Open webhooks panel
+  openPanel("panel-webhooks");
   await renderAll();
 });
 
-addRuleBtn.addEventListener("click", async (e) => {
-  e.stopPropagation();
+addRuleBtn.addEventListener("click", async () => {
   const store = await loadStore();
   if (store.templates.length === 0) return; // need at least one template
   const rule = await addQuickSendRule({
@@ -482,19 +561,10 @@ addRuleBtn.addEventListener("click", async (e) => {
   });
   currentRuleId = rule.id;
   editorMode = "rule";
-  // Open rules panel
+  // Keep rules panel active
   openPanel("panel-rules");
   await renderAll();
 });
-
-function openPanel(panelId) {
-  const panels = document.querySelectorAll(".accordion-panel");
-  for (const p of panels) {
-    p.classList.remove("active");
-  }
-  const panel = document.getElementById(panelId);
-  if (panel) panel.classList.add("active");
-}
 
 addParamBtn.addEventListener("click", () => {
   paramsList.appendChild(createParamRow());
@@ -536,6 +606,6 @@ themeSelect.addEventListener("change", async () => {
 document.getElementById("version").textContent =
   "v" + chrome.runtime.getManifest().version;
 
-initAccordion();
+initSidebar();
 applyI18n();
 migrateFromLegacy().then(() => renderAll());
