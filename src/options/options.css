@@ -472,6 +472,7 @@ select {
 }
 
 .btn-danger {
+  margin-right: auto;
   padding: 10px 20px;
   font-size: 14px;
   font-weight: 500;
