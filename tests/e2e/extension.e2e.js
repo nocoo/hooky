@@ -21,15 +21,28 @@ let webhookReceived = null;
 function startWebhookServer() {
   return new Promise((resolve) => {
     server = http.createServer((req, res) => {
+      // Handle CORS preflight
+      res.setHeader("Access-Control-Allow-Origin", "*");
+      res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS");
+      res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+      if (req.method === "OPTIONS") {
+        res.writeHead(204);
+        res.end();
+        return;
+      }
+
       let body = "";
       req.on("data", (chunk) => (body += chunk));
       req.on("end", () => {
-        webhookReceived = {
-          method: req.method,
-          url: req.url,
-          headers: req.headers,
-          body: body ? JSON.parse(body) : null,
-        };
+        // Only capture requests to /hook (ignore favicon, etc.)
+        if (req.url === "/hook") {
+          webhookReceived = {
+            method: req.method,
+            url: req.url,
+            headers: req.headers,
+            body: body ? JSON.parse(body) : null,
+          };
+        }
         res.writeHead(200, { "Content-Type": "application/json" });
         res.end(JSON.stringify({ status: "ok" }));
       });
@@ -242,6 +255,122 @@ async function runTests() {
     );
 
     await popupPage.close();
+
+    // --- Test Rules UI in Options Page ---
+    console.log("\nTesting Quick Send Rules...");
+    const rulesPage = await browser.newPage();
+    await rulesPage.goto(
+      `chrome-extension://${extensionId}/src/options/options.html`,
+      { waitUntil: "domcontentloaded", timeout: TIMEOUT },
+    );
+    await new Promise((r) => setTimeout(r, 500));
+
+    // Verify accordion panels exist
+    const panels = await rulesPage.$$(".accordion-panel");
+    assert(panels.length === 3, "Rules: Three accordion panels exist");
+
+    // Templates panel should be active by default
+    const templatesActive = await rulesPage.$eval(
+      "#panel-templates",
+      (el) => el.classList.contains("active"),
+    );
+    assert(templatesActive, "Rules: Templates panel is active by default");
+
+    // Click Rules accordion trigger to open rules panel
+    await rulesPage.click('[data-panel="panel-rules"]');
+    await new Promise((r) => setTimeout(r, 300));
+
+    const rulesActive = await rulesPage.$eval(
+      "#panel-rules",
+      (el) => el.classList.contains("active"),
+    );
+    assert(rulesActive, "Rules: Rules panel is active after click");
+
+    // Templates panel should now be inactive
+    const templatesInactive = await rulesPage.$eval(
+      "#panel-templates",
+      (el) => !el.classList.contains("active"),
+    );
+    assert(templatesInactive, "Rules: Templates panel closed when Rules opened");
+
+    // No rules message should be visible
+    const noRulesVisible = await rulesPage.$eval(
+      "#no-rules",
+      (el) => !el.classList.contains("hidden"),
+    );
+    assert(noRulesVisible, "Rules: 'No rules' message shown initially");
+
+    // Click + to add a new rule
+    await rulesPage.click("#add-rule");
+    await new Promise((r) => setTimeout(r, 500));
+
+    // Rule editor form should be visible
+    const ruleFormVisible = await rulesPage.$eval(
+      "#rule-editor-form",
+      (el) => el.style.display !== "none",
+    );
+    assert(ruleFormVisible, "Rules: Rule editor form is visible after adding rule");
+
+    // Rules list should have one item
+    const ruleItems = await rulesPage.$$("#rules-list li");
+    assert(ruleItems.length === 1, "Rules: Rules list has one entry");
+
+    // Fill in rule details
+    await rulesPage.select("#rule-field", "url");
+    await rulesPage.select("#rule-operator", "contains");
+    await rulesPage.type("#rule-value", "github.com");
+
+    // Template dropdown should have the template we created earlier
+    const ruleTemplateOptions = await rulesPage.$$eval(
+      "#rule-template option",
+      (opts) => opts.map((o) => o.textContent),
+    );
+    assert(
+      ruleTemplateOptions.includes("E2E Test Hook"),
+      "Rules: Template dropdown contains 'E2E Test Hook'",
+    );
+
+    // Save the rule
+    await rulesPage.click("#save");
+    await new Promise((r) => setTimeout(r, 500));
+
+    // Status should show saved
+    const ruleStatusText = await rulesPage.$eval("#status", (el) => el.textContent);
+    assert(ruleStatusText === "Saved!", "Rules: Rule saved successfully");
+
+    // No-rules message should be hidden now
+    const noRulesHidden = await rulesPage.$eval(
+      "#no-rules",
+      (el) => el.classList.contains("hidden"),
+    );
+    assert(noRulesHidden, "Rules: 'No rules' message hidden after adding rule");
+
+    // Delete the rule (should not show confirmation dialog)
+    await rulesPage.click("#delete-template");
+    await new Promise((r) => setTimeout(r, 500));
+
+    // Rules list should be empty
+    const ruleItemsAfterDelete = await rulesPage.$$("#rules-list li");
+    assert(ruleItemsAfterDelete.length === 0, "Rules: Rules list empty after delete");
+
+    // No-rules message should be visible again
+    const noRulesVisibleAgain = await rulesPage.$eval(
+      "#no-rules",
+      (el) => !el.classList.contains("hidden"),
+    );
+    assert(noRulesVisibleAgain, "Rules: 'No rules' message shown after delete");
+
+    // Switch back to templates panel
+    await rulesPage.click('[data-panel="panel-templates"]');
+    await new Promise((r) => setTimeout(r, 300));
+
+    const templatesActiveAgain = await rulesPage.$eval(
+      "#panel-templates",
+      (el) => el.classList.contains("active"),
+    );
+    assert(templatesActiveAgain, "Rules: Can switch back to Templates panel");
+
+    await rulesPage.close();
   } catch (err) {
     console.error(`\n  ERROR: ${err.message}`);
     failed++;
