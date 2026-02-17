@@ -1,6 +1,6 @@
-Hooky — Webhook per Klick auslösen, mit Seitenkontext.
+Hooky — Webhook per Klick auslösen, mit Seitenkontext und intelligenten Regeln.
 
-Erstellen Sie Webhook-Vorlagen, füllen Sie sie automatisch mit Seitendaten und lösen Sie sie über die Symbolleiste, das Kontextmenü oder den Schnellversand-Modus aus.
+Erstellen Sie Webhook-Vorlagen, füllen Sie sie automatisch mit Seitendaten und lösen Sie sie über die Symbolleiste, das Kontextmenü oder Schnellversand-Regeln aus.
 
 🪝 WEBHOOK-VORLAGEN
 Erstellen Sie mehrere benannte Webhook-Vorlagen, jeweils mit eigener URL, HTTP-Methode (GET/POST/PUT/PATCH/DELETE) und Schlüssel-Wert-Parametern. Wechseln Sie jederzeit zwischen ihnen.
@@ -15,8 +15,12 @@ Fügen Sie Echtzeit-Seitenkontext in Ihre Webhook-Parameter ein:
 • {{page.meta.og:description}} — Open-Graph-Beschreibung
 • {{page.meta.og:image}} — Open-Graph-Bild-URL
 
-⚡ SCHNELLVERSAND
-Legen Sie eine Vorlage als Schnellversand-Ziel fest. Wenn aktiviert, wird der Webhook sofort beim Klick auf das Symbolleisten-Icon ausgelöst — ohne Popup. Ein Badge zeigt ✓ oder ✗ als Bestätigung.
+⚡ SCHNELLVERSAND-REGELN
+Definieren Sie Regeln, um automatisch die passende Webhook-Vorlage basierend auf der aktuellen Seite auszuwählen. Beim Klick auf das Hooky-Symbol werden Regeln der Reihe nach ausgewertet — der erste Treffer löst den Webhook sofort aus, ohne das Popup zu öffnen.
+
+Regelbedingungen: URL oder Titel × enthält, gleich, beginnt mit, endet mit, Regex-Match. Prioritäten sortieren, einzeln aktivieren/deaktivieren. Wenn keine Regel zutrifft, öffnet sich das Popup wie gewohnt.
+
+Badge-Feedback: ✓ (grün) erfolgreich gesendet, ✗ (rot) Anfrage fehlgeschlagen.
 
 📋 KONTEXTMENÜ
 Klicken Sie auf einer beliebigen Seite mit der rechten Maustaste, um alle Ihre Vorlagen im „Hooky"-Menü zu sehen. Wählen Sie eine aus und lösen Sie sie mit einem Klick aus.
@@ -41,5 +45,5 @@ ANWENDUNGSFÄLLE
 
 BERECHTIGUNGEN
 • activeTab — aktuelle Seiten-URL und -Titel für Vorlagenvariablen lesen
-• storage — Ihre Webhook-Vorlagen lokal speichern
+• storage — Ihre Webhook-Vorlagen und Regeln lokal speichern
 • contextMenus — „Hooky" zum Kontextmenü hinzufügen

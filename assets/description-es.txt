@@ -1,6 +1,6 @@
-Hooky — Dispara webhooks con un clic, con contexto de página.
+Hooky — Dispara webhooks con un clic, con contexto de página y reglas inteligentes.
 
-Crea plantillas de webhook, rellénalas automáticamente con datos de la página y dispáralas desde la barra de herramientas, el menú contextual o el modo de envío rápido.
+Crea plantillas de webhook, rellénalas automáticamente con datos de la página y dispáralas desde la barra de herramientas, el menú contextual o las reglas de envío rápido.
 
 🪝 PLANTILLAS DE WEBHOOK
 Crea múltiples plantillas de webhook con nombre, cada una con su propia URL, método HTTP (GET/POST/PUT/PATCH/DELETE) y parámetros clave-valor. Cambia entre ellas al instante.
@@ -15,8 +15,12 @@ Inyecta el contexto de la página en tiempo real en los parámetros del webhook:
 • {{page.meta.og:description}} — descripción Open Graph
 • {{page.meta.og:image}} — URL de imagen Open Graph
 
-⚡ ENVÍO RÁPIDO
-Designa una plantilla como destino de envío rápido. Al activarlo, hacer clic en el icono de la barra de herramientas dispara el webhook inmediatamente — sin popup. Un badge muestra ✓ o ✗ para confirmar el resultado.
+⚡ REGLAS DE ENVÍO RÁPIDO
+Define reglas para seleccionar automáticamente qué plantilla de webhook enviar según la página actual. Al hacer clic en el icono de Hooky, las reglas se evalúan en orden — la primera coincidencia dispara el webhook inmediatamente, sin abrir el popup.
+
+Condiciones de regla: URL o Título × contiene, es igual a, empieza con, termina con, coincide (regex). Reordena prioridades y activa/desactiva cada regla individualmente. Si ninguna regla coincide, el popup se abre normalmente.
+
+Indicador de badge: ✓ (verde) envío exitoso, ✗ (rojo) solicitud fallida.
 
 📋 MENÚ CONTEXTUAL
 Haz clic derecho en cualquier página para ver todas tus plantillas en el menú "Hooky". Selecciona una y dispárala con un solo clic.
@@ -41,5 +45,5 @@ CASOS DE USO
 
 PERMISOS
 • activeTab — leer la URL y el título de la página actual para las variables de plantilla
-• storage — guardar tus plantillas de webhook localmente
+• storage — guardar tus plantillas de webhook y reglas localmente
 • contextMenus — agregar "Hooky" al menú contextual

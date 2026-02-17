@@ -3,7 +3,7 @@
     "message": "Hooky"
   },
   "extDescription": {
-    "message": "Dispara webhooks con un clic, con contexto de página y variables de plantilla"
+    "message": "Dispara webhooks con un clic, con contexto de página, variables y reglas inteligentes"
   },
   "settingsTitle": {
     "message": "Configuración de Hooky"

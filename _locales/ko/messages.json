@@ -3,7 +3,7 @@
     "message": "Hooky"
   },
   "extDescription": {
-    "message": "원클릭 Webhook 트리거, 페이지 컨텍스트 및 템플릿 변수 지원"
+    "message": "원클릭 Webhook 트리거, 페이지 컨텍스트·템플릿 변수·스마트 규칙 지원"
   },
   "settingsTitle": {
     "message": "Hooky 설정"

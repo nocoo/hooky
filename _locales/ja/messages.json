@@ -3,7 +3,7 @@
     "message": "Hooky"
   },
   "extDescription": {
-    "message": "ワンクリックで Webhook を送信、ページコンテキストとテンプレート変数をサポート"
+    "message": "ワンクリックで Webhook を送信、ページコンテキスト・テンプレート変数・スマートルール対応"
   },
   "settingsTitle": {
     "message": "Hooky 設定"

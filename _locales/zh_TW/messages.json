@@ -3,7 +3,7 @@
     "message": "Hooky"
   },
   "extDescription": {
-    "message": "一鍵觸發 Webhook，支援頁面上下文和範本變數"
+    "message": "一鍵觸發 Webhook，支援頁面上下文、範本變數和智慧規則"
   },
   "settingsTitle": {
     "message": "Hooky 設定"

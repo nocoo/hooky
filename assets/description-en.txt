@@ -1,6 +1,6 @@
-Hooky — One-click webhook trigger with page context and template variables.
+Hooky — One-click webhook trigger with page context, template variables, and smart rules.
 
-Create reusable webhook templates, automatically fill them with live page data, and fire them from your browser toolbar, right-click context menu, or Quick Send mode. Hooky is a lightweight, privacy-first tool for developers, power users, and anyone who wants to connect their browser to external services without writing code.
+Create reusable webhook templates, automatically fill them with live page data, and fire them from your browser toolbar, right-click context menu, or Quick Send rules. Hooky is a lightweight, privacy-first tool for developers, power users, and anyone who wants to connect their browser to external services without writing code.
 
 ━━━━━━━━━━━━━━━━━━━━
 
@@ -37,20 +37,23 @@ Variables that cannot be resolved (e.g. no text is selected, or the page has no 
 
 ━━━━━━━━━━━━━━━━━━━━
 
-⚡ QUICK SEND
+⚡ QUICK SEND RULES
 
-For workflows where speed matters, Quick Send lets you fire a webhook with zero clicks after the first setup.
+Define rules that automatically select which webhook template to send based on the current page. When you click the Hooky toolbar icon, rules are evaluated in order — the first match wins, and the webhook fires instantly without opening the popup.
 
 How it works:
-1. Enable Quick Send in settings
-2. Designate one of your templates as the Quick Send target
-3. Now, clicking the Hooky toolbar icon immediately sends that template's webhook — no popup opens, no extra clicks needed
+1. Open settings and go to the Rules section
+2. Create a rule by choosing a field (URL or Title), an operator (contains, equals, starts with, ends with, or matches regex), and a value to match against
+3. Assign a webhook template to the rule
+4. Now, when you click the Hooky icon on a matching page, the webhook fires automatically — no popup, no extra clicks
+
+If no rule matches the current page, the popup opens as usual so you can choose a template manually.
 
 After sending, the extension badge briefly flashes:
 • ✓ (green) — the webhook was sent successfully
 • ✗ (red) — the request failed
 
-You can change which template is the Quick Send target at any time from the settings page or directly from the template editor. When Quick Send is enabled, you can still access settings by right-clicking the extension icon and selecting "Options".
+Rules can be reordered by priority, individually enabled or disabled, and edited at any time from the settings page.
 
 ━━━━━━━━━━━━━━━━━━━━
 
@@ -58,7 +61,7 @@ You can change which template is the Quick Send target at any time from the sett
 
 Right-click on any web page to see the "Hooky" context menu. All your webhook templates appear as menu items. Click any template to immediately fire its webhook with the current page's context data.
 
-This is especially useful when you want to quickly send page data without opening the popup, and you have multiple templates to choose from (unlike Quick Send, which is limited to one designated template).
+This is especially useful when you want to quickly send page data without opening the popup, and you have multiple templates to choose from. Unlike Quick Send rules (which match automatically), the context menu lets you manually pick any template on the fly.
 
 ━━━━━━━━━━━━━━━━━━━━
 
@@ -134,7 +137,7 @@ Hooky is a general-purpose browser-to-API bridge. Here are some ways people use 
 6. Click "Send" and see the result instantly
 
 For power users:
-• Enable Quick Send to skip the popup entirely
+• Set up Quick Send rules to automatically fire webhooks based on page URL or title
 • Use the right-click context menu to pick from multiple templates
 • Switch between system, light, and dark themes
 
@@ -145,7 +148,7 @@ For power users:
 • Built with Manifest V3 — the latest Chrome extension platform
 • Vanilla JavaScript — no frameworks, no bloat, fast load times
 • Minimal permissions — only activeTab, storage, and contextMenus
-• Content script runs at document_idle — does not slow down page load
+• Content script runs on demand via activeTab — does not slow down page load
 • POST/PUT/PATCH requests send a JSON body with Content-Type: application/json
 • GET/DELETE requests append parameters as URL query strings
 
@@ -157,7 +160,7 @@ Hooky requests only the minimum permissions needed to function:
 
 • activeTab — allows Hooky to read the current page's URL, title, selected text, and meta tags when you trigger a webhook. This permission is scoped to the active tab only and does not grant access to other tabs or browsing history.
 
-• storage — allows Hooky to save your webhook templates and settings (theme, Quick Send preference) locally in your browser. Data is stored via chrome.storage.local and never synced externally.
+• storage — allows Hooky to save your webhook templates, rules, and settings (theme preference) locally in your browser. Data is stored via chrome.storage.local and never synced externally.
 
 • contextMenus — allows Hooky to add the "Hooky" entry to the browser's right-click context menu, showing your webhook templates as sub-items.
 
@@ -176,10 +179,16 @@ Hooky is open source. If you encounter any issues, have feature requests, or wan
 
 VERSION HISTORY
 
+1.1.0 — Quick Send Rules
+• Quick Send rules: automatically select which template to fire based on page URL or title
+• Rule conditions: contains, equals, starts with, ends with, matches (regex)
+• Rules evaluated in order with first-match-wins logic
+• Rules can be reordered, enabled/disabled individually
+• Fallback to popup when no rule matches
+
 1.0.0 — Initial release
 • Multiple webhook templates with full CRUD
 • 7 template variables for page context
-• Quick Send mode with badge feedback
 • Context menu integration
 • System / Light / Dark themes
 • 10 language localizations

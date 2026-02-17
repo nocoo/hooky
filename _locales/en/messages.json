@@ -3,7 +3,7 @@
     "message": "Hooky"
   },
   "extDescription": {
-    "message": "One-click webhook trigger with page context and template variables"
+    "message": "One-click webhook trigger with page context, template variables, and smart rules"
   },
   "settingsTitle": {
     "message": "Hooky Settings"

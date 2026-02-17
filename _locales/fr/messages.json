@@ -3,7 +3,7 @@
     "message": "Hooky"
   },
   "extDescription": {
-    "message": "Déclenchez des webhooks en un clic avec le contexte de la page et des variables de modèle"
+    "message": "Déclenchez des webhooks en un clic avec contexte de page, variables et règles intelligentes"
   },
   "settingsTitle": {
     "message": "Paramètres Hooky"

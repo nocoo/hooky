@@ -1,6 +1,6 @@
-Hooky — Déclenchez des webhooks en un clic avec le contexte de la page.
+Hooky — Déclenchez des webhooks en un clic avec le contexte de la page et des règles intelligentes.
 
-Créez des modèles de webhook, remplissez-les avec les données de la page en temps réel, et déclenchez-les depuis la barre d'outils, le menu contextuel ou le mode d'envoi rapide.
+Créez des modèles de webhook, remplissez-les avec les données de la page en temps réel, et déclenchez-les depuis la barre d'outils, le menu contextuel ou les règles d'envoi rapide.
 
 🪝 MODÈLES DE WEBHOOK
 Créez plusieurs modèles de webhook nommés, chacun avec sa propre URL, méthode HTTP (GET/POST/PUT/PATCH/DELETE) et paramètres clé-valeur. Passez de l'un à l'autre instantanément.
@@ -15,8 +15,12 @@ Injectez le contexte de la page en temps réel dans vos paramètres de webhook g
 • {{page.meta.og:description}} — description Open Graph
 • {{page.meta.og:image}} — URL de l'image Open Graph
 
-⚡ ENVOI RAPIDE
-Désignez un modèle comme cible d'envoi rapide. Une fois activé, un clic sur l'icône de la barre d'outils déclenche immédiatement le webhook — sans popup. Un badge affiche ✓ ou ✗ pour confirmer le résultat.
+⚡ RÈGLES D'ENVOI RAPIDE
+Définissez des règles pour sélectionner automatiquement le modèle de webhook à envoyer en fonction de la page actuelle. Lorsque vous cliquez sur l'icône Hooky, les règles sont évaluées dans l'ordre — la première correspondance déclenche immédiatement le webhook, sans ouvrir la popup.
+
+Conditions de règle : URL ou Titre × contient, égal à, commence par, se termine par, correspond (regex). Réorganisez les priorités et activez/désactivez individuellement chaque règle. Si aucune règle ne correspond, la popup s'ouvre normalement.
+
+Retour par badge : ✓ (vert) envoi réussi, ✗ (rouge) échec de la requête.
 
 📋 MENU CONTEXTUEL
 Faites un clic droit sur n'importe quelle page pour voir tous vos modèles dans le menu « Hooky ». Sélectionnez-en un et déclenchez-le d'un clic.
@@ -41,5 +45,5 @@ CAS D'UTILISATION
 
 PERMISSIONS
 • activeTab — lire l'URL et le titre de la page pour les variables de modèle
-• storage — sauvegarder vos modèles de webhook localement
+• storage — sauvegarder vos modèles de webhook et vos règles localement
 • contextMenus — ajouter « Hooky » au menu contextuel

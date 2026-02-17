@@ -3,55 +3,55 @@
     "message": "Hooky"
   },
   "extDescription": {
-    "message": "\u4e00\u952e\u89e6\u53d1 Webhook\uff0c\u652f\u6301\u9875\u9762\u4e0a\u4e0b\u6587\u548c\u6a21\u677f\u53d8\u91cf"
+    "message": "一键触发 Webhook，支持页面上下文、模板变量和智能规则"
   },
   "settingsTitle": {
-    "message": "Hooky \u8bbe\u7f6e"
+    "message": "Hooky 设置"
   },
   "webhookUrl": {
-    "message": "Webhook \u5730\u5740"
+    "message": "Webhook 地址"
   },
   "webhookUrlPlaceholder": {
     "message": "https://example.com/api/webhook"
   },
   "httpMethod": {
-    "message": "HTTP \u65b9\u6cd5"
+    "message": "HTTP 方法"
   },
   "parameters": {
-    "message": "\u53c2\u6570"
+    "message": "参数"
   },
   "addParam": {
-    "message": "\u6dfb\u52a0"
+    "message": "添加"
   },
   "templateHint": {
-    "message": "\u53ef\u7528\u53d8\u91cf\uff1a"
+    "message": "可用变量："
   },
   "paramKeyPlaceholder": {
-    "message": "\u952e"
+    "message": "键"
   },
   "paramValuePlaceholder": {
-    "message": "\u503c\uff08\u5982 {{page.url}}\uff09"
+    "message": "值（如 {{page.url}}）"
   },
   "save": {
-    "message": "\u4fdd\u5b58"
+    "message": "保存"
   },
   "saved": {
-    "message": "\u5df2\u4fdd\u5b58\uff01"
+    "message": "已保存！"
   },
   "noConfig": {
-    "message": "\u5c1a\u672a\u914d\u7f6e Webhook\u3002"
+    "message": "尚未配置 Webhook。"
   },
   "openSettings": {
-    "message": "\u6253\u5f00\u8bbe\u7f6e"
+    "message": "打开设置"
   },
   "send": {
-    "message": "\u53d1\u9001"
+    "message": "发送"
   },
   "sending": {
-    "message": "\u53d1\u9001\u4e2d..."
+    "message": "发送中..."
   },
   "successStatus": {
-    "message": "\u6210\u529f ($STATUS$)",
+    "message": "成功 ($STATUS$)",
     "placeholders": {
       "status": {
         "content": "$1"
@@ -59,7 +59,7 @@
     }
   },
   "failedStatus": {
-    "message": "\u5931\u8d25 ($STATUS$)",
+    "message": "失败 ($STATUS$)",
     "placeholders": {
       "status": {
         "content": "$1"
@@ -67,25 +67,25 @@
     }
   },
   "requestFailed": {
-    "message": "\u8bf7\u6c42\u5931\u8d25"
+    "message": "请求失败"
   },
   "settingsTooltip": {
-    "message": "\u8bbe\u7f6e"
+    "message": "设置"
   },
   "webhooks": {
     "message": "Webhooks"
   },
   "newTemplate": {
-    "message": "\u65b0\u5efa"
+    "message": "新建"
   },
   "defaultTemplateName": {
-    "message": "\u672a\u547d\u540d"
+    "message": "未命名"
   },
   "deleteTemplate": {
-    "message": "\u5220\u9664"
+    "message": "删除"
   },
   "deleteConfirm": {
-    "message": "\u5220\u9664\u201c$NAME$\u201d\uff1f",
+    "message": "删除“$NAME$”？",
     "placeholders": {
       "name": {
         "content": "$1"
@@ -93,34 +93,34 @@
     }
   },
   "selectTemplate": {
-    "message": "\u9009\u62e9\u6a21\u677f"
+    "message": "选择模板"
   },
   "noTemplates": {
-    "message": "\u8fd8\u6ca1\u6709\u6a21\u677f\uff0c\u8bf7\u5148\u5728\u8bbe\u7f6e\u4e2d\u521b\u5efa\u3002"
+    "message": "还没有模板，请先在设置中创建。"
   },
   "templateName": {
-    "message": "\u6a21\u677f\u540d\u79f0"
+    "message": "模板名称"
   },
   "webhookDetail": {
-    "message": "Webhook \u8be6\u60c5"
+    "message": "Webhook 详情"
   },
   "templateNamePlaceholder": {
-    "message": "\u5982\uff1a\u901a\u77e5 Slack"
+    "message": "如：通知 Slack"
   },
   "settings": {
-    "message": "\u8bbe\u7f6e"
+    "message": "设置"
   },
   "theme": {
-    "message": "\u4e3b\u9898"
+    "message": "主题"
   },
   "themeSystem": {
-    "message": "\u8ddf\u968f\u7cfb\u7edf"
+    "message": "跟随系统"
   },
   "themeLight": {
-    "message": "\u6d45\u8272"
+    "message": "浅色"
   },
   "themeDark": {
-    "message": "\u6df1\u8272"
+    "message": "深色"
   },
   "quickSendRules": {
     "message": "快速发送规则"

@@ -1,6 +1,6 @@
-Hooky — Dispare webhooks com um clique, com contexto da página.
+Hooky — Dispare webhooks com um clique, com contexto da página e regras inteligentes.
 
-Crie modelos de webhook, preencha-os automaticamente com dados da página e dispare-os pela barra de ferramentas, menu de contexto ou modo de envio rápido.
+Crie modelos de webhook, preencha-os automaticamente com dados da página e dispare-os pela barra de ferramentas, menu de contexto ou regras de envio rápido.
 
 🪝 MODELOS DE WEBHOOK
 Crie vários modelos de webhook nomeados, cada um com sua própria URL, método HTTP (GET/POST/PUT/PATCH/DELETE) e parâmetros chave-valor. Alterne entre eles instantaneamente.
@@ -15,8 +15,12 @@ Injete o contexto da página em tempo real nos parâmetros do webhook:
 • {{page.meta.og:description}} — descrição Open Graph
 • {{page.meta.og:image}} — URL da imagem Open Graph
 
-⚡ ENVIO RÁPIDO
-Designe um modelo como destino de envio rápido. Quando ativado, clicar no ícone da barra de ferramentas dispara o webhook imediatamente — sem popup. Um badge exibe ✓ ou ✗ para confirmar o resultado.
+⚡ REGRAS DE ENVIO RÁPIDO
+Defina regras para selecionar automaticamente qual modelo de webhook enviar com base na página atual. Ao clicar no ícone do Hooky, as regras são avaliadas em ordem — a primeira correspondência dispara o webhook imediatamente, sem abrir o popup.
+
+Condições de regra: URL ou Título × contém, igual a, começa com, termina com, corresponde (regex). Reordene prioridades e ative/desative cada regra individualmente. Se nenhuma regra corresponder, o popup abre normalmente.
+
+Feedback do badge: ✓ (verde) envio bem-sucedido, ✗ (vermelho) falha na requisição.
 
 📋 MENU DE CONTEXTO
 Clique com o botão direito em qualquer página para ver todos os seus modelos no menu "Hooky". Selecione um e dispare-o com um clique.
@@ -41,5 +45,5 @@ CASOS DE USO
 
 PERMISSÕES
 • activeTab — ler a URL e o título da página atual para variáveis de modelo
-• storage — salvar seus modelos de webhook localmente
+• storage — salvar seus modelos de webhook e regras localmente
 • contextMenus — adicionar "Hooky" ao menu de contexto

@@ -3,7 +3,7 @@
     "message": "Hooky"
   },
   "extDescription": {
-    "message": "Webhook per Klick auslösen — mit Seitenkontext und Vorlagenvariablen"
+    "message": "Webhook per Klick auslösen — mit Seitenkontext, Vorlagenvariablen und smarten Regeln"
   },
   "settingsTitle": {
     "message": "Hooky Einstellungen"
