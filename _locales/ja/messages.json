@@ -142,5 +142,44 @@
   },
   "editorQuickSendDesc": {
     "message": "有効にすると、拡張機能アイコンをクリックするだけでこのテンプレートの Webhook を即座に送信します。ポップアップは表示されません。"
+  },
+  "quickSendRules": {
+    "message": "クイック送信ルール"
+  },
+  "quickSendRulesDesc": {
+    "message": "現在のページに基づいて送信するテンプレートを自動選択します。ルールは順番に評価され、最初に一致したものが適用されます。"
+  },
+  "addRule": {
+    "message": "+ ルールを追加"
+  },
+  "ruleFieldUrl": {
+    "message": "URL"
+  },
+  "ruleFieldTitle": {
+    "message": "タイトル"
+  },
+  "ruleOperatorContains": {
+    "message": "を含む"
+  },
+  "ruleOperatorEquals": {
+    "message": "と一致"
+  },
+  "ruleOperatorStartsWith": {
+    "message": "で始まる"
+  },
+  "ruleOperatorEndsWith": {
+    "message": "で終わる"
+  },
+  "ruleOperatorMatches": {
+    "message": "に一致（正規表現）"
+  },
+  "ruleValuePlaceholder": {
+    "message": "例: github.com"
+  },
+  "ruleThenSend": {
+    "message": "を送信"
+  },
+  "noRules": {
+    "message": "ルールが設定されていません。クイック送信はデフォルトのテンプレートを使用します。"
   }
 }

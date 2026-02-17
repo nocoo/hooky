@@ -142,5 +142,44 @@
   },
   "editorQuickSendDesc": {
     "message": "Lorsqu'activé, cliquer sur l'icône de l'extension enverra immédiatement le webhook de ce modèle sans ouvrir le popup."
+  },
+  "quickSendRules": {
+    "message": "Règles d'envoi rapide"
+  },
+  "quickSendRulesDesc": {
+    "message": "Sélectionnez automatiquement le modèle à envoyer en fonction de la page actuelle. Les règles sont évaluées dans l'ordre ; la première correspondance l'emporte."
+  },
+  "addRule": {
+    "message": "+ Ajouter une règle"
+  },
+  "ruleFieldUrl": {
+    "message": "URL"
+  },
+  "ruleFieldTitle": {
+    "message": "Titre"
+  },
+  "ruleOperatorContains": {
+    "message": "contient"
+  },
+  "ruleOperatorEquals": {
+    "message": "est égal à"
+  },
+  "ruleOperatorStartsWith": {
+    "message": "commence par"
+  },
+  "ruleOperatorEndsWith": {
+    "message": "se termine par"
+  },
+  "ruleOperatorMatches": {
+    "message": "correspond à (regex)"
+  },
+  "ruleValuePlaceholder": {
+    "message": "ex. github.com"
+  },
+  "ruleThenSend": {
+    "message": "alors envoyer"
+  },
+  "noRules": {
+    "message": "Aucune règle configurée. L'envoi rapide utilisera le modèle par défaut."
   }
 }

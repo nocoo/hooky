@@ -142,5 +142,44 @@
   },
   "editorQuickSendDesc": {
     "message": "开启后，点击扩展图标将立即发送此模板的 Webhook，无需打开弹窗。"
+  },
+  "quickSendRules": {
+    "message": "快速发送规则"
+  },
+  "quickSendRulesDesc": {
+    "message": "根据当前页面自动选择要发送的模板。规则按顺序评估，第一条匹配即生效。"
+  },
+  "addRule": {
+    "message": "+ 添加规则"
+  },
+  "ruleFieldUrl": {
+    "message": "URL"
+  },
+  "ruleFieldTitle": {
+    "message": "标题"
+  },
+  "ruleOperatorContains": {
+    "message": "包含"
+  },
+  "ruleOperatorEquals": {
+    "message": "等于"
+  },
+  "ruleOperatorStartsWith": {
+    "message": "开头是"
+  },
+  "ruleOperatorEndsWith": {
+    "message": "结尾是"
+  },
+  "ruleOperatorMatches": {
+    "message": "匹配（正则）"
+  },
+  "ruleValuePlaceholder": {
+    "message": "如 github.com"
+  },
+  "ruleThenSend": {
+    "message": "则发送"
+  },
+  "noRules": {
+    "message": "未配置规则。快速发送将使用默认模板。"
   }
 }

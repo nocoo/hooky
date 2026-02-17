@@ -142,5 +142,44 @@
   },
   "editorQuickSendDesc": {
     "message": "Cuando está activado, al hacer clic en el icono de la extensión se enviará inmediatamente el webhook de esta plantilla sin abrir el popup."
+  },
+  "quickSendRules": {
+    "message": "Reglas de envío rápido"
+  },
+  "quickSendRulesDesc": {
+    "message": "Selecciona automáticamente la plantilla a enviar según la página actual. Las reglas se evalúan en orden; la primera coincidencia gana."
+  },
+  "addRule": {
+    "message": "+ Agregar regla"
+  },
+  "ruleFieldUrl": {
+    "message": "URL"
+  },
+  "ruleFieldTitle": {
+    "message": "Título"
+  },
+  "ruleOperatorContains": {
+    "message": "contiene"
+  },
+  "ruleOperatorEquals": {
+    "message": "es igual a"
+  },
+  "ruleOperatorStartsWith": {
+    "message": "empieza con"
+  },
+  "ruleOperatorEndsWith": {
+    "message": "termina con"
+  },
+  "ruleOperatorMatches": {
+    "message": "coincide (regex)"
+  },
+  "ruleValuePlaceholder": {
+    "message": "ej. github.com"
+  },
+  "ruleThenSend": {
+    "message": "entonces enviar"
+  },
+  "noRules": {
+    "message": "No hay reglas configuradas. El envío rápido usará la plantilla predeterminada."
   }
 }

@@ -142,5 +142,44 @@
   },
   "editorQuickSendDesc": {
     "message": "啟用後，點擊擴充功能圖示將立即傳送此範本的 Webhook，無需開啟彈窗。"
+  },
+  "quickSendRules": {
+    "message": "快速傳送規則"
+  },
+  "quickSendRulesDesc": {
+    "message": "根據目前頁面自動選擇要傳送的範本。規則依序評估，第一條符合即生效。"
+  },
+  "addRule": {
+    "message": "+ 新增規則"
+  },
+  "ruleFieldUrl": {
+    "message": "URL"
+  },
+  "ruleFieldTitle": {
+    "message": "標題"
+  },
+  "ruleOperatorContains": {
+    "message": "包含"
+  },
+  "ruleOperatorEquals": {
+    "message": "等於"
+  },
+  "ruleOperatorStartsWith": {
+    "message": "開頭是"
+  },
+  "ruleOperatorEndsWith": {
+    "message": "結尾是"
+  },
+  "ruleOperatorMatches": {
+    "message": "符合（正規式）"
+  },
+  "ruleValuePlaceholder": {
+    "message": "如 github.com"
+  },
+  "ruleThenSend": {
+    "message": "則傳送"
+  },
+  "noRules": {
+    "message": "未設定規則。快速傳送將使用預設範本。"
   }
 }

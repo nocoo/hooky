@@ -142,5 +142,44 @@
   },
   "editorQuickSendDesc": {
     "message": "활성화하면 확장 프로그램 아이콘을 클릭하면 팝업 없이 이 템플릿의 Webhook이 즉시 전송됩니다."
+  },
+  "quickSendRules": {
+    "message": "빠른 전송 규칙"
+  },
+  "quickSendRulesDesc": {
+    "message": "현재 페이지에 따라 전송할 템플릿을 자동으로 선택합니다. 규칙은 순서대로 평가되며 첫 번째 일치 항목이 적용됩니다."
+  },
+  "addRule": {
+    "message": "+ 규칙 추가"
+  },
+  "ruleFieldUrl": {
+    "message": "URL"
+  },
+  "ruleFieldTitle": {
+    "message": "제목"
+  },
+  "ruleOperatorContains": {
+    "message": "포함"
+  },
+  "ruleOperatorEquals": {
+    "message": "일치"
+  },
+  "ruleOperatorStartsWith": {
+    "message": "시작"
+  },
+  "ruleOperatorEndsWith": {
+    "message": "끝남"
+  },
+  "ruleOperatorMatches": {
+    "message": "정규식 일치"
+  },
+  "ruleValuePlaceholder": {
+    "message": "예: github.com"
+  },
+  "ruleThenSend": {
+    "message": "전송"
+  },
+  "noRules": {
+    "message": "규칙이 설정되지 않았습니다. 빠른 전송은 기본 템플릿을 사용합니다."
   }
 }

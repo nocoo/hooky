@@ -142,5 +142,44 @@
   },
   "editorQuickSendDesc": {
     "message": "При включении нажатие на значок расширения немедленно отправит вебхук этого шаблона без открытия всплывающего окна."
+  },
+  "quickSendRules": {
+    "message": "Правила быстрой отправки"
+  },
+  "quickSendRulesDesc": {
+    "message": "Автоматически выбирайте шаблон для отправки на основе текущей страницы. Правила оцениваются по порядку; первое совпадение побеждает."
+  },
+  "addRule": {
+    "message": "+ Добавить правило"
+  },
+  "ruleFieldUrl": {
+    "message": "URL"
+  },
+  "ruleFieldTitle": {
+    "message": "Заголовок"
+  },
+  "ruleOperatorContains": {
+    "message": "содержит"
+  },
+  "ruleOperatorEquals": {
+    "message": "равно"
+  },
+  "ruleOperatorStartsWith": {
+    "message": "начинается с"
+  },
+  "ruleOperatorEndsWith": {
+    "message": "заканчивается на"
+  },
+  "ruleOperatorMatches": {
+    "message": "совпадает (regex)"
+  },
+  "ruleValuePlaceholder": {
+    "message": "напр. github.com"
+  },
+  "ruleThenSend": {
+    "message": "тогда отправить"
+  },
+  "noRules": {
+    "message": "Правила не настроены. Быстрая отправка будет использовать шаблон по умолчанию."
   }
 }

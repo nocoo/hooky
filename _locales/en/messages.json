@@ -142,5 +142,44 @@
   },
   "editorQuickSendDesc": {
     "message": "When enabled, clicking the extension icon will immediately send this template's webhook without opening the popup."
+  },
+  "quickSendRules": {
+    "message": "Quick Send Rules"
+  },
+  "quickSendRulesDesc": {
+    "message": "Automatically select which template to send based on the current page. Rules are evaluated in order; the first match wins."
+  },
+  "addRule": {
+    "message": "+ Add Rule"
+  },
+  "ruleFieldUrl": {
+    "message": "URL"
+  },
+  "ruleFieldTitle": {
+    "message": "Title"
+  },
+  "ruleOperatorContains": {
+    "message": "contains"
+  },
+  "ruleOperatorEquals": {
+    "message": "equals"
+  },
+  "ruleOperatorStartsWith": {
+    "message": "starts with"
+  },
+  "ruleOperatorEndsWith": {
+    "message": "ends with"
+  },
+  "ruleOperatorMatches": {
+    "message": "matches (regex)"
+  },
+  "ruleValuePlaceholder": {
+    "message": "e.g. github.com"
+  },
+  "ruleThenSend": {
+    "message": "then send"
+  },
+  "noRules": {
+    "message": "No rules configured. Quick Send will use the default template."
   }
 }

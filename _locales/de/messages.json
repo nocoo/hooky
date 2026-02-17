@@ -142,5 +142,44 @@
   },
   "editorQuickSendDesc": {
     "message": "Wenn aktiviert, wird beim Klick auf das Erweiterungssymbol sofort der Webhook dieser Vorlage gesendet, ohne das Popup zu öffnen."
+  },
+  "quickSendRules": {
+    "message": "Schnellversand-Regeln"
+  },
+  "quickSendRulesDesc": {
+    "message": "Wählen Sie automatisch die zu sendende Vorlage basierend auf der aktuellen Seite. Regeln werden der Reihe nach ausgewertet; der erste Treffer gewinnt."
+  },
+  "addRule": {
+    "message": "+ Regel hinzufügen"
+  },
+  "ruleFieldUrl": {
+    "message": "URL"
+  },
+  "ruleFieldTitle": {
+    "message": "Titel"
+  },
+  "ruleOperatorContains": {
+    "message": "enthält"
+  },
+  "ruleOperatorEquals": {
+    "message": "ist gleich"
+  },
+  "ruleOperatorStartsWith": {
+    "message": "beginnt mit"
+  },
+  "ruleOperatorEndsWith": {
+    "message": "endet mit"
+  },
+  "ruleOperatorMatches": {
+    "message": "entspricht (Regex)"
+  },
+  "ruleValuePlaceholder": {
+    "message": "z. B. github.com"
+  },
+  "ruleThenSend": {
+    "message": "dann senden"
+  },
+  "noRules": {
+    "message": "Keine Regeln konfiguriert. Schnellversand verwendet die Standardvorlage."
   }
 }
