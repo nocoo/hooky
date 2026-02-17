@@ -147,8 +147,8 @@ async function runTests() {
     );
     assert(formVisible, "Options page: Editor form visible after creating template");
 
-    // Template list should have one item
-    const listItems = await optionsPage.$$("#template-list li");
+    // Template list should have one item (plus the "+ New Webhook" action item)
+    const listItems = await optionsPage.$$("#template-list li:not(.new-item)");
     assert(listItems.length === 1, "Options page: Template list has one entry");
 
     // Verify elements exist in editor
@@ -318,8 +318,8 @@ async function runTests() {
     );
     assert(ruleFormVisible, "Rules: Rule editor form is visible after adding rule");
 
-    // Rules list should have one item
-    const ruleItems = await rulesPage.$$("#rules-list li");
+    // Rules list should have one item (plus the "+ New Rule" action item)
+    const ruleItems = await rulesPage.$$("#rules-list li:not(.new-item)");
     assert(ruleItems.length === 1, "Rules: Rules list has one entry");
 
     // Fill in rule details
@@ -363,8 +363,8 @@ async function runTests() {
     );
     assert(rulesManagerAfterDelete, "Rules: Rules manager visible after delete");
 
-    // Rules list should be empty
-    const ruleItemsAfterDelete = await rulesPage.$$("#rules-list li");
+    // Rules list should be empty (only the "+ New Rule" action item remains)
+    const ruleItemsAfterDelete = await rulesPage.$$("#rules-list li:not(.new-item)");
     assert(ruleItemsAfterDelete.length === 0, "Rules: Rules list empty after delete");
 
     // No-rules message should be visible again
