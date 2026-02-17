@@ -5,13 +5,13 @@
 <h1 align="center">Hooky</h1>
 
 <p align="center">
-  🪝 One-click webhook trigger with page context and template variables
+  🪝 One-click webhook trigger with page context, template variables, and smart rules
 </p>
 
 <p align="center">
   <img src="https://img.shields.io/badge/manifest-v3-blue" alt="Manifest V3">
-  <img src="https://img.shields.io/badge/coverage-93%25-brightgreen" alt="Coverage 93%">
-  <img src="https://img.shields.io/badge/tests-188_passing-brightgreen" alt="188 tests passing">
+  <img src="https://img.shields.io/badge/coverage-95%25-brightgreen" alt="Coverage 95%">
+  <img src="https://img.shields.io/badge/tests-258_passing-brightgreen" alt="258 tests passing">
   <img src="https://img.shields.io/badge/license-ISC-blue" alt="License ISC">
 </p>
 
@@ -32,7 +32,7 @@
   | `{{page.meta.og:description}}` | Open Graph description |
   | `{{page.meta.og:image}}` | Open Graph image |
 
-- ⚡ **Quick Send** — click the toolbar icon to instantly fire a designated template; badge flashes ✓ or ✗ for feedback
+- ⚡ **Quick Send Rules** — define rules based on page URL or title to automatically fire the right webhook; first match wins, fallback opens popup
 - 📋 **Context menu** — right-click on any page to trigger webhooks from the "Hooky" menu
 - 🎨 **Themes** — system / light / dark
 - 🌐 **i18n** — 10 languages: English, 简体中文, 繁體中文, 日本語, 한국어, Français, Deutsch, Español, Português (BR), Русский
@@ -90,7 +90,7 @@ Coverage is enforced at **90%** for all four metrics:
 -----------------|---------|----------|---------|---------|
 File             | % Stmts | % Branch | % Funcs | % Lines |
 -----------------|---------|----------|---------|---------|
-All files        |   98.09 |    93.22 |   92.68 |   99.53 |
+All files        |   96.83 |    91.55 |   94.78 |   98.48 |
 -----------------|---------|----------|---------|---------|
 ```
 
@@ -103,15 +103,16 @@ hooky/
 ├── 🐶 .husky/             # Git hooks (pre-commit, pre-push)
 ├── 🔧 scripts/            # Utility scripts (icon generation)
 ├── 📦 src/
-│   ├── background.js      # Service worker — startup, message routing
-│   ├── content.js         # Content script — page context extraction
+│   ├── background.js      # Service worker — startup, rules dispatch
 │   ├── contextmenu.js     # Context menu setup & click handling
 │   ├── i18n.js            # i18n helpers (applyI18n, t)
 │   ├── icons/             # Extension icons (16–256px)
 │   ├── options/           # ⚙️ Settings page (HTML, CSS, JS)
+│   ├── pagecontext.js     # Page metadata extraction (injected on demand)
 │   ├── params.js          # Request body / URL builder
 │   ├── popup/             # 🪟 Toolbar popup (HTML, CSS, JS)
 │   ├── quicksend.js       # ⚡ Quick Send with badge feedback
+│   ├── rules.js           # 📐 Rule engine (matchRule, findMatchingRule)
 │   ├── store.js           # Storage CRUD, migration, settings
 │   ├── template.js        # Template variable resolution engine
 │   ├── theme.js           # 🎨 Theme switching (system/light/dark)
@@ -154,7 +155,7 @@ This produces `dist/hooky-<version>.zip` containing only the runtime files neede
 | 🔒 Privacy Policy | [`PRIVACY.md`](PRIVACY.md) | ✅ |
 | 🖼️ Store Icon (128×128) | `src/icons/icon128.png` | ✅ |
 | 🖼️ Promo Tile (440×280) | `assets/hooky-banner-440x280.png` | ✅ |
-| 📸 Screenshot (1280×800) | `assets/hooky-screenshot-1280x800.png` | ✅ |
+| 📸 Screenshots (1280×800) | `assets/hooky-screenshot-1280x800-*.png` | ✅ |
 
 ### Steps
 

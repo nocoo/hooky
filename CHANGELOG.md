@@ -9,19 +9,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Quick Send Rules: conditional rules that match page URL or title to determine which template to fire
+- Quick Send Rules: conditional rules that match page URL or title to automatically select which webhook to fire
 - Rule matching fields: URL, Title
 - Rule matching operators: contains, equals, starts with, ends with, matches (regex)
 - Case-insensitive matching for all operators
-- Fallback chain: rules → default Quick Send template → open popup
+- First-match-wins evaluation: rules are checked in order, first match fires immediately
+- Fallback to popup when no rule matches the current page
 - Options page redesigned with 3-panel accordion sidebar (Templates, Rules, Settings)
 - Rule editor form with field, operator, value, template dropdown, and enabled toggle
 - 20 new i18n keys across all 10 locales for rules UI
 - E2E tests for rules accordion, rule CRUD, and rule editor
+- Store descriptions updated for all 10 languages
+
+### Changed
+
+- Quick Send mode replaced by rules-based dispatch — `quickSend` boolean and `quickSendTemplateId` fields removed from storage schema
+- `manifest.json` `default_popup` set to empty string so `chrome.action.onClicked` always fires
+- Background service worker now evaluates rules on toolbar click instead of using a fixed Quick Send template
 
 ### Fixed
 
 - E2E webhook server now handles CORS preflight requests correctly
+- Popup resets correctly after fallback so `onClicked` continues to fire on subsequent clicks
+- Delete button repositioned to left side of editor actions for better UX
 
 ## [1.0.0] - 2026-02-17
 
