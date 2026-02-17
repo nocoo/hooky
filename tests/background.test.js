@@ -196,4 +196,55 @@ describe("background.js", () => {
 
     expect(chrome.contextMenus.removeAll).not.toHaveBeenCalled();
   });
+
+  it("should call handleQuickSend when action icon is clicked", async () => {
+    chrome.storage.local.get.mockResolvedValue({});
+    await loadBackground();
+
+    const listener = onClickedListeners[0];
+    const tab = { id: 1, url: "https://example.com", title: "Test" };
+
+    // handleQuickSend will be called, which calls storage.local.get internally
+    // Since store is empty, it will try to open popup
+    chrome.action.openPopup.mockResolvedValue();
+    listener(tab);
+
+    // Give the async handleQuickSend time to execute
+    await vi.waitFor(() => {
+      expect(chrome.action.setPopup).toHaveBeenCalled();
+    });
+  });
+
+  it("should call handleContextMenuClick when context menu is clicked", async () => {
+    chrome.storage.local.get.mockResolvedValue({
+      hooky: {
+        templates: [{ id: "t1", name: "Test", url: "https://x.com", method: "POST", params: [] }],
+      },
+    });
+
+    // Add scripting mock for getPageContext
+    chrome.scripting = {
+      executeScript: vi.fn().mockResolvedValue([{
+        result: { url: "https://example.com", title: "Test", selection: "", meta: {} },
+      }]),
+    };
+
+    await loadBackground();
+
+    const listener = onMenuClickedListeners[0];
+    const info = { menuItemId: "hooky-t1" };
+    const tab = { id: 1, url: "https://example.com", title: "Test" };
+
+    // Mock fetch for webhook execution
+    global.fetch = vi.fn().mockResolvedValue({ ok: true, status: 200 });
+
+    listener(info, tab);
+
+    // Give async handleContextMenuClick time to execute
+    await vi.waitFor(() => {
+      expect(global.fetch).toHaveBeenCalled();
+    });
+
+    delete global.fetch;
+  });
 });

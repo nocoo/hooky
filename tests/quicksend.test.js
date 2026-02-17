@@ -404,6 +404,28 @@ describe("handleQuickSend", () => {
     );
   });
 
+  it("should handle context with missing page property", async () => {
+    const store = {
+      templates: [
+        { id: "t1", name: "A", url: "https://a.com/hook", method: "POST", params: [] },
+      ],
+      quickSendRules: [
+        { id: "r1", field: "url", operator: "contains", value: "example.com", templateId: "t1", enabled: true },
+      ],
+    };
+    storageMock.local.get.mockResolvedValue({ hooky: store });
+
+    // Return context without page property — triggers `context.page || {}` fallback
+    getPageContext.mockResolvedValue({});
+
+    const tab = { id: 1, url: "https://example.com", title: "Example" };
+    await handleQuickSend(tab);
+
+    // page is {} so page.url is undefined, matchRule returns false → open popup
+    expect(fetchMock).not.toHaveBeenCalled();
+    expect(chrome.action.openPopup).toHaveBeenCalled();
+  });
+
   it("should handle null tab gracefully", async () => {
     const store = {
       templates: [

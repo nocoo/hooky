@@ -307,6 +307,18 @@ describe("store", () => {
       expect(rules).toHaveLength(1);
       expect(rules[0].templateId).toBe(t1.id);
     });
+
+    it("should handle deleteTemplate when quickSendRules is undefined", async () => {
+      const tpl = await createTemplate("Test");
+      // Manually remove quickSendRules from store to trigger the falsy branch
+      const store = storage.hooky;
+      delete store.quickSendRules;
+      storage.hooky = store;
+
+      await deleteTemplate(tpl.id);
+      const result = await loadStore();
+      expect(result.templates).toHaveLength(0);
+    });
   });
 
   describe("migrateFromLegacy", () => {

@@ -709,6 +709,28 @@ describe("popup.js", () => {
     expect(document.querySelectorAll(".param-item")).toHaveLength(0);
   });
 
+  it("should fallback to first template when activeTemplateId does not match any template", async () => {
+    setupChromeMock({
+      hooky: {
+        templates: [
+          { id: "t1", name: "First", url: "https://first.com", method: "PUT", params: [] },
+          { id: "t2", name: "Second", url: "https://second.com", method: "DELETE", params: [] },
+        ],
+        activeTemplateId: "non-existent-id",
+        theme: "system",
+      },
+    });
+    await setupPageContextMock();
+
+    await import("../src/popup/popup.js");
+
+    await vi.waitFor(() => {
+      // Should fallback to first template
+      expect(document.getElementById("method-badge").textContent).toBe("PUT");
+    });
+    expect(document.getElementById("url-display").textContent).toBe("https://first.com");
+  });
+
   it("should handle template select change to non-existent template", async () => {
     setupChromeMock({
       hooky: {
