@@ -21,7 +21,7 @@
     "message": "パラメータ"
   },
   "addParam": {
-    "message": "+ 追加"
+    "message": "追加"
   },
   "templateHint": {
     "message": "利用可能な変数："
@@ -150,7 +150,7 @@
     "message": "現在のページに基づいて送信するテンプレートを自動選択します。ルールは順番に評価され、最初に一致したものが適用されます。"
   },
   "addRule": {
-    "message": "+ ルールを追加"
+    "message": "ルールを追加"
   },
   "ruleFieldUrl": {
     "message": "URL"
@@ -204,6 +204,6 @@
     "message": "Rules"
   },
   "newWebhook": {
-    "message": "+ New Webhook"
+    "message": "New Webhook"
   }
 }

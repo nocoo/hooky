@@ -21,7 +21,7 @@
     "message": "Parameter"
   },
   "addParam": {
-    "message": "+ Hinzufügen"
+    "message": "Hinzufügen"
   },
   "templateHint": {
     "message": "Verfügbare Variablen:"
@@ -150,7 +150,7 @@
     "message": "Wählen Sie automatisch die zu sendende Vorlage basierend auf der aktuellen Seite. Regeln werden der Reihe nach ausgewertet; der erste Treffer gewinnt."
   },
   "addRule": {
-    "message": "+ Regel hinzufügen"
+    "message": "Regel hinzufügen"
   },
   "ruleFieldUrl": {
     "message": "URL"
@@ -204,6 +204,6 @@
     "message": "Rules"
   },
   "newWebhook": {
-    "message": "+ New Webhook"
+    "message": "New Webhook"
   }
 }

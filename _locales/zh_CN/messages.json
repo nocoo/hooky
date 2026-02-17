@@ -21,7 +21,7 @@
     "message": "\u53c2\u6570"
   },
   "addParam": {
-    "message": "+ \u6dfb\u52a0"
+    "message": "\u6dfb\u52a0"
   },
   "templateHint": {
     "message": "\u53ef\u7528\u53d8\u91cf\uff1a"
@@ -150,7 +150,7 @@
     "message": "根据当前页面自动选择要发送的模板。规则按顺序评估，第一条匹配即生效。"
   },
   "addRule": {
-    "message": "+ 添加规则"
+    "message": "添加规则"
   },
   "ruleFieldUrl": {
     "message": "URL"
@@ -204,6 +204,6 @@
     "message": "Rules"
   },
   "newWebhook": {
-    "message": "+ New Webhook"
+    "message": "New Webhook"
   }
 }

@@ -21,7 +21,7 @@
     "message": "매개변수"
   },
   "addParam": {
-    "message": "+ 추가"
+    "message": "추가"
   },
   "templateHint": {
     "message": "사용 가능한 변수:"
@@ -150,7 +150,7 @@
     "message": "현재 페이지에 따라 전송할 템플릿을 자동으로 선택합니다. 규칙은 순서대로 평가되며 첫 번째 일치 항목이 적용됩니다."
   },
   "addRule": {
-    "message": "+ 규칙 추가"
+    "message": "규칙 추가"
   },
   "ruleFieldUrl": {
     "message": "URL"
@@ -204,6 +204,6 @@
     "message": "Rules"
   },
   "newWebhook": {
-    "message": "+ New Webhook"
+    "message": "New Webhook"
   }
 }

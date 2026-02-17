@@ -21,7 +21,7 @@
     "message": "Параметры"
   },
   "addParam": {
-    "message": "+ Добавить"
+    "message": "Добавить"
   },
   "templateHint": {
     "message": "Доступные переменные:"
@@ -150,7 +150,7 @@
     "message": "Автоматически выбирайте шаблон для отправки на основе текущей страницы. Правила оцениваются по порядку; первое совпадение побеждает."
   },
   "addRule": {
-    "message": "+ Добавить правило"
+    "message": "Добавить правило"
   },
   "ruleFieldUrl": {
     "message": "URL"
@@ -204,6 +204,6 @@
     "message": "Rules"
   },
   "newWebhook": {
-    "message": "+ New Webhook"
+    "message": "New Webhook"
   }
 }

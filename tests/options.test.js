@@ -135,8 +135,8 @@ function setupChromeMock(storeData = {}) {
           ruleOperatorEndsWith: "ends with",
           ruleOperatorMatches: "matches (regex)",
           noRules: "No rules configured.",
-          newWebhook: "+ New Webhook",
-          addRule: "+ Add Rule",
+          newWebhook: "New Webhook",
+          addRule: "Add Rule",
         };
         return messages[key] || key;
       }),

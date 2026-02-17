@@ -21,7 +21,7 @@
     "message": "參數"
   },
   "addParam": {
-    "message": "+ 新增"
+    "message": "新增"
   },
   "templateHint": {
     "message": "可用變數："
@@ -150,7 +150,7 @@
     "message": "根據目前頁面自動選擇要傳送的範本。規則依序評估，第一條符合即生效。"
   },
   "addRule": {
-    "message": "+ 新增規則"
+    "message": "新增規則"
   },
   "ruleFieldUrl": {
     "message": "URL"
@@ -204,6 +204,6 @@
     "message": "Rules"
   },
   "newWebhook": {
-    "message": "+ New Webhook"
+    "message": "New Webhook"
   }
 }

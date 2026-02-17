@@ -21,7 +21,7 @@
     "message": "Parameters"
   },
   "addParam": {
-    "message": "+ Add"
+    "message": "Add"
   },
   "templateHint": {
     "message": "Available variables:"
@@ -150,7 +150,7 @@
     "message": "Automatically select which template to send based on the current page. Rules are evaluated in order; the first match wins."
   },
   "addRule": {
-    "message": "+ Add Rule"
+    "message": "Add Rule"
   },
   "ruleFieldUrl": {
     "message": "URL"
@@ -204,6 +204,6 @@
     "message": "Rules"
   },
   "newWebhook": {
-    "message": "+ New Webhook"
+    "message": "New Webhook"
   }
 }
