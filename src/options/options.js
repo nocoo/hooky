@@ -495,9 +495,15 @@ async function saveCurrentRule() {
 
   await updateQuickSendRule(currentRuleId, changes);
 
-  // Re-render rules list to update summary
+  // Re-render rules list to update summary and no-rules message
   const store = await loadStore();
   renderRulesList(store.quickSendRules);
+  const rules = store.quickSendRules || [];
+  if (rules.length === 0) {
+    noRulesEl.classList.remove("hidden");
+  } else {
+    noRulesEl.classList.add("hidden");
+  }
 
   showStatus(t("saved"));
 }
