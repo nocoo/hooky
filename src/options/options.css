@@ -29,6 +29,7 @@ body {
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
+  overflow: hidden;
 }
 
 .sidebar-header {
@@ -62,27 +63,99 @@ body {
   flex-shrink: 0;
 }
 
-.btn-new {
-  padding: 5px 12px;
-  font-size: 13px;
+/* ─── Accordion ─── */
+.accordion-panel {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  border-bottom: 1px solid #e8e8e8;
+}
+
+.accordion-panel:last-child {
+  border-bottom: none;
+}
+
+.accordion-trigger {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  padding: 10px 16px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #999;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.15s, color 0.15s;
+  flex-shrink: 0;
+}
+
+.accordion-trigger:hover {
+  background: #f8f8f8;
+  color: #777;
+}
+
+.accordion-panel.active > .accordion-trigger {
+  color: #9666b7;
+}
+
+.accordion-actions {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+}
+
+.btn-icon {
+  padding: 2px 8px;
+  font-size: 14px;
   font-weight: 500;
   color: #9666b7;
-  background: #f3eef8;
-  border: 1px solid #d4c0e4;
-  border-radius: 6px;
+  background: none;
+  border: 1px solid transparent;
+  border-radius: 4px;
   cursor: pointer;
-  transition: background 0.15s;
+  line-height: 1;
+  transition: background 0.15s, border-color 0.15s;
 }
 
-.btn-new:hover {
-  background: #e6d8f0;
+.btn-icon:hover {
+  background: #f3eef8;
+  border-color: #d4c0e4;
 }
 
+.accordion-chevron {
+  flex-shrink: 0;
+  color: #bbb;
+  transition: transform 0.25s ease;
+}
+
+.accordion-panel.active > .accordion-trigger .accordion-chevron {
+  transform: rotate(180deg);
+  color: #9666b7;
+}
+
+.accordion-content {
+  overflow: hidden;
+  max-height: 0;
+  opacity: 0;
+  transition: max-height 0.3s ease, opacity 0.25s ease;
+}
+
+.accordion-panel.active > .accordion-content {
+  max-height: 2000px;
+  opacity: 1;
+  overflow-y: auto;
+  flex: 1;
+}
+
+/* ─── Template list ─── */
 .template-list {
   list-style: none;
-  flex: 1;
-  overflow-y: auto;
-  padding: 8px 0;
+  padding: 0 0 8px;
 }
 
 .template-list li {
@@ -142,9 +215,74 @@ body {
   border-left-color: #9666b7;
 }
 
-.sidebar-footer {
-  border-top: 1px solid #e8e8e8;
-  padding: 16px;
+/* ─── Rules list ─── */
+.rules-list {
+  list-style: none;
+  padding: 0 0 8px;
+}
+
+.rules-list li {
+  display: flex;
+  align-items: center;
+  padding: 8px 16px 8px 16px;
+  font-size: 13px;
+  cursor: pointer;
+  color: #555;
+  border-left: 3px solid transparent;
+  transition: background 0.1s, border-color 0.1s;
+  gap: 6px;
+}
+
+.rules-list li:hover {
+  background: #f8f8f8;
+}
+
+.rules-list li.active {
+  background: #f3eef8;
+  color: #7d52a0;
+  font-weight: 500;
+  border-left-color: #9666b7;
+}
+
+.rules-list li.disabled {
+  opacity: 0.5;
+}
+
+.rule-summary {
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.rule-summary .rule-field {
+  font-weight: 500;
+  color: #9666b7;
+}
+
+.rule-summary .rule-operator {
+  color: #888;
+  font-style: italic;
+}
+
+.rule-summary .rule-value {
+  color: #555;
+}
+
+.no-rules {
+  font-size: 12px;
+  color: #aaa;
+  padding: 8px 16px 12px;
+  line-height: 1.4;
+}
+
+.no-rules.hidden {
+  display: none;
+}
+
+/* ─── Settings body ─── */
+.settings-body {
+  padding: 4px 16px 12px;
 }
 
 /* ─── Editor ─── */
@@ -479,15 +617,6 @@ select {
   margin-right: 2px;
 }
 
-.sidebar-footer h3 {
-  font-size: 13px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  color: #999;
-  margin-bottom: 12px;
-}
-
 .setting-row {
   display: flex;
   align-items: center;
@@ -558,6 +687,40 @@ html[data-theme="dark"] .version {
   color: #666;
 }
 
+html[data-theme="dark"] .accordion-panel {
+  border-bottom-color: #2a2a2a;
+}
+
+html[data-theme="dark"] .accordion-trigger {
+  color: #666;
+}
+
+html[data-theme="dark"] .accordion-trigger:hover {
+  background: #1e1e1e;
+  color: #888;
+}
+
+html[data-theme="dark"] .accordion-panel.active > .accordion-trigger {
+  color: #be94dc;
+}
+
+html[data-theme="dark"] .accordion-chevron {
+  color: #555;
+}
+
+html[data-theme="dark"] .accordion-panel.active > .accordion-trigger .accordion-chevron {
+  color: #be94dc;
+}
+
+html[data-theme="dark"] .btn-icon {
+  color: #be94dc;
+}
+
+html[data-theme="dark"] .btn-icon:hover {
+  background: #2a1e35;
+  border-color: #3d2a55;
+}
+
 html[data-theme="dark"] .editor-header {
   border-bottom-color: #2a2a2a;
 }
@@ -566,22 +729,8 @@ html[data-theme="dark"] .editor-header h2 {
   color: #f0f0f0;
 }
 
-html[data-theme="dark"] .sidebar-footer h3 {
-  color: #666;
-}
-
 html[data-theme="dark"] .setting-row > label {
   color: #e0e0e0;
-}
-
-html[data-theme="dark"] .btn-new {
-  color: #be94dc;
-  background: #2a1e35;
-  border-color: #3d2a55;
-}
-
-html[data-theme="dark"] .btn-new:hover {
-  background: #332545;
 }
 
 html[data-theme="dark"] .template-list li {
@@ -611,8 +760,34 @@ html[data-theme="dark"] .template-list li .btn-lightning.active {
   color: #e6a817;
 }
 
-html[data-theme="dark"] .sidebar-footer {
-  border-top-color: #2a2a2a;
+html[data-theme="dark"] .rules-list li {
+  color: #999;
+}
+
+html[data-theme="dark"] .rules-list li:hover {
+  background: #1e1e1e;
+}
+
+html[data-theme="dark"] .rules-list li.active {
+  background: #2a1e35;
+  color: #be94dc;
+  border-left-color: #a97bcf;
+}
+
+html[data-theme="dark"] .rule-summary .rule-field {
+  color: #be94dc;
+}
+
+html[data-theme="dark"] .rule-summary .rule-operator {
+  color: #777;
+}
+
+html[data-theme="dark"] .rule-summary .rule-value {
+  color: #999;
+}
+
+html[data-theme="dark"] .no-rules {
+  color: #555;
 }
 
 html[data-theme="dark"] .editor-actions {
@@ -767,6 +942,40 @@ html[data-theme="light"] .layout {
     color: #666;
   }
 
+  html:not([data-theme]) .accordion-panel {
+    border-bottom-color: #2a2a2a;
+  }
+
+  html:not([data-theme]) .accordion-trigger {
+    color: #666;
+  }
+
+  html:not([data-theme]) .accordion-trigger:hover {
+    background: #1e1e1e;
+    color: #888;
+  }
+
+  html:not([data-theme]) .accordion-panel.active > .accordion-trigger {
+    color: #be94dc;
+  }
+
+  html:not([data-theme]) .accordion-chevron {
+    color: #555;
+  }
+
+  html:not([data-theme]) .accordion-panel.active > .accordion-trigger .accordion-chevron {
+    color: #be94dc;
+  }
+
+  html:not([data-theme]) .btn-icon {
+    color: #be94dc;
+  }
+
+  html:not([data-theme]) .btn-icon:hover {
+    background: #2a1e35;
+    border-color: #3d2a55;
+  }
+
   html:not([data-theme]) .editor-header {
     border-bottom-color: #2a2a2a;
   }
@@ -775,22 +984,8 @@ html[data-theme="light"] .layout {
     color: #f0f0f0;
   }
 
-  html:not([data-theme]) .sidebar-footer h3 {
-    color: #666;
-  }
-
   html:not([data-theme]) .setting-row > label {
     color: #e0e0e0;
-  }
-
-  html:not([data-theme]) .btn-new {
-    color: #be94dc;
-    background: #2a1e35;
-    border-color: #3d2a55;
-  }
-
-  html:not([data-theme]) .btn-new:hover {
-    background: #332545;
   }
 
   html:not([data-theme]) .template-list li {
@@ -820,8 +1015,34 @@ html[data-theme="light"] .layout {
     color: #e6a817;
   }
 
-  html:not([data-theme]) .sidebar-footer {
-    border-top-color: #2a2a2a;
+  html:not([data-theme]) .rules-list li {
+    color: #999;
+  }
+
+  html:not([data-theme]) .rules-list li:hover {
+    background: #1e1e1e;
+  }
+
+  html:not([data-theme]) .rules-list li.active {
+    background: #2a1e35;
+    color: #be94dc;
+    border-left-color: #a97bcf;
+  }
+
+  html:not([data-theme]) .rule-summary .rule-field {
+    color: #be94dc;
+  }
+
+  html:not([data-theme]) .rule-summary .rule-operator {
+    color: #777;
+  }
+
+  html:not([data-theme]) .rule-summary .rule-value {
+    color: #999;
+  }
+
+  html:not([data-theme]) .no-rules {
+    color: #555;
   }
 
   html:not([data-theme]) .editor-actions {

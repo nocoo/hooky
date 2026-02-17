@@ -181,5 +181,20 @@
   },
   "noRules": {
     "message": "Правила не настроены. Быстрая отправка будет использовать шаблон по умолчанию."
+  },
+  "ruleField": {
+    "message": "Когда"
+  },
+  "ruleCondition": {
+    "message": "Условие"
+  },
+  "ruleValueLabel": {
+    "message": "Значение"
+  },
+  "ruleEnabled": {
+    "message": "Включено"
+  },
+  "ruleDetail": {
+    "message": "Детали правила"
   }
 }

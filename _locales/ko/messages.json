@@ -181,5 +181,20 @@
   },
   "noRules": {
     "message": "규칙이 설정되지 않았습니다. 빠른 전송은 기본 템플릿을 사용합니다."
+  },
+  "ruleField": {
+    "message": "조건 대상"
+  },
+  "ruleCondition": {
+    "message": "조건"
+  },
+  "ruleValueLabel": {
+    "message": "값"
+  },
+  "ruleEnabled": {
+    "message": "활성화"
+  },
+  "ruleDetail": {
+    "message": "규칙 상세"
   }
 }

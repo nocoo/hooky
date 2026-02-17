@@ -181,5 +181,20 @@
   },
   "noRules": {
     "message": "未配置规则。快速发送将使用默认模板。"
+  },
+  "ruleField": {
+    "message": "当"
+  },
+  "ruleCondition": {
+    "message": "条件"
+  },
+  "ruleValueLabel": {
+    "message": "值"
+  },
+  "ruleEnabled": {
+    "message": "启用"
+  },
+  "ruleDetail": {
+    "message": "规则详情"
   }
 }

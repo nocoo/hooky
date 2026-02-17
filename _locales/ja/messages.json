@@ -181,5 +181,20 @@
   },
   "noRules": {
     "message": "ルールが設定されていません。クイック送信はデフォルトのテンプレートを使用します。"
+  },
+  "ruleField": {
+    "message": "条件対象"
+  },
+  "ruleCondition": {
+    "message": "条件"
+  },
+  "ruleValueLabel": {
+    "message": "値"
+  },
+  "ruleEnabled": {
+    "message": "有効"
+  },
+  "ruleDetail": {
+    "message": "ルール詳細"
   }
 }

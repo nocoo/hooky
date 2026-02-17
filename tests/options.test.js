@@ -3,36 +3,98 @@ import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 
 function setupOptionsDOM() {
   document.body.innerHTML = `
-    <ul id="template-list"></ul>
-    <button id="new-template">+</button>
-    <input type="checkbox" id="quick-send">
-    <p id="quick-send-hint"></p>
-    <select id="theme-select">
-      <option value="system">System</option>
-      <option value="light">Light</option>
-      <option value="dark">Dark</option>
-    </select>
-    <div id="editor-empty" style="display: flex;"></div>
-    <div id="editor-form" style="display: none;">
-      <input type="text" id="template-name">
-      <input type="url" id="webhook-url">
-      <select id="http-method">
-        <option value="GET">GET</option>
-        <option value="POST" selected>POST</option>
-        <option value="PUT">PUT</option>
-        <option value="PATCH">PATCH</option>
-        <option value="DELETE">DELETE</option>
-      </select>
-      <div id="params-list"></div>
-      <button id="add-param">+ Add</button>
-      <input type="checkbox" id="editor-quick-send">
+    <div class="layout">
+      <aside class="sidebar">
+        <div class="sidebar-header">
+          <h2>Hooky <span class="version" id="version"></span></h2>
+        </div>
+        <div class="accordion-panel active" id="panel-templates">
+          <button type="button" class="accordion-trigger" data-panel="panel-templates">
+            <span>Templates</span>
+            <span class="accordion-actions">
+              <button type="button" id="new-template" class="btn-icon">+</button>
+            </span>
+            <svg class="accordion-chevron" width="10" height="6" viewBox="0 0 10 6"></svg>
+          </button>
+          <div class="accordion-content">
+            <ul id="template-list" class="template-list"></ul>
+          </div>
+        </div>
+        <div class="accordion-panel" id="panel-rules">
+          <button type="button" class="accordion-trigger" data-panel="panel-rules">
+            <span>Rules</span>
+            <span class="accordion-actions">
+              <button type="button" id="add-rule" class="btn-icon">+</button>
+            </span>
+            <svg class="accordion-chevron" width="10" height="6" viewBox="0 0 10 6"></svg>
+          </button>
+          <div class="accordion-content">
+            <ul id="rules-list" class="rules-list"></ul>
+            <p class="no-rules" id="no-rules">No rules configured.</p>
+          </div>
+        </div>
+        <div class="accordion-panel" id="panel-settings">
+          <button type="button" class="accordion-trigger" data-panel="panel-settings">
+            <span>Settings</span>
+            <svg class="accordion-chevron" width="10" height="6" viewBox="0 0 10 6"></svg>
+          </button>
+          <div class="accordion-content">
+            <div class="settings-body">
+              <select id="theme-select">
+                <option value="system">System</option>
+                <option value="light">Light</option>
+                <option value="dark">Dark</option>
+              </select>
+              <input type="checkbox" id="quick-send">
+              <p id="quick-send-hint"></p>
+            </div>
+          </div>
+        </div>
+      </aside>
+      <main class="editor" id="editor">
+        <div class="editor-header">
+          <h2 id="editor-title">Webhook Detail</h2>
+        </div>
+        <div class="editor-body">
+          <div class="editor-empty" id="editor-empty" style="display: flex;"></div>
+          <div class="editor-form" id="editor-form" style="display: none;">
+            <input type="text" id="template-name">
+            <input type="url" id="webhook-url">
+            <select id="http-method">
+              <option value="GET">GET</option>
+              <option value="POST" selected>POST</option>
+              <option value="PUT">PUT</option>
+              <option value="PATCH">PATCH</option>
+              <option value="DELETE">DELETE</option>
+            </select>
+            <div id="params-list"></div>
+            <button id="add-param">+ Add</button>
+            <input type="checkbox" id="editor-quick-send">
+          </div>
+          <div class="editor-form" id="rule-editor-form" style="display: none;">
+            <select id="rule-field">
+              <option value="url">URL</option>
+              <option value="title">Title</option>
+            </select>
+            <select id="rule-operator">
+              <option value="contains">contains</option>
+              <option value="equals">equals</option>
+              <option value="startsWith">starts with</option>
+              <option value="endsWith">ends with</option>
+              <option value="matches">matches (regex)</option>
+            </select>
+            <input type="text" id="rule-value">
+            <select id="rule-template"></select>
+            <input type="checkbox" id="rule-enabled" checked>
+          </div>
+        </div>
+        <div class="editor-actions" id="editor-actions" style="display: none;">
+          <button id="delete-template">Delete</button>
+          <span id="status"></span>
+          <button id="save">Save</button>
+        </div>
+      </main>
     </div>
-    <div id="editor-actions" style="display: none;">
-      <button id="delete-template">Delete</button>
-      <span id="status"></span>
-      <button id="save">Save</button>
-    </div>
-    <span id="version"></span>
   `;
 }
 
@@ -60,6 +122,16 @@ function setupChromeMock(storeData = {}) {
           settings: "Settings",
           theme: "Theme",
           quickSend: "Quick Send",
+          webhookDetail: "Webhook Detail",
+          ruleDetail: "Rule Detail",
+          ruleFieldUrl: "URL",
+          ruleFieldTitle: "Title",
+          ruleOperatorContains: "contains",
+          ruleOperatorEquals: "equals",
+          ruleOperatorStartsWith: "starts with",
+          ruleOperatorEndsWith: "ends with",
+          ruleOperatorMatches: "matches (regex)",
+          noRules: "No rules configured.",
         };
         return messages[key] || key;
       }),
@@ -82,6 +154,7 @@ function makeStore(overrides = {}) {
       activeTemplateId: "t1",
       quickSend: false,
       quickSendTemplateId: null,
+      quickSendRules: [],
       theme: "system",
       ...overrides,
     },
@@ -361,7 +434,6 @@ describe("options.js", () => {
     });
 
     // No additional set calls should have been made for deletion
-    // (There may be set calls from init, but no new ones for delete)
     expect(chrome.storage.local.set.mock.calls.length).toBe(setCallsBefore);
 
     delete global.confirm;
@@ -618,13 +690,277 @@ describe("options.js", () => {
     document.getElementById("delete-template").click();
 
     await vi.waitFor(() => {
-      // The mock returns raw "Delete $1?" since it doesn't substitute
-      // but we can verify confirm was called with a string containing "Delete"
       expect(global.confirm).toHaveBeenCalled();
       const confirmArg = global.confirm.mock.calls[0][0];
       expect(confirmArg).toContain("Delete");
     });
 
     delete global.confirm;
+  });
+
+  // ─── Accordion tests ───
+
+  it("should initialize with templates panel active", async () => {
+    setupChromeMock(makeStore());
+    await import("../src/options/options.js");
+
+    await vi.waitFor(() => {
+      expect(document.getElementById("panel-templates").classList.contains("active")).toBe(true);
+    });
+    expect(document.getElementById("panel-rules").classList.contains("active")).toBe(false);
+    expect(document.getElementById("panel-settings").classList.contains("active")).toBe(false);
+  });
+
+  it("should switch accordion panels exclusively", async () => {
+    setupChromeMock(makeStore());
+    await import("../src/options/options.js");
+
+    await vi.waitFor(() => {
+      expect(document.getElementById("panel-templates").classList.contains("active")).toBe(true);
+    });
+
+    // Click settings trigger
+    const settingsTrigger = document.querySelector('[data-panel="panel-settings"]');
+    settingsTrigger.click();
+
+    expect(document.getElementById("panel-settings").classList.contains("active")).toBe(true);
+    expect(document.getElementById("panel-templates").classList.contains("active")).toBe(false);
+    expect(document.getElementById("panel-rules").classList.contains("active")).toBe(false);
+  });
+
+  it("should not collapse an already active panel when clicked", async () => {
+    setupChromeMock(makeStore());
+    await import("../src/options/options.js");
+
+    await vi.waitFor(() => {
+      expect(document.getElementById("panel-templates").classList.contains("active")).toBe(true);
+    });
+
+    // Click templates trigger again — should remain active
+    const trigger = document.querySelector('[data-panel="panel-templates"]');
+    trigger.click();
+
+    expect(document.getElementById("panel-templates").classList.contains("active")).toBe(true);
+  });
+
+  // ─── Rules list tests ───
+
+  it("should show no-rules message when there are no rules", async () => {
+    setupChromeMock(makeStore({ quickSendRules: [] }));
+    await import("../src/options/options.js");
+
+    await vi.waitFor(() => {
+      expect(document.getElementById("no-rules").classList.contains("hidden")).toBe(false);
+    });
+    expect(document.querySelectorAll("#rules-list li")).toHaveLength(0);
+  });
+
+  it("should render rules list", async () => {
+    setupChromeMock(makeStore({
+      quickSendRules: [
+        { id: "r1", field: "url", operator: "contains", value: "github.com", templateId: "t1", enabled: true },
+        { id: "r2", field: "title", operator: "equals", value: "Home", templateId: "t1", enabled: false },
+      ],
+    }));
+    await import("../src/options/options.js");
+
+    await vi.waitFor(() => {
+      const items = document.querySelectorAll("#rules-list li");
+      expect(items).toHaveLength(2);
+    });
+
+    const items = document.querySelectorAll("#rules-list li");
+    expect(items[0].querySelector(".rule-field").textContent).toBe("URL");
+    expect(items[0].querySelector(".rule-operator").textContent).toContain("contains");
+    expect(items[0].querySelector(".rule-value").textContent).toBe("github.com");
+    expect(items[1].classList.contains("disabled")).toBe(true);
+  });
+
+  it("should hide no-rules message when rules exist", async () => {
+    setupChromeMock(makeStore({
+      quickSendRules: [
+        { id: "r1", field: "url", operator: "contains", value: "test", templateId: "t1", enabled: true },
+      ],
+    }));
+    await import("../src/options/options.js");
+
+    await vi.waitFor(() => {
+      expect(document.getElementById("no-rules").classList.contains("hidden")).toBe(true);
+    });
+  });
+
+  it("should select a rule and show rule editor", async () => {
+    setupChromeMock(makeStore({
+      quickSendRules: [
+        { id: "r1", field: "url", operator: "contains", value: "github.com", templateId: "t1", enabled: true },
+      ],
+    }));
+    await import("../src/options/options.js");
+
+    await vi.waitFor(() => {
+      expect(document.querySelectorAll("#rules-list li")).toHaveLength(1);
+    });
+
+    // Click on the rule
+    document.querySelector("#rules-list li").click();
+
+    await vi.waitFor(() => {
+      expect(document.getElementById("rule-editor-form").style.display).toBe("block");
+    });
+    expect(document.getElementById("editor-form").style.display).toBe("none");
+    expect(document.getElementById("rule-field").value).toBe("url");
+    expect(document.getElementById("rule-operator").value).toBe("contains");
+    expect(document.getElementById("rule-value").value).toBe("github.com");
+    expect(document.getElementById("editor-title").textContent).toBe("Rule Detail");
+  });
+
+  it("should add a new rule when add-rule button is clicked", async () => {
+    const store = makeStore();
+    setupChromeMock(store);
+
+    let callCount = 0;
+    chrome.storage.local.get.mockImplementation(() => {
+      callCount++;
+      if (callCount <= 2) return Promise.resolve(store);
+      return Promise.resolve(makeStore({
+        quickSendRules: [
+          { id: "r-new", field: "url", operator: "contains", value: "", templateId: "t1", enabled: true },
+        ],
+      }));
+    });
+
+    await import("../src/options/options.js");
+
+    await vi.waitFor(() => {
+      expect(document.querySelectorAll("#template-list li")).toHaveLength(1);
+    });
+
+    document.getElementById("add-rule").click();
+
+    await vi.waitFor(() => {
+      expect(chrome.storage.local.set).toHaveBeenCalled();
+    });
+  });
+
+  it("should save rule changes", async () => {
+    const storeWithRule = makeStore({
+      quickSendRules: [
+        { id: "r1", field: "url", operator: "contains", value: "github.com", templateId: "t1", enabled: true },
+      ],
+    });
+    setupChromeMock(storeWithRule);
+    await import("../src/options/options.js");
+
+    await vi.waitFor(() => {
+      expect(document.querySelectorAll("#rules-list li")).toHaveLength(1);
+    });
+
+    // Select the rule
+    document.querySelector("#rules-list li").click();
+
+    await vi.waitFor(() => {
+      expect(document.getElementById("rule-editor-form").style.display).toBe("block");
+    });
+
+    // Modify rule
+    document.getElementById("rule-field").value = "title";
+    document.getElementById("rule-operator").value = "equals";
+    document.getElementById("rule-value").value = "My Page";
+
+    document.getElementById("save").click();
+
+    await vi.waitFor(() => {
+      const setCalls = chrome.storage.local.set.mock.calls;
+      const saved = setCalls.find(
+        (call) => call[0].hooky?.quickSendRules?.[0]?.field === "title",
+      );
+      expect(saved).toBeTruthy();
+    });
+  });
+
+  it("should delete a rule without confirmation", async () => {
+    const storeWithRule = makeStore({
+      quickSendRules: [
+        { id: "r1", field: "url", operator: "contains", value: "test", templateId: "t1", enabled: true },
+      ],
+    });
+    setupChromeMock(storeWithRule);
+    await import("../src/options/options.js");
+
+    await vi.waitFor(() => {
+      expect(document.querySelectorAll("#rules-list li")).toHaveLength(1);
+    });
+
+    // Select the rule first
+    document.querySelector("#rules-list li").click();
+
+    await vi.waitFor(() => {
+      expect(document.getElementById("rule-editor-form").style.display).toBe("block");
+    });
+
+    // After delete, rules list is empty
+    chrome.storage.local.get.mockResolvedValue(makeStore({ quickSendRules: [] }));
+
+    document.getElementById("delete-template").click();
+
+    await vi.waitFor(() => {
+      expect(document.getElementById("editor-empty").style.display).toBe("flex");
+    });
+  });
+
+  it("should populate template dropdown in rule editor", async () => {
+    setupChromeMock(makeStore({
+      templates: [
+        { id: "t1", name: "Hook A", url: "https://a.com", method: "POST", params: [] },
+        { id: "t2", name: "Hook B", url: "https://b.com", method: "GET", params: [] },
+      ],
+      quickSendRules: [
+        { id: "r1", field: "url", operator: "contains", value: "test", templateId: "t2", enabled: true },
+      ],
+    }));
+    await import("../src/options/options.js");
+
+    await vi.waitFor(() => {
+      expect(document.querySelectorAll("#rules-list li")).toHaveLength(1);
+    });
+
+    // Select the rule
+    document.querySelector("#rules-list li").click();
+
+    await vi.waitFor(() => {
+      expect(document.getElementById("rule-editor-form").style.display).toBe("block");
+    });
+
+    const options = document.querySelectorAll("#rule-template option");
+    expect(options).toHaveLength(2);
+    expect(options[0].textContent).toBe("Hook A");
+    expect(options[1].textContent).toBe("Hook B");
+    expect(document.getElementById("rule-template").value).toBe("t2");
+  });
+
+  it("should clear template list highlights when selecting a rule", async () => {
+    setupChromeMock(makeStore({
+      quickSendRules: [
+        { id: "r1", field: "url", operator: "contains", value: "test", templateId: "t1", enabled: true },
+      ],
+    }));
+    await import("../src/options/options.js");
+
+    await vi.waitFor(() => {
+      expect(document.getElementById("editor-form").style.display).toBe("block");
+    });
+
+    // Template t1 should be highlighted initially
+    expect(document.querySelector("#template-list li.active")).toBeTruthy();
+
+    // Click on a rule
+    document.querySelector("#rules-list li").click();
+
+    await vi.waitFor(() => {
+      expect(document.getElementById("rule-editor-form").style.display).toBe("block");
+    });
+
+    // Template list should have no active items
+    expect(document.querySelector("#template-list li.active")).toBeFalsy();
   });
 });

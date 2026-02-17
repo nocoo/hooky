@@ -181,5 +181,20 @@
   },
   "noRules": {
     "message": "No rules configured. Quick Send will use the default template."
+  },
+  "ruleField": {
+    "message": "When"
+  },
+  "ruleCondition": {
+    "message": "Condition"
+  },
+  "ruleValueLabel": {
+    "message": "Value"
+  },
+  "ruleEnabled": {
+    "message": "Enabled"
+  },
+  "ruleDetail": {
+    "message": "Rule Detail"
   }
 }

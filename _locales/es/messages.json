@@ -181,5 +181,20 @@
   },
   "noRules": {
     "message": "No hay reglas configuradas. El envío rápido usará la plantilla predeterminada."
+  },
+  "ruleField": {
+    "message": "Cuando"
+  },
+  "ruleCondition": {
+    "message": "Condición"
+  },
+  "ruleValueLabel": {
+    "message": "Valor"
+  },
+  "ruleEnabled": {
+    "message": "Activada"
+  },
+  "ruleDetail": {
+    "message": "Detalle de la regla"
   }
 }

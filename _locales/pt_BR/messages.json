@@ -181,5 +181,20 @@
   },
   "noRules": {
     "message": "Nenhuma regra configurada. O envio rápido usará o modelo padrão."
+  },
+  "ruleField": {
+    "message": "Quando"
+  },
+  "ruleCondition": {
+    "message": "Condição"
+  },
+  "ruleValueLabel": {
+    "message": "Valor"
+  },
+  "ruleEnabled": {
+    "message": "Ativada"
+  },
+  "ruleDetail": {
+    "message": "Detalhe da regra"
   }
 }

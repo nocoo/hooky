@@ -9,44 +9,78 @@
 </head>
 <body>
   <div class="layout">
-    <!-- Left: Template list -->
+    <!-- Left: Sidebar with accordion -->
     <aside class="sidebar">
       <div class="sidebar-header">
         <h2><img src="../icons/icon48.png" srcset="../icons/icon24.png 1x, ../icons/icon48.png 2x" alt="Hooky" width="24" height="24" class="logo">Hooky <span class="version" id="version"></span></h2>
-        <button type="button" id="new-template" class="btn-new">+</button>
       </div>
-      <ul id="template-list" class="template-list"></ul>
 
-      <div class="sidebar-footer">
-        <h3 data-i18n="settings">Settings</h3>
-
-        <div class="setting-row">
-          <label for="theme-select"><span class="setting-icon">🎨</span> <span data-i18n="theme">Theme</span></label>
-          <select id="theme-select" class="setting-select">
-            <option value="system" data-i18n="themeSystem">System</option>
-            <option value="light" data-i18n="themeLight">Light</option>
-            <option value="dark" data-i18n="themeDark">Dark</option>
-          </select>
+      <!-- Accordion panel: Templates -->
+      <div class="accordion-panel active" id="panel-templates">
+        <button type="button" class="accordion-trigger" data-panel="panel-templates">
+          <span data-i18n="templates">Templates</span>
+          <span class="accordion-actions">
+            <button type="button" id="new-template" class="btn-icon" title="New">+</button>
+          </span>
+          <svg class="accordion-chevron" width="10" height="6" viewBox="0 0 10 6"><polyline points="1 1 5 5 9 1" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <div class="accordion-content">
+          <ul id="template-list" class="template-list"></ul>
         </div>
+      </div>
 
-        <div class="toggle-row">
-          <div class="toggle-info">
-            <label for="quick-send"><span class="setting-icon">⚡</span> <span data-i18n="quickSend">Quick Send</span></label>
-            <p class="toggle-desc" data-i18n="quickSendDesc">Skip the popup and send the webhook immediately when clicking the extension icon.</p>
+      <!-- Accordion panel: Rules -->
+      <div class="accordion-panel" id="panel-rules">
+        <button type="button" class="accordion-trigger" data-panel="panel-rules">
+          <span data-i18n="quickSendRules">Quick Send Rules</span>
+          <span class="accordion-actions">
+            <button type="button" id="add-rule" class="btn-icon" title="Add Rule">+</button>
+          </span>
+          <svg class="accordion-chevron" width="10" height="6" viewBox="0 0 10 6"><polyline points="1 1 5 5 9 1" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <div class="accordion-content">
+          <ul id="rules-list" class="rules-list"></ul>
+          <p class="no-rules" id="no-rules" data-i18n="noRules">No rules configured. Quick Send will use the default template.</p>
+        </div>
+      </div>
+
+      <!-- Accordion panel: Settings -->
+      <div class="accordion-panel" id="panel-settings">
+        <button type="button" class="accordion-trigger" data-panel="panel-settings">
+          <span data-i18n="settings">Settings</span>
+          <svg class="accordion-chevron" width="10" height="6" viewBox="0 0 10 6"><polyline points="1 1 5 5 9 1" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <div class="accordion-content">
+          <div class="settings-body">
+            <div class="setting-row">
+              <label for="theme-select"><span class="setting-icon">🎨</span> <span data-i18n="theme">Theme</span></label>
+              <select id="theme-select" class="setting-select">
+                <option value="system" data-i18n="themeSystem">System</option>
+                <option value="light" data-i18n="themeLight">Light</option>
+                <option value="dark" data-i18n="themeDark">Dark</option>
+              </select>
+            </div>
+
+            <div class="toggle-row">
+              <div class="toggle-info">
+                <label for="quick-send"><span class="setting-icon">⚡</span> <span data-i18n="quickSend">Quick Send</span></label>
+                <p class="toggle-desc" data-i18n="quickSendDesc">Skip the popup and send the webhook immediately when clicking the extension icon.</p>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" id="quick-send">
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+            <p class="quick-send-hint" id="quick-send-hint" data-i18n="quickSendHint">When enabled, right-click the extension icon and select "Options" to access settings.</p>
           </div>
-          <label class="toggle-switch">
-            <input type="checkbox" id="quick-send">
-            <span class="toggle-slider"></span>
-          </label>
         </div>
-        <p class="quick-send-hint" id="quick-send-hint" data-i18n="quickSendHint">When enabled, right-click the extension icon and select "Options" to access settings.</p>
       </div>
     </aside>
 
     <!-- Right: Editor -->
     <main class="editor" id="editor">
       <div class="editor-header">
-        <h2 data-i18n="webhookDetail">Webhook Detail</h2>
+        <h2 id="editor-title" data-i18n="webhookDetail">Webhook Detail</h2>
       </div>
 
       <div class="editor-body">
@@ -54,6 +88,7 @@
           <p data-i18n="noTemplates">No templates yet. Open settings to create one.</p>
         </div>
 
+        <!-- Template editor form -->
         <div class="editor-form" id="editor-form" style="display: none;">
           <section class="section">
             <label for="template-name" data-i18n="templateName">Template Name</label>
@@ -104,6 +139,50 @@
               </div>
               <label class="toggle-switch">
                 <input type="checkbox" id="editor-quick-send">
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+          </section>
+        </div>
+
+        <!-- Rule editor form -->
+        <div class="editor-form" id="rule-editor-form" style="display: none;">
+          <section class="section">
+            <label for="rule-field" data-i18n="ruleField">When</label>
+            <select id="rule-field">
+              <option value="url" data-i18n="ruleFieldUrl">URL</option>
+              <option value="title" data-i18n="ruleFieldTitle">Title</option>
+            </select>
+          </section>
+
+          <section class="section">
+            <label for="rule-operator" data-i18n="ruleCondition">Condition</label>
+            <select id="rule-operator">
+              <option value="contains" data-i18n="ruleOperatorContains">contains</option>
+              <option value="equals" data-i18n="ruleOperatorEquals">equals</option>
+              <option value="startsWith" data-i18n="ruleOperatorStartsWith">starts with</option>
+              <option value="endsWith" data-i18n="ruleOperatorEndsWith">ends with</option>
+              <option value="matches" data-i18n="ruleOperatorMatches">matches (regex)</option>
+            </select>
+          </section>
+
+          <section class="section">
+            <label for="rule-value" data-i18n="ruleValueLabel">Value</label>
+            <input type="text" id="rule-value" data-i18n-placeholder="ruleValuePlaceholder" placeholder="e.g. github.com">
+          </section>
+
+          <section class="section">
+            <label for="rule-template" data-i18n="ruleThenSend">Then Send</label>
+            <select id="rule-template"></select>
+          </section>
+
+          <section class="section">
+            <div class="toggle-row">
+              <div class="toggle-info">
+                <label for="rule-enabled" data-i18n="ruleEnabled">Enabled</label>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" id="rule-enabled" checked>
                 <span class="toggle-slider"></span>
               </label>
             </div>

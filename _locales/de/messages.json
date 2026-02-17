@@ -181,5 +181,20 @@
   },
   "noRules": {
     "message": "Keine Regeln konfiguriert. Schnellversand verwendet die Standardvorlage."
+  },
+  "ruleField": {
+    "message": "Wenn"
+  },
+  "ruleCondition": {
+    "message": "Bedingung"
+  },
+  "ruleValueLabel": {
+    "message": "Wert"
+  },
+  "ruleEnabled": {
+    "message": "Aktiviert"
+  },
+  "ruleDetail": {
+    "message": "Regeldetails"
   }
 }

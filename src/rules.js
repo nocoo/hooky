@@ -4,7 +4,7 @@
  * @param {Object} page - { url, title }
  * @returns {boolean}
  */
-function matchRule(rule, page) {
+export function matchRule(rule, page) {
   if (!rule.value) return false;
 
   const fieldValue = page[rule.field];
@@ -39,7 +39,7 @@ function matchRule(rule, page) {
  * @param {Object} page - { url, title }
  * @returns {Object|null} the matched rule or null
  */
-function findMatchingRule(rules, page) {
+export function findMatchingRule(rules, page) {
   if (!Array.isArray(rules)) return null;
   for (const rule of rules) {
     if (rule.enabled && matchRule(rule, page)) {
@@ -49,4 +49,3 @@ function findMatchingRule(rules, page) {
   return null;
 }
 
-module.exports = { matchRule, findMatchingRule };

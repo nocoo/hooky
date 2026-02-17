@@ -181,5 +181,20 @@
   },
   "noRules": {
     "message": "Aucune règle configurée. L'envoi rapide utilisera le modèle par défaut."
+  },
+  "ruleField": {
+    "message": "Quand"
+  },
+  "ruleCondition": {
+    "message": "Condition"
+  },
+  "ruleValueLabel": {
+    "message": "Valeur"
+  },
+  "ruleEnabled": {
+    "message": "Activé"
+  },
+  "ruleDetail": {
+    "message": "Détail de la règle"
   }
 }

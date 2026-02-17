@@ -181,5 +181,20 @@
   },
   "noRules": {
     "message": "未設定規則。快速傳送將使用預設範本。"
+  },
+  "ruleField": {
+    "message": "當"
+  },
+  "ruleCondition": {
+    "message": "條件"
+  },
+  "ruleValueLabel": {
+    "message": "值"
+  },
+  "ruleEnabled": {
+    "message": "啟用"
+  },
+  "ruleDetail": {
+    "message": "規則詳情"
   }
 }
