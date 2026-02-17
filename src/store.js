@@ -8,6 +8,7 @@
  *     activeTemplateId: string | null,
  *     quickSend: boolean,
  *     quickSendTemplateId: string | null,
+ *     quickSendRules: [ { id, field, operator, value, templateId, enabled } ],
  *     theme: "system" | "light" | "dark",
  *   }
  * }
@@ -25,7 +26,9 @@ function generateId() {
  */
 export async function loadStore() {
   const data = await chrome.storage.local.get(STORE_KEY);
-  return data[STORE_KEY] || { templates: [], activeTemplateId: null, quickSend: false, quickSendTemplateId: null, theme: "system" };
+  const store = data[STORE_KEY] || { templates: [], activeTemplateId: null, quickSend: false, quickSendTemplateId: null, quickSendRules: [], theme: "system" };
+  if (!store.quickSendRules) store.quickSendRules = [];
+  return store;
 }
 
 /**
@@ -88,6 +91,9 @@ export async function deleteTemplate(id) {
   }
   if (store.quickSendTemplateId === id) {
     store.quickSendTemplateId = null;
+  }
+  if (store.quickSendRules) {
+    store.quickSendRules = store.quickSendRules.filter((r) => r.templateId !== id);
   }
   await saveStore(store);
 }
@@ -165,6 +171,74 @@ export async function getQuickSendTemplateId() {
 export async function setQuickSendTemplateId(id) {
   const store = await loadStore();
   store.quickSendTemplateId = id;
+  await saveStore(store);
+}
+
+/**
+ * Get all quick send rules.
+ *
+ * @returns {Promise<Array>}
+ */
+export async function getQuickSendRules() {
+  const store = await loadStore();
+  return store.quickSendRules;
+}
+
+/**
+ * Add a new quick send rule.
+ *
+ * @param {object} rule - { field, operator, value, templateId }
+ * @returns {Promise<object>} The created rule (with id and enabled)
+ */
+export async function addQuickSendRule(rule) {
+  const store = await loadStore();
+  const newRule = {
+    id: generateId(),
+    field: rule.field,
+    operator: rule.operator,
+    value: rule.value,
+    templateId: rule.templateId,
+    enabled: true,
+  };
+  store.quickSendRules.push(newRule);
+  await saveStore(store);
+  return newRule;
+}
+
+/**
+ * Update an existing quick send rule by id (partial update).
+ *
+ * @param {string} id
+ * @param {object} changes
+ */
+export async function updateQuickSendRule(id, changes) {
+  const store = await loadStore();
+  const rule = store.quickSendRules.find((r) => r.id === id);
+  if (!rule) throw new Error("Rule not found");
+  Object.assign(rule, changes);
+  await saveStore(store);
+}
+
+/**
+ * Delete a quick send rule by id.
+ *
+ * @param {string} id
+ */
+export async function deleteQuickSendRule(id) {
+  const store = await loadStore();
+  store.quickSendRules = store.quickSendRules.filter((r) => r.id !== id);
+  await saveStore(store);
+}
+
+/**
+ * Reorder quick send rules by an array of ids.
+ *
+ * @param {Array<string>} orderedIds
+ */
+export async function reorderQuickSendRules(orderedIds) {
+  const store = await loadStore();
+  const ruleMap = new Map(store.quickSendRules.map((r) => [r.id, r]));
+  store.quickSendRules = orderedIds.map((id) => ruleMap.get(id)).filter(Boolean);
   await saveStore(store);
 }
 

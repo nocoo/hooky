@@ -12,6 +12,11 @@ import {
   setQuickSend,
   getQuickSendTemplateId,
   setQuickSendTemplateId,
+  getQuickSendRules,
+  addQuickSendRule,
+  updateQuickSendRule,
+  deleteQuickSendRule,
+  reorderQuickSendRules,
   getTheme,
   setTheme,
   migrateFromLegacy,
@@ -50,6 +55,7 @@ describe("store", () => {
         activeTemplateId: null,
         quickSend: false,
         quickSendTemplateId: null,
+        quickSendRules: [],
         theme: "system",
       });
     });
@@ -278,6 +284,94 @@ describe("store", () => {
       await setQuickSendTemplateId(tpl.id);
       await setQuickSendTemplateId(null);
       expect(await getQuickSendTemplateId()).toBeNull();
+    });
+  });
+
+  describe("quickSendRules", () => {
+    it("should default to empty array", async () => {
+      const rules = await getQuickSendRules();
+      expect(rules).toEqual([]);
+    });
+
+    it("should add a rule with generated id", async () => {
+      const rule = await addQuickSendRule({
+        field: "url",
+        operator: "contains",
+        value: "github.com",
+        templateId: "tpl_1",
+      });
+      expect(rule.id).toBeDefined();
+      expect(rule.field).toBe("url");
+      expect(rule.operator).toBe("contains");
+      expect(rule.value).toBe("github.com");
+      expect(rule.templateId).toBe("tpl_1");
+      expect(rule.enabled).toBe(true);
+
+      const rules = await getQuickSendRules();
+      expect(rules).toHaveLength(1);
+      expect(rules[0].id).toBe(rule.id);
+    });
+
+    it("should add multiple rules in order", async () => {
+      await addQuickSendRule({ field: "url", operator: "contains", value: "github.com", templateId: "tpl_1" });
+      await addQuickSendRule({ field: "title", operator: "contains", value: "PR", templateId: "tpl_2" });
+      const rules = await getQuickSendRules();
+      expect(rules).toHaveLength(2);
+      expect(rules[0].value).toBe("github.com");
+      expect(rules[1].value).toBe("PR");
+    });
+
+    it("should update a rule by id", async () => {
+      const rule = await addQuickSendRule({ field: "url", operator: "contains", value: "github.com", templateId: "tpl_1" });
+      await updateQuickSendRule(rule.id, { value: "gitlab.com", operator: "startsWith" });
+      const rules = await getQuickSendRules();
+      expect(rules[0].value).toBe("gitlab.com");
+      expect(rules[0].operator).toBe("startsWith");
+      expect(rules[0].field).toBe("url"); // unchanged
+    });
+
+    it("should throw when updating non-existent rule", async () => {
+      await expect(updateQuickSendRule("nonexistent", { value: "x" })).rejects.toThrow("Rule not found");
+    });
+
+    it("should delete a rule by id", async () => {
+      const r1 = await addQuickSendRule({ field: "url", operator: "contains", value: "github.com", templateId: "tpl_1" });
+      const r2 = await addQuickSendRule({ field: "url", operator: "contains", value: "gitlab.com", templateId: "tpl_2" });
+      await deleteQuickSendRule(r1.id);
+      const rules = await getQuickSendRules();
+      expect(rules).toHaveLength(1);
+      expect(rules[0].id).toBe(r2.id);
+    });
+
+    it("should reorder rules by id array", async () => {
+      const r1 = await addQuickSendRule({ field: "url", operator: "contains", value: "a.com", templateId: "tpl_1" });
+      const r2 = await addQuickSendRule({ field: "url", operator: "contains", value: "b.com", templateId: "tpl_2" });
+      const r3 = await addQuickSendRule({ field: "url", operator: "contains", value: "c.com", templateId: "tpl_3" });
+      await reorderQuickSendRules([r3.id, r1.id, r2.id]);
+      const rules = await getQuickSendRules();
+      expect(rules[0].value).toBe("c.com");
+      expect(rules[1].value).toBe("a.com");
+      expect(rules[2].value).toBe("b.com");
+    });
+
+    it("should clean up rules when a template is deleted", async () => {
+      const tpl = await createTemplate("Test");
+      await addQuickSendRule({ field: "url", operator: "contains", value: "github.com", templateId: tpl.id });
+      await addQuickSendRule({ field: "url", operator: "contains", value: "gitlab.com", templateId: "other_tpl" });
+      await deleteTemplate(tpl.id);
+      const rules = await getQuickSendRules();
+      expect(rules).toHaveLength(1);
+      expect(rules[0].templateId).toBe("other_tpl");
+    });
+
+    it("should not clean up rules when a different template is deleted", async () => {
+      const t1 = await createTemplate("A");
+      const t2 = await createTemplate("B");
+      await addQuickSendRule({ field: "url", operator: "contains", value: "github.com", templateId: t1.id });
+      await deleteTemplate(t2.id);
+      const rules = await getQuickSendRules();
+      expect(rules).toHaveLength(1);
+      expect(rules[0].templateId).toBe(t1.id);
     });
   });
 
