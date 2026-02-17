@@ -51,64 +51,6 @@ body {
   gap: 8px;
 }
 
-.version {
-  font-size: 11px;
-  font-weight: 400;
-  color: #aaa;
-}
-
-.logo {
-  width: 24px;
-  height: 24px;
-  flex-shrink: 0;
-}
-
-/* ─── Accordion ─── */
-.accordion-panel {
-  display: flex;
-  flex-direction: column;
-  min-height: 0;
-  border-bottom: 1px solid #e8e8e8;
-}
-
-.accordion-panel:last-child {
-  border-bottom: none;
-}
-
-.accordion-trigger {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  width: 100%;
-  padding: 10px 16px;
-  font-size: 12px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  color: #999;
-  background: none;
-  border: none;
-  cursor: pointer;
-  text-align: left;
-  transition: background 0.15s, color 0.15s;
-  flex-shrink: 0;
-}
-
-.accordion-trigger:hover {
-  background: #f8f8f8;
-  color: #777;
-}
-
-.accordion-panel.active > .accordion-trigger {
-  color: #9666b7;
-}
-
-.accordion-actions {
-  margin-left: auto;
-  display: flex;
-  align-items: center;
-}
-
 .btn-icon {
   padding: 2px 8px;
   font-size: 14px;
@@ -127,25 +69,78 @@ body {
   border-color: #d4c0e4;
 }
 
-.accordion-chevron {
+.version {
+  font-size: 11px;
+  font-weight: 400;
+  color: #aaa;
+}
+
+.logo {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+}
+
+/* ─── Sidebar nav panels ─── */
+.sidebar-panel {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  border-bottom: 1px solid #e8e8e8;
+}
+
+.sidebar-panel:last-child {
+  border-bottom: none;
+}
+
+.sidebar-nav-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  padding: 10px 16px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #999;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.15s, color 0.15s;
+  flex-shrink: 0;
+}
+
+.sidebar-nav-btn:hover {
+  background: #f8f8f8;
+  color: #777;
+}
+
+.sidebar-panel.active > .sidebar-nav-btn {
+  color: #9666b7;
+}
+
+.sidebar-chevron {
+  margin-left: auto;
   flex-shrink: 0;
   color: #bbb;
   transition: transform 0.25s ease;
 }
 
-.accordion-panel.active > .accordion-trigger .accordion-chevron {
+.sidebar-panel.active > .sidebar-nav-btn .sidebar-chevron {
   transform: rotate(180deg);
   color: #9666b7;
 }
 
-.accordion-content {
+.sidebar-panel-content {
   overflow: hidden;
   max-height: 0;
   opacity: 0;
   transition: max-height 0.3s ease, opacity 0.25s ease;
 }
 
-.accordion-panel.active > .accordion-content {
+.sidebar-panel.active > .sidebar-panel-content {
   max-height: 2000px;
   opacity: 1;
   overflow-y: auto;
@@ -216,19 +211,40 @@ body {
 }
 
 /* ─── Rules list ─── */
+.rules-manager-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.rules-manager-header p {
+  font-size: 13px;
+  color: #888;
+  line-height: 1.5;
+  flex: 1;
+}
+
+.rules-manager-header .btn-secondary {
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
 .rules-list {
   list-style: none;
-  padding: 0 0 8px;
+  padding: 0;
 }
 
 .rules-list li {
   display: flex;
   align-items: center;
-  padding: 8px 16px 8px 16px;
-  font-size: 13px;
+  padding: 10px 12px;
+  font-size: 14px;
   cursor: pointer;
   color: #555;
   border-left: 3px solid transparent;
+  border-radius: 6px;
   transition: background 0.1s, border-color 0.1s;
   gap: 6px;
 }
@@ -687,28 +703,28 @@ html[data-theme="dark"] .version {
   color: #666;
 }
 
-html[data-theme="dark"] .accordion-panel {
+html[data-theme="dark"] .sidebar-panel {
   border-bottom-color: #2a2a2a;
 }
 
-html[data-theme="dark"] .accordion-trigger {
+html[data-theme="dark"] .sidebar-nav-btn {
   color: #666;
 }
 
-html[data-theme="dark"] .accordion-trigger:hover {
+html[data-theme="dark"] .sidebar-nav-btn:hover {
   background: #1e1e1e;
   color: #888;
 }
 
-html[data-theme="dark"] .accordion-panel.active > .accordion-trigger {
+html[data-theme="dark"] .sidebar-panel.active > .sidebar-nav-btn {
   color: #be94dc;
 }
 
-html[data-theme="dark"] .accordion-chevron {
+html[data-theme="dark"] .sidebar-chevron {
   color: #555;
 }
 
-html[data-theme="dark"] .accordion-panel.active > .accordion-trigger .accordion-chevron {
+html[data-theme="dark"] .sidebar-panel.active > .sidebar-nav-btn .sidebar-chevron {
   color: #be94dc;
 }
 
@@ -788,6 +804,10 @@ html[data-theme="dark"] .rule-summary .rule-value {
 
 html[data-theme="dark"] .no-rules {
   color: #555;
+}
+
+html[data-theme="dark"] .rules-manager-header p {
+  color: #666;
 }
 
 html[data-theme="dark"] .editor-actions {
@@ -942,28 +962,28 @@ html[data-theme="light"] .layout {
     color: #666;
   }
 
-  html:not([data-theme]) .accordion-panel {
+  html:not([data-theme]) .sidebar-panel {
     border-bottom-color: #2a2a2a;
   }
 
-  html:not([data-theme]) .accordion-trigger {
+  html:not([data-theme]) .sidebar-nav-btn {
     color: #666;
   }
 
-  html:not([data-theme]) .accordion-trigger:hover {
+  html:not([data-theme]) .sidebar-nav-btn:hover {
     background: #1e1e1e;
     color: #888;
   }
 
-  html:not([data-theme]) .accordion-panel.active > .accordion-trigger {
+  html:not([data-theme]) .sidebar-panel.active > .sidebar-nav-btn {
     color: #be94dc;
   }
 
-  html:not([data-theme]) .accordion-chevron {
+  html:not([data-theme]) .sidebar-chevron {
     color: #555;
   }
 
-  html:not([data-theme]) .accordion-panel.active > .accordion-trigger .accordion-chevron {
+  html:not([data-theme]) .sidebar-panel.active > .sidebar-nav-btn .sidebar-chevron {
     color: #be94dc;
   }
 
@@ -1043,6 +1063,10 @@ html[data-theme="light"] .layout {
 
   html:not([data-theme]) .no-rules {
     color: #555;
+  }
+
+  html:not([data-theme]) .rules-manager-header p {
+    color: #666;
   }
 
   html:not([data-theme]) .editor-actions {

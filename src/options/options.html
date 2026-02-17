@@ -9,71 +9,36 @@
 </head>
 <body>
   <div class="layout">
-    <!-- Left: Sidebar with accordion -->
+    <!-- Left: Sidebar -->
     <aside class="sidebar">
       <div class="sidebar-header">
         <h2><img src="../icons/icon48.png" srcset="../icons/icon24.png 1x, ../icons/icon48.png 2x" alt="Hooky" width="24" height="24" class="logo">Hooky <span class="version" id="version"></span></h2>
+        <button type="button" id="new-template" class="btn-icon" title="New">+</button>
       </div>
 
-      <!-- Accordion panel: Templates -->
-      <div class="accordion-panel active" id="panel-templates">
-        <button type="button" class="accordion-trigger" data-panel="panel-templates">
-          <span data-i18n="templates">Templates</span>
-          <span class="accordion-actions">
-            <button type="button" id="new-template" class="btn-icon" title="New">+</button>
-          </span>
-          <svg class="accordion-chevron" width="10" height="6" viewBox="0 0 10 6"><polyline points="1 1 5 5 9 1" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <!-- Nav panel: Webhooks (expandable with list) -->
+      <div class="sidebar-panel active" id="panel-webhooks">
+        <button type="button" class="sidebar-nav-btn" data-panel="panel-webhooks">
+          <span data-i18n="webhooks">Webhooks</span>
+          <svg class="sidebar-chevron" width="10" height="6" viewBox="0 0 10 6"><polyline points="1 1 5 5 9 1" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </button>
-        <div class="accordion-content">
+        <div class="sidebar-panel-content">
           <ul id="template-list" class="template-list"></ul>
         </div>
       </div>
 
-      <!-- Accordion panel: Rules -->
-      <div class="accordion-panel" id="panel-rules">
-        <button type="button" class="accordion-trigger" data-panel="panel-rules">
+      <!-- Nav panel: Rules (entry only) -->
+      <div class="sidebar-panel" id="panel-rules">
+        <button type="button" class="sidebar-nav-btn" data-panel="panel-rules">
           <span data-i18n="quickSendRules">Quick Send Rules</span>
-          <span class="accordion-actions">
-            <button type="button" id="add-rule" class="btn-icon" title="Add Rule">+</button>
-          </span>
-          <svg class="accordion-chevron" width="10" height="6" viewBox="0 0 10 6"><polyline points="1 1 5 5 9 1" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </button>
-        <div class="accordion-content">
-          <ul id="rules-list" class="rules-list"></ul>
-          <p class="no-rules" id="no-rules" data-i18n="noRules">No rules configured. Quick Send will use the default template.</p>
-        </div>
       </div>
 
-      <!-- Accordion panel: Settings -->
-      <div class="accordion-panel" id="panel-settings">
-        <button type="button" class="accordion-trigger" data-panel="panel-settings">
+      <!-- Nav panel: Settings (entry only) -->
+      <div class="sidebar-panel" id="panel-settings">
+        <button type="button" class="sidebar-nav-btn" data-panel="panel-settings">
           <span data-i18n="settings">Settings</span>
-          <svg class="accordion-chevron" width="10" height="6" viewBox="0 0 10 6"><polyline points="1 1 5 5 9 1" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </button>
-        <div class="accordion-content">
-          <div class="settings-body">
-            <div class="setting-row">
-              <label for="theme-select"><span class="setting-icon">🎨</span> <span data-i18n="theme">Theme</span></label>
-              <select id="theme-select" class="setting-select">
-                <option value="system" data-i18n="themeSystem">System</option>
-                <option value="light" data-i18n="themeLight">Light</option>
-                <option value="dark" data-i18n="themeDark">Dark</option>
-              </select>
-            </div>
-
-            <div class="toggle-row">
-              <div class="toggle-info">
-                <label for="quick-send"><span class="setting-icon">⚡</span> <span data-i18n="quickSend">Quick Send</span></label>
-                <p class="toggle-desc" data-i18n="quickSendDesc">Skip the popup and send the webhook immediately when clicking the extension icon.</p>
-              </div>
-              <label class="toggle-switch">
-                <input type="checkbox" id="quick-send">
-                <span class="toggle-slider"></span>
-              </label>
-            </div>
-            <p class="quick-send-hint" id="quick-send-hint" data-i18n="quickSendHint">When enabled, right-click the extension icon and select "Options" to access settings.</p>
-          </div>
-        </div>
       </div>
     </aside>
 
@@ -187,6 +152,42 @@
               </label>
             </div>
           </section>
+        </div>
+
+        <!-- Rules manager (shown when Rules nav is selected) -->
+        <div class="editor-form" id="rules-manager" style="display: none;">
+          <div class="rules-manager-header">
+            <p data-i18n="quickSendRulesDesc">Automatically select which template to send based on the current page. Rules are evaluated in order; the first match wins.</p>
+            <button type="button" id="add-rule" class="btn-secondary" data-i18n="addRule">+ Add Rule</button>
+          </div>
+          <ul id="rules-list" class="rules-list"></ul>
+          <p class="no-rules" id="no-rules" data-i18n="noRules">No rules configured. Quick Send will use the default template.</p>
+        </div>
+
+        <!-- Settings form (shown when Settings nav is selected) -->
+        <div class="editor-form" id="settings-form" style="display: none;">
+          <div class="settings-body">
+            <div class="setting-row">
+              <label for="theme-select"><span class="setting-icon">🎨</span> <span data-i18n="theme">Theme</span></label>
+              <select id="theme-select" class="setting-select">
+                <option value="system" data-i18n="themeSystem">System</option>
+                <option value="light" data-i18n="themeLight">Light</option>
+                <option value="dark" data-i18n="themeDark">Dark</option>
+              </select>
+            </div>
+
+            <div class="toggle-row">
+              <div class="toggle-info">
+                <label for="quick-send"><span class="setting-icon">⚡</span> <span data-i18n="quickSend">Quick Send</span></label>
+                <p class="toggle-desc" data-i18n="quickSendDesc">Skip the popup and send the webhook immediately when clicking the extension icon.</p>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" id="quick-send">
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+            <p class="quick-send-hint" id="quick-send-hint" data-i18n="quickSendHint">When enabled, right-click the extension icon and select "Options" to access settings.</p>
+          </div>
         </div>
       </div>
 
