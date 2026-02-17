@@ -7,48 +7,26 @@ function setupOptionsDOM() {
       <aside class="sidebar">
         <div class="sidebar-header">
           <h2>Hooky <span class="version" id="version"></span></h2>
+          <button type="button" id="new-template" class="btn-icon">+</button>
         </div>
-        <div class="accordion-panel active" id="panel-templates">
-          <button type="button" class="accordion-trigger" data-panel="panel-templates">
-            <span>Templates</span>
-            <span class="accordion-actions">
-              <button type="button" id="new-template" class="btn-icon">+</button>
-            </span>
-            <svg class="accordion-chevron" width="10" height="6" viewBox="0 0 10 6"></svg>
+        <div class="sidebar-panel active" id="panel-webhooks">
+          <button type="button" class="sidebar-nav-btn" data-panel="panel-webhooks">
+            <span>Webhooks</span>
+            <svg class="sidebar-chevron" width="10" height="6" viewBox="0 0 10 6"></svg>
           </button>
-          <div class="accordion-content">
+          <div class="sidebar-panel-content">
             <ul id="template-list" class="template-list"></ul>
           </div>
         </div>
-        <div class="accordion-panel" id="panel-rules">
-          <button type="button" class="accordion-trigger" data-panel="panel-rules">
+        <div class="sidebar-panel" id="panel-rules">
+          <button type="button" class="sidebar-nav-btn" data-panel="panel-rules">
             <span>Rules</span>
-            <span class="accordion-actions">
-              <button type="button" id="add-rule" class="btn-icon">+</button>
-            </span>
-            <svg class="accordion-chevron" width="10" height="6" viewBox="0 0 10 6"></svg>
           </button>
-          <div class="accordion-content">
-            <ul id="rules-list" class="rules-list"></ul>
-            <p class="no-rules" id="no-rules">No rules configured.</p>
-          </div>
         </div>
-        <div class="accordion-panel" id="panel-settings">
-          <button type="button" class="accordion-trigger" data-panel="panel-settings">
+        <div class="sidebar-panel" id="panel-settings">
+          <button type="button" class="sidebar-nav-btn" data-panel="panel-settings">
             <span>Settings</span>
-            <svg class="accordion-chevron" width="10" height="6" viewBox="0 0 10 6"></svg>
           </button>
-          <div class="accordion-content">
-            <div class="settings-body">
-              <select id="theme-select">
-                <option value="system">System</option>
-                <option value="light">Light</option>
-                <option value="dark">Dark</option>
-              </select>
-              <input type="checkbox" id="quick-send">
-              <p id="quick-send-hint"></p>
-            </div>
-          </div>
         </div>
       </aside>
       <main class="editor" id="editor">
@@ -87,6 +65,22 @@ function setupOptionsDOM() {
             <select id="rule-template"></select>
             <input type="checkbox" id="rule-enabled" checked>
           </div>
+          <div class="editor-form" id="rules-manager" style="display: none;">
+            <button id="add-rule" class="btn-secondary">+ Add Rule</button>
+            <ul id="rules-list" class="rules-list"></ul>
+            <p class="no-rules" id="no-rules">No rules configured.</p>
+          </div>
+          <div class="editor-form" id="settings-form" style="display: none;">
+            <div class="settings-body">
+              <select id="theme-select">
+                <option value="system">System</option>
+                <option value="light">Light</option>
+                <option value="dark">Dark</option>
+              </select>
+              <input type="checkbox" id="quick-send">
+              <p id="quick-send-hint"></p>
+            </div>
+          </div>
         </div>
         <div class="editor-actions" id="editor-actions" style="display: none;">
           <button id="delete-template">Delete</button>
@@ -124,6 +118,8 @@ function setupChromeMock(storeData = {}) {
           quickSend: "Quick Send",
           webhookDetail: "Webhook Detail",
           ruleDetail: "Rule Detail",
+          quickSendRules: "Quick Send Rules",
+          settingsDetail: "Settings",
           ruleFieldUrl: "URL",
           ruleFieldTitle: "Title",
           ruleOperatorContains: "contains",
@@ -355,6 +351,14 @@ describe("options.js", () => {
       expect(document.getElementById("editor-form").style.display).toBe("block");
     });
 
+    // Navigate to settings first
+    const settingsTrigger = document.querySelector('[data-panel="panel-settings"]');
+    settingsTrigger.click();
+
+    await vi.waitFor(() => {
+      expect(document.getElementById("settings-form").style.display).toBe("block");
+    });
+
     const toggle = document.getElementById("quick-send");
     const hint = document.getElementById("quick-send-hint");
 
@@ -374,6 +378,14 @@ describe("options.js", () => {
 
     await vi.waitFor(() => {
       expect(document.getElementById("editor-form").style.display).toBe("block");
+    });
+
+    // Navigate to settings
+    const settingsTrigger = document.querySelector('[data-panel="panel-settings"]');
+    settingsTrigger.click();
+
+    await vi.waitFor(() => {
+      expect(document.getElementById("settings-form").style.display).toBe("block");
     });
 
     const themeSelect = document.getElementById("theme-select");
@@ -498,9 +510,19 @@ describe("options.js", () => {
     setupChromeMock(makeStore());
     await import("../src/options/options.js");
 
+    // Navigate to settings to see theme select
     await vi.waitFor(() => {
-      expect(document.getElementById("theme-select").value).toBe("system");
+      expect(document.getElementById("editor-form").style.display).toBe("block");
     });
+
+    const settingsTrigger = document.querySelector('[data-panel="panel-settings"]');
+    settingsTrigger.click();
+
+    await vi.waitFor(() => {
+      expect(document.getElementById("settings-form").style.display).toBe("block");
+    });
+
+    expect(document.getElementById("theme-select").value).toBe("system");
   });
 
   it("should run legacy migration on startup", async () => {
@@ -669,9 +691,19 @@ describe("options.js", () => {
     setupChromeMock(makeStore({ theme: undefined }));
     await import("../src/options/options.js");
 
+    // Navigate to settings
     await vi.waitFor(() => {
-      expect(document.getElementById("theme-select").value).toBe("system");
+      expect(document.getElementById("editor-form").style.display).toBe("block");
     });
+
+    const settingsTrigger = document.querySelector('[data-panel="panel-settings"]');
+    settingsTrigger.click();
+
+    await vi.waitFor(() => {
+      expect(document.getElementById("settings-form").style.display).toBe("block");
+    });
+
+    expect(document.getElementById("theme-select").value).toBe("system");
   });
 
   it("should handle delete template name fallback", async () => {
@@ -698,64 +730,98 @@ describe("options.js", () => {
     delete global.confirm;
   });
 
-  // ─── Accordion tests ───
+  // ─── Sidebar panel tests ───
 
-  it("should initialize with templates panel active", async () => {
+  it("should initialize with webhooks panel active", async () => {
     setupChromeMock(makeStore());
     await import("../src/options/options.js");
 
     await vi.waitFor(() => {
-      expect(document.getElementById("panel-templates").classList.contains("active")).toBe(true);
+      expect(document.getElementById("panel-webhooks").classList.contains("active")).toBe(true);
     });
     expect(document.getElementById("panel-rules").classList.contains("active")).toBe(false);
     expect(document.getElementById("panel-settings").classList.contains("active")).toBe(false);
   });
 
-  it("should switch accordion panels exclusively", async () => {
+  it("should switch sidebar panels exclusively", async () => {
     setupChromeMock(makeStore());
     await import("../src/options/options.js");
 
     await vi.waitFor(() => {
-      expect(document.getElementById("panel-templates").classList.contains("active")).toBe(true);
+      expect(document.getElementById("panel-webhooks").classList.contains("active")).toBe(true);
     });
 
     // Click settings trigger
     const settingsTrigger = document.querySelector('[data-panel="panel-settings"]');
     settingsTrigger.click();
 
-    expect(document.getElementById("panel-settings").classList.contains("active")).toBe(true);
-    expect(document.getElementById("panel-templates").classList.contains("active")).toBe(false);
+    await vi.waitFor(() => {
+      expect(document.getElementById("panel-settings").classList.contains("active")).toBe(true);
+    });
+    expect(document.getElementById("panel-webhooks").classList.contains("active")).toBe(false);
     expect(document.getElementById("panel-rules").classList.contains("active")).toBe(false);
   });
 
-  it("should not collapse an already active panel when clicked", async () => {
+  it("should not deactivate an already active panel when clicked", async () => {
     setupChromeMock(makeStore());
     await import("../src/options/options.js");
 
     await vi.waitFor(() => {
-      expect(document.getElementById("panel-templates").classList.contains("active")).toBe(true);
+      expect(document.getElementById("panel-webhooks").classList.contains("active")).toBe(true);
     });
 
-    // Click templates trigger again — should remain active
-    const trigger = document.querySelector('[data-panel="panel-templates"]');
+    // Click webhooks trigger again — should remain active
+    const trigger = document.querySelector('[data-panel="panel-webhooks"]');
     trigger.click();
 
-    expect(document.getElementById("panel-templates").classList.contains("active")).toBe(true);
+    expect(document.getElementById("panel-webhooks").classList.contains("active")).toBe(true);
   });
 
-  // ─── Rules list tests ───
+  // ─── Rules manager tests ───
+
+  it("should show rules manager when rules panel is clicked", async () => {
+    setupChromeMock(makeStore({
+      quickSendRules: [
+        { id: "r1", field: "url", operator: "contains", value: "github.com", templateId: "t1", enabled: true },
+      ],
+    }));
+    await import("../src/options/options.js");
+
+    await vi.waitFor(() => {
+      expect(document.getElementById("editor-form").style.display).toBe("block");
+    });
+
+    // Click rules panel
+    const rulesTrigger = document.querySelector('[data-panel="panel-rules"]');
+    rulesTrigger.click();
+
+    await vi.waitFor(() => {
+      expect(document.getElementById("rules-manager").style.display).toBe("block");
+    });
+    expect(document.getElementById("editor-form").style.display).toBe("none");
+    expect(document.getElementById("editor-actions").style.display).toBe("none");
+    expect(document.getElementById("editor-title").textContent).toBe("Quick Send Rules");
+  });
 
   it("should show no-rules message when there are no rules", async () => {
     setupChromeMock(makeStore({ quickSendRules: [] }));
     await import("../src/options/options.js");
 
     await vi.waitFor(() => {
-      expect(document.getElementById("no-rules").classList.contains("hidden")).toBe(false);
+      expect(document.getElementById("editor-form").style.display).toBe("block");
     });
+
+    // Click rules panel
+    document.querySelector('[data-panel="panel-rules"]').click();
+
+    await vi.waitFor(() => {
+      expect(document.getElementById("rules-manager").style.display).toBe("block");
+    });
+    expect(document.getElementById("no-rules").classList.contains("hidden")).toBe(false);
     expect(document.querySelectorAll("#rules-list li")).toHaveLength(0);
   });
 
-  it("should render rules list", async () => {
+  it("should render rules list in right pane", async () => {
     setupChromeMock(makeStore({
       quickSendRules: [
         { id: "r1", field: "url", operator: "contains", value: "github.com", templateId: "t1", enabled: true },
@@ -763,6 +829,13 @@ describe("options.js", () => {
       ],
     }));
     await import("../src/options/options.js");
+
+    await vi.waitFor(() => {
+      expect(document.getElementById("editor-form").style.display).toBe("block");
+    });
+
+    // Click rules panel
+    document.querySelector('[data-panel="panel-rules"]').click();
 
     await vi.waitFor(() => {
       const items = document.querySelectorAll("#rules-list li");
@@ -785,8 +858,16 @@ describe("options.js", () => {
     await import("../src/options/options.js");
 
     await vi.waitFor(() => {
-      expect(document.getElementById("no-rules").classList.contains("hidden")).toBe(true);
+      expect(document.getElementById("editor-form").style.display).toBe("block");
     });
+
+    // Click rules panel
+    document.querySelector('[data-panel="panel-rules"]').click();
+
+    await vi.waitFor(() => {
+      expect(document.getElementById("rules-manager").style.display).toBe("block");
+    });
+    expect(document.getElementById("no-rules").classList.contains("hidden")).toBe(true);
   });
 
   it("should select a rule and show rule editor", async () => {
@@ -796,6 +877,13 @@ describe("options.js", () => {
       ],
     }));
     await import("../src/options/options.js");
+
+    await vi.waitFor(() => {
+      expect(document.getElementById("editor-form").style.display).toBe("block");
+    });
+
+    // Click rules panel to show rules manager
+    document.querySelector('[data-panel="panel-rules"]').click();
 
     await vi.waitFor(() => {
       expect(document.querySelectorAll("#rules-list li")).toHaveLength(1);
@@ -808,6 +896,7 @@ describe("options.js", () => {
       expect(document.getElementById("rule-editor-form").style.display).toBe("block");
     });
     expect(document.getElementById("editor-form").style.display).toBe("none");
+    expect(document.getElementById("rules-manager").style.display).toBe("none");
     expect(document.getElementById("rule-field").value).toBe("url");
     expect(document.getElementById("rule-operator").value).toBe("contains");
     expect(document.getElementById("rule-value").value).toBe("github.com");
@@ -835,6 +924,13 @@ describe("options.js", () => {
       expect(document.querySelectorAll("#template-list li")).toHaveLength(1);
     });
 
+    // Navigate to rules panel first
+    document.querySelector('[data-panel="panel-rules"]').click();
+
+    await vi.waitFor(() => {
+      expect(document.getElementById("rules-manager").style.display).toBe("block");
+    });
+
     document.getElementById("add-rule").click();
 
     await vi.waitFor(() => {
@@ -852,10 +948,16 @@ describe("options.js", () => {
     await import("../src/options/options.js");
 
     await vi.waitFor(() => {
+      expect(document.getElementById("editor-form").style.display).toBe("block");
+    });
+
+    // Navigate to rules, then select rule
+    document.querySelector('[data-panel="panel-rules"]').click();
+
+    await vi.waitFor(() => {
       expect(document.querySelectorAll("#rules-list li")).toHaveLength(1);
     });
 
-    // Select the rule
     document.querySelector("#rules-list li").click();
 
     await vi.waitFor(() => {
@@ -878,7 +980,7 @@ describe("options.js", () => {
     });
   });
 
-  it("should delete a rule without confirmation", async () => {
+  it("should delete a rule and return to rules manager", async () => {
     const storeWithRule = makeStore({
       quickSendRules: [
         { id: "r1", field: "url", operator: "contains", value: "test", templateId: "t1", enabled: true },
@@ -888,10 +990,16 @@ describe("options.js", () => {
     await import("../src/options/options.js");
 
     await vi.waitFor(() => {
+      expect(document.getElementById("editor-form").style.display).toBe("block");
+    });
+
+    // Navigate to rules, select the rule
+    document.querySelector('[data-panel="panel-rules"]').click();
+
+    await vi.waitFor(() => {
       expect(document.querySelectorAll("#rules-list li")).toHaveLength(1);
     });
 
-    // Select the rule first
     document.querySelector("#rules-list li").click();
 
     await vi.waitFor(() => {
@@ -904,7 +1012,8 @@ describe("options.js", () => {
     document.getElementById("delete-template").click();
 
     await vi.waitFor(() => {
-      expect(document.getElementById("editor-empty").style.display).toBe("flex");
+      // Should return to rules manager (not editor-empty)
+      expect(document.getElementById("rules-manager").style.display).toBe("block");
     });
   });
 
@@ -921,10 +1030,16 @@ describe("options.js", () => {
     await import("../src/options/options.js");
 
     await vi.waitFor(() => {
+      expect(document.getElementById("editor-form").style.display).toBe("block");
+    });
+
+    // Navigate to rules, select the rule
+    document.querySelector('[data-panel="panel-rules"]').click();
+
+    await vi.waitFor(() => {
       expect(document.querySelectorAll("#rules-list li")).toHaveLength(1);
     });
 
-    // Select the rule
     document.querySelector("#rules-list li").click();
 
     await vi.waitFor(() => {
@@ -953,7 +1068,13 @@ describe("options.js", () => {
     // Template t1 should be highlighted initially
     expect(document.querySelector("#template-list li.active")).toBeTruthy();
 
-    // Click on a rule
+    // Navigate to rules, click on a rule
+    document.querySelector('[data-panel="panel-rules"]').click();
+
+    await vi.waitFor(() => {
+      expect(document.querySelectorAll("#rules-list li")).toHaveLength(1);
+    });
+
     document.querySelector("#rules-list li").click();
 
     await vi.waitFor(() => {
@@ -962,5 +1083,50 @@ describe("options.js", () => {
 
     // Template list should have no active items
     expect(document.querySelector("#template-list li.active")).toBeFalsy();
+  });
+
+  // ─── Settings panel tests ───
+
+  it("should show settings form when settings panel is clicked", async () => {
+    setupChromeMock(makeStore());
+    await import("../src/options/options.js");
+
+    await vi.waitFor(() => {
+      expect(document.getElementById("editor-form").style.display).toBe("block");
+    });
+
+    // Click settings panel
+    document.querySelector('[data-panel="panel-settings"]').click();
+
+    await vi.waitFor(() => {
+      expect(document.getElementById("settings-form").style.display).toBe("block");
+    });
+    expect(document.getElementById("editor-form").style.display).toBe("none");
+    expect(document.getElementById("editor-actions").style.display).toBe("none");
+    expect(document.getElementById("editor-title").textContent).toBe("Settings");
+  });
+
+  it("should navigate back to webhooks from settings", async () => {
+    setupChromeMock(makeStore());
+    await import("../src/options/options.js");
+
+    await vi.waitFor(() => {
+      expect(document.getElementById("editor-form").style.display).toBe("block");
+    });
+
+    // Go to settings
+    document.querySelector('[data-panel="panel-settings"]').click();
+
+    await vi.waitFor(() => {
+      expect(document.getElementById("settings-form").style.display).toBe("block");
+    });
+
+    // Go back to webhooks
+    document.querySelector('[data-panel="panel-webhooks"]').click();
+
+    await vi.waitFor(() => {
+      expect(document.getElementById("editor-form").style.display).toBe("block");
+    });
+    expect(document.getElementById("settings-form").style.display).toBe("none");
   });
 });
