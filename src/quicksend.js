@@ -23,7 +23,9 @@ function flashBadge(success) {
  */
 function openPopupFallback() {
   chrome.action.setPopup({ popup: POPUP_PATH });
-  chrome.action.openPopup();
+  chrome.action.openPopup().then(() => {
+    chrome.action.setPopup({ popup: "" });
+  });
 }
 
 /**

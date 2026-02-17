@@ -33,7 +33,7 @@ describe("handleQuickSend", () => {
         setPopup: vi.fn(),
         setBadgeText: vi.fn(),
         setBadgeBackgroundColor: vi.fn(),
-        openPopup: vi.fn(),
+        openPopup: vi.fn().mockResolvedValue(),
       },
     };
 
@@ -52,6 +52,8 @@ describe("handleQuickSend", () => {
     expect(fetchMock).not.toHaveBeenCalled();
     expect(chrome.action.setPopup).toHaveBeenCalledWith({ popup: "src/popup/popup.html" });
     expect(chrome.action.openPopup).toHaveBeenCalled();
+    // Should reset popup to empty so onClicked fires next time
+    expect(chrome.action.setPopup).toHaveBeenCalledWith({ popup: "" });
   });
 
   it("should open popup when store has empty templates", async () => {
