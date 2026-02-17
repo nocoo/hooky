@@ -265,18 +265,18 @@ async function runTests() {
     );
     await new Promise((r) => setTimeout(r, 500));
 
-    // Verify accordion panels exist
-    const panels = await rulesPage.$$(".accordion-panel");
-    assert(panels.length === 3, "Rules: Three accordion panels exist");
+    // Verify sidebar panels exist
+    const panels = await rulesPage.$$(".sidebar-panel");
+    assert(panels.length === 3, "Rules: Three sidebar panels exist");
 
-    // Templates panel should be active by default
-    const templatesActive = await rulesPage.$eval(
-      "#panel-templates",
+    // Webhooks panel should be active by default
+    const webhooksActive = await rulesPage.$eval(
+      "#panel-webhooks",
       (el) => el.classList.contains("active"),
     );
-    assert(templatesActive, "Rules: Templates panel is active by default");
+    assert(webhooksActive, "Rules: Webhooks panel is active by default");
 
-    // Click Rules accordion trigger to open rules panel
+    // Click Rules nav button to navigate to rules
     await rulesPage.click('[data-panel="panel-rules"]');
     await new Promise((r) => setTimeout(r, 300));
 
@@ -286,12 +286,19 @@ async function runTests() {
     );
     assert(rulesActive, "Rules: Rules panel is active after click");
 
-    // Templates panel should now be inactive
-    const templatesInactive = await rulesPage.$eval(
-      "#panel-templates",
+    // Webhooks panel should now be inactive
+    const webhooksInactive = await rulesPage.$eval(
+      "#panel-webhooks",
       (el) => !el.classList.contains("active"),
     );
-    assert(templatesInactive, "Rules: Templates panel closed when Rules opened");
+    assert(webhooksInactive, "Rules: Webhooks panel closed when Rules opened");
+
+    // Rules manager should be visible in right pane
+    const rulesManagerVisible = await rulesPage.$eval(
+      "#rules-manager",
+      (el) => el.style.display !== "none",
+    );
+    assert(rulesManagerVisible, "Rules: Rules manager visible in right pane");
 
     // No rules message should be visible
     const noRulesVisible = await rulesPage.$eval(
@@ -300,7 +307,7 @@ async function runTests() {
     );
     assert(noRulesVisible, "Rules: 'No rules' message shown initially");
 
-    // Click + to add a new rule
+    // Click + to add a new rule (button is in rules-manager)
     await rulesPage.click("#add-rule");
     await new Promise((r) => setTimeout(r, 500));
 
@@ -349,6 +356,13 @@ async function runTests() {
     await rulesPage.click("#delete-template");
     await new Promise((r) => setTimeout(r, 500));
 
+    // After delete, should return to rules-list mode (rules manager visible)
+    const rulesManagerAfterDelete = await rulesPage.$eval(
+      "#rules-manager",
+      (el) => el.style.display !== "none",
+    );
+    assert(rulesManagerAfterDelete, "Rules: Rules manager visible after delete");
+
     // Rules list should be empty
     const ruleItemsAfterDelete = await rulesPage.$$("#rules-list li");
     assert(ruleItemsAfterDelete.length === 0, "Rules: Rules list empty after delete");
@@ -360,15 +374,15 @@ async function runTests() {
     );
     assert(noRulesVisibleAgain, "Rules: 'No rules' message shown after delete");
 
-    // Switch back to templates panel
-    await rulesPage.click('[data-panel="panel-templates"]');
+    // Switch back to webhooks panel
+    await rulesPage.click('[data-panel="panel-webhooks"]');
     await new Promise((r) => setTimeout(r, 300));
 
-    const templatesActiveAgain = await rulesPage.$eval(
-      "#panel-templates",
+    const webhooksActiveAgain = await rulesPage.$eval(
+      "#panel-webhooks",
       (el) => el.classList.contains("active"),
     );
-    assert(templatesActiveAgain, "Rules: Can switch back to Templates panel");
+    assert(webhooksActiveAgain, "Rules: Can switch back to Webhooks panel");
 
     await rulesPage.close();
   } catch (err) {
