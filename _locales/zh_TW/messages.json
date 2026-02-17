@@ -81,8 +81,8 @@
   "settingsTooltip": {
     "message": "設定"
   },
-  "templates": {
-    "message": "範本"
+  "webhooks": {
+    "message": "Webhooks"
   },
   "newTemplate": {
     "message": "新增"
@@ -196,5 +196,8 @@
   },
   "ruleDetail": {
     "message": "規則詳情"
+  },
+  "settingsDetail": {
+    "message": "設定"
   }
 }

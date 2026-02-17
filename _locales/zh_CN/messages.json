@@ -81,8 +81,8 @@
   "settingsTooltip": {
     "message": "\u8bbe\u7f6e"
   },
-  "templates": {
-    "message": "\u6a21\u677f"
+  "webhooks": {
+    "message": "Webhooks"
   },
   "newTemplate": {
     "message": "\u65b0\u5efa"
@@ -196,5 +196,8 @@
   },
   "ruleDetail": {
     "message": "规则详情"
+  },
+  "settingsDetail": {
+    "message": "设置"
   }
 }

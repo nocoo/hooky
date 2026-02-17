@@ -81,8 +81,8 @@
   "settingsTooltip": {
     "message": "Settings"
   },
-  "templates": {
-    "message": "Templates"
+  "webhooks": {
+    "message": "Webhooks"
   },
   "newTemplate": {
     "message": "New"
@@ -196,5 +196,8 @@
   },
   "ruleDetail": {
     "message": "Rule Detail"
+  },
+  "settingsDetail": {
+    "message": "Settings"
   }
 }
