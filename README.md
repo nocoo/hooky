@@ -17,7 +17,7 @@
 
 <p align="center">
   <a href="https://chromewebstore.google.com/detail/hooky/almccnkbhfhckimediabjimflnbfbeeo">
-    <img src="https://developer.chrome.com/static/images/badges/chrome-web-store-badge-large-border.png" alt="Available in the Chrome Web Store">
+    <img src="https://developer.chrome.com/static/docs/webstore/branding/image/HRs9MPufa1J1h5glNhut.png" alt="Available in the Chrome Web Store" height="75">
   </a>
 </p>
 
