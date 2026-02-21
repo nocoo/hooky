@@ -15,6 +15,12 @@
   <img src="https://img.shields.io/badge/license-MIT-blue" alt="License MIT">
 </p>
 
+<p align="center">
+  <a href="https://chromewebstore.google.com/detail/hooky/almccnkbhfhckimediabjimflnbfbeeo">
+    <img src="https://storage.googleapis.com/web-dev-uploads/image/WlD8wC6g8khYWPJUsQceQkhXSlv1/iNEddTyWiMfLSwFD6qGq.png" alt="Available in the Chrome Web Store" width="248">
+  </a>
+</p>
+
 ---
 
 ## ✨ Features
