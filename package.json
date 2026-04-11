@@ -24,14 +24,18 @@
     "url": "https://github.com/nocoo/hooky/issues"
   },
   "homepage": "https://github.com/nocoo/hooky#readme",
+  "overrides": {
+    "basic-ftp": "^5.2.2",
+    "picomatch": "^4.0.4"
+  },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
-    "@vitest/coverage-v8": "^4.0.18",
+    "@vitest/coverage-v8": "^4.1.4",
     "eslint": "^10.0.0",
     "globals": "^17.3.0",
     "husky": "^9.1.7",
     "jsdom": "^28.1.0",
-    "puppeteer": "^24.37.3",
-    "vitest": "^4.0.18"
+    "puppeteer": "^24.40.0",
+    "vitest": "^4.1.4"
   }
 }
