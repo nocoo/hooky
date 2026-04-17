@@ -1647,6 +1647,406 @@ describe("options.js", () => {
 
   // ─── quickSendRules || [] branch (store.quickSendRules is undefined) ───
 
+  // ─── renderAll branch coverage: editorMode="template" + empty templates (line 572) ───
+
+  it("should call showEditorEmpty in renderAll when editorMode=template and templates are empty", async () => {
+    // handleNewTemplate sets editorMode="template" then calls renderAll()
+    // If the store returns empty templates in renderAll, line 572 is hit
+    const store = makeStore();
+    setupChromeMock(store);
+
+    // createTemplate calls storage.local.set, then renderAll calls loadStore
+    // We need loadStore (storage.local.get) to return empty templates AFTER createTemplate runs
+    let getCalls = 0;
+    chrome.storage.local.get.mockImplementation(() => {
+      getCalls++;
+      if (getCalls <= 2) return Promise.resolve(store); // initial load
+      // After createTemplate, renderAll's loadStore returns empty templates
+      return Promise.resolve(makeStore({ templates: [] }));
+    });
+
+    await import("../src/options/options.js");
+
+    await vi.waitFor(() => {
+      expect(getTemplateItems()).toHaveLength(1);
+    });
+
+    // Click "+ New Webhook" — handleNewTemplate sets editorMode="template", calls renderAll
+    document.getElementById("new-template").click();
+
+    await vi.waitFor(() => {
+      // renderAll with editorMode="template" + empty templates → showEditorEmpty
+      expect(document.getElementById("editor-empty").style.display).toBe("flex");
+    });
+  });
+
+  // ─── renderAll branch coverage: editorMode="rule" + matching currentRuleId (line 577) ───
+
+  it("should select matching rule in renderAll when editorMode=rule and currentRuleId matches", async () => {
+    // handleNewRule sets editorMode="rule", currentRuleId=newRule.id, calls renderAll
+    // renderAll finds the rule in store → selectRule(currentRuleId) (line 577)
+    const store = makeStore();
+    setupChromeMock(store);
+
+    // Track the rule ID created by addQuickSendRule
+    let createdRuleId = null;
+    let getCalls = 0;
+    chrome.storage.local.get.mockImplementation(() => {
+      getCalls++;
+      if (getCalls <= 2) return Promise.resolve(store); // initial load
+      // After addQuickSendRule creates rule, return store with that rule
+      if (createdRuleId) {
+        return Promise.resolve(makeStore({
+          quickSendRules: [
+            { id: createdRuleId, field: "url", operator: "contains", value: "", templateId: "t1", enabled: true },
+          ],
+        }));
+      }
+      return Promise.resolve(store);
+    });
+
+    chrome.storage.local.set.mockImplementation((data) => {
+      // Capture the rule ID from addQuickSendRule's save
+      if (data.hooky?.quickSendRules?.length > 0) {
+        createdRuleId = data.hooky.quickSendRules[0].id;
+      }
+      return Promise.resolve();
+    });
+
+    await import("../src/options/options.js");
+
+    await vi.waitFor(() => {
+      expect(getTemplateItems()).toHaveLength(1);
+    });
+
+    // Navigate to rules panel first
+    document.querySelector('[data-panel="panel-rules"]').click();
+
+    await vi.waitFor(() => {
+      expect(document.getElementById("rules-manager").style.display).toBe("block");
+    });
+
+    // Click "+ New Rule" — handleNewRule sets editorMode="rule", currentRuleId, calls renderAll
+    document.getElementById("add-rule").click();
+
+    await vi.waitFor(() => {
+      // renderAll with editorMode="rule" + matching currentRuleId → selectRule (line 577)
+      expect(document.getElementById("rule-editor-form").style.display).toBe("block");
+    });
+  });
+
+  // ─── renderAll branch coverage: editorMode="rule" + empty rules (line 581) ───
+
+  it("should show rules manager in renderAll when editorMode=rule and no rules exist", async () => {
+    // handleNewRule sets editorMode="rule", calls renderAll
+    // If renderAll's loadStore returns empty rules → showRulesManager (line 581)
+    const store = makeStore();
+    setupChromeMock(store);
+
+    let getCalls = 0;
+    chrome.storage.local.get.mockImplementation(() => {
+      getCalls++;
+      if (getCalls <= 2) return Promise.resolve(store); // initial load
+      // After addQuickSendRule, renderAll's loadStore returns empty rules
+      return Promise.resolve(makeStore({ quickSendRules: [] }));
+    });
+
+    await import("../src/options/options.js");
+
+    await vi.waitFor(() => {
+      expect(getTemplateItems()).toHaveLength(1);
+    });
+
+    // Navigate to rules
+    document.querySelector('[data-panel="panel-rules"]').click();
+
+    await vi.waitFor(() => {
+      expect(document.getElementById("rules-manager").style.display).toBe("block");
+    });
+
+    // Click "+ New Rule" — handleNewRule sets editorMode="rule", calls renderAll
+    document.getElementById("add-rule").click();
+
+    await vi.waitFor(() => {
+      // renderAll with editorMode="rule" + empty rules → showRulesManager (line 581)
+      expect(document.getElementById("rules-manager").style.display).toBe("block");
+      expect(document.getElementById("no-rules").classList.contains("hidden")).toBe(false);
+    });
+  });
+
+  // ─── Branch coverage: navigateToWebhooks with matching currentTemplateId (line 95) ───
+
+  it("should re-select current template when navigating back to webhooks", async () => {
+    const store = makeStore({
+      templates: [
+        { id: "t1", name: "Hook A", url: "https://a.com", method: "POST", params: [] },
+        { id: "t2", name: "Hook B", url: "https://b.com", method: "GET", params: [] },
+      ],
+    });
+    setupChromeMock(store);
+    await import("../src/options/options.js");
+
+    await vi.waitFor(() => {
+      expect(document.getElementById("template-name").value).toBe("Hook A");
+    });
+
+    // Select second template — sets currentTemplateId = "t2"
+    getTemplateItems()[1].click();
+
+    await vi.waitFor(() => {
+      expect(document.getElementById("template-name").value).toBe("Hook B");
+    });
+
+    // Navigate to rules
+    document.querySelector('[data-panel="panel-rules"]').click();
+
+    await vi.waitFor(() => {
+      expect(document.getElementById("rules-manager").style.display).toBe("block");
+    });
+
+    // Navigate back to webhooks — should re-select t2 via navigateToWebhooks (line 95-96)
+    document.querySelector('[data-panel="panel-webhooks"]').click();
+
+    await vi.waitFor(() => {
+      expect(document.getElementById("template-name").value).toBe("Hook B");
+    });
+  });
+
+  // ─── Branch coverage: navigateToWebhooks with currentTemplateId not found (line 95 branch 1) ───
+
+  it("should fallback to first template in navigateToWebhooks when currentTemplateId is gone", async () => {
+    const store = makeStore({
+      templates: [
+        { id: "t1", name: "Hook A", url: "https://a.com", method: "POST", params: [] },
+        { id: "t2", name: "Hook B", url: "https://b.com", method: "GET", params: [] },
+      ],
+    });
+    setupChromeMock(store);
+    await import("../src/options/options.js");
+
+    await vi.waitFor(() => {
+      expect(document.getElementById("template-name").value).toBe("Hook A");
+    });
+
+    // Select second template
+    getTemplateItems()[1].click();
+
+    await vi.waitFor(() => {
+      expect(document.getElementById("template-name").value).toBe("Hook B");
+    });
+
+    // Navigate to rules
+    document.querySelector('[data-panel="panel-rules"]').click();
+
+    await vi.waitFor(() => {
+      expect(document.getElementById("rules-manager").style.display).toBe("block");
+    });
+
+    // Now mock store without t2
+    chrome.storage.local.get.mockResolvedValue(makeStore({
+      templates: [
+        { id: "t1", name: "Hook A", url: "https://a.com", method: "POST", params: [] },
+      ],
+    }));
+
+    // Navigate back to webhooks — currentTemplateId=t2 but not found → select first
+    document.querySelector('[data-panel="panel-webhooks"]').click();
+
+    await vi.waitFor(() => {
+      expect(document.getElementById("template-name").value).toBe("Hook A");
+    });
+  });
+
+  // ─── Branch coverage: settings list item click (line 88) ───
+
+  it("should handle clicking settings list items", async () => {
+    setupChromeMock(makeStore());
+    await import("../src/options/options.js");
+
+    await vi.waitFor(() => {
+      expect(document.getElementById("editor-form").style.display).toBe("block");
+    });
+
+    // Navigate to settings
+    document.querySelector('[data-panel="panel-settings"]').click();
+
+    await vi.waitFor(() => {
+      expect(document.getElementById("settings-form").style.display).toBe("block");
+    });
+
+    // Click the theme settings item directly
+    const themeItem = document.querySelector('[data-settings="theme"]');
+    themeItem.click();
+
+    expect(themeItem.classList.contains("active")).toBe(true);
+  });
+
+  // ─── Branch coverage: renderAll editorMode="template" + matching currentTemplateId (line 567-568) ───
+
+  it("should selectTemplate in renderAll when editorMode=template and currentTemplateId found", async () => {
+    const store = makeStore({
+      templates: [
+        { id: "t1", name: "Hook A", url: "https://a.com", method: "POST", params: [] },
+      ],
+    });
+    setupChromeMock(store);
+
+    // handleNewTemplate sets editorMode="template", currentTemplateId=newId, then calls renderAll
+    // We need renderAll's loadStore to return a store with the new template
+    let createdId = null;
+    let getCalls = 0;
+    chrome.storage.local.get.mockImplementation(() => {
+      getCalls++;
+      if (getCalls <= 2) return Promise.resolve(store);
+      if (createdId) {
+        return Promise.resolve(makeStore({
+          templates: [
+            ...store.hooky.templates,
+            { id: createdId, name: "Untitled", url: "", method: "POST", params: [] },
+          ],
+        }));
+      }
+      return Promise.resolve(store);
+    });
+
+    chrome.storage.local.set.mockImplementation((data) => {
+      if (data.hooky?.templates?.length > 1) {
+        createdId = data.hooky.templates[data.hooky.templates.length - 1].id;
+      }
+      return Promise.resolve();
+    });
+
+    await import("../src/options/options.js");
+
+    await vi.waitFor(() => {
+      expect(getTemplateItems()).toHaveLength(1);
+    });
+
+    // Click "+ New Webhook" → handleNewTemplate → editorMode="template", renderAll
+    document.getElementById("new-template").click();
+
+    await vi.waitFor(() => {
+      // renderAll finds currentTemplateId in templates → selectTemplate (line 568)
+      expect(document.getElementById("editor-form").style.display).toBe("block");
+      expect(document.getElementById("template-name").value).toBe("Untitled");
+    });
+  });
+
+  // ─── Branch coverage: showRulesManager with undefined quickSendRules (line 223) ───
+
+  it("should handle showRulesManager when quickSendRules is undefined via navigateToRules", async () => {
+    // navigateToRules calls showRulesManager which checks store.quickSendRules || []
+    const store = makeStore();
+    setupChromeMock(store);
+    await import("../src/options/options.js");
+
+    await vi.waitFor(() => {
+      expect(document.getElementById("editor-form").style.display).toBe("block");
+    });
+
+    // Mock store to return undefined quickSendRules
+    chrome.storage.local.get.mockResolvedValue(makeStore({ quickSendRules: undefined }));
+
+    // Navigate to rules — quickSendRules is undefined → || [] fallback (line 223)
+    document.querySelector('[data-panel="panel-rules"]').click();
+
+    await vi.waitFor(() => {
+      expect(document.getElementById("rules-manager").style.display).toBe("block");
+      expect(document.getElementById("no-rules").classList.contains("hidden")).toBe(false);
+    });
+  });
+
+  // ─── Branch coverage: saveCurrentRule with undefined quickSendRules (line 496) ───
+
+  it("should handle saveCurrentRule when store quickSendRules becomes undefined", async () => {
+    const storeWithRule = makeStore({
+      quickSendRules: [
+        { id: "r1", field: "url", operator: "contains", value: "test", templateId: "t1", enabled: true },
+      ],
+    });
+    setupChromeMock(storeWithRule);
+    await import("../src/options/options.js");
+
+    await vi.waitFor(() => {
+      expect(document.getElementById("editor-form").style.display).toBe("block");
+    });
+
+    // Navigate to rules, select rule
+    document.querySelector('[data-panel="panel-rules"]').click();
+
+    await vi.waitFor(() => {
+      expect(getRuleItems()).toHaveLength(1);
+    });
+
+    getRuleItems()[0].click();
+
+    await vi.waitFor(() => {
+      expect(document.getElementById("rule-editor-form").style.display).toBe("block");
+    });
+
+    // After save, loadStore returns undefined quickSendRules → || [] fallback (line 496)
+    let saveCalled = false;
+    chrome.storage.local.get.mockImplementation(() => {
+      if (saveCalled) {
+        return Promise.resolve(makeStore({ quickSendRules: undefined }));
+      }
+      return Promise.resolve(storeWithRule);
+    });
+    chrome.storage.local.set.mockImplementation(() => {
+      saveCalled = true;
+      return Promise.resolve();
+    });
+
+    document.getElementById("save").click();
+
+    await vi.waitFor(() => {
+      expect(document.getElementById("no-rules").classList.contains("hidden")).toBe(false);
+    });
+  });
+
+  it("should handle save when template list item is not in DOM", async () => {
+    setupChromeMock(makeStore());
+    await import("../src/options/options.js");
+
+    await vi.waitFor(() => {
+      expect(document.getElementById("template-name").value).toBe("Hook A");
+    });
+
+    // Remove the template list items from DOM so querySelector won't find them
+    const templateList = document.getElementById("template-list");
+    const items = templateList.querySelectorAll("li:not(.new-item)");
+    for (const item of items) {
+      item.removeAttribute("data-id");
+    }
+
+    // Save — saveCurrentTemplate will try to find li by data-id but fail (line 472 falsy branch)
+    document.getElementById("save").click();
+
+    await vi.waitFor(() => {
+      expect(chrome.storage.local.set).toHaveBeenCalled();
+    });
+  });
+
+  it("should handle save when template name span is missing", async () => {
+    setupChromeMock(makeStore());
+    await import("../src/options/options.js");
+
+    await vi.waitFor(() => {
+      expect(document.getElementById("template-name").value).toBe("Hook A");
+    });
+
+    // Remove the .template-name span from the list item
+    const nameSpan = document.querySelector("#template-list li:not(.new-item) .template-name");
+    if (nameSpan) nameSpan.remove();
+
+    // Save — saveCurrentTemplate finds li but not nameSpan (line 474 falsy branch)
+    document.getElementById("save").click();
+
+    await vi.waitFor(() => {
+      expect(chrome.storage.local.set).toHaveBeenCalled();
+    });
+  });
+
   it("should handle missing quickSendRules in store for rules manager", async () => {
     setupChromeMock(makeStore({ quickSendRules: undefined }));
     await import("../src/options/options.js");
@@ -1663,5 +2063,115 @@ describe("options.js", () => {
       expect(document.getElementById("no-rules").classList.contains("hidden")).toBe(false);
     });
     expect(getRuleItems()).toHaveLength(0);
+  });
+
+  // ─── Branch coverage: guard clauses and edge cases ───
+
+  it("should enter navigateToWebhooks with null currentTemplateId", async () => {
+    setupChromeMock(makeStore({ templates: [] }));
+    await import("../src/options/options.js");
+
+    await vi.waitFor(() => {
+      expect(document.getElementById("editor-empty").style.display).toBe("flex");
+    });
+
+    // Navigate to settings (not rules, to avoid any template selection)
+    document.querySelector('[data-panel="panel-settings"]').click();
+
+    await vi.waitFor(() => {
+      expect(document.getElementById("settings-form").style.display).toBe("block");
+    });
+
+    // Verify webhooks panel is NOT active
+    expect(document.getElementById("panel-webhooks").classList.contains("active")).toBe(false);
+
+    // Navigate back to webhooks — currentTemplateId is null
+    document.querySelector('[data-panel="panel-webhooks"]').click();
+
+    await vi.waitFor(() => {
+      expect(document.getElementById("editor-empty").style.display).toBe("flex");
+    });
+  });
+
+  it("should handle nav button with invalid panel id", async () => {
+    setupChromeMock(makeStore());
+    await import("../src/options/options.js");
+
+    await vi.waitFor(() => {
+      expect(document.getElementById("editor-form").style.display).toBe("block");
+    });
+
+    // Add a nav button with invalid data-panel
+    const sidebar = document.querySelector(".sidebar");
+    const badBtn = document.createElement("button");
+    badBtn.type = "button";
+    badBtn.className = "sidebar-nav-btn";
+    badBtn.dataset.panel = "panel-nonexistent";
+    sidebar.appendChild(badBtn);
+
+    // Re-init sidebar won't work since it ran at import. Instead, manually trigger the event
+    // by clicking - but the buttons are registered at init time, so new buttons won't have listeners.
+    // We need to test a button that was registered but has a bad panel reference.
+    // Let's modify an existing button's data-panel to point to non-existent panel
+    const webhooksBtn = document.querySelector('[data-panel="panel-webhooks"]');
+    webhooksBtn.dataset.panel = "panel-nonexistent";
+
+    // First navigate away so the current panel is not the one we're clicking
+    document.querySelector('[data-panel="panel-rules"]').click();
+
+    await vi.waitFor(() => {
+      expect(document.getElementById("rules-manager").style.display).toBe("block");
+    });
+
+    // Now click the modified button — panel is null → early return (line 61)
+    webhooksBtn.click();
+
+    // Should stay on rules manager (nothing changed)
+    expect(document.getElementById("rules-manager").style.display).toBe("block");
+  });
+
+  it("should handle openPanel with nonexistent panel id", async () => {
+    // handleNewRule calls openPanel("panel-rules") — if we remove the panel element,
+    // openPanel's `if (panel)` branch will be false (line 557)
+    const store = makeStore();
+    setupChromeMock(store);
+
+    let getCalls = 0;
+    chrome.storage.local.get.mockImplementation(() => {
+      getCalls++;
+      if (getCalls <= 2) return Promise.resolve(store);
+      return Promise.resolve(makeStore({
+        quickSendRules: [
+          { id: "r-test", field: "url", operator: "contains", value: "", templateId: "t1", enabled: true },
+        ],
+      }));
+    });
+
+    await import("../src/options/options.js");
+
+    await vi.waitFor(() => {
+      expect(getTemplateItems()).toHaveLength(1);
+    });
+
+    // Navigate to rules
+    document.querySelector('[data-panel="panel-rules"]').click();
+
+    await vi.waitFor(() => {
+      expect(document.getElementById("rules-manager").style.display).toBe("block");
+    });
+
+    // Remove the panel-rules element so openPanel can't find it
+    const rulesPanel = document.getElementById("panel-rules");
+    rulesPanel.id = "panel-rules-removed";
+
+    // Click add rule — handleNewRule calls openPanel("panel-rules") which won't find the element
+    document.getElementById("add-rule").click();
+
+    await vi.waitFor(() => {
+      expect(chrome.storage.local.set).toHaveBeenCalled();
+    });
+
+    // Restore
+    rulesPanel.id = "panel-rules";
   });
 });
