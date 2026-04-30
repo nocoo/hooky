@@ -6,8 +6,13 @@ export default defineConfig({
     environment: "node",
     coverage: {
       provider: "v8",
+      // AST-aware remapping is built into vitest v4+; no opt-in needed.
+      reporter: ["text", "html"],
       include: ["src/**/*.js"],
-      exclude: ["src/content.js"],
+      exclude: [
+        // Legacy exclusion — file no longer exists, harmless to keep.
+        "src/content.js",
+      ],
       thresholds: {
         statements: 90,
         branches: 90,
