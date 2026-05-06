@@ -8,7 +8,7 @@ Hooky is a Chrome Extension (Manifest V3) for configuring and triggering webhook
 
 - **Runtime**: Chrome Extension (Manifest V3), vanilla JavaScript
 - **Package manager**: Bun (NOT npm)
-- **Test runner**: Vitest (`bun run test`, NOT `bun test` — the latter uses bun's built-in runner)
+- **Test runner**: Vitest (`vitest run`)
 - **E2E**: Puppeteer
 - **Lint**: ESLint v10, flat config (`eslint.config.mjs`)
 - **Hooks**: Husky — pre-commit: `bun run test`, pre-push: `bun run test && bun run lint`
@@ -117,7 +117,7 @@ Uses `chrome.scripting.executeScript()` to inject `extractPageContext()` from `s
 ## Retrospective
 
 - **German locale Unicode quotes**: `„"` curly quotes break JSON parsing. Use `«»` instead.
-- **`bun test` vs `bun run test`**: `bun test` invokes bun's built-in test runner, NOT vitest. Always use `bun run test`.
+- **Test runner**: tests are run via `vitest run` (or `npm test`). The project no longer uses bun's built-in test runner.
 - **V8 coverage branch counting**: `||`, `?.`, and `&&` operators each count as branches. Defensive fallbacks like `x || ''` create uncoverable branches when x is always truthy in tests.
 - **Content script limitations**: `chrome.scripting.executeScript` with `activeTab` is more reliable than persistent content_scripts, and avoids needing host permissions.
 - **Top-level DOM access**: Modules that call `document.getElementById()` at import time require DOM fixtures before `import()` in tests.
