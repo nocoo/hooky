@@ -75,3 +75,8 @@ reason = "Indirect: vite via vitest (dev-only, no production server exposure)"
 [[IgnoredVulns]]
 id = "GHSA-v2wj-q39q-566r"
 reason = "Indirect: vite via vitest (dev-only, no production server exposure)"
+
+# ip-address - indirect via 6to4/socks via cloudflared (CIDR validation, low risk in CI/build context)
+[[IgnoredVulns]]
+id = "GHSA-v2v4-37r5-5v8g"
+reason = "Indirect: ip-address via transitive deps (CIDR string handling, no untrusted input in our usage)"
