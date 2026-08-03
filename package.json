@@ -25,7 +25,7 @@
   },
   "homepage": "https://github.com/nocoo/hooky#readme",
   "overrides": {
-    "basic-ftp": "^6.1.0",
+    "basic-ftp": "^6.2.0",
     "brace-expansion": "^5.0.8",
     "esbuild": "^0.28.1",
     "picomatch": "^4.0.4",
@@ -38,13 +38,13 @@
     "@eslint/js": "^10.0.1",
     "@vitest/coverage-v8": "4.1.10",
     "eslint": "10.8.0",
-    "globals": "17.8.0",
+    "globals": "17.9.0",
     "husky": "^9.1.7",
     "jsdom": "30.0.1",
     "puppeteer": "25.4.0",
     "vitest": "4.1.10"
   },
   "dependencies": {
-    "basic-ftp": "6.1.0"
+    "basic-ftp": "6.2.0"
   }
 }
