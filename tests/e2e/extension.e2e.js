@@ -163,7 +163,7 @@ async function runTests() {
 
     // Fill in template name
     const nameInput = await optionsPage.$("#template-name");
-    await nameInput.click({ clickCount: 3 }); // Select all existing text
+    await nameInput.evaluate((input) => input.select());
     await nameInput.type("E2E Test Hook");
 
     // Fill in URL
