@@ -37,13 +37,13 @@
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
-    "@vitest/coverage-v8": "4.1.10",
+    "@vitest/coverage-v8": "4.1.11",
     "eslint": "10.8.1",
     "globals": "17.11.0",
     "husky": "^9.1.7",
     "jsdom": "30.0.1",
     "puppeteer": "25.8.0",
-    "vitest": "4.1.10"
+    "vitest": "4.1.11"
   },
   "dependencies": {
     "basic-ftp": "6.2.0"
