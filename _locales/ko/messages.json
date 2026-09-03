@@ -38,9 +38,6 @@
   "saved": {
     "message": "저장됨!"
   },
-  "noConfig": {
-    "message": "아직 Webhook이 설정되지 않았습니다."
-  },
   "openSettings": {
     "message": "설정 열기"
   },
@@ -75,9 +72,6 @@
   "webhooks": {
     "message": "Webhooks"
   },
-  "newTemplate": {
-    "message": "새로 만들기"
-  },
   "defaultTemplateName": {
     "message": "제목 없음"
   },
@@ -91,9 +85,6 @@
         "content": "$1"
       }
     }
-  },
-  "selectTemplate": {
-    "message": "템플릿 선택"
   },
   "noTemplates": {
     "message": "아직 템플릿이 없습니다. 설정에서 만들어 주세요."

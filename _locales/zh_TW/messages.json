@@ -38,9 +38,6 @@
   "saved": {
     "message": "已儲存！"
   },
-  "noConfig": {
-    "message": "尚未設定 Webhook。"
-  },
   "openSettings": {
     "message": "開啟設定"
   },
@@ -75,9 +72,6 @@
   "webhooks": {
     "message": "Webhooks"
   },
-  "newTemplate": {
-    "message": "新增"
-  },
   "defaultTemplateName": {
     "message": "未命名"
   },
@@ -91,9 +85,6 @@
         "content": "$1"
       }
     }
-  },
-  "selectTemplate": {
-    "message": "選擇範本"
   },
   "noTemplates": {
     "message": "還沒有範本，請先在設定中建立。"
