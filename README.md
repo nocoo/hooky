@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/hooky-max.png" width="128" height="128" alt="Hooky logo">
+  <img src="assets/brand/icon-rounded.png" width="128" height="128" alt="Hooky logo">
 </p>
 
 <h1 align="center">Hooky</h1>

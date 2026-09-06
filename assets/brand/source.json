@@ -1,0 +1,40 @@
+{
+  "study": "hooky/2026-09-07-01",
+  "finishing": "01",
+  "method": "retained-original",
+  "generationCalls": 0,
+  "nativeDimensions": [
+    900,
+    900
+  ],
+  "original": {
+    "path": "source/original.png",
+    "sha256": "7e98ee9d581e9f5f70fadc239a60b6d0204f62f8586d9e1e8ee7b0ef7106fe62",
+    "width": 900,
+    "height": 900,
+    "bytes": 667627,
+    "repository": "https://github.com/nocoo/hooky",
+    "repositoryRevision": "fadcde05a823356775a9c27005a701d6d107e955",
+    "sourcePath": "assets/hooky-max.png",
+    "sourceUrl": "https://github.com/nocoo/hooky/blob/fadcde05a823356775a9c27005a701d6d107e955/assets/hooky-max.png"
+  },
+  "masters": {
+    "logo.png": {
+      "sha256": "7e98ee9d581e9f5f70fadc239a60b6d0204f62f8586d9e1e8ee7b0ef7106fe62",
+      "width": 900,
+      "height": 900
+    },
+    "assets/brand/icon.png": {
+      "sha256": "d618aa2a092ad61c031e68108b1927329d8c3619ad5441a0a7390d6396bf6f2d",
+      "width": 900,
+      "height": 900
+    },
+    "assets/brand/icon-rounded.png": {
+      "sha256": "2569bcc971dbbc5317405f9e855fad5678d829aa4aa1e72206162a2cf0e9b518",
+      "width": 900,
+      "height": 900
+    }
+  },
+  "review": "https://hexly.ai/logos/hooky",
+  "archive": "https://github.com/nocoo/hexly.ai/tree/main/artwork/logo-family/hooky/2026-09-07-01"
+}

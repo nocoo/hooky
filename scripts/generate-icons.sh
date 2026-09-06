@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Generate all icon sizes from assets/hooky-max.png (900x900 source).
+# Generate transparent app and browser icons from logo.png (900x900 source).
 # Uses macOS built-in `sips` — no external dependencies required.
 #
 # Sizes:
@@ -13,7 +13,7 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 ROOT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
-SOURCE="$ROOT_DIR/assets/hooky-max.png"
+SOURCE="$ROOT_DIR/logo.png"
 ICON_DIR="$ROOT_DIR/src/icons"
 
 if [ ! -f "$SOURCE" ]; then
@@ -28,8 +28,7 @@ echo "Source: $SOURCE ($(sips -g pixelWidth "$SOURCE" 2>/dev/null | tail -1 | aw
 echo "Output: $ICON_DIR"
 echo ""
 
-# Remove old generated PNGs (keep icon.svg)
-find "$ICON_DIR" -name '*.png' -delete 2>/dev/null || true
+mkdir -p "$ICON_DIR"
 
 for size in "${SIZES[@]}"; do
   output="$ICON_DIR/icon${size}.png"
