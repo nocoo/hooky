@@ -1,180 +1,122 @@
 <p align="center">
-  <img src="assets/brand/icon-rounded.png" width="128" height="128" alt="Hooky logo">
+  <img src="assets/brand/icon-rounded.png" width="128" height="128" alt="Hooky logo" />
 </p>
-
 <h1 align="center">Hooky</h1>
-
+<p align="center">从 Chrome 工具栏或右键菜单，将当前页面信息发送到指定 Webhook。</p>
 <p align="center">
-  🪝 One-click webhook trigger with page context, template variables, and smart rules
+  <a href="https://chromewebstore.google.com/detail/hooky/almccnkbhfhckimediabjimflnbfbeeo">Chrome Web Store</a> ·
+  <a href="docs/README.en.md">English</a>
 </p>
 
-<p align="center">
-  <img src="https://img.shields.io/badge/manifest-v3-blue" alt="Manifest V3">
-  <img src="https://img.shields.io/badge/coverage-95%25-brightgreen" alt="Coverage 95%">
-  <img src="https://img.shields.io/badge/tests-258_passing-brightgreen" alt="258 tests passing">
-  <img src="https://img.shields.io/badge/license-MIT-blue" alt="License MIT">
-</p>
+## 这是什么
 
-<p align="center">
-  <a href="https://chromewebstore.google.com/detail/hooky/almccnkbhfhckimediabjimflnbfbeeo">
-    <img src="https://developer.chrome.com/static/docs/webstore/branding/image/HRs9MPufa1J1h5glNhut.png" alt="Available in the Chrome Web Store" height="75">
-  </a>
-</p>
+Hooky 是一个 Chrome 扩展，用于保存 Webhook 模板，并在浏览网页时发送页面 URL、标题、选中文本或元数据。你可以在弹窗中选择模板，使用页面右键菜单，或设置点击工具栏图标时应用的快捷发送规则。
 
----
+模板、规则和外观设置保存在浏览器本地。请求由扩展发送到你配置的地址，页面数据是否进入请求取决于参数模板。扩展无需账号，接收请求的 Webhook 服务需要自行准备。
 
-## ✨ Features
+## 功能
 
-- 🪝 **Multiple webhook templates** — create, edit, and manage named templates with URL, HTTP method, and key-value parameters
-- 🔀 **Template variables** — dynamically inject page context into parameter values:
+- **多个模板**：分别保存名称、目标 URL、HTTP 方法和键值参数。
+- **页面变量**：在参数值中引用当前页面信息，发送时替换变量。
+- **快捷发送规则**：点击工具栏图标时，按顺序匹配页面 URL 或标题；首条启用且匹配的规则关联有效模板时直接发送，否则打开弹窗。
+- **右键发送**：在页面、选区、链接或图片的右键菜单中选择模板。
+- **结果反馈**：弹窗显示请求结果，快捷发送和右键操作通过图标标记反馈成功或失败。
+- **界面设置**：系统、浅色、深色主题；界面语言跟随 Chrome，包含中英文等多种语言。
 
-  | Variable | Description |
-  |---|---|
-  | `{{page.url}}` | Current page URL |
-  | `{{page.title}}` | Page title |
-  | `{{page.selection}}` | Selected text |
-  | `{{page.meta.description}}` | Meta description |
-  | `{{page.meta.og:title}}` | Open Graph title |
-  | `{{page.meta.og:description}}` | Open Graph description |
-  | `{{page.meta.og:image}}` | Open Graph image |
+规则支持包含、相等、开头、结尾和正则匹配，匹配忽略大小写。页面变量包括：
 
-- ⚡ **Quick Send Rules** — define rules based on page URL or title to automatically fire the right webhook; first match wins, fallback opens popup
-- 📋 **Context menu** — right-click on any page to trigger webhooks from the "Hooky" menu
-- 🎨 **Themes** — system / light / dark
-- 🌐 **i18n** — 10 languages: English, 简体中文, 繁體中文, 日本語, 한국어, Français, Deutsch, Español, Português (BR), Русский
+| 变量 | 内容 |
+| --- | --- |
+| `{{page.url}}` | 页面 URL |
+| `{{page.title}}` | 页面标题 |
+| `{{page.selection}}` | 当前选中文本 |
+| `{{page.meta.description}}` | description 元数据 |
+| `{{page.meta.og:title}}` | Open Graph 标题 |
+| `{{page.meta.og:description}}` | Open Graph 描述 |
+| `{{page.meta.og:image}}` | Open Graph 图片地址 |
 
-## 🚀 Getting Started
+GET、DELETE 把参数放入查询字符串；POST、PUT、PATCH 发送 JSON 对象，参数值为字符串。当前不支持自定义 HTTP 请求头。Chrome 内部页等无法注入脚本的页面会退回可用的标签页信息，选中文本和元数据可能为空。
 
-### Prerequisites
+## 使用
 
-- [Bun](https://bun.sh/) v1.x+
-- Google Chrome
+从顶部的 Chrome Web Store 链接安装，或按开发章节从源码加载。
 
-### Install
+1. 打开扩展的选项页，创建 Webhook 模板，填写自己的目标地址与 HTTP 方法。
+2. 添加参数，例如 `url = {{page.url}}`、`title = {{page.title}}`，然后保存。
+3. 打开目标网页，在弹窗或右键菜单中选择模板发送。
+4. 如需一次点击发送，在规则中选择 URL 或标题、匹配条件和模板，并启用该规则。
 
-```sh
-bun install
+例如使用 POST 并配置上面的两个参数，接收端得到：
+
+```json
+{
+  "url": "https://example.com/article",
+  "title": "Example article"
+}
 ```
 
-> The `prepare` script automatically runs `husky` to set up Git hooks.
+权限包括页面上下文读取、脚本注入、本地存储、右键菜单，以及向自定义地址发送请求所需的 `<all_urls>` 主机权限。页面上下文在用户触发操作时读取；详见[隐私说明](PRIVACY.md)。
 
-### Load in Chrome
+## 开发
 
-1. Navigate to `chrome://extensions/`
-2. Enable **Developer mode** (top-right toggle)
-3. Click **Load unpacked** → select the project root
+开发检查需要 Bun、Node.js 24 和 Chrome。扩展运行代码是 JavaScript、HTML 和 CSS，没有前端框架或编译步骤。
 
----
-
-## 🛠️ Development
-
-### Scripts
-
-| Command | What it does |
-|---|---|
-| `bun run test` | 🧪 Run unit tests (Vitest) |
-| `bun run test:watch` | 👀 Run tests in watch mode |
-| `bun run test:coverage` | 📊 Run tests with V8 coverage report (90% threshold) |
-| `bun run lint` | 🔍 Lint `src/` and `tests/` with ESLint |
-| `bun run test:e2e` | 🌐 Run Puppeteer E2E tests |
-| `bun run build` | 📦 Package extension into `dist/hooky-<version>.zip` |
-
-### Git Hooks (Husky) 🐶
-
-Hooks live in `.husky/` and are shared across the team via Git.
-
-| Stage | Command | Purpose |
-|---|---|---|
-| `pre-commit` | `bun run test` | ✅ Catch regressions before commit |
-| `pre-push` | `bun run test && bun run lint` | ✅ Full quality gate before push |
-
-### Test Coverage 📊
-
-Coverage is enforced at **90%** for all four metrics:
-
-```
------------------|---------|----------|---------|---------|
-File             | % Stmts | % Branch | % Funcs | % Lines |
------------------|---------|----------|---------|---------|
-All files        |   96.83 |    91.55 |   94.78 |   98.48 |
------------------|---------|----------|---------|---------|
+```bash
+git clone https://github.com/nocoo/hooky.git
+cd hooky
+bun install --frozen-lockfile
 ```
 
-### Project Structure 📁
+在 `chrome://extensions/` 打开开发者模式，点击 **加载已解压的扩展程序**，选择仓库根目录。修改代码后，在扩展管理页重新加载。
 
-```
-hooky/
-├── 🌐 _locales/           # i18n messages (10 languages)
-├── 🖼️ assets/              # Logo, store descriptions, promo images
-├── 🐶 .husky/             # Git hooks (pre-commit, pre-push)
-├── 🔧 scripts/            # Utility scripts (icon generation)
-├── 📦 src/
-│   ├── background.js      # Service worker — startup, rules dispatch
-│   ├── contextmenu.js     # Context menu setup & click handling
-│   ├── i18n.js            # i18n helpers (applyI18n, t)
-│   ├── icons/             # Extension icons (16–256px)
-│   ├── options/           # ⚙️ Settings page (HTML, CSS, JS)
-│   ├── pagecontext.js     # Page metadata extraction (injected on demand)
-│   ├── params.js          # Request body / URL builder
-│   ├── popup/             # 🪟 Toolbar popup (HTML, CSS, JS)
-│   ├── quicksend.js       # ⚡ Quick Send with badge feedback
-│   ├── rules.js           # 📐 Rule engine (matchRule, findMatchingRule)
-│   ├── store.js           # Storage CRUD, migration, settings
-│   ├── template.js        # Template variable resolution engine
-│   ├── theme.js           # 🎨 Theme switching (system/light/dark)
-│   └── webhook.js         # HTTP request executor
-├── 🧪 tests/
-│   ├── *.test.js          # Unit tests (Vitest + jsdom)
-│   └── e2e/               # Puppeteer E2E tests
-├── manifest.json          # Chrome Extension Manifest V3
-├── vitest.config.js       # Vitest + coverage config
-├── eslint.config.mjs      # ESLint flat config
-└── package.json           # Scripts & dev dependencies
-```
-
----
-
-## 📦 Publishing to Chrome Web Store
-
-### Build
-
-```sh
+```bash
+bun run lint
 bun run build
 ```
 
-This produces `dist/hooky-<version>.zip` containing only the runtime files needed by Chrome.
+构建命令将 `manifest.json`、`_locales/` 和 `src/` 打包为 `dist/hooky-<version>.zip`，版本读取自 manifest。它只生成 ZIP，不提交商店发布。
 
-### Store Assets
+| 路径 | 内容 |
+| --- | --- |
+| [src/options](src/options) | 模板、规则与设置编辑 |
+| [src/popup](src/popup) | 选择模板与发送面板 |
+| [src/background.js](src/background.js) | 事件分发和请求执行协调 |
+| [src/pagecontext.js](src/pagecontext.js) | 按需读取当前页面信息 |
+| [src/store.js](src/store.js) | 本地模板与规则存储 |
 
-| Asset | Location | Status |
-|---|---|---|
-| 📝 Description (EN) | `assets/description-en.txt` | ✅ |
-| 📝 Description (ZH) | `assets/description-zh.txt` | ✅ |
-| 📝 Description (JA) | `assets/description-ja.txt` | ✅ |
-| 📝 Description (KO) | `assets/description-ko.txt` | ✅ |
-| 📝 Description (ZH-TW) | `assets/description-zh-tw.txt` | ✅ |
-| 📝 Description (FR) | `assets/description-fr.txt` | ✅ |
-| 📝 Description (DE) | `assets/description-de.txt` | ✅ |
-| 📝 Description (ES) | `assets/description-es.txt` | ✅ |
-| 📝 Description (PT-BR) | `assets/description-pt-br.txt` | ✅ |
-| 📝 Description (RU) | `assets/description-ru.txt` | ✅ |
-| 🔒 Privacy Policy | [`PRIVACY.md`](PRIVACY.md) | ✅ |
-| 🖼️ Store Icon (128×128) | `src/icons/icon128.png` | ✅ |
-| 🖼️ Promo Tile (440×280) | `assets/hooky-banner-440x280.png` | ✅ |
-| 📸 Screenshots (1280×800) | `assets/hooky-screenshot-1280x800-*.png` | ✅ |
+## 测试
 
-### Steps
+```bash
+bun run test
+bun run test:e2e
+```
 
-1. Register at the [Chrome Web Store Developer Dashboard](https://chrome.google.com/webstore/devconsole) ($5 one-time fee)
-2. Run `bun run build` to generate the ZIP
-3. Upload `dist/hooky-<version>.zip`
-4. Fill in listing details using the descriptions in `assets/`
-5. Set privacy policy URL to `https://github.com/nocoo/hooky/blob/main/PRIVACY.md`
-6. Upload promo tile (440×280) and at least 1 screenshot (1280×800 or 640×400)
-7. Submit for review (typically 1–3 business days)
+单元测试覆盖模板、参数、规则、存储、界面和请求逻辑。端到端测试由 Puppeteer 启动独立浏览器，创建临时本地 Webhook 接收端，检查配置保存、发送与规则编辑；需要可启动有界面浏览器的桌面环境和 Puppeteer 对应的浏览器文件。
 
----
+如安装后缺少测试浏览器，可先运行：
 
-## 📄 License
+```bash
+bunx puppeteer browsers install chrome
+```
+
+## 技术栈
+
+| 技术 | 用途 |
+| --- | --- |
+| JavaScript / HTML / CSS | 扩展逻辑与界面 |
+| Chrome Extensions Manifest V3 | Service worker、工具栏、页面脚本和右键菜单 |
+| chrome.storage.local | 模板、规则和外观设置 |
+| Fetch API | 发送 Webhook 请求 |
+| Vitest / jsdom | 单元测试和 DOM 测试 |
+| Puppeteer | 浏览器端到端测试 |
+
+## 文档
+
+- [隐私说明](PRIVACY.md)
+- [版本记录](CHANGELOG.md)
+- [请求参数处理](src/params.js)
+- [规则匹配](src/rules.js)
+
+## 许可证
 
 [MIT](LICENSE)
