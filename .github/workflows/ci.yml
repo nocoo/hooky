@@ -13,6 +13,7 @@ jobs:
     with:
       runtime-version: "1.4.2"
       install-policy: "blocked"
+      coverage-path: "coverage"
       prepare-command: "bun run build"
       test-command: "bun run test:coverage"
       typecheck: false
