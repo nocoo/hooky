@@ -38,9 +38,6 @@
   "saved": {
     "message": "Enregistré !"
   },
-  "noConfig": {
-    "message": "Aucun webhook configuré."
-  },
   "openSettings": {
     "message": "Ouvrir les paramètres"
   },
@@ -75,9 +72,6 @@
   "webhooks": {
     "message": "Webhooks"
   },
-  "newTemplate": {
-    "message": "Nouveau"
-  },
   "defaultTemplateName": {
     "message": "Sans titre"
   },
@@ -91,9 +85,6 @@
         "content": "$1"
       }
     }
-  },
-  "selectTemplate": {
-    "message": "Sélectionner un modèle"
   },
   "noTemplates": {
     "message": "Aucun modèle. Ouvrez les paramètres pour en créer un."

@@ -38,9 +38,6 @@
   "saved": {
     "message": "已保存！"
   },
-  "noConfig": {
-    "message": "尚未配置 Webhook。"
-  },
   "openSettings": {
     "message": "打开设置"
   },
@@ -75,9 +72,6 @@
   "webhooks": {
     "message": "Webhooks"
   },
-  "newTemplate": {
-    "message": "新建"
-  },
   "defaultTemplateName": {
     "message": "未命名"
   },
@@ -91,9 +85,6 @@
         "content": "$1"
       }
     }
-  },
-  "selectTemplate": {
-    "message": "选择模板"
   },
   "noTemplates": {
     "message": "还没有模板，请先在设置中创建。"

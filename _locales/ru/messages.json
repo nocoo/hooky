@@ -38,9 +38,6 @@
   "saved": {
     "message": "Сохранено!"
   },
-  "noConfig": {
-    "message": "Вебхук ещё не настроен."
-  },
   "openSettings": {
     "message": "Открыть настройки"
   },
@@ -75,9 +72,6 @@
   "webhooks": {
     "message": "Webhooks"
   },
-  "newTemplate": {
-    "message": "Новый"
-  },
   "defaultTemplateName": {
     "message": "Без названия"
   },
@@ -91,9 +85,6 @@
         "content": "$1"
       }
     }
-  },
-  "selectTemplate": {
-    "message": "Выберите шаблон"
   },
   "noTemplates": {
     "message": "Шаблонов пока нет. Откройте настройки, чтобы создать."

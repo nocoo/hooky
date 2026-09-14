@@ -38,9 +38,6 @@
   "saved": {
     "message": "¡Guardado!"
   },
-  "noConfig": {
-    "message": "Aún no se ha configurado ningún webhook."
-  },
   "openSettings": {
     "message": "Abrir configuración"
   },
@@ -75,9 +72,6 @@
   "webhooks": {
     "message": "Webhooks"
   },
-  "newTemplate": {
-    "message": "Nueva"
-  },
   "defaultTemplateName": {
     "message": "Sin título"
   },
@@ -91,9 +85,6 @@
         "content": "$1"
       }
     }
-  },
-  "selectTemplate": {
-    "message": "Seleccionar plantilla"
   },
   "noTemplates": {
     "message": "Aún no hay plantillas. Abre la configuración para crear una."

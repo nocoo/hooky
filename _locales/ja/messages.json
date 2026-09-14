@@ -38,9 +38,6 @@
   "saved": {
     "message": "保存しました！"
   },
-  "noConfig": {
-    "message": "Webhook がまだ設定されていません。"
-  },
   "openSettings": {
     "message": "設定を開く"
   },
@@ -75,9 +72,6 @@
   "webhooks": {
     "message": "Webhooks"
   },
-  "newTemplate": {
-    "message": "新規"
-  },
   "defaultTemplateName": {
     "message": "無題"
   },
@@ -91,9 +85,6 @@
         "content": "$1"
       }
     }
-  },
-  "selectTemplate": {
-    "message": "テンプレートを選択"
   },
   "noTemplates": {
     "message": "テンプレートがありません。設定から作成してください。"
