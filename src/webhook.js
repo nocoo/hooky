@@ -13,11 +13,11 @@ const QUERY_METHODS = new Set(["GET", "DELETE"]);
  * @param {object} context - Template variable context
  * @returns {Promise<{ok: boolean, status?: number, error?: string}>}
  */
-export async function executeWebhook(config, context) {
+export async function executeWebhook(config, context, alreadyResolved = false) {
   const { url, method, params } = config;
 
   try {
-    const finalUrl = buildRequestUrl(url, params, context, method);
+    const finalUrl = buildRequestUrl(url, params, context, method, alreadyResolved);
 
     const options = {
       method,
@@ -25,7 +25,7 @@ export async function executeWebhook(config, context) {
     };
 
     if (!QUERY_METHODS.has(method)) {
-      options.body = JSON.stringify(buildRequestBody(params, context));
+      options.body = JSON.stringify(buildRequestBody(params, context, alreadyResolved));
     }
 
     const response = await fetch(finalUrl, options);

@@ -126,7 +126,7 @@
     "message": "Règles d'envoi rapide"
   },
   "quickSendRulesDesc": {
-    "message": "Sélectionnez automatiquement le modèle à envoyer en fonction de la page actuelle. Les règles sont évaluées dans l'ordre ; la première correspondance l'emporte."
+    "message": "La première règle active correspondante envoie son modèle. Sinon, la fenêtre s’ouvre."
   },
   "addRule": {
     "message": "Ajouter une règle"
@@ -159,7 +159,7 @@
     "message": "alors envoyer"
   },
   "noRules": {
-    "message": "Aucune règle configurée. L'envoi rapide utilisera le modèle par défaut."
+    "message": "Aucune règle. La barre d’outils ouvre la fenêtre."
   },
   "ruleField": {
     "message": "Quand"
@@ -184,5 +184,65 @@
   },
   "newWebhook": {
     "message": "New Webhook"
+  },
+  "workspace": {
+    "message": "Espace de travail"
+  },
+  "localSettings": {
+    "message": "Réglages en local"
+  },
+  "currentPage": {
+    "message": "Page actuelle"
+  },
+  "productTagline": {
+    "message": "Votre page, en action."
+  },
+  "readyToSend": {
+    "message": "Prêt à envoyer"
+  },
+  "browserToWebhook": {
+    "message": "Navigateur → webhook"
+  },
+  "parameterHelp": {
+    "message": "Utilisez des variables de page et modifiez les valeurs avant l’envoi."
+  },
+  "requestPreview": {
+    "message": "Aperçu de la requête"
+  },
+  "previewHint": {
+    "message": "Les variables sont résolues depuis la page active lors de l’envoi."
+  },
+  "variableHint": {
+    "message": "Cliquez pour insérer dans la dernière valeur sélectionnée."
+  },
+  "moveUp": {
+    "message": "Monter"
+  },
+  "moveDown": {
+    "message": "Descendre"
+  },
+  "testRule": {
+    "message": "Tester cette règle"
+  },
+  "ruleSample": {
+    "message": "URL ou titre à tester"
+  },
+  "ruleMatches": {
+    "message": "Correspond à cette règle"
+  },
+  "ruleNoMatch": {
+    "message": "Ne correspond pas"
+  },
+  "createTemplateFirst": {
+    "message": "Créez d’abord un modèle webhook."
+  },
+  "invalidRegex": {
+    "message": "Saisissez une expression régulière valide."
+  },
+  "removeParam": {
+    "message": "Supprimer le paramètre"
+  },
+  "privacyNote": {
+    "message": "Modèles et règles restent dans le navigateur. Les requêtes vont directement aux adresses choisies."
   }
 }

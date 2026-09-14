@@ -3,7 +3,7 @@
     "message": "Hooky"
   },
   "extDescription": {
-    "message": "One-click webhook trigger with page context, template variables, and smart rules"
+    "message": "Send page context to your webhooks with reusable templates and smart rules. A product of hexly.ai."
   },
   "settingsTitle": {
     "message": "Hooky Settings"
@@ -126,7 +126,7 @@
     "message": "Quick Send Rules"
   },
   "quickSendRulesDesc": {
-    "message": "Automatically select which template to send based on the current page. Rules are evaluated in order; the first match wins."
+    "message": "Rules run in order. The first matching enabled rule sends its template. Otherwise, the popup opens."
   },
   "addRule": {
     "message": "Add Rule"
@@ -159,7 +159,7 @@
     "message": "then send"
   },
   "noRules": {
-    "message": "No rules configured. Quick Send will use the default template."
+    "message": "No rules yet. The toolbar opens the popup."
   },
   "ruleField": {
     "message": "When"
@@ -184,5 +184,65 @@
   },
   "newWebhook": {
     "message": "New Webhook"
+  },
+  "workspace": {
+    "message": "Workspace"
+  },
+  "localSettings": {
+    "message": "Settings stay local"
+  },
+  "currentPage": {
+    "message": "Current page"
+  },
+  "productTagline": {
+    "message": "Your page. In motion."
+  },
+  "readyToSend": {
+    "message": "Ready to send"
+  },
+  "browserToWebhook": {
+    "message": "Browser → webhook"
+  },
+  "parameterHelp": {
+    "message": "Values can include page variables. Edit them again before sending."
+  },
+  "requestPreview": {
+    "message": "Request preview"
+  },
+  "previewHint": {
+    "message": "Variables resolve from the active page when you send."
+  },
+  "variableHint": {
+    "message": "Click to insert into the last selected value."
+  },
+  "moveUp": {
+    "message": "Move up"
+  },
+  "moveDown": {
+    "message": "Move down"
+  },
+  "testRule": {
+    "message": "Test this rule"
+  },
+  "ruleSample": {
+    "message": "Sample URL or title"
+  },
+  "ruleMatches": {
+    "message": "Matches this rule"
+  },
+  "ruleNoMatch": {
+    "message": "Does not match"
+  },
+  "createTemplateFirst": {
+    "message": "Create a webhook template first."
+  },
+  "invalidRegex": {
+    "message": "Enter a valid regular expression."
+  },
+  "removeParam": {
+    "message": "Remove parameter"
+  },
+  "privacyNote": {
+    "message": "Templates and rules stay in your browser. Requests go directly to the endpoints you choose."
   }
 }

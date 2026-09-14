@@ -9,7 +9,7 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
   if (message.type === "EXECUTE_WEBHOOK") {
     const { config, context } = message;
 
-    executeWebhook(config, context).then((result) => {
+    executeWebhook(config, context, message.resolved === true).then((result) => {
       sendResponse(result);
     });
 

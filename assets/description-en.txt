@@ -1,200 +1,55 @@
-Hooky — One-click webhook trigger with page context, template variables, and smart rules.
+Hooky — Your page. In motion.
 
-Create reusable webhook templates, automatically fill them with live page data, and fire them from your browser toolbar, right-click context menu, or Quick Send rules. Hooky is a lightweight, privacy-first tool for developers, power users, and anyone who wants to connect their browser to external services without writing code.
+Keep the useful parts of a page moving. Send a link to your reading list, share a selection with your own automation, or trigger a workflow without leaving Chrome. You choose the webhook. Hooky brings the page context.
 
-━━━━━━━━━━━━━━━━━━━━
+WHAT'S NEW IN 2.0
 
-🪝 WEBHOOK TEMPLATES
+A compact purple workspace puts templates, request previews, and page variables within easy reach. See the current page in the popup, edit resolved values before sending, and try a sample URL or title before saving a Quick Send rule. Fine borders, quiet shadows, and light, dark, or system themes keep the interface clear.
 
-Create as many webhook templates as you need. Each template is fully independent with its own configuration:
+MAKE A TEMPLATE. USE IT AGAIN.
 
-• Name — give each template a descriptive name (e.g. "Save to Notion", "Notify Slack", "Trigger Deploy")
-• URL — the webhook endpoint to send requests to
-• HTTP Method — choose from GET, POST, PUT, PATCH, or DELETE
-• Parameters — add key-value pairs that become query parameters (GET/DELETE) or JSON body fields (POST/PUT/PATCH)
+Save independent templates with a name, endpoint URL, HTTP method, and key-value parameters. Switch templates from the popup or settings. Choose GET, POST, PUT, PATCH, or DELETE. GET and DELETE use query parameters; POST, PUT, and PATCH send a JSON object with string values. A request preview shows how the configured request is assembled.
 
-All templates are saved locally in your browser and persist across sessions. Switch between templates with a single click in the popup or settings page.
+BRING THE PAGE WITH YOU
 
-━━━━━━━━━━━━━━━━━━━━
+Use any of these variables in parameter values:
 
-🔀 TEMPLATE VARIABLES
+• {{page.url}} — page URL
+• {{page.title}} — page title
+• {{page.selection}} — selected text
+• {{page.meta.description}} — description metadata
+• {{page.meta.og:title}} — Open Graph title
+• {{page.meta.og:description}} — Open Graph description
+• {{page.meta.og:image}} — Open Graph image URL
 
-Make your webhooks dynamic by injecting live page context into parameter values. Hooky automatically extracts data from the current page and replaces variables at send time.
+Click a variable in settings to insert it into a parameter. Combine variables with your own text, including multiline notes. Missing values become empty strings. The popup shows the resolved values and lets you edit them before sending.
 
-Available variables:
+ONE CLICK WHEN THE PAGE MATCHES
 
-• {{page.url}} — the full URL of the current page
-• {{page.title}} — the page title from the <title> tag
-• {{page.selection}} — the text currently selected on the page
-• {{page.meta.description}} — the content of the <meta name="description"> tag
-• {{page.meta.og:title}} — the Open Graph title (og:title)
-• {{page.meta.og:description}} — the Open Graph description (og:description)
-• {{page.meta.og:image}} — the Open Graph image URL (og:image)
+Quick Send rules choose a template when you click the toolbar icon. Match the page URL or title using contains, equals, starts with, ends with, or a regular expression. Matching ignores case. Enable or disable rules, test a sample, and move rules up or down in priority.
 
-You can use multiple variables in a single parameter value. For example, a value like "{{page.title}} - {{page.url}}" will resolve to something like "My Article - https://example.com/article".
+The first enabled matching rule with a valid template sends immediately. If no applicable rule is found, Hooky opens the popup. Rules run on your toolbar click, not automatically as you browse.
 
-Variables that cannot be resolved (e.g. no text is selected, or the page has no Open Graph tags) are replaced with an empty string, so your webhook always sends cleanly.
+RIGHT-CLICK TO SEND
 
-━━━━━━━━━━━━━━━━━━━━
+Your templates also appear in the Hooky context menu. Choose one to send with the page's available context. A brief toolbar badge shows success or failure. The popup provides request status after sending.
 
-⚡ QUICK SEND RULES
+SMALL BY DESIGN
 
-Define rules that automatically select which webhook template to send based on the current page. When you click the Hooky toolbar icon, rules are evaluated in order — the first match wins, and the webhook fires instantly without opening the popup.
+Hooky uses native JavaScript and local assets, with no UI framework, analytics, account, or publisher relay. Templates, rules, and preferences stay in your browser's local storage. Page context is read on demand; requests go to the endpoint you configured. That receiving service controls what happens to the data afterward.
 
-How it works:
-1. Open settings and go to the Rules section
-2. Create a rule by choosing a field (URL or Title), an operator (contains, equals, starts with, ends with, or matches regex), and a value to match against
-3. Assign a webhook template to the rule
-4. Now, when you click the Hooky icon on a matching page, the webhook fires automatically — no popup, no extra clicks
+SET UP IN A MINUTE
 
-If no rule matches the current page, the popup opens as usual so you can choose a template manually.
+1. Open Hooky Settings and create a webhook template.
+2. Enter your receiving endpoint, method, and parameters.
+3. Add page variables if needed, then save.
+4. Open a webpage, choose the template, review the values, and send.
 
-After sending, the extension badge briefly flashes:
-• ✓ (green) — the webhook was sent successfully
-• ✗ (red) — the request failed
+You provide a compatible webhook or automation endpoint. Hooky does not provide built-in service accounts, custom HTTP headers, or full-page text extraction.
 
-Rules can be reordered by priority, individually enabled or disabled, and edited at any time from the settings page.
+Available in English, Simplified Chinese, Traditional Chinese, Japanese, Korean, French, German, Spanish, Brazilian Portuguese, and Russian. The interface follows Chrome's language. Requires Chrome 127 or later.
 
-━━━━━━━━━━━━━━━━━━━━
+A product of hexly.ai.
 
-📋 CONTEXT MENU
-
-Right-click on any web page to see the "Hooky" context menu. All your webhook templates appear as menu items. Click any template to immediately fire its webhook with the current page's context data.
-
-This is especially useful when you want to quickly send page data without opening the popup, and you have multiple templates to choose from. Unlike Quick Send rules (which match automatically), the context menu lets you manually pick any template on the fly.
-
-━━━━━━━━━━━━━━━━━━━━
-
-🎨 THEMES
-
-Hooky supports three theme modes:
-• System — automatically matches your operating system's light/dark preference
-• Light — clean light interface
-• Dark — easy on the eyes in low-light environments
-
-The theme setting applies to both the popup and the settings page. Switch themes anytime from the settings panel in the sidebar.
-
-━━━━━━━━━━━━━━━━━━━━
-
-🌐 LANGUAGES
-
-Hooky is available in 10 languages. The extension automatically displays in your browser's language if supported:
-
-• English
-• 简体中文 (Simplified Chinese)
-• 繁體中文 (Traditional Chinese)
-• 日本語 (Japanese)
-• 한국어 (Korean)
-• Français (French)
-• Deutsch (German)
-• Español (Spanish)
-• Português do Brasil (Brazilian Portuguese)
-• Русский (Russian)
-
-━━━━━━━━━━━━━━━━━━━━
-
-🔒 PRIVACY & SECURITY
-
-Hooky is designed with a strict privacy-first approach:
-
-• No analytics or telemetry — Hooky never phones home
-• No tracking scripts — no third-party code runs inside the extension
-• No cookies — Hooky does not read or write any cookies
-• No account required — no sign-up, no login, no cloud sync
-• No data shared with third parties — ever
-
-All your webhook templates and settings are stored locally in your browser using chrome.storage.local. This data never leaves your device unless you explicitly trigger a webhook.
-
-When you do trigger a webhook, the HTTP request is sent only to the URL you configured in the template. Hooky does not proxy, log, or intercept your requests in any way.
-
-For the full privacy policy, visit: https://github.com/nocoo/hooky/blob/main/PRIVACY.md
-
-━━━━━━━━━━━━━━━━━━━━
-
-💡 USE CASES
-
-Hooky is a general-purpose browser-to-API bridge. Here are some ways people use it:
-
-• Save articles to Notion — send the page title, URL, and description to a Notion API integration
-• Clip to Raindrop or Pocket — bookmark pages to your read-later service via its API
-• Notify Slack or Discord — send the current page URL to a Slack incoming webhook or Discord bot
-• Send to Telegram — forward interesting links to a Telegram bot
-• Trigger CI/CD pipelines — kick off a GitHub Actions workflow or Jenkins build with page metadata
-• Log browsing activity — send page visits to a personal webhook for journaling or analytics
-• Bookmark to a custom backend — save URLs to your own API or database
-• Share with teammates — quickly push a page link to a shared channel or service
-• Feed content to AI — send page text and metadata to an AI API for summarization or processing
-
-━━━━━━━━━━━━━━━━━━━━
-
-🔧 HOW IT WORKS
-
-1. Install Hooky and click the extension icon to open the popup
-2. Click "Open Settings" to create your first webhook template
-3. Give it a name, enter the webhook URL, choose an HTTP method, and add parameters
-4. Use template variables like {{page.url}} in parameter values to inject page data
-5. Navigate to any page and click the Hooky icon — your template is ready to send
-6. Click "Send" and see the result instantly
-
-For power users:
-• Set up Quick Send rules to automatically fire webhooks based on page URL or title
-• Use the right-click context menu to pick from multiple templates
-• Switch between system, light, and dark themes
-
-━━━━━━━━━━━━━━━━━━━━
-
-📦 TECHNICAL DETAILS
-
-• Built with Manifest V3 — the latest Chrome extension platform
-• Vanilla JavaScript — no frameworks, no bloat, fast load times
-• Minimal permissions — only activeTab, storage, contextMenus, and host permissions for sending requests
-• Host permissions (<all_urls>) — required because most webhook endpoints are designed for server-to-server use and do not handle browser CORS preflight requests; without this, POST requests with JSON bodies would be silently blocked
-• Content script runs on demand via activeTab — does not slow down page load
-• POST/PUT/PATCH requests send a JSON body with Content-Type: application/json
-• GET/DELETE requests append parameters as URL query strings
-
-━━━━━━━━━━━━━━━━━━━━
-
-🔐 PERMISSIONS EXPLAINED
-
-Hooky requests only the minimum permissions needed to function:
-
-• activeTab — allows Hooky to read the current page's URL, title, selected text, and meta tags when you trigger a webhook. This permission is scoped to the active tab only and does not grant access to other tabs or browsing history.
-
-• storage — allows Hooky to save your webhook templates, rules, and settings (theme preference) locally in your browser. Data is stored via chrome.storage.local and never synced externally.
-
-• contextMenus — allows Hooky to add the "Hooky" entry to the browser's right-click context menu, showing your webhook templates as sub-items.
-
-• host permissions (<all_urls>) — allows Hooky to send webhook requests to any URL you configure in your templates. This is required because most webhook endpoints are designed for server-to-server communication and do not handle browser CORS preflight requests. Without this permission, POST requests with JSON content types would be silently blocked by the browser. Hooky only makes requests to URLs you explicitly set — it never contacts any other server.
-
-Hooky does not request permissions for browsing history, bookmarks, downloads, or any other sensitive browser data.
-
-━━━━━━━━━━━━━━━━━━━━
-
-📬 SUPPORT & FEEDBACK
-
-Hooky is open source. If you encounter any issues, have feature requests, or want to contribute:
-
-• GitHub: https://github.com/nocoo/hooky
-• Issues: https://github.com/nocoo/hooky/issues
-
-━━━━━━━━━━━━━━━━━━━━
-
-VERSION HISTORY
-
-1.1.1 — Host Permissions Fix
-• Add host_permissions for all URLs to fix CORS preflight failures with webhook endpoints
-
-1.1.0 — Quick Send Rules
-• Quick Send rules: automatically select which template to fire based on page URL or title
-• Rule conditions: contains, equals, starts with, ends with, matches (regex)
-• Rules evaluated in order with first-match-wins logic
-• Rules can be reordered, enabled/disabled individually
-• Fallback to popup when no rule matches
-
-1.0.0 — Initial release
-• Multiple webhook templates with full CRUD
-• 7 template variables for page context
-• Context menu integration
-• System / Light / Dark themes
-• 10 language localizations
+Source and support: https://github.com/nocoo/hooky
+Privacy: https://github.com/nocoo/hooky/blob/main/PRIVACY.md

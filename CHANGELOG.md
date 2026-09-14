@@ -5,6 +5,28 @@ All notable changes to Hooky will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.0] - 2026-09-14
+
+### Added
+
+- Compact wisteria popup and settings workspace, with subtle hexly.ai family attribution.
+- Current-page context card, request preview, clickable template variables, and multiline parameter editing.
+- Rule sample testing and explicit up/down priority controls.
+- Updated interface strings in all 10 locales and Chrome 127 minimum version.
+
+### Changed
+
+- Preserve the original identity, storage schema, templates, rules, and three theme modes.
+- Keep the extension runtime in native JavaScript, HTML, and CSS with system fonts.
+- Synchronize manifest and package versions at 2.0.0.
+
+### Fixed
+
+- Preserve literal variable syntax and whitespace in values edited in the popup, without resolving them twice.
+- Select a valid fallback template if the stored active template was removed.
+- Surface storage failures and prevent repeated saves while a write is pending.
+- Update the browser test launcher for current Chrome extension installation APIs.
+
 ## [1.1.1] - 2026-02-17
 
 ### Fixed

@@ -62,28 +62,6 @@ function stopWebhookServer() {
   });
 }
 
-async function getExtensionId(browser) {
-  const targets = browser.targets();
-  const extensionTarget = targets.find(
-    (t) => t.type() === "service_worker" && t.url().includes("chrome-extension://"),
-  );
-  if (extensionTarget) {
-    const match = extensionTarget.url().match(/chrome-extension:\/\/([^/]+)/);
-    return match ? match[1] : null;
-  }
-  return null;
-}
-
-async function waitForExtensionId(browser, timeout = 5000) {
-  const start = Date.now();
-  while (Date.now() - start < timeout) {
-    const id = await getExtensionId(browser);
-    if (id) return id;
-    await new Promise((r) => setTimeout(r, 200));
-  }
-  throw new Error("Could not find extension ID");
-}
-
 async function runTests() {
   const port = await startWebhookServer();
   let browser;
@@ -103,16 +81,19 @@ async function runTests() {
   try {
     console.log("\nLaunching browser with extension...");
     browser = await puppeteer.launch({
-      headless: false,
+      executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || undefined,
+      headless: true,
+      pipe: true,
+      enableExtensions: true,
       args: [
-        `--disable-extensions-except=${EXTENSION_PATH}`,
-        `--load-extension=${EXTENSION_PATH}`,
+        "--enable-unsafe-extension-debugging",
+        "--lang=en-US",
         "--no-first-run",
         "--disable-default-apps",
       ],
     });
 
-    const extensionId = await waitForExtensionId(browser);
+    const extensionId = await browser.installExtension(EXTENSION_PATH);
     console.log(`  Extension ID: ${extensionId}`);
     assert(!!extensionId, "Extension loaded successfully");
 

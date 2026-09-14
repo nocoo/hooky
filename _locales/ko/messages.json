@@ -126,7 +126,7 @@
     "message": "빠른 전송 규칙"
   },
   "quickSendRulesDesc": {
-    "message": "현재 페이지에 따라 전송할 템플릿을 자동으로 선택합니다. 규칙은 순서대로 평가되며 첫 번째 일치 항목이 적용됩니다."
+    "message": "순서대로 평가하여 처음 일치하는 활성 규칙의 템플릿을 전송합니다. 일치하지 않으면 팝업을 엽니다."
   },
   "addRule": {
     "message": "규칙 추가"
@@ -159,7 +159,7 @@
     "message": "전송"
   },
   "noRules": {
-    "message": "규칙이 설정되지 않았습니다. 빠른 전송은 기본 템플릿을 사용합니다."
+    "message": "규칙이 없으면 툴바에서 팝업을 엽니다."
   },
   "ruleField": {
     "message": "조건 대상"
@@ -184,5 +184,65 @@
   },
   "newWebhook": {
     "message": "New Webhook"
+  },
+  "workspace": {
+    "message": "작업 공간"
+  },
+  "localSettings": {
+    "message": "설정은 로컬에 저장"
+  },
+  "currentPage": {
+    "message": "현재 페이지"
+  },
+  "productTagline": {
+    "message": "페이지에서 다음 동작으로"
+  },
+  "readyToSend": {
+    "message": "전송 준비 완료"
+  },
+  "browserToWebhook": {
+    "message": "브라우저 → 웹훅"
+  },
+  "parameterHelp": {
+    "message": "값에 페이지 변수를 넣고 전송 전에 수정할 수 있습니다."
+  },
+  "requestPreview": {
+    "message": "요청 미리보기"
+  },
+  "previewHint": {
+    "message": "전송할 때 현재 페이지의 값으로 변수를 바꿉니다."
+  },
+  "variableHint": {
+    "message": "클릭하면 마지막으로 선택한 값에 삽입됩니다."
+  },
+  "moveUp": {
+    "message": "위로"
+  },
+  "moveDown": {
+    "message": "아래로"
+  },
+  "testRule": {
+    "message": "규칙 테스트"
+  },
+  "ruleSample": {
+    "message": "테스트 URL 또는 제목"
+  },
+  "ruleMatches": {
+    "message": "규칙과 일치합니다"
+  },
+  "ruleNoMatch": {
+    "message": "규칙과 일치하지 않습니다"
+  },
+  "createTemplateFirst": {
+    "message": "먼저 웹훅 템플릿을 만드세요."
+  },
+  "invalidRegex": {
+    "message": "올바른 정규식을 입력하세요."
+  },
+  "removeParam": {
+    "message": "매개변수 삭제"
+  },
+  "privacyNote": {
+    "message": "템플릿과 규칙은 브라우저에 저장되며 요청은 지정한 주소로 직접 전송됩니다."
   }
 }

@@ -126,7 +126,7 @@
     "message": "クイック送信ルール"
   },
   "quickSendRulesDesc": {
-    "message": "現在のページに基づいて送信するテンプレートを自動選択します。ルールは順番に評価され、最初に一致したものが適用されます。"
+    "message": "上から順に評価し、最初に一致した有効なルールのテンプレートを送信します。一致しない場合はポップアップを開きます。"
   },
   "addRule": {
     "message": "ルールを追加"
@@ -159,7 +159,7 @@
     "message": "を送信"
   },
   "noRules": {
-    "message": "ルールが設定されていません。クイック送信はデフォルトのテンプレートを使用します。"
+    "message": "ルールがない場合、ツールバーからポップアップが開きます。"
   },
   "ruleField": {
     "message": "条件対象"
@@ -184,5 +184,65 @@
   },
   "newWebhook": {
     "message": "New Webhook"
+  },
+  "workspace": {
+    "message": "ワークスペース"
+  },
+  "localSettings": {
+    "message": "設定はローカルに保存"
+  },
+  "currentPage": {
+    "message": "現在のページ"
+  },
+  "productTagline": {
+    "message": "ページから、次のアクションへ"
+  },
+  "readyToSend": {
+    "message": "送信準備完了"
+  },
+  "browserToWebhook": {
+    "message": "ブラウザ → Webhook"
+  },
+  "parameterHelp": {
+    "message": "値にはページ変数を使えます。送信前にも編集できます。"
+  },
+  "requestPreview": {
+    "message": "リクエストのプレビュー"
+  },
+  "previewHint": {
+    "message": "送信時に現在のページから変数を解決します。"
+  },
+  "variableHint": {
+    "message": "クリックで選択中の値に挿入します。"
+  },
+  "moveUp": {
+    "message": "上へ"
+  },
+  "moveDown": {
+    "message": "下へ"
+  },
+  "testRule": {
+    "message": "ルールをテスト"
+  },
+  "ruleSample": {
+    "message": "テスト用のURLまたはタイトル"
+  },
+  "ruleMatches": {
+    "message": "一致します"
+  },
+  "ruleNoMatch": {
+    "message": "一致しません"
+  },
+  "createTemplateFirst": {
+    "message": "先にWebhookテンプレートを作成してください。"
+  },
+  "invalidRegex": {
+    "message": "有効な正規表現を入力してください。"
+  },
+  "removeParam": {
+    "message": "パラメータを削除"
+  },
+  "privacyNote": {
+    "message": "テンプレートとルールはブラウザに保存され、リクエストは指定先へ直接送信されます。"
   }
 }

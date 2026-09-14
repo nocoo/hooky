@@ -14,6 +14,10 @@ Hooky is a Chrome extension for saving webhook templates and sending a page URL,
 
 Templates, rules, and appearance settings stay in local browser storage. The extension sends requests to your configured endpoints; parameter templates determine which page data enters each request. No account is required, and you provide the receiving webhook service.
 
+## Version 2.0.0
+
+A compact wisteria workspace in the hexly.ai family, with a current-page card, editable popup values, a request preview, click-to-insert variables, and a rule tester with priority controls. Existing templates, rules, and preferences are retained. Requires Chrome 127 or later.
+
 ## Features
 
 - **Multiple templates**: Save a name, target URL, HTTP method, and key-value parameters for each webhook.
@@ -91,7 +95,7 @@ bun run test
 bun run test:e2e
 ```
 
-Unit tests cover templates, parameters, rules, storage, UI, and request logic. Puppeteer end-to-end tests launch a separate browser and a temporary local webhook receiver to check configuration saving, sending, and rule editing. They require a desktop session that can launch a visible browser and the browser files expected by Puppeteer.
+Unit tests cover templates, parameters, rules, storage, UI, and request logic. Puppeteer end-to-end tests launch a separate browser and a temporary local webhook receiver to check configuration saving, sending, and rule editing. They run in a separate headless Chrome profile. Use Puppeteer’s installed browser, or set `PUPPETEER_EXECUTABLE_PATH` to a compatible local Chrome executable (Chrome 137+ for the development installation API).
 
 If the test browser is missing after installation, run:
 
@@ -116,6 +120,8 @@ bunx puppeteer browsers install chrome
 - [Changelog](../CHANGELOG.md)
 - [Request parameter handling](../src/params.js)
 - [Rule matching](../src/rules.js)
+
+A product of [hexly.ai](https://hexly.ai).
 
 ## License
 

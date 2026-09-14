@@ -126,7 +126,7 @@
     "message": "快速傳送規則"
   },
   "quickSendRulesDesc": {
-    "message": "根據目前頁面自動選擇要傳送的範本。規則依序評估，第一條符合即生效。"
+    "message": "規則依順序比對，傳送首條符合且啟用的規則所指定的範本；沒有符合時開啟彈出視窗。"
   },
   "addRule": {
     "message": "新增規則"
@@ -159,7 +159,7 @@
     "message": "則傳送"
   },
   "noRules": {
-    "message": "未設定規則。快速傳送將使用預設範本。"
+    "message": "尚無規則，點擊工具列圖示會開啟彈出視窗。"
   },
   "ruleField": {
     "message": "當"
@@ -184,5 +184,65 @@
   },
   "newWebhook": {
     "message": "New Webhook"
+  },
+  "workspace": {
+    "message": "工作空間"
+  },
+  "localSettings": {
+    "message": "設定儲存在本機"
+  },
+  "currentPage": {
+    "message": "目前頁面"
+  },
+  "productTagline": {
+    "message": "讓網頁連接更多可能"
+  },
+  "readyToSend": {
+    "message": "準備傳送"
+  },
+  "browserToWebhook": {
+    "message": "瀏覽器 → Webhook"
+  },
+  "parameterHelp": {
+    "message": "參數值可包含頁面變數，傳送前可再次編輯。"
+  },
+  "requestPreview": {
+    "message": "請求預覽"
+  },
+  "previewHint": {
+    "message": "傳送時會讀取目前頁面並替換變數。"
+  },
+  "variableHint": {
+    "message": "點擊插入到上次選取的參數值。"
+  },
+  "moveUp": {
+    "message": "上移"
+  },
+  "moveDown": {
+    "message": "下移"
+  },
+  "testRule": {
+    "message": "測試此規則"
+  },
+  "ruleSample": {
+    "message": "測試網址或標題"
+  },
+  "ruleMatches": {
+    "message": "符合此規則"
+  },
+  "ruleNoMatch": {
+    "message": "不符合此規則"
+  },
+  "createTemplateFirst": {
+    "message": "請先建立一個 Webhook 範本。"
+  },
+  "invalidRegex": {
+    "message": "請輸入有效的正規表示式。"
+  },
+  "removeParam": {
+    "message": "刪除參數"
+  },
+  "privacyNote": {
+    "message": "範本和規則儲存在瀏覽器中，請求直接傳送到你指定的端點。"
   }
 }

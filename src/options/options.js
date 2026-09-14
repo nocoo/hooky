@@ -9,8 +9,11 @@ import {
   addQuickSendRule,
   updateQuickSendRule,
   deleteQuickSendRule,
+  reorderQuickSendRules,
 } from "../store.js";
 import { applyTheme } from "../theme.js";
+import { matchRule } from "../rules.js";
+import { buildRequestBody, buildRequestUrl } from "../params.js";
 
 // ─── DOM refs ───
 
@@ -49,6 +52,8 @@ let currentTemplateId = null;
 let currentRuleId = null;
 let currentSettingsItem = null;
 let editorMode = null; // "template" | "rule" | "rules-list" | "settings" | null
+let lastValueInput = null;
+let statusTimer;
 
 // ─── Sidebar navigation ───
 
@@ -125,18 +130,25 @@ function createParamRow(key = "", value = "") {
   keyInput.placeholder = t("paramKeyPlaceholder");
   keyInput.value = key;
   keyInput.className = "param-key";
+  keyInput.setAttribute("aria-label", t("paramKeyPlaceholder"));
 
-  const valueInput = document.createElement("input");
-  valueInput.type = "text";
+  const valueInput = document.createElement("textarea");
+  valueInput.rows = 2;
   valueInput.placeholder = t("paramValuePlaceholder");
   valueInput.value = value;
   valueInput.className = "param-value";
+  valueInput.setAttribute("aria-label", t("paramValuePlaceholder"));
+  valueInput.addEventListener("focus", () => { lastValueInput = valueInput; });
 
   const removeBtn = document.createElement("button");
   removeBtn.type = "button";
   removeBtn.className = "btn-remove";
   removeBtn.textContent = "\u00d7";
-  removeBtn.addEventListener("click", () => row.remove());
+  removeBtn.setAttribute("aria-label", t("removeParam"));
+  removeBtn.addEventListener("click", () => {
+    row.remove();
+    updatePreview();
+  });
 
   row.appendChild(keyInput);
   row.appendChild(valueInput);
@@ -150,7 +162,7 @@ function getParams() {
   const params = [];
   for (const row of rows) {
     const key = row.querySelector(".param-key").value.trim();
-    const value = row.querySelector(".param-value").value.trim();
+    const value = row.querySelector(".param-value").value;
     params.push({ key, value });
   }
   return params;
@@ -158,10 +170,34 @@ function getParams() {
 
 // ─── Status flash ───
 
-function showStatus(message) {
+function showStatus(message, error = false) {
   statusEl.textContent = message;
+  statusEl.classList.toggle("error", error);
+  if (error && editorActions.style.display === "none") {
+    editorEmpty.textContent = message;
+    editorEmpty.style.display = "flex";
+    editorEmpty.setAttribute("role", "alert");
+  }
   statusEl.classList.add("visible");
-  setTimeout(() => statusEl.classList.remove("visible"), 2000);
+  clearTimeout(statusTimer);
+  statusTimer = setTimeout(() => statusEl.classList.remove("visible"), 3000);
+}
+
+function updatePreview() {
+  const params = getParams();
+  const context = { page: { url: "{{page.url}}", title: "{{page.title}}", selection: "{{page.selection}}", meta: {
+    description: "{{page.meta.description}}", "og:title": "{{page.meta.og:title}}", "og:description": "{{page.meta.og:description}}", "og:image": "{{page.meta.og:image}}",
+  } } };
+  const method = methodSelect.value;
+  const url = urlInput.value || "https://example.com/webhook";
+  document.getElementById("request-preview").textContent = method === "GET" || method === "DELETE"
+    ? method + " " + buildRequestUrl(url, params, context, method)
+    : method + " " + url + "\n\n" + JSON.stringify(buildRequestBody(params, context), null, 2);
+}
+
+function makeKeyboardItem(li) {
+  li.setAttribute("role", "button");
+  li.tabIndex = 0;
 }
 
 // ─── Editor state ───
@@ -264,6 +300,7 @@ function renderTemplateList(templates, activeId) {
   const newLi = document.createElement("li");
   newLi.className = "new-item";
   newLi.id = "new-template";
+  makeKeyboardItem(newLi);
 
   const newIcon = document.createElement("span");
   newIcon.className = "new-icon";
@@ -280,6 +317,7 @@ function renderTemplateList(templates, activeId) {
   for (const tpl of templates) {
     const li = document.createElement("li");
     li.dataset.id = tpl.id;
+    makeKeyboardItem(li);
     if (editorMode === "template" && tpl.id === activeId) li.classList.add("active");
 
     const nameSpan = document.createElement("span");
@@ -332,6 +370,8 @@ async function selectTemplate(id) {
       paramsList.appendChild(createParamRow(key, value));
     }
   }
+  lastValueInput = null;
+  updatePreview();
 }
 
 // ─── Rules list (sidebar) ───
@@ -343,6 +383,7 @@ function renderRulesList(rules) {
   const newLi = document.createElement("li");
   newLi.className = "new-item";
   newLi.id = "add-rule";
+  makeKeyboardItem(newLi);
 
   const newIcon = document.createElement("span");
   newIcon.className = "new-icon";
@@ -359,6 +400,7 @@ function renderRulesList(rules) {
   for (const rule of rules) {
     const li = document.createElement("li");
     li.dataset.id = rule.id;
+    makeKeyboardItem(li);
     if (editorMode === "rule" && rule.id === currentRuleId) li.classList.add("active");
     if (!rule.enabled) li.classList.add("disabled");
 
@@ -390,7 +432,11 @@ function renderRulesList(rules) {
 
 async function handleNewRule() {
   const store = await loadStore();
-  if (store.templates.length === 0) return; // need at least one template
+  if (store.templates.length === 0) {
+    noRulesEl.textContent = t("createTemplateFirst");
+    noRulesEl.classList.remove("hidden");
+    return;
+  }
   const rule = await addQuickSendRule({
     field: "url",
     operator: "contains",
@@ -440,6 +486,9 @@ async function selectRule(id) {
 
   // Populate template dropdown
   populateRuleTemplateSelect(store.templates, rule.templateId);
+  document.getElementById("rule-up").disabled = store.quickSendRules[0].id === id;
+  document.getElementById("rule-down").disabled = store.quickSendRules.at(-1).id === id;
+  document.getElementById("rule-test-result").textContent = "";
 }
 
 function populateRuleTemplateSelect(templates, selectedId) {
@@ -457,6 +506,7 @@ function populateRuleTemplateSelect(templates, selectedId) {
 
 async function saveCurrentTemplate() {
   if (!currentTemplateId) return;
+  if (!urlInput.reportValidity()) return;
 
   const changes = {
     name: nameInput.value.trim() || t("defaultTemplateName"),
@@ -479,6 +529,10 @@ async function saveCurrentTemplate() {
 
 async function saveCurrentRule() {
   if (!currentRuleId) return;
+  if (ruleOperatorSelect.value === "matches") {
+    try { new RegExp(ruleValueInput.value, "i"); }
+    catch { showStatus(t("invalidRegex"), true); return; }
+  }
 
   const changes = {
     field: ruleFieldSelect.value,
@@ -504,10 +558,14 @@ async function saveCurrentRule() {
 }
 
 async function handleSave() {
-  if (editorMode === "template") {
-    await saveCurrentTemplate();
-  } else if (editorMode === "rule") {
-    await saveCurrentRule();
+  saveBtn.disabled = true;
+  try {
+    if (editorMode === "template") await saveCurrentTemplate();
+    else if (editorMode === "rule") await saveCurrentRule();
+  } catch (error) {
+    showStatus(error.message || t("requestFailed"), true);
+  } finally {
+    saveBtn.disabled = false;
   }
 }
 
@@ -561,6 +619,7 @@ function openPanel(panelId) {
 
 async function renderAll() {
   const store = await loadStore();
+  applyTheme(store.theme);
   renderTemplateList(store.templates, currentTemplateId);
 
   if (editorMode === "template") {
@@ -598,8 +657,56 @@ async function renderAll() {
 // ─── Events ───
 
 addParamBtn.addEventListener("click", () => {
-  paramsList.appendChild(createParamRow());
+  const row = createParamRow();
+  paramsList.appendChild(row);
+  row.querySelector(".param-value").focus();
+  updatePreview();
 });
+
+editorForm.addEventListener("input", updatePreview);
+document.getElementById("empty-new-template").addEventListener("click", handleNewTemplate);
+document.getElementById("empty-add-rule").addEventListener("click", handleNewRule);
+for (const list of [templateListEl, rulesListEl, settingsListEl]) {
+  list.addEventListener("keydown", (event) => {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      event.target.closest("li").click();
+    }
+  });
+}
+for (const button of document.querySelectorAll("[data-variable]")) {
+  button.addEventListener("click", () => {
+    if (!lastValueInput || !lastValueInput.isConnected) {
+      const row = createParamRow();
+      paramsList.appendChild(row);
+      lastValueInput = row.querySelector(".param-value");
+    }
+    lastValueInput.setRangeText(button.dataset.variable, lastValueInput.selectionStart, lastValueInput.selectionEnd, "end");
+    lastValueInput.focus();
+    updatePreview();
+  });
+}
+document.getElementById("test-rule").addEventListener("click", () => {
+  const matches = matchRule({ field: ruleFieldSelect.value, operator: ruleOperatorSelect.value, value: ruleValueInput.value }, { [ruleFieldSelect.value]: document.getElementById("rule-sample").value });
+  const result = document.getElementById("rule-test-result");
+  result.textContent = t(matches ? "ruleMatches" : "ruleNoMatch");
+  result.classList.toggle("error", !matches);
+});
+async function moveRule(direction) {
+  const store = await loadStore();
+  const ids = store.quickSendRules.map((rule) => rule.id);
+  const from = ids.indexOf(currentRuleId);
+  const to = from + direction;
+  if (from < 0 || to < 0 || to >= ids.length) return;
+  [ids[from], ids[to]] = [ids[to], ids[from]];
+  await reorderQuickSendRules(ids);
+  renderRulesList((await loadStore()).quickSendRules);
+  document.getElementById("rule-up").disabled = to === 0;
+  document.getElementById("rule-down").disabled = to === ids.length - 1;
+  showStatus(t("saved"));
+}
+document.getElementById("rule-up").addEventListener("click", () => moveRule(-1).catch((error) => showStatus(error.message, true)));
+document.getElementById("rule-down").addEventListener("click", () => moveRule(1).catch((error) => showStatus(error.message, true)));
 
 saveBtn.addEventListener("click", handleSave);
 deleteBtn.addEventListener("click", handleDelete);
@@ -617,4 +724,4 @@ document.getElementById("version").textContent =
 
 initSidebar();
 applyI18n();
-migrateFromLegacy().then(() => renderAll());
+migrateFromLegacy().then(renderAll).catch((error) => showStatus(error.message, true));

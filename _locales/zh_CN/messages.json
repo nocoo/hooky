@@ -126,7 +126,7 @@
     "message": "快速发送规则"
   },
   "quickSendRulesDesc": {
-    "message": "根据当前页面自动选择要发送的模板。规则按顺序评估，第一条匹配即生效。"
+    "message": "规则按顺序匹配，发送首条命中且启用的规则所指定的模板；没有匹配时打开弹窗。"
   },
   "addRule": {
     "message": "添加规则"
@@ -159,7 +159,7 @@
     "message": "则发送"
   },
   "noRules": {
-    "message": "未配置规则。快速发送将使用默认模板。"
+    "message": "暂无规则，点击工具栏图标会打开弹窗。"
   },
   "ruleField": {
     "message": "当"
@@ -184,5 +184,65 @@
   },
   "newWebhook": {
     "message": "New Webhook"
+  },
+  "workspace": {
+    "message": "工作空间"
+  },
+  "localSettings": {
+    "message": "设置保存在本机"
+  },
+  "currentPage": {
+    "message": "当前页面"
+  },
+  "productTagline": {
+    "message": "让网页连接更多可能"
+  },
+  "readyToSend": {
+    "message": "准备发送"
+  },
+  "browserToWebhook": {
+    "message": "浏览器 → Webhook"
+  },
+  "parameterHelp": {
+    "message": "参数值可包含页面变量，发送前可再次编辑。"
+  },
+  "requestPreview": {
+    "message": "请求预览"
+  },
+  "previewHint": {
+    "message": "发送时会读取当前页面并替换变量。"
+  },
+  "variableHint": {
+    "message": "点击插入到上次选中的参数值。"
+  },
+  "moveUp": {
+    "message": "上移"
+  },
+  "moveDown": {
+    "message": "下移"
+  },
+  "testRule": {
+    "message": "测试此规则"
+  },
+  "ruleSample": {
+    "message": "测试网址或标题"
+  },
+  "ruleMatches": {
+    "message": "符合此规则"
+  },
+  "ruleNoMatch": {
+    "message": "不符合此规则"
+  },
+  "createTemplateFirst": {
+    "message": "请先创建一个 Webhook 模板。"
+  },
+  "invalidRegex": {
+    "message": "请输入有效的正则表达式。"
+  },
+  "removeParam": {
+    "message": "删除参数"
+  },
+  "privacyNote": {
+    "message": "模板和规则保存在浏览器中，请求直接发送到你指定的端点。"
   }
 }

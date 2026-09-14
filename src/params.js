@@ -10,11 +10,11 @@ const QUERY_METHODS = new Set(["GET", "DELETE"]);
  * @param {object} context - Template variable context
  * @returns {object} The resolved JSON body
  */
-export function buildRequestBody(params, context) {
+export function buildRequestBody(params, context, alreadyResolved = false) {
   const body = {};
   for (const { key, value } of params) {
     if (!key) continue;
-    body[key] = resolveTemplate(value, context);
+    body[key] = alreadyResolved ? value : resolveTemplate(value, context);
   }
   return body;
 }
@@ -29,14 +29,14 @@ export function buildRequestBody(params, context) {
  * @param {string} method - HTTP method
  * @returns {string} The final URL
  */
-export function buildRequestUrl(baseUrl, params, context, method) {
+export function buildRequestUrl(baseUrl, params, context, method, alreadyResolved = false) {
   if (!QUERY_METHODS.has(method)) return baseUrl;
 
   const validParams = params.filter((p) => p.key);
   if (validParams.length === 0) return baseUrl;
 
   const queryParts = validParams.map((p) => {
-    const resolved = resolveTemplate(p.value, context);
+    const resolved = alreadyResolved ? p.value : resolveTemplate(p.value, context);
     return `${encodeURIComponent(p.key)}=${encodeURIComponent(resolved)}`;
   });
 

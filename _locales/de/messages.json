@@ -126,7 +126,7 @@
     "message": "Schnellversand-Regeln"
   },
   "quickSendRulesDesc": {
-    "message": "Wählen Sie automatisch die zu sendende Vorlage basierend auf der aktuellen Seite. Regeln werden der Reihe nach ausgewertet; der erste Treffer gewinnt."
+    "message": "Die erste passende aktive Regel sendet ihre Vorlage. Andernfalls öffnet sich das Popup."
   },
   "addRule": {
     "message": "Regel hinzufügen"
@@ -159,7 +159,7 @@
     "message": "dann senden"
   },
   "noRules": {
-    "message": "Keine Regeln konfiguriert. Schnellversand verwendet die Standardvorlage."
+    "message": "Ohne Regeln öffnet die Symbolleiste das Popup."
   },
   "ruleField": {
     "message": "Wenn"
@@ -184,5 +184,65 @@
   },
   "newWebhook": {
     "message": "New Webhook"
+  },
+  "workspace": {
+    "message": "Arbeitsbereich"
+  },
+  "localSettings": {
+    "message": "Einstellungen bleiben lokal"
+  },
+  "currentPage": {
+    "message": "Aktuelle Seite"
+  },
+  "productTagline": {
+    "message": "Deine Seite in Aktion."
+  },
+  "readyToSend": {
+    "message": "Sendebereit"
+  },
+  "browserToWebhook": {
+    "message": "Browser → Webhook"
+  },
+  "parameterHelp": {
+    "message": "Seitenvariablen lassen sich vor dem Senden bearbeiten."
+  },
+  "requestPreview": {
+    "message": "Anfragevorschau"
+  },
+  "previewHint": {
+    "message": "Variablen werden beim Senden aus der aktiven Seite ersetzt."
+  },
+  "variableHint": {
+    "message": "Zum Einfügen in den zuletzt gewählten Wert klicken."
+  },
+  "moveUp": {
+    "message": "Nach oben"
+  },
+  "moveDown": {
+    "message": "Nach unten"
+  },
+  "testRule": {
+    "message": "Regel testen"
+  },
+  "ruleSample": {
+    "message": "Test-URL oder Titel"
+  },
+  "ruleMatches": {
+    "message": "Regel stimmt überein"
+  },
+  "ruleNoMatch": {
+    "message": "Keine Übereinstimmung"
+  },
+  "createTemplateFirst": {
+    "message": "Zuerst eine Webhook-Vorlage erstellen."
+  },
+  "invalidRegex": {
+    "message": "Einen gültigen regulären Ausdruck eingeben."
+  },
+  "removeParam": {
+    "message": "Parameter entfernen"
+  },
+  "privacyNote": {
+    "message": "Vorlagen und Regeln bleiben im Browser. Anfragen gehen direkt an die gewählten Endpunkte."
   }
 }

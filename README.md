@@ -14,6 +14,10 @@ Hooky 是一个 Chrome 扩展，用于保存 Webhook 模板，并在浏览网页
 
 模板、规则和外观设置保存在浏览器本地。请求由扩展发送到你配置的地址，页面数据是否进入请求取决于参数模板。扩展无需账号，接收请求的 Webhook 服务需要自行准备。
 
+## 2.0.0 新界面
+
+采用 hexly.ai 家族的紧凑布局与紫色主题，增加当前页面卡片、弹窗参数编辑、请求预览、点击插入变量，以及规则测试和优先级操作。原有模板、规则和偏好设置继续保留。需要 Chrome 127 或更高版本。
+
 ## 功能
 
 - **多个模板**：分别保存名称、目标 URL、HTTP 方法和键值参数。
@@ -91,7 +95,7 @@ bun run test
 bun run test:e2e
 ```
 
-单元测试覆盖模板、参数、规则、存储、界面和请求逻辑。端到端测试由 Puppeteer 启动独立浏览器，创建临时本地 Webhook 接收端，检查配置保存、发送与规则编辑；需要可启动有界面浏览器的桌面环境和 Puppeteer 对应的浏览器文件。
+单元测试覆盖模板、参数、规则、存储、界面和请求逻辑。端到端测试由 Puppeteer 启动独立浏览器，创建临时本地 Webhook 接收端，检查配置保存、发送与规则编辑；测试使用独立的无头 Chrome 配置。可以使用 Puppeteer 下载的浏览器，或设置 `PUPPETEER_EXECUTABLE_PATH` 指向本机 Chrome（开发用安装 API 需要 Chrome 137+）。
 
 如安装后缺少测试浏览器，可先运行：
 
@@ -116,6 +120,8 @@ bunx puppeteer browsers install chrome
 - [版本记录](CHANGELOG.md)
 - [请求参数处理](src/params.js)
 - [规则匹配](src/rules.js)
+
+[hexly.ai](https://hexly.ai) 出品。
 
 ## 许可证
 

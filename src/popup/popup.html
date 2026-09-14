@@ -1,44 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Hooky</title>
-  <link rel="icon" type="image/png" sizes="32x32" href="../icons/icon32.png">
-  <link rel="icon" type="image/png" sizes="64x64" href="../icons/icon64.png">
-  <link rel="stylesheet" href="popup.css">
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Hooky</title><link rel="icon" href="../icons/icon32.png">
+  <link rel="stylesheet" href="../ui.css"><link rel="stylesheet" href="popup.css">
 </head>
 <body>
   <div class="container">
-    <div class="header">
-      <h1><img src="../icons/icon48.png" srcset="../icons/icon24.png 1x, ../icons/icon48.png 2x" alt="Hooky" width="24" height="24" class="logo">Hooky</h1>
-      <button type="button" id="settings-btn" class="btn-icon" data-i18n-title="settingsTooltip" title="Settings">&#9881;</button>
-    </div>
-
-    <div id="no-config" class="empty-state" style="display: none;">
-      <p data-i18n="noTemplates">No templates yet. Open settings to create one.</p>
+    <header class="header">
+      <div class="brand"><img src="../icons/icon64.png" alt="" width="28" height="28"><div><h1>Hooky</h1><small data-i18n="productTagline">Your page. In motion.</small></div></div>
+      <button type="button" id="settings-btn" class="btn-icon" data-i18n-title="settingsTooltip" data-i18n-aria-label="settingsTooltip" title="Settings" aria-label="Settings"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 2 3 3 .5 2 3-1 3 1 3-2 3-3 .5-2 3-2-3-3-.5-2-3 1-3-1-3 2-3 3-.5Z"/><circle cx="12" cy="12" r="3"/></svg></button>
+    </header>
+    <div id="no-config" class="empty-state" style="display:none">
+      <img src="../icons/icon128.png" alt="" width="58" height="58"><p data-i18n="noTemplates">No templates yet. Open settings to create one.</p>
       <button type="button" id="go-settings" class="btn-primary" data-i18n="openSettings">Open Settings</button>
     </div>
-
-    <div id="webhook-panel" style="display: none;">
-      <div class="template-select">
-        <select id="template-select"></select>
-      </div>
-
-      <div class="info-row">
-        <span class="method-badge" id="method-badge">POST</span>
-        <span class="url-display" id="url-display" title=""></span>
-      </div>
-
-      <div id="params-preview" class="params-preview"></div>
-
-      <div class="actions">
-        <button type="button" id="send-btn" class="btn-primary btn-send" data-i18n="send">Send</button>
-      </div>
-    </div>
-
-    <div id="toast" class="toast"></div>
+    <main id="webhook-panel" style="display:none">
+      <div class="context-card"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M3 9h18M7 6.5h.01M10 6.5h.01"/></svg><div class="context-copy"><strong id="page-title"></strong><small id="page-host"></small></div></div>
+      <div class="template-select"><label for="template-select"><span data-i18n="selectTemplate">Select a template</span><span class="badge" data-i18n="readyToSend">Ready to send</span></label><select id="template-select"></select></div>
+      <div class="info-row"><span class="method-badge" id="method-badge">POST</span><span class="url-display" id="url-display"></span></div>
+      <p class="eyebrow params-heading" data-i18n="parameters">Parameters</p><div id="params-preview" class="params-preview"></div>
+      <button type="button" id="send-btn" class="btn-primary btn-send" data-i18n="send">Send</button>
+    </main>
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+    <footer class="brand-footer"><span><i class="dot"></i><span data-i18n="localSettings">Settings stay local</span></span><a href="https://hexly.ai" target="_blank" rel="noopener noreferrer">a product of hexly.ai ↗</a></footer>
   </div>
-
   <script src="popup.js" type="module"></script>
 </body>
 </html>

@@ -17,11 +17,13 @@ const toastEl = document.getElementById("toast");
 
 let currentTemplate = null;
 let pageContext = null;
+let toastTimer;
 
 function showToast(message, type = "success") {
   toastEl.textContent = message;
   toastEl.className = `toast ${type} visible`;
-  setTimeout(() => toastEl.classList.remove("visible"), 2500);
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toastEl.classList.remove("visible"), 4000);
 }
 
 function openSettings() {
@@ -48,9 +50,10 @@ function renderParams(params, context) {
     keyLabel.className = "param-key";
     keyLabel.textContent = param.key;
 
-    const valueInput = document.createElement("input");
-    valueInput.type = "text";
-    valueInput.value = resolveTemplate(param.value, context);
+    const resolved = resolveTemplate(param.value, context);
+    const valueInput = document.createElement(resolved.includes("\n") ? "textarea" : "input");
+    valueInput.value = resolved;
+    valueInput.setAttribute("aria-label", param.key);
     valueInput.dataset.originalTemplate = param.value;
 
     item.appendChild(keyLabel);
@@ -76,7 +79,7 @@ function getResolvedParams() {
   const params = [];
   for (const item of items) {
     const key = item.querySelector(".param-key").textContent;
-    const value = item.querySelector("input").value;
+    const value = item.querySelector("input, textarea").value;
     params.push({ key, value });
   }
   return params;
@@ -94,6 +97,7 @@ async function sendWebhook() {
 
     const result = await chrome.runtime.sendMessage({
       type: "EXECUTE_WEBHOOK",
+      resolved: true,
       config,
       context: { page: {} },
     });
@@ -144,9 +148,12 @@ async function init() {
 
   // Get page context first
   pageContext = await getPopupPageContext();
+  document.getElementById("page-title").textContent = pageContext.page.title || t("currentPage");
+  document.getElementById("page-host").textContent = pageContext.page.url;
 
   // Show the active template
   const activeTpl = store.templates.find((t) => t.id === activeId) || store.templates[0];
+  templateSelect.value = activeTpl.id;
   showTemplate(activeTpl);
 }
 
@@ -163,4 +170,4 @@ settingsBtn.addEventListener("click", openSettings);
 goSettingsBtn.addEventListener("click", openSettings);
 sendBtn.addEventListener("click", sendWebhook);
 
-init();
+init().catch((err) => showToast(err.message || t("requestFailed"), "error"));

@@ -1,187 +1,46 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title data-i18n="settingsTitle">Hooky Settings</title>
-  <link rel="icon" type="image/png" sizes="32x32" href="../icons/icon32.png">
-  <link rel="icon" type="image/png" sizes="64x64" href="../icons/icon64.png">
-  <link rel="stylesheet" href="options.css">
-</head>
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title data-i18n="settingsTitle">Hooky Settings</title><link rel="icon" href="../icons/icon32.png"><link rel="stylesheet" href="../ui.css"><link rel="stylesheet" href="options.css"></head>
 <body>
   <div class="layout">
-    <!-- Left: Sidebar -->
     <aside class="sidebar">
-      <div class="sidebar-header">
-        <h2><img src="../icons/icon48.png" srcset="../icons/icon24.png 1x, ../icons/icon48.png 2x" alt="Hooky" width="24" height="24" class="logo">Hooky <span class="version" id="version"></span></h2>
-      </div>
-
-      <!-- Nav panel: Webhooks (expandable with list) -->
-      <div class="sidebar-panel active" id="panel-webhooks">
-        <button type="button" class="sidebar-nav-btn" data-panel="panel-webhooks">
-          <svg class="sidebar-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
-          <span data-i18n="webhooks">Webhooks</span>
-          <svg class="sidebar-chevron" width="10" height="6" viewBox="0 0 10 6"><polyline points="1 1 5 5 9 1" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </button>
-        <div class="sidebar-panel-content">
-          <ul id="template-list" class="template-list"></ul>
-        </div>
-      </div>
-
-      <!-- Nav panel: Rules (expandable with list) -->
-      <div class="sidebar-panel" id="panel-rules">
-        <button type="button" class="sidebar-nav-btn" data-panel="panel-rules">
-          <svg class="sidebar-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-          <span data-i18n="rules">Rules</span>
-          <svg class="sidebar-chevron" width="10" height="6" viewBox="0 0 10 6"><polyline points="1 1 5 5 9 1" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </button>
-        <div class="sidebar-panel-content">
-          <ul id="rules-list" class="sidebar-list"></ul>
-        </div>
-      </div>
-
-      <!-- Nav panel: Settings (expandable with list) -->
-      <div class="sidebar-panel" id="panel-settings">
-        <button type="button" class="sidebar-nav-btn" data-panel="panel-settings">
-          <svg class="sidebar-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-          <span data-i18n="settings">Settings</span>
-          <svg class="sidebar-chevron" width="10" height="6" viewBox="0 0 10 6"><polyline points="1 1 5 5 9 1" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </button>
-        <div class="sidebar-panel-content">
-          <ul id="settings-list" class="sidebar-list">
-            <li data-settings="theme"><span data-i18n="theme">Theme</span></li>
-          </ul>
-        </div>
-      </div>
+      <header class="sidebar-header"><div class="brand"><img src="../icons/icon64.png" alt="" width="28" height="28"><div><h1>Hooky</h1><small data-i18n="productTagline">Your page. In motion.</small></div></div><span class="version" id="version"></span></header>
+      <div class="sidebar-panel active" id="panel-webhooks"><button type="button" class="sidebar-nav-btn" data-panel="panel-webhooks"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m10 13 4-4M8 16l-1 1a4 4 0 0 1-6-6l5-5a4 4 0 0 1 6 0m0 12a4 4 0 0 0 6 0l5-5a4 4 0 0 0-6-6l-1 1"/></svg><span data-i18n="webhooks">Webhooks</span></button><div class="sidebar-panel-content"><ul id="template-list" class="template-list"></ul></div></div>
+      <div class="sidebar-panel" id="panel-rules"><button type="button" class="sidebar-nav-btn" data-panel="panel-rules"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m13 2-9 12h7l-1 8 10-13h-7Z"/></svg><span data-i18n="quickSendRules">Quick Send Rules</span></button><div class="sidebar-panel-content"><ul id="rules-list" class="sidebar-list"></ul></div></div>
+      <div class="sidebar-panel" id="panel-settings"><button type="button" class="sidebar-nav-btn" data-panel="panel-settings"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 17h16"/><circle cx="9" cy="7" r="3"/><circle cx="15" cy="17" r="3"/></svg><span data-i18n="settings">Settings</span></button><div class="sidebar-panel-content"><ul id="settings-list" class="sidebar-list"><li data-settings="theme" role="button" tabindex="0"><span data-i18n="theme">Theme</span></li></ul></div></div>
+      <div class="sidebar-note"><p><i class="dot"></i><span data-i18n="localSettings">Settings stay local</span></p><a href="https://hexly.ai" target="_blank" rel="noopener noreferrer">a product of hexly.ai ↗</a></div>
     </aside>
-
-    <!-- Right: Editor -->
     <main class="editor" id="editor">
-      <div class="editor-header">
-        <h2 id="editor-title" data-i18n="webhookDetail">Webhook Detail</h2>
-      </div>
-
+      <header class="editor-header"><div><p class="eyebrow" data-i18n="workspace">Workspace</p><h2 id="editor-title" data-i18n="webhookDetail">Webhook Detail</h2></div><span class="badge" data-i18n="browserToWebhook">Browser → webhook</span></header>
       <div class="editor-body">
-        <div class="editor-empty" id="editor-empty">
-          <p data-i18n="noTemplates">No templates yet. Open settings to create one.</p>
+        <div class="editor-empty" id="editor-empty"><img src="../icons/icon128.png" alt="" width="84" height="84"><p data-i18n="noTemplates">No templates yet. Open settings to create one.</p><button type="button" id="empty-new-template" class="btn-primary" data-i18n="newWebhook">New Webhook</button></div>
+        <div class="editor-form" id="editor-form" style="display:none">
+          <div class="editor-columns"><div class="editor-main">
+            <section class="section"><label for="template-name" data-i18n="templateName">Template Name</label><input id="template-name" data-i18n-placeholder="templateNamePlaceholder" placeholder="e.g. Save to reading list" autocomplete="off"></section>
+            <section class="section"><label for="webhook-url" data-i18n="webhookUrl">Webhook URL</label><input type="url" id="webhook-url" placeholder="https://example.com/api/webhook" autocomplete="off"></section>
+            <section class="section"><label for="http-method" data-i18n="httpMethod">HTTP Method</label><select id="http-method"><option>GET</option><option selected>POST</option><option>PUT</option><option>PATCH</option><option>DELETE</option></select></section>
+            <section class="section"><div class="section-header"><h3 data-i18n="parameters">Parameters</h3><button type="button" id="add-param" class="btn-secondary" data-i18n="addParam">Add</button></div><div id="params-list"></div><p class="hint" data-i18n="parameterHelp">Values can include page variables. Edit them again before sending.</p></section>
+          </div><aside class="editor-aside">
+            <div class="card"><p class="eyebrow" data-i18n="requestPreview">Request preview</p><pre id="request-preview" class="request-preview"></pre><p class="hint" data-i18n="previewHint">Variables resolve from the active page when you send.</p></div>
+            <div class="card"><p class="eyebrow" data-i18n="templateHint">Available variables</p><div class="template-hint"><button type="button" data-variable="{{page.url}}">{{page.url}}</button><button type="button" data-variable="{{page.title}}">{{page.title}}</button><button type="button" data-variable="{{page.selection}}">{{page.selection}}</button><button type="button" data-variable="{{page.meta.description}}">{{page.meta.description}}</button><button type="button" data-variable="{{page.meta.og:title}}">{{page.meta.og:title}}</button><button type="button" data-variable="{{page.meta.og:description}}">{{page.meta.og:description}}</button><button type="button" data-variable="{{page.meta.og:image}}">{{page.meta.og:image}}</button></div><p class="hint" data-i18n="variableHint">Click to insert into the last selected value.</p></div>
+          </aside></div>
         </div>
-
-        <!-- Template editor form -->
-        <div class="editor-form" id="editor-form" style="display: none;">
-          <section class="section">
-            <label for="template-name" data-i18n="templateName">Template Name</label>
-            <input type="text" id="template-name" data-i18n-placeholder="templateNamePlaceholder" placeholder="e.g. Notify Slack">
-          </section>
-
-          <section class="section">
-            <label for="webhook-url" data-i18n="webhookUrl">Webhook URL</label>
-            <input type="url" id="webhook-url" data-i18n-placeholder="webhookUrlPlaceholder" placeholder="https://example.com/api/webhook">
-          </section>
-
-          <section class="section">
-            <label for="http-method" data-i18n="httpMethod">HTTP Method</label>
-            <select id="http-method">
-              <option value="GET">GET</option>
-              <option value="POST" selected>POST</option>
-              <option value="PUT">PUT</option>
-              <option value="PATCH">PATCH</option>
-              <option value="DELETE">DELETE</option>
-            </select>
-          </section>
-
-          <section class="section">
-            <div class="section-header">
-              <label data-i18n="parameters">Parameters</label>
-              <button type="button" id="add-param" class="btn-secondary" data-i18n="addParam">+ Add</button>
-            </div>
-
-            <div class="template-hint">
-              <span data-i18n="templateHint">Available variables:</span>
-              <code>{{page.url}}</code>
-              <code>{{page.title}}</code>
-              <code>{{page.selection}}</code>
-              <code>{{page.meta.description}}</code>
-              <code>{{page.meta.og:title}}</code>
-              <code>{{page.meta.og:description}}</code>
-              <code>{{page.meta.og:image}}</code>
-            </div>
-
-            <div id="params-list"></div>
-          </section>
+        <div class="editor-form" id="rule-editor-form" style="display:none">
+          <p class="rule-info" data-i18n="quickSendRulesDesc">Rules are evaluated in order. The first match sends its template; otherwise the popup opens.</p>
+          <div class="editor-columns"><div class="editor-main">
+            <div class="field-grid section"><label><span data-i18n="ruleField">When</span><select id="rule-field"><option value="url" data-i18n="ruleFieldUrl">URL</option><option value="title" data-i18n="ruleFieldTitle">Title</option></select></label><label><span data-i18n="ruleCondition">Condition</span><select id="rule-operator"><option value="contains" data-i18n="ruleOperatorContains">contains</option><option value="equals" data-i18n="ruleOperatorEquals">equals</option><option value="startsWith" data-i18n="ruleOperatorStartsWith">starts with</option><option value="endsWith" data-i18n="ruleOperatorEndsWith">ends with</option><option value="matches" data-i18n="ruleOperatorMatches">matches (regex)</option></select></label></div>
+            <section class="section"><label for="rule-value" data-i18n="ruleValueLabel">Value</label><input id="rule-value" data-i18n-placeholder="ruleValuePlaceholder" placeholder="e.g. github.com"></section>
+            <section class="section"><label for="rule-template" data-i18n="ruleThenSend">Then Send</label><select id="rule-template"></select></section>
+            <div class="toggle-row"><label for="rule-enabled" data-i18n="ruleEnabled">Enabled</label><input type="checkbox" id="rule-enabled" checked></div>
+            <div class="rule-order"><button type="button" class="btn-secondary" id="rule-up" data-i18n="moveUp">Move up</button><button type="button" class="btn-secondary" id="rule-down" data-i18n="moveDown">Move down</button></div>
+          </div><aside class="editor-aside"><div class="card rule-test"><p class="eyebrow" data-i18n="testRule">Test this rule</p><label for="rule-sample" data-i18n="ruleSample">Sample URL or title</label><input id="rule-sample" placeholder="https://github.com/nocoo/hooky"><button type="button" id="test-rule" class="btn-secondary" data-i18n="testRule">Test this rule</button><p id="rule-test-result" class="status" role="status" aria-live="polite"></p></div></aside></div>
         </div>
-
-        <!-- Rule editor form -->
-        <div class="editor-form" id="rule-editor-form" style="display: none;">
-          <section class="section">
-            <label for="rule-field" data-i18n="ruleField">When</label>
-            <select id="rule-field">
-              <option value="url" data-i18n="ruleFieldUrl">URL</option>
-              <option value="title" data-i18n="ruleFieldTitle">Title</option>
-            </select>
-          </section>
-
-          <section class="section">
-            <label for="rule-operator" data-i18n="ruleCondition">Condition</label>
-            <select id="rule-operator">
-              <option value="contains" data-i18n="ruleOperatorContains">contains</option>
-              <option value="equals" data-i18n="ruleOperatorEquals">equals</option>
-              <option value="startsWith" data-i18n="ruleOperatorStartsWith">starts with</option>
-              <option value="endsWith" data-i18n="ruleOperatorEndsWith">ends with</option>
-              <option value="matches" data-i18n="ruleOperatorMatches">matches (regex)</option>
-            </select>
-          </section>
-
-          <section class="section">
-            <label for="rule-value" data-i18n="ruleValueLabel">Value</label>
-            <input type="text" id="rule-value" data-i18n-placeholder="ruleValuePlaceholder" placeholder="e.g. github.com">
-          </section>
-
-          <section class="section">
-            <label for="rule-template" data-i18n="ruleThenSend">Then Send</label>
-            <select id="rule-template"></select>
-          </section>
-
-          <section class="section">
-            <div class="toggle-row">
-              <div class="toggle-info">
-                <label for="rule-enabled" data-i18n="ruleEnabled">Enabled</label>
-              </div>
-              <label class="toggle-switch">
-                <input type="checkbox" id="rule-enabled" checked>
-                <span class="toggle-slider"></span>
-              </label>
-            </div>
-          </section>
-        </div>
-
-        <!-- Rules manager (shown when Rules nav is selected, no rule selected) -->
-        <div class="editor-form" id="rules-manager" style="display: none;">
-          <p class="editor-desc" data-i18n="quickSendRulesDesc">Automatically select which template to send based on the current page. Rules are evaluated in order; the first match wins.</p>
-          <p class="no-items" id="no-rules" data-i18n="noRules">No rules configured. Quick Send will use the default template.</p>
-        </div>
-
-        <!-- Settings form (shown when Settings nav is selected) -->
-        <div class="editor-form" id="settings-form" style="display: none;">
-          <div class="settings-body">
-            <div class="setting-row">
-              <label for="theme-select"><span class="setting-icon">🎨</span> <span data-i18n="theme">Theme</span></label>
-              <select id="theme-select" class="setting-select">
-                <option value="system" data-i18n="themeSystem">System</option>
-                <option value="light" data-i18n="themeLight">Light</option>
-                <option value="dark" data-i18n="themeDark">Dark</option>
-              </select>
-            </div>
-          </div>
-        </div>
+        <div class="editor-form" id="rules-manager" style="display:none"><p class="rule-info" data-i18n="quickSendRulesDesc">Rules are evaluated in order. The first match wins.</p><button type="button" id="empty-add-rule" class="btn-primary" data-i18n="addRule">Add Rule</button><p class="no-items" id="no-rules" data-i18n="noRules">No rules yet. The toolbar opens the popup.</p></div>
+        <div class="editor-form" id="settings-form" style="display:none"><div class="settings-body"><div class="setting-row"><label for="theme-select" data-i18n="theme">Theme</label><select id="theme-select" class="setting-select"><option value="system" data-i18n="themeSystem">System</option><option value="light" data-i18n="themeLight">Light</option><option value="dark" data-i18n="themeDark">Dark</option></select></div><div class="help-card card"><h3 data-i18n="localSettings">Settings stay local</h3><p class="hint" data-i18n="privacyNote">Templates and rules stay in your browser. Requests go directly to the endpoints you choose.</p></div></div></div>
       </div>
-
-      <div class="editor-actions" id="editor-actions" style="display: none;">
-        <button type="button" id="delete-template" class="btn-danger" data-i18n="deleteTemplate">Delete</button>
-        <span id="status" class="status"></span>
-        <button type="button" id="save" class="btn-primary" data-i18n="save">Save</button>
-      </div>
+      <footer class="editor-actions" id="editor-actions" style="display:none"><button type="button" id="delete-template" class="btn-danger" data-i18n="deleteTemplate">Delete</button><span id="status" class="status" role="status" aria-live="polite"></span><button type="button" id="save" class="btn-primary" data-i18n="save">Save</button></footer>
     </main>
   </div>
-
   <script src="options.js" type="module"></script>
 </body>
 </html>

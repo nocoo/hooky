@@ -24,6 +24,11 @@ export function applyI18n() {
     const msg = chrome.i18n.getMessage(key);
     if (msg) el.title = msg;
   }
+
+  for (const el of document.querySelectorAll("[data-i18n-aria-label]")) {
+    const msg = chrome.i18n.getMessage(el.getAttribute("data-i18n-aria-label"));
+    if (msg) el.setAttribute("aria-label", msg);
+  }
 }
 
 /**

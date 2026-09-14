@@ -1,3 +1,4 @@
+import { readFileSync } from "node:fs";
 // @vitest-environment jsdom
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 
@@ -8,19 +9,7 @@ vi.mock("../src/pagecontext.js", () => ({
 
 // Set up DOM structure that popup.js expects at import time
 function setupPopupDOM() {
-  document.body.innerHTML = `
-    <div id="no-config" style="display: none;"></div>
-    <div id="webhook-panel" style="display: none;">
-      <select id="template-select"></select>
-      <span id="method-badge">POST</span>
-      <span id="url-display"></span>
-      <div id="params-preview"></div>
-      <button id="send-btn">Send</button>
-    </div>
-    <button id="settings-btn"></button>
-    <button id="go-settings"></button>
-    <div id="toast"></div>
-  `;
+  document.body.innerHTML = readFileSync("src/popup/popup.html", "utf8").split("<body>")[1].split("</body>")[0];
 }
 
 // Set up chrome mock
@@ -86,6 +75,27 @@ describe("popup.js", () => {
   afterEach(() => {
     vi.useRealTimers();
     delete global.chrome;
+  });
+
+  it("preserves multiline selection and literal variable text when editing before send", async () => {
+    setupChromeMock({ hooky: {
+      templates: [{ id: "t1", name: "Notes", url: "https://example.com/hook", method: "POST", params: [{ key: "note", value: "{{page.selection}}" }] }],
+      activeTemplateId: "t1",
+      theme: "light",
+    } });
+    await setupPageContextMock({ page: { url: "https://example.com", title: "Example", selection: "First line\nSecond line", meta: {} } });
+    await import("../src/popup/popup.js");
+    await vi.waitFor(() => expect(document.querySelector(".param-item textarea")).not.toBeNull());
+    const field = document.querySelector(".param-item textarea");
+    expect(field.value).toBe("First line\nSecond line");
+    field.value = "  edited {{page.title}}\nSecond line  ";
+    document.getElementById("send-btn").click();
+    await vi.waitFor(() => expect(chrome.runtime.sendMessage).toHaveBeenCalledWith(expect.objectContaining({
+      resolved: true,
+      config: expect.objectContaining({ params: [{ key: "note", value: "  edited {{page.title}}\nSecond line  " }] }),
+    })));
+    await vi.advanceTimersByTimeAsync(4100);
+    expect(document.getElementById("toast").classList.contains("visible")).toBe(false);
   });
 
   it("should show no-config when store has no templates", async () => {

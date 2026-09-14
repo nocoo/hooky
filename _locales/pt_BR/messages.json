@@ -126,7 +126,7 @@
     "message": "Regras de envio rápido"
   },
   "quickSendRulesDesc": {
-    "message": "Selecione automaticamente qual modelo enviar com base na página atual. As regras são avaliadas em ordem; a primeira correspondência vence."
+    "message": "A primeira regra ativa correspondente envia seu modelo. Caso contrário, o popup abre."
   },
   "addRule": {
     "message": "Adicionar regra"
@@ -159,7 +159,7 @@
     "message": "então enviar"
   },
   "noRules": {
-    "message": "Nenhuma regra configurada. O envio rápido usará o modelo padrão."
+    "message": "Sem regras, a barra abre o popup."
   },
   "ruleField": {
     "message": "Quando"
@@ -184,5 +184,65 @@
   },
   "newWebhook": {
     "message": "New Webhook"
+  },
+  "workspace": {
+    "message": "Espaço de trabalho"
+  },
+  "localSettings": {
+    "message": "Configurações locais"
+  },
+  "currentPage": {
+    "message": "Página atual"
+  },
+  "productTagline": {
+    "message": "Sua página em ação."
+  },
+  "readyToSend": {
+    "message": "Pronto para enviar"
+  },
+  "browserToWebhook": {
+    "message": "Navegador → webhook"
+  },
+  "parameterHelp": {
+    "message": "Use variáveis da página e edite os valores antes de enviar."
+  },
+  "requestPreview": {
+    "message": "Prévia da requisição"
+  },
+  "previewHint": {
+    "message": "As variáveis usam a página ativa no momento do envio."
+  },
+  "variableHint": {
+    "message": "Clique para inserir no último valor selecionado."
+  },
+  "moveUp": {
+    "message": "Mover para cima"
+  },
+  "moveDown": {
+    "message": "Mover para baixo"
+  },
+  "testRule": {
+    "message": "Testar regra"
+  },
+  "ruleSample": {
+    "message": "URL ou título de teste"
+  },
+  "ruleMatches": {
+    "message": "Corresponde à regra"
+  },
+  "ruleNoMatch": {
+    "message": "Não corresponde"
+  },
+  "createTemplateFirst": {
+    "message": "Crie um modelo de webhook primeiro."
+  },
+  "invalidRegex": {
+    "message": "Insira uma expressão regular válida."
+  },
+  "removeParam": {
+    "message": "Remover parâmetro"
+  },
+  "privacyNote": {
+    "message": "Modelos e regras ficam no navegador. As requisições vão diretamente aos destinos escolhidos."
   }
 }

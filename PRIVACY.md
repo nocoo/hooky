@@ -1,60 +1,35 @@
-# Privacy Policy
+# Privacy Policy — Hooky
 
-**Last updated:** February 17, 2026
+Last updated: September 14, 2026 · Version 2.0.0
 
-## Overview
+## Purpose
 
-Hooky is a browser extension that lets you trigger webhook requests with page context data. Your privacy is important — Hooky is designed to work entirely on your device with no data collection.
+Hooky sends user-configured webhook requests using context from the current browser page. It is a product of hexly.ai. The publisher does not operate a relay, collect analytics, or receive the contents of your requests.
 
-## Data Collection
+## Local data
 
-**Hooky does not collect, store, or transmit any personal data.**
+Webhook templates, endpoint URLs, parameter values, rules, and theme preferences are stored in `chrome.storage.local`. They are not synced by Hooky and are removed when the extension is uninstalled. Template values may contain information you enter, including credentials; local extension storage is not a password vault.
 
-Specifically:
+## Page data and requests
 
-- ❌ No analytics or telemetry
-- ❌ No tracking scripts
-- ❌ No cookies
-- ❌ No account registration
-- ❌ No data shared with third parties
+When you open the popup or trigger a webhook, Hooky reads available page context: URL, title, selected text, description metadata, and Open Graph title, description, and image URL. Values appear in the popup and fill the variables you configured. Missing variables become empty strings. Hooky does not extract the complete page body, record browsing history, or run a persistent page script.
 
-## Local Storage
+Requests are sent when you press Send, choose a context-menu template, or click the toolbar icon on a page matching an enabled Quick Send rule. Quick Send does not send merely because you visit a matching page.
 
-Hooky stores your webhook templates and settings locally in your browser using `chrome.storage.local`. This data:
-
-- Never leaves your device unless you explicitly trigger a webhook
-- Is not synced to any cloud service
-- Is deleted when you uninstall the extension
-
-## Network Requests
-
-Hooky only makes HTTP requests to **URLs that you explicitly configure** in your webhook templates. No other network requests are made. Hooky does not contact any first-party or third-party servers.
+The configured endpoint receives the request parameters, standard network information such as your IP address, and any data you included. Endpoint redirects follow the browser's Fetch behavior. The receiving service's storage and privacy practices are outside Hooky's control. Hooky does not proxy these requests or maintain a request history.
 
 ## Permissions
 
-| Permission | Purpose |
-|---|---|
-| `activeTab` | Read the current page URL, title, selected text, and meta tags when you trigger a webhook. This permission is scoped to the active tab only and does not grant access to other tabs or browsing history. |
-| `scripting` | Inject a page context extraction function into the active tab on demand |
-| `storage` | Save your webhook templates and settings locally |
-| `contextMenus` | Add the "Hooky" right-click menu |
-| `host_permissions: <all_urls>` | Send webhook requests to any URL you configure. Most webhook endpoints are designed for server-to-server communication and do not handle browser CORS preflight requests. Without this permission, POST requests with JSON content types would be silently blocked by the browser. Hooky only makes requests to URLs you explicitly set in your templates. |
+| Permission | Use |
+| --- | --- |
+| `activeTab` | Access the current tab after a user gesture to read page context. |
+| `scripting` | Run the small context-extraction function on demand. |
+| `storage` | Save templates, rules, and preferences locally. |
+| `contextMenus` | Show configured templates in the browser's right-click menu. |
+| `<all_urls>` host permission | Allow requests to user-configured HTTP/HTTPS endpoints across domains, including endpoints without browser CORS support. This broad capability is used for the configured webhook destinations; Hooky does not scan other tabs. |
 
-## Page Content Access
+Hooky requests no history, bookmarks, cookies, or downloads permission. It contains no analytics, advertising, remote executable code, account system, or publisher cloud sync. It does not sell data or use it for advertising. Links to hexly.ai and GitHub open only when clicked and are governed by those sites' policies.
 
-When you trigger a webhook (via popup, context menu, or Quick Send), Hooky reads the following from the active tab:
+## Control and contact
 
-- Page URL
-- Page title
-- Selected text
-- Meta tags (description, Open Graph)
-
-This data is used **only** to resolve template variables in your webhook parameters. It is sent **only** to the webhook URL you configured and is not stored or transmitted elsewhere.
-
-## Changes
-
-If this policy changes, the updated version will be posted in the [Hooky GitHub repository](https://github.com/nocoo/hooky).
-
-## Contact
-
-For questions about this policy, please open an issue at [github.com/nocoo/hooky](https://github.com/nocoo/hooky/issues).
+Edit or delete templates and rules in Settings; uninstall to remove the extension's local data. Data already sent must be managed with the receiving service. Policy updates are published in this repository. Questions: https://github.com/nocoo/hooky/issues

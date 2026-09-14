@@ -24,8 +24,7 @@ Stored under `chrome.storage.local` key `"hooky"`:
 {
   "templates": [{ "id": "...", "name": "...", "url": "...", "method": "GET", "params": [...] }],
   "activeTemplateId": "...",
-  "quickSend": false,
-  "quickSendTemplateId": null,
+  "quickSendRules": [],
   "theme": "system"
 }
 ```
@@ -66,21 +65,21 @@ Uses `chrome.scripting.executeScript()` to inject `extractPageContext()` from `s
 
 - Uses `chrome.i18n` API exclusively (no runtime switching)
 - 10 locales: `en`, `zh_CN`, `zh_TW`, `ja`, `ko`, `fr`, `de`, `es`, `pt_BR`, `ru`
-- 57 message keys, 2 with placeholders (`successStatus`, `failedStatus` use `$STATUS$`; `deleteConfirm` uses `$NAME$`)
+- Message keys include placeholders (`successStatus`, `failedStatus` use `$STATUS$`; `deleteConfirm` uses `$NAME$`)
 
 ## Testing
 
-- 257 unit tests across 14 test files
-- Coverage thresholds: 90% for statements, branches, functions, lines
+- Unit tests cover core modules and the shipped popup/options HTML
+- Coverage thresholds: 95% for statements, branches, functions, lines
 - `jsdom` environment used for DOM tests (via `// @vitest-environment jsdom` directive)
 - DOM-dependent modules (popup.js, options.js) do `document.getElementById()` at top level — tests must set up DOM before importing, using `vi.resetModules()`
 - Content script can't run on `chrome://` pages — popup.js and quicksend.js have fallbacks
 
 ## Quality Gates
 
-- Pre-commit: `bun run test` (257 unit tests)
+- Pre-commit: `bun run test`
 - Pre-push: `bun run test && bun run lint`
-- Coverage: 98% statements / 92% branches / 95% functions / 99% lines
+- Coverage gates: 95% minimum for statements, branches, functions, and lines
 
 ## Version & Release Process
 
@@ -90,7 +89,7 @@ Uses `chrome.scripting.executeScript()` to inject `extractPageContext()` from `s
 
 ### Release Checklist
 
-1. **Bump version** in `manifest.json` (the ONLY place to change version)
+1. **Bump version** in `manifest.json` and keep `package.json` synchronized
 2. **Update `CHANGELOG.md`** with new version entry following [Keep a Changelog](https://keepachangelog.com/) format
 3. **Run full verification**: `bun run test && bun run lint`
 4. **Commit**: `chore: bump version to X.Y.Z`
@@ -108,8 +107,8 @@ Uses `chrome.scripting.executeScript()` to inject `extractPageContext()` from `s
 
 ## Design Notes
 
-- Primary theme color: `#9666b7` (light), `#a97bcf` (dark)
-- Headers use fixed `height: 57px`
+- Primary theme: wisteria purple; native CSS variables in `src/ui.css`
+- Shared compact controls, system fonts, and responsive options workspace
 - Select dropdowns use custom SVG polyline chevron with `appearance: none`
 - Lightning icon for Quick Send target designation
 - `chrome.action.onClicked` only fires when `default_popup` is empty — dynamically set/cleared via `applyQuickSendMode()`

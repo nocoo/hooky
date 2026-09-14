@@ -126,7 +126,7 @@
     "message": "Reglas de envío rápido"
   },
   "quickSendRulesDesc": {
-    "message": "Selecciona automáticamente la plantilla a enviar según la página actual. Las reglas se evalúan en orden; la primera coincidencia gana."
+    "message": "La primera regla activa que coincida envía su plantilla. Si no, se abre la ventana."
   },
   "addRule": {
     "message": "Agregar regla"
@@ -159,7 +159,7 @@
     "message": "entonces enviar"
   },
   "noRules": {
-    "message": "No hay reglas configuradas. El envío rápido usará la plantilla predeterminada."
+    "message": "Sin reglas, la barra abre la ventana emergente."
   },
   "ruleField": {
     "message": "Cuando"
@@ -184,5 +184,65 @@
   },
   "newWebhook": {
     "message": "New Webhook"
+  },
+  "workspace": {
+    "message": "Espacio de trabajo"
+  },
+  "localSettings": {
+    "message": "Ajustes guardados localmente"
+  },
+  "currentPage": {
+    "message": "Página actual"
+  },
+  "productTagline": {
+    "message": "Tu página, en acción."
+  },
+  "readyToSend": {
+    "message": "Listo para enviar"
+  },
+  "browserToWebhook": {
+    "message": "Navegador → webhook"
+  },
+  "parameterHelp": {
+    "message": "Usa variables de página y edita los valores antes de enviar."
+  },
+  "requestPreview": {
+    "message": "Vista previa de solicitud"
+  },
+  "previewHint": {
+    "message": "Las variables se resuelven con la página activa al enviar."
+  },
+  "variableHint": {
+    "message": "Haz clic para insertar en el último valor seleccionado."
+  },
+  "moveUp": {
+    "message": "Subir"
+  },
+  "moveDown": {
+    "message": "Bajar"
+  },
+  "testRule": {
+    "message": "Probar regla"
+  },
+  "ruleSample": {
+    "message": "URL o título de prueba"
+  },
+  "ruleMatches": {
+    "message": "Coincide con la regla"
+  },
+  "ruleNoMatch": {
+    "message": "No coincide"
+  },
+  "createTemplateFirst": {
+    "message": "Crea primero una plantilla webhook."
+  },
+  "invalidRegex": {
+    "message": "Introduce una expresión regular válida."
+  },
+  "removeParam": {
+    "message": "Eliminar parámetro"
+  },
+  "privacyNote": {
+    "message": "Las plantillas y reglas quedan en tu navegador. Las solicitudes van a los destinos que eliges."
   }
 }
