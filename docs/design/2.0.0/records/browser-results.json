@@ -1,0 +1,79 @@
+{
+  "date": "2026-09-14T01:11:04.322Z",
+  "browser": "Chrome/152.0.7977.83",
+  "packages": "release ZIP extractions",
+  "checks": [
+    {
+      "name": "Both production manifests load as 2.0.0",
+      "passed": true
+    },
+    {
+      "name": "R2 endpoint parsing, unsaved connection test, validation and storage",
+      "passed": true
+    },
+    {
+      "name": "Hooky template creation, parameter editor, preview and save",
+      "passed": true
+    },
+    {
+      "name": "Hooky real toolbar popup, page extraction and literal edited payload",
+      "passed": true
+    },
+    {
+      "name": "R2 visible-tab screenshot produces real JPEG bytes and a signed upload",
+      "passed": true
+    },
+    {
+      "name": "R2 full-page stitching, output dimensions and restored scroll position",
+      "detail": {
+        "width": 1280,
+        "height": 2166
+      },
+      "passed": true
+    },
+    {
+      "name": "R2 failed upload, hidden result and successful retry",
+      "passed": true
+    },
+    {
+      "name": "Copy success and denial UI (clipboard boundary stubbed)",
+      "passed": true
+    },
+    {
+      "name": "Hooky Quick Send executes a matching rule from the real toolbar action",
+      "passed": true
+    },
+    {
+      "name": "Hooky context-menu handler uses real page context and HTTP (invoked from the extension test page)",
+      "passed": true
+    },
+    {
+      "name": "Both settings workspaces fit 390, 860 and 1280px widths",
+      "passed": true
+    },
+    {
+      "name": "Light and dark production UI captures saved for store artwork",
+      "passed": true
+    }
+  ],
+  "consoleErrors": [],
+  "network": {
+    "hooky": "Real HTTP requests to a local receiver",
+    "r2": "Real JPEG capture and Web Crypto signing; R2 HTTP boundary intercepted with synthetic credentials",
+    "clipboard": "Native UI with isolated clipboard success/failure stubs"
+  },
+  "jpeg": {
+    "visible": {
+      "width": 1280,
+      "height": 800
+    },
+    "fullPage": {
+      "width": 1280,
+      "height": 2166
+    }
+  },
+  "packageSHA256": {
+    "hooky": "9ad5a024f2907accb674542fabd5b3d7684b32758ca700d7d6c91536e6a5180c",
+    "r2shot": "2b8e76a072fbefc8fd3ecf039449cfb0661bc524dfa049f39ed6f019f33e4b5e"
+  }
+}

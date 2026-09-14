@@ -1,0 +1,43 @@
+{
+  "products": {
+    "hooky": {
+      "unit_tests_passed": 294,
+      "coverage_percent": {
+        "statements": 98.66,
+        "branches": 95.04,
+        "functions": 96.87,
+        "lines": 99.73
+      },
+      "lint": "passed",
+      "version": "2.0.0",
+      "repository_browser_assertions_passed": 34
+    },
+    "r2shot": {
+      "unit_tests_passed": 154,
+      "coverage_percent": {
+        "statements": 99.51,
+        "branches": 98.65,
+        "functions": 100.0,
+        "lines": 99.74
+      },
+      "lint": "passed",
+      "version": "2.0.0",
+      "workflow_tests_passed": 8,
+      "typecheck": "passed"
+    }
+  },
+  "chrome": "Chrome/152.0.7977.83",
+  "cross_product_browser_checks_passed": 12,
+  "materials_checks_passed": 9,
+  "logos_unchanged": true,
+  "network_boundaries": {
+    "hooky": "Real HTTP requests to a local receiver",
+    "r2": "Real JPEG capture and Web Crypto signing; R2 HTTP boundary intercepted with synthetic credentials",
+    "clipboard": "Native UI with isolated clipboard success/failure stubs"
+  },
+  "limits": [
+    "No live R2 account, bucket write, or public-domain request was used.",
+    "Context-menu handler was invoked in a real extension page; native menu registration and routing also have unit coverage.",
+    "Clipboard success and failure were checked with isolated stubs; the user clipboard was not changed by tests."
+  ]
+}

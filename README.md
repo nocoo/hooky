@@ -126,3 +126,9 @@ bunx puppeteer browsers install chrome
 ## 许可证
 
 [MIT](LICENSE)
+
+## 设计稿与发布资料
+
+[概念稿与已通过的家族设计](docs/design/README.md) · [Hooky 2.0.0 资料总览](materials/2.0.0/index.html) · [人工测试说明](materials/2.0.0/TESTING.md)
+
+后续资料从本仓库独立生成：`bun run materials`。原始图像、提示词、英文文案、单页与测试包均按版本归档，目录与使用方法见 [materials/README.md](materials/README.md)。

@@ -1,0 +1,13 @@
+{
+  "version": "2.0.0",
+  "date": "2026-09-14",
+  "package_sha256": "9ad5a024f2907accb674542fabd5b3d7684b32758ca700d7d6c91536e6a5180c",
+  "source": "Actual extension UI in Chrome 152; synthetic configuration. Shared sample-page JPEGs captured by R2Shot.",
+  "files": {
+    "hooky-settings-light.png": "d62c88eb5cd2e8ea6b3576bc03860eeb961e9484357745ad7ca4ad2596666cac",
+    "hooky-popup-light.png": "b2fe0feeba77d34ec7e30342c1a900313001533addbed71e09c764e4be7d5067",
+    "captured-visible.jpg": "69a35cd7d281508d38e1afc9dcad24674a702a6c051d80f56c525f3a3f237341",
+    "captured-full-page.jpg": "1c0a07c9852f9c01249ae4f21acf85a91712de06d6dbdce3bf5cf1621e944984",
+    "hooky-rules-dark.png": "0df83c8ad5c1b4b854c7bac8e40b0945ea939d9498ccf91b9df7f37d803689a0"
+  }
+}

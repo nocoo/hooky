@@ -1,0 +1,31 @@
+{
+  "ink": "#30253f",
+  "muted": "#766786",
+  "accent": "#7851a5",
+  "page": "#f4eff9",
+  "titles": [
+    "Your page.<br>In motion.",
+    "Make a template.<br>Keep your flow.",
+    "The right page.<br>The right webhook."
+  ],
+  "short": [
+    "Send the useful parts of a page<br>to the webhooks you choose.",
+    "Reusable templates. Live page variables.<br>A request you can review before sending.",
+    "One toolbar click. Your rules choose<br>the next step."
+  ],
+  "compact": [
+    "Your page.<br>In motion.",
+    "Make a template.<br>Keep your flow.",
+    "Let the page pick<br>the webhook."
+  ],
+  "features": [
+    "Page context → your webhook",
+    "7 variables · 5 HTTP methods",
+    "Quick Send · Ordered rules"
+  ],
+  "ui": [
+    "hooky-popup-light",
+    "hooky-settings-light",
+    "hooky-rules-dark"
+  ]
+}

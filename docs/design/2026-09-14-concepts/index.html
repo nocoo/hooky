@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="zh-CN" data-direction="soft" data-density="compact" data-canvas="light" data-view="both">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' data: blob:; connect-src 'none'; base-uri 'none'; form-action 'none'">
+  <meta name="color-scheme" content="light dark">
+  <meta name="description" content="Hooky 与 R2Shot 的交互式 UI 概念研究。原生 HTML、CSS、JavaScript，完全离线。">
+  <title>Hooky × R2Shot — Extension UI Study</title>
+  <link rel="icon" href="assets/hooky.png">
+  <link rel="stylesheet" href="ui.css">
+  <script src="ui.js" defer></script>
+</head>
+<body>
+  <svg class="icon-library" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <defs>
+      <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6"/></symbol>
+      <symbol id="i-external" viewBox="0 0 24 24"><path d="M14 4h6v6m0-6L10 14M9 4H5a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-4"/></symbol>
+      <symbol id="i-settings" viewBox="0 0 24 24"><path d="m9 3-1 3-3 1v4l2 2-1 3 3 3 3-1 3 1 3-3-1-3 2-2V7l-3-1-1-3z"/><circle cx="11.5" cy="11.5" r="3"/></symbol>
+      <symbol id="i-link" viewBox="0 0 24 24"><path d="m10 14 4-4m-6 6-1 1a4.25 4.25 0 0 1-6-6l4-4a4.25 4.25 0 0 1 6 0m2 2 1-1a4.25 4.25 0 0 1 6 6l-4 4a4.25 4.25 0 0 1-6 0" transform="translate(1 -1)"/></symbol>
+      <symbol id="i-send" viewBox="0 0 24 24"><path d="m21 3-7 18-4-8-8-4L21 3ZM10 13 21 3"/></symbol>
+      <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+      <symbol id="i-close" viewBox="0 0 24 24"><path d="m6 6 12 12M6 18 18 6"/></symbol>
+      <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
+      <symbol id="i-copy" viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M15 8V4H4v11h4"/></symbol>
+      <symbol id="i-camera" viewBox="0 0 24 24"><path d="M8 6 9.5 3h5L16 6h4a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1z"/><circle cx="12" cy="12.5" r="3.5"/></symbol>
+      <symbol id="i-screen" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M12 17v4M8 21h8"/></symbol>
+      <symbol id="i-scan" viewBox="0 0 24 24"><path d="M8 3H3v5m13-5h5v5M3 16v5h5m13-5v5h-5M8 9h8m-8 4h8m-8 4h5"/></symbol>
+      <symbol id="i-cloud" viewBox="0 0 24 24"><path d="M6 18a5 5 0 0 1-1-9.9A7 7 0 0 1 18.6 7a5.5 5.5 0 0 1-.1 11H6Z"/></symbol>
+      <symbol id="i-folder" viewBox="0 0 24 24"><path d="M3 7V4h6l2 3h10v13H3V7Z"/></symbol>
+      <symbol id="i-bolt" viewBox="0 0 24 24"><path d="m14 2-3 8h8L9 22l3-9H5L14 2Z"/></symbol>
+      <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5"/></symbol>
+      <symbol id="i-moon" viewBox="0 0 24 24"><path d="M20 15.5A9 9 0 0 1 8.5 4 9 9 0 1 0 20 15.5Z"/></symbol>
+      <symbol id="i-palette" viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 0 18h1a2 2 0 0 0 1-3.5 1.5 1.5 0 0 1 .9-2.7H18a4 4 0 0 0 4-4C22 6 17 3 12 3Z"/><path d="M6.5 12h.01M8 7h.01m5-1h.01m4 3h.01" stroke-width="3"/></symbol>
+      <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><ellipse cx="12" cy="12" rx="4" ry="9"/><path d="M3 12h18"/></symbol>
+      <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V6a4 4 0 0 1 8 0v4m-4 5v2"/></symbol>
+      <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></symbol>
+      <symbol id="i-reset" viewBox="0 0 24 24"><path d="M3 10a9 9 0 1 1 2 8M3 3v7h7"/></symbol>
+      <symbol id="i-trash" viewBox="0 0 24 24"><path d="M3 6h18M9 6V3h6v3M6 6l1 15h10l1-15M10 10v7m4-7v7"/></symbol>
+      <symbol id="i-up" viewBox="0 0 24 24"><path d="M12 20V4m-6 6 6-6 6 6"/></symbol>
+      <symbol id="i-down" viewBox="0 0 24 24"><path d="M12 4v16m-6-6 6 6 6-6"/></symbol>
+      <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6m0-10v.1"/></symbol>
+      <symbol id="i-sliders" viewBox="0 0 24 24"><path d="M3 7h4m4 0h10M3 17h10m4 0h4"/><circle cx="9" cy="7" r="2"/><circle cx="15" cy="17" r="2"/></symbol>
+      <symbol id="i-code" viewBox="0 0 24 24"><path d="m8 6-6 6 6 6m8-12 6 6-6 6M14 3l-4 18"/></symbol>
+      <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m9 5 7 7-7 7"/></symbol>
+    </defs>
+  </svg>
+
+  <header class="studio-bar">
+    <a class="studio-brand" href="#top" aria-label="返回设计画布顶部"><span class="family-mark"><i></i><i></i><i></i><i></i></span><span>Extension studies<span class="studio-edition"> / 01</span></span></a>
+    <nav class="segmented studio-views" aria-label="选择展示的应用">
+      <button type="button" data-action="view" data-value="both" aria-pressed="true">双应用</button>
+      <button type="button" data-action="view" data-value="hooky" aria-pressed="false">Hooky</button>
+      <button type="button" data-action="view" data-value="r2shot" aria-pressed="false">R2Shot</button>
+    </nav>
+    <div class="studio-tools">
+      <div class="segmented direction-picker" aria-label="视觉方向">
+        <button type="button" data-action="direction" data-value="soft" aria-pressed="true"><span class="option-letter">A</span>柔光</button>
+        <button type="button" data-action="direction" data-value="line" aria-pressed="false"><span class="option-letter">B</span>轻线</button>
+      </div>
+      <button type="button" class="studio-tool density-tool" data-action="density" aria-pressed="true" title="切换紧凑 / 舒适密度"><svg class="icon"><use href="#i-sliders"/></svg><span id="density-label">紧凑</span></button>
+      <button type="button" class="icon-button studio-tool" data-action="canvas-theme" aria-label="切换全部应用为深色" title="切换全部应用的深浅主题"><svg class="icon"><use href="#i-moon"/></svg></button>
+      <button type="button" class="icon-button studio-tool" data-action="about" aria-label="设计说明与功能范围" title="设计说明"><svg class="icon"><use href="#i-info"/></svg></button>
+    </div>
+  </header>
+
+  <main id="top" class="studio-main">
+    <section class="study-intro">
+      <div><p class="eyebrow">HOOKY × R2SHOT <span>—</span> A FAMILY OF SMALL TOOLS</p><h1>轻一点，顺手一点<span class="intro-dot">。</span></h1><p class="intro-description">统一的细节，两种性格。为浏览器里的每一寸空间认真设计。</p></div>
+      <div class="study-meta"><span class="study-live"><span class="status-dot"></span>可操作概念稿</span><span>09 / 2026 <span class="meta-divider">·</span> 100% 原始尺寸</span><button class="text-button" type="button" data-action="context">编辑示例网页 <svg class="icon"><use href="#i-arrow"/></svg></button></div>
+    </section>
+
+    <div class="family-board">
+      <section class="app-study hooky" id="study-hooky" data-app="hooky" data-theme="light" aria-labelledby="hooky-heading">
+        <header class="app-identity"><div class="identity-title"><img class="brand-logo" src="assets/hooky.png" alt="" width="34" height="34"><div><h2 id="hooky-heading">Hooky<span class="identity-index">01</span></h2><p>把网页，送到你的工作流。</p></div></div><div class="palette-strip" title="紫藤色 / Wisteria"><span></span><span></span><span></span><span></span><small>WISTERIA</small></div></header>
+        <section class="popup-section" aria-label="Hooky 工具栏弹窗概念">
+          <div class="surface-label"><span><b>01</b>工具栏弹窗 <span class="measurement">360 px</span></span><label class="scenario-control">演示场景<select id="h-scenario" aria-label="Hooky 演示场景"><option value="success">正常</option><option value="error">发送失败</option><option value="empty">未配置</option></select></label></div>
+          <div class="popup-stage">
+            <div class="popup app-surface" id="h-popup"></div>
+            <aside class="surface-notes"><span class="note-overline">PAGE → WEBHOOK</span><div class="flow-point"><span class="flow-icon"><svg class="icon"><use href="#i-globe"/></svg></span><div><strong>读到好内容</strong><span>URL、标题、选区</span></div></div><div class="flow-thread"></div><div class="flow-point"><span class="flow-icon accent"><svg class="icon"><use href="#i-send"/></svg></span><div><strong>一键送达</strong><span>选择模板，确认后发送</span></div></div><p class="note-copy">发送前可直接修改参数。<br>复杂配置留在设置页。</p><button type="button" class="note-link" data-action="navigate" data-app="hooky" data-page="rules">试试快捷规则 <svg class="icon"><use href="#i-arrow"/></svg></button></aside>
+          </div>
+        </section>
+        <section class="workbench-section" id="h-settings-section" aria-label="Hooky 完整设置页概念">
+          <div class="surface-label"><span><b>02</b>设置工作台 <span class="measurement">列表 + 编辑器</span></span><button type="button" class="text-button" data-action="expand" data-app="hooky">展开查看 <svg class="icon"><use href="#i-external"/></svg></button></div>
+          <div class="workbench app-surface" id="h-workbench"></div>
+        </section>
+        <div class="app-caption"><span class="color-dot"></span><span>紫藤色聚焦发送动作</span><span class="caption-divider">/</span><span>模板、规则、弹窗实时联动</span></div>
+      </section>
+
+      <section class="app-study r2shot" id="study-r2shot" data-app="r2shot" data-theme="light" aria-labelledby="r2shot-heading">
+        <header class="app-identity"><div class="identity-title"><img class="brand-logo" src="assets/r2shot.png" alt="" width="34" height="34"><div><h2 id="r2shot-heading">R2Shot<span class="identity-index">02</span></h2><p>把所见，变成可以分享的链接。</p></div></div><div class="palette-strip" title="海玻璃色 / Sea glass"><span></span><span></span><span></span><span></span><small>SEA GLASS</small></div></header>
+        <section class="popup-section" aria-label="R2Shot 工具栏弹窗概念">
+          <div class="surface-label"><span><b>01</b>工具栏弹窗 <span class="measurement">360 px</span></span><label class="scenario-control">演示场景<select id="r-scenario" aria-label="R2Shot 演示场景"><option value="success">正常</option><option value="error">上传失败</option><option value="empty">未配置</option></select></label></div>
+          <div class="popup-stage">
+            <div class="popup app-surface" id="r-popup"></div>
+            <aside class="surface-notes"><span class="note-overline">CAPTURE → LINK</span><div class="flow-point"><span class="flow-icon"><svg class="icon"><use href="#i-camera"/></svg></span><div><strong>留下这一页</strong><span>可见区域，或完整长页</span></div></div><div class="flow-thread"></div><div class="flow-point"><span class="flow-icon accent"><svg class="icon"><use href="#i-cloud"/></svg></span><div><strong>存到自己的 R2</strong><span>截图、上传、复制链接</span></div></div><p class="note-copy">用一个主按钮完成捕获。<br>结果在原位自然接续。</p><button type="button" class="note-link" data-action="navigate" data-app="r2shot" data-page="capture">调整截图偏好 <svg class="icon"><use href="#i-arrow"/></svg></button></aside>
+          </div>
+        </section>
+        <section class="workbench-section" id="r-settings-section" aria-label="R2Shot 完整设置页概念">
+          <div class="surface-label"><span><b>02</b>设置工作台 <span class="measurement">导航 + 配置</span></span><button type="button" class="text-button" data-action="expand" data-app="r2shot">展开查看 <svg class="icon"><use href="#i-external"/></svg></button></div>
+          <div class="workbench app-surface" id="r-workbench"></div>
+        </section>
+        <div class="app-caption"><span class="color-dot"></span><span>海玻璃色聚焦捕获动作</span><span class="caption-divider">/</span><span>连接、画质、结果循序展开</span></div>
+      </section>
+    </div>
+
+    <footer class="study-footer"><div><span class="family-mark small"><i></i><i></i><i></i><i></i></span><span>同一套比例、字阶与交互。各自完整，各自独立。</span></div><div><span class="offline-dot"></span><span>离线演示 · 修改仅在本页生效</span><button type="button" class="text-button" data-action="reset">重置演示</button></div></footer>
+    <p class="scope-note">表单编辑、变量解析、规则匹配与剪贴板复制可操作；网页上下文为示例，发送、截图、上传及连接测试为本地模拟。</p>
+  </main>
+
+  <dialog id="context-dialog" class="studio-dialog">
+    <form id="context-form">
+      <div class="dialog-heading"><div><p class="eyebrow">DEMO CONTEXT</p><h2>换一个网页试试</h2></div><button type="button" class="icon-button" data-action="close-dialog" aria-label="关闭示例网页编辑"><svg class="icon"><use href="#i-close"/></svg></button></div>
+      <p class="dialog-description">这里的内容会同步到两个弹窗、参数预览和规则测试。</p>
+      <label class="field">页面 URL<input type="url" name="url" required placeholder="https://notes.example.com/article"></label>
+      <label class="field">页面标题<input name="title" required></label>
+      <label class="field">选中的文字<textarea name="selection" rows="2"></textarea></label>
+      <label class="field">页面描述<input name="description"></label>
+      <details class="meta-fields"><summary>Open Graph 元数据</summary><label class="field">og:title<input name="og:title"></label><label class="field">og:description<input name="og:description"></label><label class="field">og:image<input name="og:image" type="url"></label></details>
+      <div class="dialog-actions"><button type="button" class="button secondary" data-action="close-dialog">取消</button><button type="submit" class="button primary neutral-primary">应用到演示</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="about-dialog" class="studio-dialog about-dialog">
+    <div class="dialog-heading"><div><p class="eyebrow">DESIGN NOTES / 01</p><h2>小界面的共同语言</h2></div><button type="button" class="icon-button" data-action="close-dialog" aria-label="关闭设计说明"><svg class="icon"><use href="#i-close"/></svg></button></div>
+    <p class="dialog-description">依据 Hooky v1.1.1 与 R2Shot v1.3.1 当前源码整理。两种方向共享功能和布局，可在顶部直接切换。</p>
+    <div class="direction-notes"><div><b>A / 柔光</b><p>带少量色温的侧栏，细边框、低扩散阴影和 12px 容器圆角。适合轻巧、安静的日常工具。</p></div><div><b>B / 轻线</b><p>6px 容器圆角、更清晰的分隔线、平面层级和边缘色标。适合密集、直接的工具界面。</p></div></div>
+    <dl class="design-spec"><div><dt>密度</dt><dd>紧凑控件 32px / 舒适控件 38px；弹窗宽 360px，以原始尺寸展示。</dd></div><div><dt>字体</dt><dd>系统 UI 字体 + 系统等宽字体；正文 13px，辅助文字 11–12px。</dd></div><div><dt>颜色</dt><dd>Hooky 使用紫藤色，R2Shot 使用海玻璃色；分别支持浅色、深色与跟随系统。</dd></div><div><dt>交互</dt><dd>原生表单、range、select、details 和 dialog；保留键盘焦点与明确的状态文字。</dd></div></dl>
+    <div class="about-scope"><h3>现有功能与设计探索</h3><p>保留模板 CRUD、7 种页面变量、5 种请求方法、5 种规则条件，以及截图范围、R2 配置、质量和整页上限。</p><p>本稿新增的请求预览、规则试跑与排序、原位截图结果示意属于设计提案。没有增加云端图库、历史中心或账号系统。</p><h3>运行方式</h3><p>全本地 HTML / CSS / 原生 JavaScript，无框架、无外部字体、无网络请求。JS 为本地独立文件，不使用内联事件或 eval。图片沿用两个项目的透明原始图标。</p><p>发送、截图、上传和连接测试均为模拟；演示 URL 使用 example.com。保存修改只影响当前页面，刷新或重置可恢复。</p></div>
+  </dialog>
+
+  <dialog id="confirm-dialog" class="studio-dialog confirm-dialog"><div class="dialog-heading"><h2 id="confirm-title">确认删除</h2></div><p id="confirm-description"></p><div class="dialog-actions"><button type="button" class="button secondary" data-action="close-dialog">取消</button><button type="button" class="button danger" id="confirm-action">确认删除</button></div></dialog>
+  <div id="studio-toast" role="status" aria-live="polite"></div>
+  <noscript><p class="noscript-message">请在 Chrome 中允许 JavaScript，以操作这份概念稿。</p></noscript>
+</body>
+</html>

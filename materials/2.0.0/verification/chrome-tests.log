@@ -1,0 +1,47 @@
+$ node tests/e2e/extension.e2e.js
+  Webhook server listening on port 54427
+
+Launching browser with extension...
+  Extension ID: ahdimbacmhdmfemcpoioeelmlokmpgdn
+  PASS: Extension loaded successfully
+
+Testing Options page...
+  PASS: Options page: Empty state shown initially
+  PASS: Options page: Template list exists
+  PASS: Options page: Editor form visible after creating template
+  PASS: Options page: Template list has one entry
+  PASS: Options page: URL input exists
+  PASS: Options page: Method select exists
+  PASS: Options page: Add param button exists
+  PASS: Options page: Param row added
+  PASS: Options page: Config saved successfully
+
+Testing Popup page...
+  PASS: Popup: Webhook panel is visible
+  PASS: Popup: Template select has one option
+  PASS: Popup: Template select shows correct name
+  PASS: Popup: Method badge shows POST
+  PASS: Popup: URL display shows webhook URL
+  PASS: Webhook: Request received by server
+  PASS: Webhook: Method is POST
+  PASS: Webhook: Body contains correct param
+  PASS: Popup: Success toast displayed
+
+Testing Quick Send Rules...
+  PASS: Rules: Three sidebar panels exist
+  PASS: Rules: Webhooks panel is active by default
+  PASS: Rules: Rules panel is active after click
+  PASS: Rules: Webhooks panel closed when Rules opened
+  PASS: Rules: Rules manager visible in right pane
+  PASS: Rules: 'No rules' message shown initially
+  PASS: Rules: Rule editor form is visible after adding rule
+  PASS: Rules: Rules list has one entry
+  PASS: Rules: Template dropdown contains 'E2E Test Hook'
+  PASS: Rules: Rule saved successfully
+  PASS: Rules: 'No rules' message hidden after adding rule
+  PASS: Rules: Rules manager visible after delete
+  PASS: Rules: Rules list empty after delete
+  PASS: Rules: 'No rules' message shown after delete
+  PASS: Rules: Can switch back to Webhooks panel
+
+  Results: 34 passed, 0 failed

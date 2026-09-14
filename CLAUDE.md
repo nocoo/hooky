@@ -123,3 +123,10 @@ Uses `chrome.scripting.executeScript()` to inject `extractPageContext()` from `s
 - **ESM exports in src/**: All source files must use ESM `export` syntax (not `module.exports`) since ESLint config sets `sourceType: "module"` for `src/**/*.js`.
 - **deleteCurrentRule editorMode**: After deleting a rule, keep `editorMode` as `"rule"` (not `null`) so `renderAll()` stays in rule context and shows empty state or selects next rule. Setting it to `null` causes `renderAll()` to fall through to template selection.
 - **E2E CORS preflight**: Chrome extension popup sends CORS preflight (OPTIONS) for cross-origin POST requests. The E2E webhook server must handle OPTIONS with proper CORS headers, otherwise the actual POST never completes.
+
+## Design and submission material ownership
+
+- Generate Hooky deliverables from this repository using `bun run materials`; validate with `bun run materials:check`. Never depend on a sibling project or an external joint-delivery directory.
+- Editable campaign inputs are in `materials/source/`; versioned ZIPs, English store copy, screenshots, banners, marquees, landing HTML and verification are in `materials/<version>/`. Keep generated `unpacked/` out of Git.
+- Preserve the original logos and the historical concept/approved HTML in `docs/design/`. Each product owns its material outputs and is committed/pushed separately.
+- Notify the user when the tested package is ready for manual acceptance. Use `TESTING.md`; do not record live R2/CDN or user acceptance as passed until actually verified.

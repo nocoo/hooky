@@ -1,0 +1,110 @@
+{
+  "version": "2.0.0",
+  "products": {
+    "hooky": {
+      "manifest_version": "2.0.0",
+      "minimum_chrome": "127",
+      "package_file": "hooky/hooky-2.0.0.zip",
+      "package_bytes": 187514,
+      "package_sha256": "9ad5a024f2907accb674542fabd5b3d7684b32758ca700d7d6c91536e6a5180c",
+      "packaged_files": 37,
+      "unpacked_bytes": 269999,
+      "runtime_files": {
+        "src/quicksend.js": 2063,
+        "src/options/options.js": 22717,
+        "src/options/options.html": 9041,
+        "src/options/options.css": 6434,
+        "src/popup/popup.js": 5334,
+        "src/popup/popup.html": 2585,
+        "src/popup/popup.css": 2341,
+        "src/pagecontext.js": 2156,
+        "src/rules.js": 1260,
+        "src/background.js": 1295,
+        "src/params.js": 1620,
+        "src/store.js": 6130,
+        "src/webhook.js": 1243,
+        "src/theme.js": 527,
+        "src/ui.css": 5091,
+        "src/contextmenu.js": 2387,
+        "src/i18n.js": 1490,
+        "src/template.js": 1270
+      },
+      "javascript_bytes": 49492,
+      "html_css_js_bytes": 74984,
+      "locales": [
+        "de",
+        "en",
+        "es",
+        "fr",
+        "ja",
+        "ko",
+        "pt_BR",
+        "ru",
+        "zh_CN",
+        "zh_TW"
+      ],
+      "permissions": [
+        "activeTab",
+        "storage",
+        "contextMenus",
+        "scripting"
+      ],
+      "host_permissions": [
+        "<all_urls>"
+      ],
+      "unchanged_identity_files": 14,
+      "original_logo_sha256": "7e98ee9d581e9f5f70fadc239a60b6d0204f62f8586d9e1e8ee7b0ef7106fe62",
+      "runtime_frameworks": [],
+      "remote_runtime_assets": []
+    },
+    "r2shot": {
+      "manifest_version": "2.0.0",
+      "minimum_chrome": "123",
+      "package_file": "r2shot/r2shot-2.0.0.zip",
+      "package_bytes": 70905,
+      "package_sha256": "2b8e76a072fbefc8fd3ecf039449cfb0661bc524dfa049f39ed6f019f33e4b5e",
+      "packaged_files": 24,
+      "unpacked_bytes": 118841,
+      "runtime_files": {
+        "popup.js": 2179,
+        "background.js": 6081,
+        "popup.html": 3048,
+        "chunks/ui.C1QheL1m.js": 1131,
+        "chunks/storage.CyZJ6TIV.js": 1890,
+        "settings.html": 6237,
+        "assets/ui.css": 10073,
+        "settings.js": 3369
+      },
+      "javascript_bytes": 14650,
+      "html_css_js_bytes": 34008,
+      "locales": [
+        "de",
+        "en",
+        "es",
+        "fr",
+        "ja",
+        "ko",
+        "pt_BR",
+        "ru",
+        "zh_CN",
+        "zh_TW"
+      ],
+      "permissions": [
+        "activeTab",
+        "storage",
+        "scripting"
+      ],
+      "host_permissions": [
+        "https://*.r2.cloudflarestorage.com/*"
+      ],
+      "unchanged_identity_files": 15,
+      "original_logo_sha256": "17e2f07d03a8de29731fbb9fc0e91ea3182de24a46b2b3af79a8b73e4ac94ec1",
+      "runtime_frameworks": [],
+      "remote_runtime_assets": [],
+      "previous_javascript_bytes": 449108,
+      "javascript_reduction_percent": 96.74
+    }
+  },
+  "logos_unchanged": true,
+  "hexly_reference": "Read only; existing unrelated working-tree changes were left intact."
+}

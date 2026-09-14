@@ -1,0 +1,25 @@
+{
+  "checks": [
+    "360px popup bounds, aligned workspaces, file:// loading",
+    "template save, HTML escaping, variables, GET query serialization, popup sync",
+    "send success/failure, edited values stay literal, multiline JSON payload",
+    "first-match rule ordering, disabled rules, fallback, regex validation",
+    "shared demo context updates both tools",
+    "R2 endpoint parsing, secret visibility, domain normalization, connection test",
+    "quality bounds, full-page limit, capture states, clipboard call and denial fallback",
+    "empty states, first template setup, delete confirmation, first R2 setup",
+    "reload isolation, both visual directions, density, independent/system themes, native dialogs",
+    "all main pages at 1920 / 1440 / 1280 / 1024 / 800 / 390 / 360px",
+    "expanded 1120px workspace, light and dark review screenshots",
+    "zero page errors and zero HTTP requests"
+  ],
+  "errors": [],
+  "networkRequests": 0,
+  "runtimeBytes": {
+    "index.html": 16982,
+    "ui.css": 53927,
+    "ui.js": 56212,
+    "assets/hooky.png": 8380,
+    "assets/r2shot.png": 7486
+  }
+}

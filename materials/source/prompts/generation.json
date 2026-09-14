@@ -1,0 +1,17 @@
+{
+  "provider": "Azure OpenAI",
+  "deployment": "gpt-image-2.5-sunburst",
+  "helper": "agi-image-generation/scripts/generate.py (workflow skill; only needed for new images)",
+  "dimensions": [
+    1536,
+    1024
+  ],
+  "purpose": "Decorative scenery; no generated logos, interface elements, or lettering",
+  "originals": {
+    "hooky": {
+      "file": "materials/source/images/hooky-original.png",
+      "sha256": "cdf85e3ca61f383d367e78211fd666be94726a2c0b62c286f5c9d86ab9142ee1",
+      "prompt": "materials/source/prompts/hooky.txt"
+    }
+  }
+}

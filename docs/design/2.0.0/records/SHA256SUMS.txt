@@ -1,0 +1,2 @@
+9ad5a024f2907accb674542fabd5b3d7684b32758ca700d7d6c91536e6a5180c  hooky/hooky-2.0.0.zip
+2b8e76a072fbefc8fd3ecf039449cfb0661bc524dfa049f39ed6f019f33e4b5e  r2shot/r2shot-2.0.0.zip

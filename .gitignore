@@ -3,3 +3,6 @@ dist/
 .DS_Store
 coverage/
 package-lock.json
+
+# ZIPs are versioned; their local extraction is reproducible.
+/materials/*/unpacked/

@@ -1,0 +1,66 @@
+{
+  "accent": "#7851a5",
+  "ink": "#30253f",
+  "muted": "#776b82",
+  "soft": "#f2edf7",
+  "line": "#e3dbe9",
+  "title": "Your page.<br>In motion.",
+  "note": "Chrome 127+ · Bring your own webhook",
+  "intro": "A small action.<br>A useful connection.",
+  "features": [
+    [
+      "A request of your own",
+      "Keep reusable webhook templates for the things you do often. Choose a method, add parameters, and check the request preview."
+    ],
+    [
+      "Context, already filled in",
+      "Page URL, title, selection, and metadata are ready as variables. Review and edit their values in the popup before sending."
+    ],
+    [
+      "Rules on your terms",
+      "Match a URL or title to a template. Test the condition, set its priority, and send with a toolbar click when the page matches."
+    ]
+  ],
+  "showcase": "A place for every next step.",
+  "showcaseNote": "Templates, variables, and rules share one focused workspace.",
+  "views": [
+    "Template editor",
+    "Quick Send rules · dark"
+  ],
+  "screenshots": [
+    "hooky-settings-light",
+    "hooky-rules-dark"
+  ],
+  "steps": [
+    [
+      "Make a template",
+      "Enter your webhook URL, choose an HTTP method, and add the parameters your endpoint expects."
+    ],
+    [
+      "Bring in the page",
+      "Use variables for a URL, title, selection, or metadata. Save the template when it is ready."
+    ],
+    [
+      "Send in your flow",
+      "Use the popup, choose a template from the right-click menu, or let a Quick Send rule choose on your toolbar click."
+    ]
+  ],
+  "faq": [
+    [
+      "Where does my data go?",
+      "Templates, rules, and settings stay in local browser storage. When you send, the configured parameters go to your webhook endpoint. The publisher does not receive, proxy, or log those requests. The receiving service controls the data after delivery."
+    ],
+    [
+      "What kinds of endpoints work?",
+      "Use a webhook or automation endpoint that accepts your chosen method and parameters. GET and DELETE use query parameters; POST, PUT, and PATCH send a flat JSON object with string values. Custom HTTP headers are not supported."
+    ],
+    [
+      "Do rules send automatically as I browse?",
+      "No. Quick Send evaluates rules when you click the Hooky toolbar icon. The first enabled matching rule with a valid template sends. Otherwise, the popup opens."
+    ],
+    [
+      "Which page data can I use?",
+      "URL, title, selected text, description metadata, and Open Graph title, description, and image URL. Missing values become empty strings. Hooky does not extract the complete page body."
+    ]
+  ]
+}

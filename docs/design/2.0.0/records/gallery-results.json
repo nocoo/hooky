@@ -1,0 +1,9 @@
+{
+  "checks": [
+    "All local links and images exist",
+    "Desktop and narrow layouts fit",
+    "Description copy works with an isolated clipboard stub"
+  ],
+  "passed": true,
+  "consoleErrors": []
+}

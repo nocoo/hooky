@@ -1,0 +1,55 @@
+Hooky — Your page. In motion.
+
+Keep the useful parts of a page moving. Send a link to your reading list, share a selection with your own automation, or trigger a workflow without leaving Chrome. You choose the webhook. Hooky brings the page context.
+
+WHAT'S NEW IN 2.0
+
+A compact purple workspace puts templates, request previews, and page variables within easy reach. See the current page in the popup, edit resolved values before sending, and try a sample URL or title before saving a Quick Send rule. Fine borders, quiet shadows, and light, dark, or system themes keep the interface clear.
+
+MAKE A TEMPLATE. USE IT AGAIN.
+
+Save independent templates with a name, endpoint URL, HTTP method, and key-value parameters. Switch templates from the popup or settings. Choose GET, POST, PUT, PATCH, or DELETE. GET and DELETE use query parameters; POST, PUT, and PATCH send a JSON object with string values. A request preview shows how the configured request is assembled.
+
+BRING THE PAGE WITH YOU
+
+Use any of these variables in parameter values:
+
+• {{page.url}} — page URL
+• {{page.title}} — page title
+• {{page.selection}} — selected text
+• {{page.meta.description}} — description metadata
+• {{page.meta.og:title}} — Open Graph title
+• {{page.meta.og:description}} — Open Graph description
+• {{page.meta.og:image}} — Open Graph image URL
+
+Click a variable in settings to insert it into a parameter. Combine variables with your own text, including multiline notes. Missing values become empty strings. The popup shows the resolved values and lets you edit them before sending.
+
+ONE CLICK WHEN THE PAGE MATCHES
+
+Quick Send rules choose a template when you click the toolbar icon. Match the page URL or title using contains, equals, starts with, ends with, or a regular expression. Matching ignores case. Enable or disable rules, test a sample, and move rules up or down in priority.
+
+The first enabled matching rule with a valid template sends immediately. If no applicable rule is found, Hooky opens the popup. Rules run on your toolbar click, not automatically as you browse.
+
+RIGHT-CLICK TO SEND
+
+Your templates also appear in the Hooky context menu. Choose one to send with the page's available context. A brief toolbar badge shows success or failure. The popup provides request status after sending.
+
+SMALL BY DESIGN
+
+Hooky uses native JavaScript and local assets, with no UI framework, analytics, account, or publisher relay. Templates, rules, and preferences stay in your browser's local storage. Page context is read on demand; requests go to the endpoint you configured. That receiving service controls what happens to the data afterward.
+
+SET UP IN A MINUTE
+
+1. Open Hooky Settings and create a webhook template.
+2. Enter your receiving endpoint, method, and parameters.
+3. Add page variables if needed, then save.
+4. Open a webpage, choose the template, review the values, and send.
+
+You provide a compatible webhook or automation endpoint. Hooky does not provide built-in service accounts, custom HTTP headers, or full-page text extraction.
+
+Available in English, Simplified Chinese, Traditional Chinese, Japanese, Korean, French, German, Spanish, Brazilian Portuguese, and Russian. The interface follows Chrome's language. Requires Chrome 127 or later.
+
+A product of hexly.ai.
+
+Source and support: https://github.com/nocoo/hooky
+Privacy: https://github.com/nocoo/hooky/blob/main/PRIVACY.md

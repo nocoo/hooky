@@ -1,0 +1,7 @@
+Publisher collection: none. No analytics, advertising, account, request relay, or remote executable code.
+Local storage: template names, destination URLs, parameter values, rules, and theme. User-entered parameters may contain credentials or personal information.
+Website content: page URL/title, current selection, description metadata, and selected Open Graph fields are read on demand. Configured variables determine what is sent.
+Browsing data: no ongoing navigation history is recorded; the active page URL/title may be transmitted in a triggered request.
+Destinations: user-configured endpoints, subject to browser redirect handling. Receiving services can see normal network metadata such as IP address.
+Purpose: perform the webhook action chosen by the user. No sale, advertising use, or credit/lending use of data.
+Deletion: remove templates/rules or uninstall for local data; previously delivered data must be managed at the receiving endpoint.

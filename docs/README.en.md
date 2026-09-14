@@ -126,3 +126,9 @@ A product of [hexly.ai](https://hexly.ai).
 ## License
 
 [MIT](../LICENSE)
+
+## Design and submission materials
+
+[Concepts and approved family designs](design/README.md) · [Hooky 2.0.0 gallery](../materials/2.0.0/index.html) · [Manual testing](../materials/2.0.0/TESTING.md)
+
+Run `bun run materials` from this repository to generate its own tested package, English store copy, promotional assets and standalone website. Original artwork, prompts and design references are retained. See [the directory and reproduction guide](../materials/README.md).

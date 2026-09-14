@@ -1,0 +1,11 @@
+Hooky 2.0.0
+
+• New compact purple popup and settings workspace, with the original Hooky logo.
+• Current-page context, editable popup values, request preview, and click-to-insert variables.
+• Multiline parameter editing, rule sample testing, and priority controls.
+• Light, dark, and system themes; updated interface strings in all 10 languages.
+• Literal values edited in the popup are sent exactly once without re-resolving variable syntax.
+• Existing templates, rules, and settings are retained. Native JavaScript runtime and local assets.
+• Requires Chrome 127 or later. No new permissions.
+
+A product of hexly.ai.

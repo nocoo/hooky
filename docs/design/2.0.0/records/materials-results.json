@@ -1,0 +1,48 @@
+{
+  "date": "2026-09-14T01:10:59.471Z",
+  "browser": "Chrome/152.0.7977.83",
+  "checks": [
+    {
+      "name": "18 English store images have the required dimensions and opaque RGB PNG format",
+      "passed": true
+    },
+    {
+      "name": "Offline Hooky preview saves a template, updates its popup, and handles simulated success/failure",
+      "passed": true
+    },
+    {
+      "name": "Offline Hooky rule testing and theme changes operate in the actual UI modules",
+      "passed": true
+    },
+    {
+      "name": "Offline R2 preview saves configuration, refreshes its popup, switches theme, and shows capture states",
+      "passed": true
+    },
+    {
+      "name": "Shared demo page context updates both independent products",
+      "passed": true
+    },
+    {
+      "name": "Combined interactive preview fits desktop and narrow windows",
+      "passed": true
+    },
+    {
+      "name": "hooky standalone landing page: responsive layout, native view switch, FAQ, and real store links",
+      "passed": true
+    },
+    {
+      "name": "r2shot standalone landing page: responsive layout, native view switch, FAQ, and real store links",
+      "passed": true
+    },
+    {
+      "name": "Preview and landing pages open directly from disk without network requests or console errors",
+      "passed": true
+    }
+  ],
+  "consoleErrors": [],
+  "externalRequests": [],
+  "visual_review": {
+    "hooky_dark_heading": "Verified light text #f2edf7 on the dark campaign background",
+    "corrected_image_format": "1280x800, 8-bit opaque RGB PNG"
+  }
+}

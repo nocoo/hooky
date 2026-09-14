@@ -1,0 +1,1 @@
+Send user-configured webhook requests with context from the active browser page, using reusable templates and optional click-triggered matching rules.

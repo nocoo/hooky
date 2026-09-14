@@ -1,0 +1,14 @@
+activeTab
+Reads the active page URL and title after a user gesture, and authorizes on-demand access to selection and metadata. Used by the toolbar popup, Quick Send action, and context menu.
+
+scripting
+Runs the small page-context extraction function in the active tab when needed. No persistent content script runs on page navigation.
+
+storage
+Stores webhook templates, active-template selection, Quick Send rules, and theme preferences locally using chrome.storage.local. No cloud sync.
+
+contextMenus
+Lists the user's configured templates in the Hooky right-click menu so they can trigger a webhook from the current page.
+
+Host permissions: <all_urls>
+Allows cross-origin HTTP/HTTPS requests to arbitrary webhook endpoints explicitly configured by the user, including endpoints without browser CORS support. Endpoint domains cannot be known at installation. The extension does not crawl tabs or send browsing activity to the publisher.

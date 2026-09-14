@@ -1,0 +1,18 @@
+{
+  "version": "2.0.0",
+  "browser": "Chrome/152.0.7977.83",
+  "checks": [
+    "All 9 store images have the required dimensions and opaque RGB format",
+    "materials/2.0.0/index.html: local links, offline resources and responsive layout",
+    "materials/2.0.0/site/index.html: local links, offline resources and responsive layout",
+    "materials/2.0.0/preview.html: local links, offline resources and responsive layout",
+    "docs/design/2.0.0/preview.html: local links, offline resources and responsive layout",
+    "docs/design/2.0.0/index.html: local links, offline resources and responsive layout",
+    "docs/design/2026-09-14-concepts/index.html: local links, offline resources and responsive layout",
+    "Landing-page native view switch and FAQ work",
+    "Gallery copy action works with an isolated clipboard stub",
+    "Independent packaged-UI preview updates page context and resets"
+  ],
+  "console_errors": [],
+  "external_requests": []
+}

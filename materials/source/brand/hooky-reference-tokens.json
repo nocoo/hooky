@@ -1,0 +1,124 @@
+{
+	"scope": {
+		"id": "hexly-campaign",
+		"appliesTo": [
+			"hexly.ai project introduction and brand archive",
+			"Hexly-authored promotional video, deck, social and campaign material"
+		],
+		"productUIChanged": false,
+		"officialIdentityRecolored": false,
+		"campaignReplacesOfficialIdentity": false
+	},
+	"ui": {
+		"source": "src/styles/base.css",
+		"baseline": "d600805f7c2833d601bc32d6e3db0b02360eb0c6",
+		"light": {
+			"page": "#f0f0e9",
+			"ink": "#30372e",
+			"muted": "#68705f",
+			"accent": "#bf5c3c",
+			"line": "#d4d8cb",
+			"surface": "#f8f8f2",
+			"soft": "#e8ebdf",
+			"shadow": "#35442c"
+		},
+		"dark": {
+			"page": "#1e2824",
+			"ink": "#e6e9dc",
+			"muted": "#a0aa9a",
+			"accent": "#e79670",
+			"line": "#3d4940",
+			"surface": "#27332c",
+			"soft": "#26352b",
+			"shadow": "#070d09"
+		}
+	},
+	"font": {
+		"family": "Space Grotesk",
+		"weight": 600,
+		"letterSpacingEm": -0.043478260869565216,
+		"title": "Hooky",
+		"license": "SIL OFL 1.1",
+		"source": "space-grotesk.woff2",
+		"fontSha256": "0640890476fc1198ab4de571fb658de443c4d85b66466ec09534a8737ab1ce9d",
+		"width": 415.399,
+		"height": 158,
+		"glyphBoundsUnits": [69.499755859375, -200, 2808.0622372834578, 700],
+		"canvasPaddingPx": 16
+	},
+	"artwork": {
+		"minimumMarkPx": 16,
+		"preferredNavigationPx": 24,
+		"minimumWordmarkWidthPx": 64,
+		"minimumLockupWidthPx": 160,
+		"preserveOriginalColors": true,
+		"palette": [
+			{
+				"color": "#9d7097",
+				"role": "background",
+				"label": {
+					"en": "Tidal hooks",
+					"zh": "展示底色"
+				},
+				"source": "Selected Hooky presentation, finishing 01; background.base in archived settings.json"
+			},
+			{
+				"color": "#e9a5bf",
+				"label": {
+					"en": "Rose pink",
+					"zh": "玫瑰粉"
+				},
+				"source": "Original hooky 7e98ee9d581e, sampled sRGB pixel (313, 260); palette.json",
+				"role": "primary"
+			},
+			{
+				"color": "#b771af",
+				"label": {
+					"en": "Lilac",
+					"zh": "丁香紫"
+				},
+				"source": "Original hooky 7e98ee9d581e, sampled sRGB pixel (262, 528); palette.json",
+				"role": "accent"
+			},
+			{
+				"color": "#fedced",
+				"label": {
+					"en": "Petal light",
+					"zh": "浅花瓣"
+				},
+				"source": "Original hooky 7e98ee9d581e, sampled sRGB pixel (376, 129); palette.json",
+				"role": "accent"
+			},
+			{
+				"color": "#8b4e93",
+				"label": {
+					"en": "Berry violet",
+					"zh": "莓紫"
+				},
+				"source": "Original hooky 7e98ee9d581e, sampled sRGB pixel (573, 606); palette.json",
+				"role": "accent"
+			},
+			{
+				"color": "#42274d",
+				"label": {
+					"en": "Ink plum",
+					"zh": "墨梅紫"
+				},
+				"source": "Original hooky 7e98ee9d581e, sampled sRGB pixel (556, 340); palette.json",
+				"role": "accent"
+			}
+		],
+		"paletteScope": "Evidence from archived artwork, not a product UI theme prescription"
+	},
+	"texture": {
+		"tile": [512, 512],
+		"inkOpacity": 0.036,
+		"accentOpacity": 0.022,
+		"recommendedTileCssPx": [360, 480],
+		"decorative": true
+	},
+	"productUI": {
+		"action": "unchanged",
+		"source": "src/data/projects/hooky.json at d600805f7c2833d601bc32d6e3db0b02360eb0c6"
+	}
+}

@@ -11,7 +11,7 @@ const puppeteer = require("puppeteer");
 const path = require("path");
 const http = require("http");
 
-const EXTENSION_PATH = path.resolve(__dirname, "../..");
+const EXTENSION_PATH = process.env.EXTENSION_PATH || path.resolve(__dirname, "../..");
 const TIMEOUT = 15000;
 
 let server;

@@ -1,0 +1,6 @@
+$ bash scripts/build.sh
+📦 Packaging Hooky v2.0.0
+
+  ✅ ./dist/hooky-2.0.0.zip (184K)
+
+Done! Upload this file to the Chrome Web Store Developer Dashboard.

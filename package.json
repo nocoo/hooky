@@ -10,7 +10,9 @@
     "lint": "eslint --max-warnings=0 src/ tests/",
     "build": "bash scripts/build.sh",
     "test:e2e": "node tests/e2e/extension.e2e.js",
-    "prepare": "husky"
+    "prepare": "husky",
+    "materials": "python3 scripts/materials/build.py",
+    "materials:check": "node scripts/materials/check.cjs"
   },
   "repository": {
     "type": "git",
