@@ -322,5 +322,35 @@
   },
   "responseInvalidJson": {
     "message": "Der Empfänger hat ungültiges JSON zurückgegeben. Anzeige als Text."
+  },
+  "desktopNotifications": {
+    "message": "Desktop-Benachrichtigungen"
+  },
+  "notificationsOff": {
+    "message": "Aus"
+  },
+  "notificationsErrors": {
+    "message": "Fehler und unbestätigte Ergebnisse"
+  },
+  "notificationsAll": {
+    "message": "Alle Ergebnisse"
+  },
+  "notificationsHelp": {
+    "message": "Optionale Browserberechtigung. Benachrichtigungen zeigen nur Vorlagenname und allgemeinen Status. Badges und Ergebnisansicht bleiben verfügbar."
+  },
+  "notificationDenied": {
+    "message": "Benachrichtigungen wurden nicht erlaubt. Die bisherige Einstellung bleibt erhalten."
+  },
+  "pasteClipboard": {
+    "message": "Aus Zwischenablage einfügen"
+  },
+  "clipboardHelp": {
+    "message": "Oben einen Wert auswählen, dann einfügen. Direkter Zugriff benötigt eine Berechtigung, manuelles Einfügen nicht."
+  },
+  "clipboardDenied": {
+    "message": "Zugriff auf die Zwischenablage wurde nicht erlaubt. Manuelles Einfügen ist weiterhin möglich."
+  },
+  "clipboardUnavailable": {
+    "message": "Zwischenablage konnte nicht gelesen werden. Bitte manuell in den ausgewählten Wert einfügen."
   }
 }

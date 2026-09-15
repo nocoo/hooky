@@ -322,5 +322,35 @@
   },
   "responseInvalidJson": {
     "message": "接收端返回了无效 JSON，按文本显示。"
+  },
+  "desktopNotifications": {
+    "message": "桌面通知"
+  },
+  "notificationsOff": {
+    "message": "关闭"
+  },
+  "notificationsErrors": {
+    "message": "仅错误及未确认结果"
+  },
+  "notificationsAll": {
+    "message": "全部结果"
+  },
+  "notificationsHelp": {
+    "message": "需要可选的浏览器权限。通知只显示模板名与通用状态，图标标记和结果面板始终可用。"
+  },
+  "notificationDenied": {
+    "message": "未获得通知权限，原设置保持不变。"
+  },
+  "pasteClipboard": {
+    "message": "从剪贴板粘贴"
+  },
+  "clipboardHelp": {
+    "message": "先选择上方参数框，再点击粘贴。直接读取剪贴板需要权限，手动粘贴不需要。"
+  },
+  "clipboardDenied": {
+    "message": "未获得剪贴板权限，仍可手动粘贴。"
+  },
+  "clipboardUnavailable": {
+    "message": "无法读取剪贴板，请手动粘贴到选中的参数框。"
   }
 }

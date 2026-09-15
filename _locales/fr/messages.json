@@ -322,5 +322,35 @@
   },
   "responseInvalidJson": {
     "message": "Le destinataire a renvoyé du JSON invalide. Affichage en texte."
+  },
+  "desktopNotifications": {
+    "message": "Notifications du bureau"
+  },
+  "notificationsOff": {
+    "message": "Désactivées"
+  },
+  "notificationsErrors": {
+    "message": "Erreurs et résultats non confirmés"
+  },
+  "notificationsAll": {
+    "message": "Tous les résultats"
+  },
+  "notificationsHelp": {
+    "message": "Autorisation facultative du navigateur. Les notifications affichent uniquement le nom du modèle et un état général. Les badges et le panneau des résultats restent disponibles."
+  },
+  "notificationDenied": {
+    "message": "L’autorisation de notification a été refusée. Le réglage précédent est conservé."
+  },
+  "pasteClipboard": {
+    "message": "Coller depuis le presse-papiers"
+  },
+  "clipboardHelp": {
+    "message": "Sélectionnez une valeur ci-dessus, puis collez. L’accès direct au presse-papiers nécessite une autorisation, contrairement au collage manuel."
+  },
+  "clipboardDenied": {
+    "message": "L’accès au presse-papiers a été refusé. Vous pouvez toujours coller manuellement."
+  },
+  "clipboardUnavailable": {
+    "message": "Impossible de lire le presse-papiers. Collez manuellement dans la valeur sélectionnée."
   }
 }

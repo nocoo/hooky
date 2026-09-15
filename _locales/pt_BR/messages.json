@@ -322,5 +322,35 @@
   },
   "responseInvalidJson": {
     "message": "O destinatário retornou JSON inválido. Exibindo como texto."
+  },
+  "desktopNotifications": {
+    "message": "Notificações na área de trabalho"
+  },
+  "notificationsOff": {
+    "message": "Desativadas"
+  },
+  "notificationsErrors": {
+    "message": "Erros e resultados não confirmados"
+  },
+  "notificationsAll": {
+    "message": "Todos os resultados"
+  },
+  "notificationsHelp": {
+    "message": "Permissão opcional do navegador. As notificações mostram apenas o nome do modelo e o estado geral. Os indicadores e o painel de resultados continuam disponíveis."
+  },
+  "notificationDenied": {
+    "message": "A permissão de notificação não foi concedida. A configuração anterior foi mantida."
+  },
+  "pasteClipboard": {
+    "message": "Colar da área de transferência"
+  },
+  "clipboardHelp": {
+    "message": "Selecione um valor acima e cole. O acesso direto exige permissão; colar manualmente não exige."
+  },
+  "clipboardDenied": {
+    "message": "O acesso à área de transferência não foi permitido. Você ainda pode colar manualmente."
+  },
+  "clipboardUnavailable": {
+    "message": "Não foi possível ler a área de transferência. Cole manualmente no valor selecionado."
   }
 }

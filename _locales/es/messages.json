@@ -322,5 +322,35 @@
   },
   "responseInvalidJson": {
     "message": "El receptor devolvió JSON no válido. Se muestra como texto."
+  },
+  "desktopNotifications": {
+    "message": "Notificaciones de escritorio"
+  },
+  "notificationsOff": {
+    "message": "Desactivadas"
+  },
+  "notificationsErrors": {
+    "message": "Errores y resultados sin confirmar"
+  },
+  "notificationsAll": {
+    "message": "Todos los resultados"
+  },
+  "notificationsHelp": {
+    "message": "Permiso opcional del navegador. Solo se muestran el nombre de la plantilla y el estado general. Los indicadores y el panel de resultados siguen disponibles."
+  },
+  "notificationDenied": {
+    "message": "No se concedió permiso para notificaciones. Se mantiene el ajuste anterior."
+  },
+  "pasteClipboard": {
+    "message": "Pegar desde el portapapeles"
+  },
+  "clipboardHelp": {
+    "message": "Selecciona un valor arriba y luego pega. El acceso directo al portapapeles requiere permiso; pegar manualmente no."
+  },
+  "clipboardDenied": {
+    "message": "No se concedió acceso al portapapeles. Puedes pegar manualmente."
+  },
+  "clipboardUnavailable": {
+    "message": "No se pudo leer el portapapeles. Pega manualmente en el valor seleccionado."
   }
 }

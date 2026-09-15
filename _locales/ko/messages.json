@@ -322,5 +322,35 @@
   },
   "responseInvalidJson": {
     "message": "올바르지 않은 JSON을 받았습니다. 텍스트로 표시합니다."
+  },
+  "desktopNotifications": {
+    "message": "데스크톱 알림"
+  },
+  "notificationsOff": {
+    "message": "끔"
+  },
+  "notificationsErrors": {
+    "message": "오류 및 확인되지 않은 결과만"
+  },
+  "notificationsAll": {
+    "message": "모든 결과"
+  },
+  "notificationsHelp": {
+    "message": "선택적 브라우저 권한이 필요합니다. 알림에는 템플릿 이름과 일반 상태만 표시됩니다. 배지와 결과 패널은 계속 사용할 수 있습니다."
+  },
+  "notificationDenied": {
+    "message": "알림 권한이 허용되지 않았습니다. 기존 설정을 유지합니다."
+  },
+  "pasteClipboard": {
+    "message": "클립보드에서 붙여넣기"
+  },
+  "clipboardHelp": {
+    "message": "위의 값을 선택한 뒤 붙여넣으세요. 클립보드를 직접 읽으려면 권한이 필요하지만 수동 붙여넣기에는 필요하지 않습니다."
+  },
+  "clipboardDenied": {
+    "message": "클립보드 권한이 허용되지 않았습니다. 수동으로 붙여넣을 수 있습니다."
+  },
+  "clipboardUnavailable": {
+    "message": "클립보드를 읽을 수 없습니다. 선택한 값에 수동으로 붙여넣으세요."
   }
 }

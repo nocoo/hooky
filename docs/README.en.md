@@ -25,6 +25,7 @@ A compact wisteria workspace in the hexly.ai family, with a current-page card, e
 - **Optional request headers**: Configure Authorization, X-API-Key, or other headers per template under Advanced. Previews always hide custom header values.
 - **Manual capture**: Type or paste multiline text into a parameter in the send panel. Edits apply to that send only.
 - **Optional receipts**: Enable response reading per template, bounded to 8 KiB and 3 seconds. Text or JSON is displayed only in the extension panel.
+- **Optional permissions**: Desktop notifications default to off, with settings for errors/unconfirmed results or all results. Focus a parameter and choose **Paste from clipboard** for an explicit clipboard read. These actions request their respective permissions; declining does not prevent sending or manual paste.
 - **Quick-send rules**: On a toolbar click, match the page URL or title in order. Send through the first enabled matching rule when its template is valid; otherwise open the popup.
 - **Context menu sending**: Choose a template from the right-click menu on a page, selection, link, or image.
 - **Result feedback**: All entry points show sending, success, receiver errors, or unconfirmed results. Quick-send and context menu actions show page feedback and persistent badges; the panel retains the latest result for this browser session.

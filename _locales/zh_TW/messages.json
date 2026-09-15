@@ -322,5 +322,35 @@
   },
   "responseInvalidJson": {
     "message": "接收端傳回無效 JSON，以文字顯示。"
+  },
+  "desktopNotifications": {
+    "message": "桌面通知"
+  },
+  "notificationsOff": {
+    "message": "關閉"
+  },
+  "notificationsErrors": {
+    "message": "僅錯誤與未確認結果"
+  },
+  "notificationsAll": {
+    "message": "全部結果"
+  },
+  "notificationsHelp": {
+    "message": "需要選用的瀏覽器權限。通知只顯示範本名稱與一般狀態，圖示標記及結果面板仍可使用。"
+  },
+  "notificationDenied": {
+    "message": "未取得通知權限，原設定保持不變。"
+  },
+  "pasteClipboard": {
+    "message": "從剪貼簿貼上"
+  },
+  "clipboardHelp": {
+    "message": "先選擇上方參數欄位，再按貼上。直接讀取剪貼簿需要權限，手動貼上不需要。"
+  },
+  "clipboardDenied": {
+    "message": "未取得剪貼簿權限，仍可手動貼上。"
+  },
+  "clipboardUnavailable": {
+    "message": "無法讀取剪貼簿，請手動貼上至選取的參數欄位。"
   }
 }

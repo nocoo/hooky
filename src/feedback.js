@@ -1,4 +1,5 @@
 import { t } from "./i18n.js";
+import { loadStore } from "./store.js";
 
 export const LAST_RESULT_KEY = "hookyLastResult";
 export const PAGE_FEEDBACK_TIMEOUT = 1500;
@@ -86,6 +87,19 @@ async function showBadge(result) {
   ]);
 }
 
+/** Permission is requested only by the settings gesture, never while sending. */
+export async function showDesktopNotification(result) {
+  if (result.state === "sending") return;
+  const mode = (await loadStore()).notificationMode;
+  if (mode !== "all" && !(mode === "errors" && result.state !== "success")) return;
+  if (!await chrome.permissions.contains({ permissions: ["notifications"] })) return;
+  await chrome.notifications.create("hooky:" + result.id, {
+    type: "basic", iconUrl: chrome.runtime.getURL("src/icons/icon128.png"),
+    title: `Hooky · ${result.name}`, message: resultMessage(result),
+    requireInteraction: result.state !== "success",
+  });
+}
+
 /** Serialize metadata updates so an older completion cannot replace a newer send. */
 export function publishResult(result, { tab, source, start = false } = {}) {
   const publish = writes.then(async () => {
@@ -98,6 +112,7 @@ export function publishResult(result, { tab, source, start = false } = {}) {
     if (!start && current[tabKey] && current[tabKey].id !== result.id) return;
     updates[tabKey] = result;
     await Promise.allSettled([chrome.storage.session.set(updates), showBadge(result)]);
+    await showDesktopNotification(result).catch(() => {});
 
     if (source === "popup" || result.tabId === null) return;
     let timer;

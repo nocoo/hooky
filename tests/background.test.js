@@ -55,6 +55,27 @@ async function loadBackground() {
 }
 
 describe("background.js", () => {
+  it("opens the panel from a desktop notification without sending", async () => {
+    await loadBackground();
+    const click = chrome.notifications.onClicked.addListener.mock.calls[0][0];
+    click("unrelated");
+    expect(chrome.action.openPopup).not.toHaveBeenCalled();
+    click("hooky:receipt");
+    await vi.waitFor(() => expect(chrome.action.openPopup).toHaveBeenCalledOnce());
+    chrome.action.openPopup.mockRejectedValue(new Error("window gone"));
+    chrome.tabs.create.mockRejectedValue(new Error("window gone"));
+    await Promise.resolve();
+    await Promise.resolve();
+    click("hooky:receipt");
+    await vi.waitFor(() => expect(chrome.tabs.create).toHaveBeenCalled());
+  });
+
+  it("starts normally if the optional notifications API is unavailable", async () => {
+    delete chrome.notifications;
+    await loadBackground();
+    expect(chrome.runtime.onMessage.addListener).toHaveBeenCalledOnce();
+  });
+
   it("responds with an error for a malformed send instead of leaving the popup waiting", async () => {
     await loadBackground();
     const respond = vi.fn();

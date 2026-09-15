@@ -193,6 +193,43 @@ describe("edited popup payloads", () => {
 
 
 describe("workspace feedback and failures", () => {
+  it("requests notifications only on an explicit setting change and handles denial", async () => {
+    await setup();
+    chrome.permissions = { request: vi.fn().mockResolvedValue(false) };
+    document.querySelector('[data-panel="panel-settings"]').click();
+    await vi.waitFor(() => expect(get("settings-form").style.display).toBe("block"));
+    expect(get("notification-mode").value).toBe("off");
+    expect(chrome.permissions.request).not.toHaveBeenCalled();
+    get("notification-mode").value = "all";
+    get("notification-mode").dispatchEvent(new Event("change"));
+    expect(chrome.permissions.request).toHaveBeenCalledWith({ permissions: ["notifications"] });
+    await vi.waitFor(() => expect(get("preferences-status").textContent).toBe(messages.notificationDenied.message));
+    expect(get("notification-mode").value).toBe("off");
+    expect(data.hooky.notificationMode).toBeUndefined();
+    chrome.permissions.request.mockResolvedValue(true);
+    get("notification-mode").value = "errors";
+    get("notification-mode").dispatchEvent(new Event("change"));
+    await vi.waitFor(() => expect(data.hooky.notificationMode).toBe("errors"));
+    expect(get("preferences-status").textContent).toBe(messages.saved.message);
+    chrome.permissions.request.mockClear();
+    get("notification-mode").value = "off";
+    get("notification-mode").dispatchEvent(new Event("change"));
+    await vi.waitFor(() => expect(data.hooky.notificationMode).toBe("off"));
+    expect(chrome.permissions.request).not.toHaveBeenCalled();
+  });
+
+  it("preserves the existing notification preference when saving fails", async () => {
+    await setup({ notificationMode: "all" });
+    document.querySelector('[data-panel="panel-settings"]').click();
+    await vi.waitFor(() => expect(get("notification-mode").value).toBe("all"));
+    chrome.storage.local.set.mockRejectedValue(new Error("Storage unavailable"));
+    get("notification-mode").value = "off";
+    get("notification-mode").dispatchEvent(new Event("change"));
+    await vi.waitFor(() => expect(get("preferences-status").textContent).toBe("Storage unavailable"));
+    expect(get("notification-mode").value).toBe("all");
+    expect(get("notification-mode").disabled).toBe(false);
+  });
+
   it("preserves selection when returning from settings and clears save feedback", async () => {
     await setup();
     document.querySelector('[data-panel="panel-settings"]').click();

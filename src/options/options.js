@@ -5,6 +5,7 @@ import {
   updateTemplate,
   deleteTemplate,
   setTheme,
+  setNotificationMode,
   migrateFromLegacy,
   addQuickSendRule,
   updateQuickSendRule,
@@ -19,6 +20,7 @@ import { buildHeaders, previewRequest } from "../webhook.js";
 
 const templateListEl = document.getElementById("template-list");
 const themeSelect = document.getElementById("theme-select");
+const notificationSelect = document.getElementById("notification-mode");
 
 const editorTitle = document.getElementById("editor-title");
 const editorEmpty = document.getElementById("editor-empty");
@@ -56,6 +58,7 @@ let currentSettingsItem = null;
 let editorMode = null; // "template" | "rule" | "rules-list" | "settings" | null
 let lastValueInput = null;
 let statusTimer;
+let notificationMode = "off";
 
 // ─── Sidebar navigation ───
 
@@ -287,6 +290,8 @@ function showSettings(store) {
   const theme = store.theme || "system";
   themeSelect.value = theme;
   applyTheme(theme);
+  notificationMode = store.notificationMode || "off";
+  notificationSelect.value = notificationMode;
 }
 
 // ─── Settings items ───
@@ -740,6 +745,24 @@ themeSelect.addEventListener("change", async () => {
   const theme = themeSelect.value;
   await setTheme(theme);
   applyTheme(theme);
+});
+
+notificationSelect.addEventListener("change", async () => {
+  const mode = notificationSelect.value;
+  const status = document.getElementById("preferences-status");
+  notificationSelect.disabled = true;
+  try {
+    // Call from the change gesture before any other await.
+    if (mode !== "off" && !await chrome.permissions.request({ permissions: ["notifications"] })) throw new Error("notificationDenied");
+    await setNotificationMode(mode);
+    notificationMode = mode;
+    status.textContent = t("saved");
+    status.classList.remove("error");
+  } catch (error) {
+    notificationSelect.value = notificationMode;
+    status.textContent = t(error.message);
+    status.classList.add("error");
+  } finally { notificationSelect.disabled = false; }
 });
 
 // ─── Start ───

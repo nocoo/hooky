@@ -16,11 +16,14 @@ const sendBtn = document.getElementById("send-btn");
 const settingsBtn = document.getElementById("settings-btn");
 const goSettingsBtn = document.getElementById("go-settings");
 const toastEl = document.getElementById("toast");
+const pasteBtn = document.getElementById("paste-clipboard");
 
 let currentTemplate = null;
 let pageContext = null;
 let currentTab = null;
 let toastTimer;
+let clipboardTarget = null;
+let clipboardBusy = false;
 
 function showToast(message, type = "success") {
   toastEl.textContent = message;
@@ -84,6 +87,8 @@ function renderParams(params, context) {
 
 function showTemplate(tpl) {
   currentTemplate = tpl;
+  clipboardTarget = null;
+  pasteBtn.disabled = true;
 
   const method = tpl.method || "POST";
   methodBadge.textContent = method;
@@ -101,11 +106,35 @@ function getResolvedParams() {
   for (const item of items) {
     const key = item.querySelector(".param-key").textContent;
     const input = item.querySelector("textarea");
-    if (input.value === input.dataset.originalValue) {
+    if (input.dataset.literal !== "true" && input.value === input.dataset.originalValue) {
       params.push({ key, value: input.dataset.originalTemplate, resolve: true });
     } else params.push({ key, value: input.value });
   }
   return params;
+}
+
+async function pasteClipboard() {
+  const target = clipboardTarget;
+  if (!target?.isConnected || clipboardBusy) return;
+  clipboardBusy = true;
+  pasteBtn.disabled = true;
+  try {
+    if (!await chrome.permissions.request({ permissions: ["clipboardRead"] })) {
+      showToast(t("clipboardDenied"), "error");
+      return;
+    }
+    const text = await navigator.clipboard.readText();
+    if (!target.isConnected || target !== clipboardTarget) return;
+    target.value = text;
+    target.dispatchEvent(new Event("input", { bubbles: true }));
+    target.focus();
+    toastEl.classList.remove("visible");
+  } catch {
+    showToast(t("clipboardUnavailable"), "error");
+  } finally {
+    clipboardBusy = false;
+    pasteBtn.disabled = !clipboardTarget?.isConnected;
+  }
 }
 
 function updateRequestPreview() {
@@ -205,7 +234,17 @@ templateSelect.addEventListener("change", async () => {
 settingsBtn.addEventListener("click", openSettings);
 goSettingsBtn.addEventListener("click", openSettings);
 sendBtn.addEventListener("click", sendWebhook);
-paramsPreview.addEventListener("input", updateRequestPreview);
+pasteBtn.addEventListener("click", pasteClipboard);
+paramsPreview.addEventListener("focusin", (event) => {
+  if (event.target.tagName === "TEXTAREA") {
+    clipboardTarget = event.target;
+    pasteBtn.disabled = clipboardBusy;
+  }
+});
+paramsPreview.addEventListener("input", (event) => {
+  event.target.dataset.literal = "true";
+  updateRequestPreview();
+});
 chrome.storage.onChanged.addListener((changes, area) => {
   if (area === "session" && changes[LAST_RESULT_KEY]?.newValue) renderLastResult(changes[LAST_RESULT_KEY].newValue);
 });

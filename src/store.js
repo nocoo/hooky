@@ -215,6 +215,12 @@ export async function setTheme(theme) {
   await saveStore(store);
 }
 
+export async function setNotificationMode(mode) {
+  const store = await loadStore();
+  store.notificationMode = mode;
+  await saveStore(store);
+}
+
 /**
  * Migrate from the legacy single-webhook format ({ webhook: {...} })
  * to the new multi-template format. Only runs if no templates exist yet

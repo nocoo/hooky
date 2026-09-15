@@ -322,5 +322,35 @@
   },
   "responseInvalidJson": {
     "message": "The receiver returned invalid JSON. Displaying it as text."
+  },
+  "desktopNotifications": {
+    "message": "Desktop notifications"
+  },
+  "notificationsOff": {
+    "message": "Off"
+  },
+  "notificationsErrors": {
+    "message": "Errors and unconfirmed results"
+  },
+  "notificationsAll": {
+    "message": "All results"
+  },
+  "notificationsHelp": {
+    "message": "Optional browser permission. Notifications show only the template name and generic status. Badges and the result panel remain available."
+  },
+  "notificationDenied": {
+    "message": "Notification permission was not granted. Your previous setting is unchanged."
+  },
+  "pasteClipboard": {
+    "message": "Paste from clipboard"
+  },
+  "clipboardHelp": {
+    "message": "Select a value above, then paste. Direct clipboard access requires permission; manual paste does not."
+  },
+  "clipboardDenied": {
+    "message": "Clipboard permission was not granted. You can still paste manually."
+  },
+  "clipboardUnavailable": {
+    "message": "The clipboard could not be read. Paste manually into the selected value."
   }
 }

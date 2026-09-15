@@ -47,3 +47,7 @@ chrome.action.onClicked.addListener((tab) => {
 chrome.contextMenus.onClicked.addListener((info, tab) => {
   ready.then(() => handleContextMenuClick(info, tab)).catch(() => openPanel().catch(() => {}));
 });
+
+chrome.notifications?.onClicked.addListener((id) => {
+  if (id.startsWith("hooky:")) openPanel().catch(() => {});
+});

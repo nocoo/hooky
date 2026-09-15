@@ -322,5 +322,35 @@
   },
   "responseInvalidJson": {
     "message": "無効な JSON が返されました。テキストとして表示します。"
+  },
+  "desktopNotifications": {
+    "message": "デスクトップ通知"
+  },
+  "notificationsOff": {
+    "message": "オフ"
+  },
+  "notificationsErrors": {
+    "message": "エラーと未確認の結果のみ"
+  },
+  "notificationsAll": {
+    "message": "すべての結果"
+  },
+  "notificationsHelp": {
+    "message": "任意のブラウザ権限が必要です。通知にはテンプレート名と一般的な状態のみを表示します。バッジと結果パネルは常に利用できます。"
+  },
+  "notificationDenied": {
+    "message": "通知の権限が許可されませんでした。以前の設定を維持します。"
+  },
+  "pasteClipboard": {
+    "message": "クリップボードから貼り付け"
+  },
+  "clipboardHelp": {
+    "message": "上の値を選択してから貼り付けてください。直接の読み取りには権限が必要ですが、手動の貼り付けには不要です。"
+  },
+  "clipboardDenied": {
+    "message": "クリップボードの権限が許可されませんでした。手動で貼り付けられます。"
+  },
+  "clipboardUnavailable": {
+    "message": "クリップボードを読み取れませんでした。選択した値に手動で貼り付けてください。"
   }
 }

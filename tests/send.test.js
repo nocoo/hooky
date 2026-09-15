@@ -203,3 +203,30 @@ describe("viewing and recovering results", () => {
     expect(feedback.resultMessage({ state: "failed", status: 401 })).toContain("401");
   });
 });
+
+describe("optional desktop notifications", () => {
+  it.each([
+    [undefined, "success", false], ["off", "failed", false], ["invalid", "failed", false],
+    ["errors", "success", false], ["errors", "failed", true], ["errors", "unknown", true], ["all", "success", true],
+  ])("respects mode %s for %s outcomes", async (notificationMode, state, expected) => {
+    chrome.storage.local.get.mockResolvedValue({ hooky: { notificationMode } });
+    chrome.permissions.contains.mockResolvedValue(true);
+    const result = { id: "notice", name: "Save", state, status: 201, ok: state === "success", receipt: { text: "private-receipt" } };
+    await feedback.showDesktopNotification(result);
+    expect(chrome.notifications.create).toHaveBeenCalledTimes(expected ? 1 : 0);
+    expect(chrome.permissions.request).not.toHaveBeenCalled();
+    expect(JSON.stringify(chrome.notifications.create.mock.calls)).not.toContain("private-receipt");
+  });
+
+  it("keeps the result available when permission is revoked or notification delivery fails", async () => {
+    chrome.storage.local.get.mockResolvedValue({ hooky: { notificationMode: "all" } });
+    await sendWebhook(config, context, { tab });
+    expect(chrome.notifications.create).not.toHaveBeenCalled();
+    chrome.permissions.contains.mockResolvedValue(true);
+    chrome.notifications.create.mockRejectedValue(new Error("not available"));
+    const result = await sendWebhook(config, context, { tab });
+    expect(result.state).toBe("success");
+    expect(session.hookyLastResult).toEqual(result);
+    expect(chrome.action.setBadgeText).toHaveBeenLastCalledWith({ tabId: 7, text: "✓" });
+  });
+});

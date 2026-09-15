@@ -7,6 +7,7 @@ const messages = JSON.parse(readFileSync("_locales/en/messages.json", "utf8"));
 export function addFeedbackChrome(target, initial = {}) {
   const session = structuredClone(initial);
   target.storage ||= {};
+  target.storage.local ||= { get: vi.fn().mockResolvedValue({}) };
   target.storage.session = {
     get: vi.fn(async (keys) => {
       if (keys === null) return structuredClone(session);
@@ -33,5 +34,7 @@ export function addFeedbackChrome(target, initial = {}) {
   target.runtime ||= {};
   target.runtime.getURL ||= (path) => "chrome-extension://hooky/" + path;
   target.runtime.sendMessage ||= vi.fn().mockResolvedValue({ ok: true });
+  target.permissions ||= { contains: vi.fn().mockResolvedValue(false), request: vi.fn().mockResolvedValue(false) };
+  target.notifications ||= { create: vi.fn().mockResolvedValue("notice"), onClicked: { addListener: vi.fn() } };
   return session;
 }
