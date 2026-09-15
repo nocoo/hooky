@@ -18,12 +18,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Optional per-template response reading, bounded while streaming to 8 KiB and 3 seconds, with plain-text session-only receipt display.
 - Opt-in desktop notification modes and an explicit clipboard-paste action, with permissions requested only from the relevant user gesture.
 - Optional JSON message/receipt field mappings and type-sensitive business success rules that preserve the HTTP outcome as separate evidence.
+- Per-template completed duplicate protection with bounded session fingerprints, a configurable window, and an explicit Send anyway action backed by a short-lived in-memory capture.
 
 ### Fixed
 
 - Preserve the selection supplied by a context-menu event, including selections inside frames.
 - Keep older completions from replacing a newer send's result or badge.
 - Keep stalled page feedback from delaying transport or overwriting a final outcome.
+- Coalesce identical pending requests across tabs, preserve the latest observed action, and restrict capture previews and execution messages to the extension's send panel.
 
 ## [2.0.0] - 2026-09-14
 

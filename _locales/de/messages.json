@@ -397,5 +397,29 @@
   },
   "receiptMessage": {
     "message": "Nachricht"
+  },
+  "duplicateProtection": {
+    "message": "Wiederholtes Senden bestätigen"
+  },
+  "duplicateWindow": {
+    "message": "Zeitfenster (Sekunden)"
+  },
+  "duplicateHelp": {
+    "message": "Standardmäßig aus. Identische Anfragen dieser Vorlage innerhalb des Zeitfensters zeigen das vorherige Ergebnis. Erneutes Senden ist ausdrücklich über die Ergebnisansicht möglich."
+  },
+  "duplicateSkipped": {
+    "message": "Wiederholte Anfrage übersprungen. Das vorherige Ergebnis wird angezeigt."
+  },
+  "sendAnyway": {
+    "message": "Trotzdem senden"
+  },
+  "sendAnywayHelp": {
+    "message": "Erfassung prüfen, dann mit einer neuen Sende-ID erneut senden. Nur kurz verfügbar, solange der Hintergrundprozess die ursprünglichen Daten behält."
+  },
+  "captureExpired": {
+    "message": "Diese Erfassung ist nicht mehr verfügbar. Inhalt erneut erfassen oder einfügen, bevor Sie senden."
+  },
+  "duplicateCheckFailed": {
+    "message": "Letzte Sendungen konnten nicht geprüft oder gespeichert werden. Es wurde keine Anfrage gesendet. Nach Wiederherstellung des Sitzungsspeichers erneut versuchen."
   }
 }

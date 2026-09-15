@@ -397,5 +397,29 @@
   },
   "receiptMessage": {
     "message": "Message"
+  },
+  "duplicateProtection": {
+    "message": "Warn about repeated sends"
+  },
+  "duplicateWindow": {
+    "message": "Time window (seconds)"
+  },
+  "duplicateHelp": {
+    "message": "Off by default. Identical requests for this template within the window show the previous result. You can explicitly send again from the result panel."
+  },
+  "duplicateSkipped": {
+    "message": "Repeated request skipped. Showing the previous result."
+  },
+  "sendAnyway": {
+    "message": "Send anyway"
+  },
+  "sendAnywayHelp": {
+    "message": "Review this capture, then send again with a new send ID. Available briefly while the background worker retains it."
+  },
+  "captureExpired": {
+    "message": "This capture is no longer available. Capture or paste the content again before sending."
+  },
+  "duplicateCheckFailed": {
+    "message": "Recent sends could not be checked or recorded. No request was sent. Try again after session storage is available."
   }
 }

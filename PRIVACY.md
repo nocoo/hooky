@@ -16,6 +16,8 @@ Response reading is off by default and enabled separately for each template. Whe
 
 Optional JSON field mappings and business success rules are stored with their template. Extracted messages and receipt IDs are limited to 1,000 characters each and retained only with the opted-in session receipt. Field traversal reads own JSON properties and does not execute expressions or code. A business rule can report failure or an unconfirmed outcome while preserving the underlying HTTP status.
 
+Completed duplicate protection is also off by default and enabled per template. It uses SHA-256 request fingerprints and up to 50 recent summaries in session storage, including receipts only when response reading was enabled. Comparison windows range from 1 to 300 seconds; expired entries are pruned on subsequent use. Raw requests and credentials are not stored in this history. When a duplicate is blocked, up to 20 original captures may be held only in background memory for **Send anyway**, for at most 60 seconds or until the worker stops. The extension panel can request a masked preview of that capture; page scripts cannot retrieve it or execute a send. Explicit repeats use a new send ID; automatic replay is never performed.
+
 Notification preferences are also stored locally and default to off. You can choose errors/unconfirmed results or all results. If enabled and permitted, desktop notifications show only the template name and generic status, never captured text, credentials, or receipts. Browser and OS settings can suppress notifications; badges and the result panel remain available. Switching notifications off stops delivery; previously granted permissions can also be revoked in Chrome's extension settings.
 
 ## Page data and requests

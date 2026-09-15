@@ -17,6 +17,7 @@ const settingsBtn = document.getElementById("settings-btn");
 const goSettingsBtn = document.getElementById("go-settings");
 const toastEl = document.getElementById("toast");
 const pasteBtn = document.getElementById("paste-clipboard");
+const sendAnywayBtn = document.getElementById("send-anyway");
 
 let currentTemplate = null;
 let pageContext = null;
@@ -24,6 +25,8 @@ let currentTab = null;
 let toastTimer;
 let clipboardTarget = null;
 let clipboardBusy = false;
+let duplicateToken = null;
+let lastRenderedAt = 0;
 
 function showToast(message, type = "success") {
   toastEl.textContent = message;
@@ -34,6 +37,9 @@ function showToast(message, type = "success") {
 
 function renderLastResult(result) {
   if (!result?.id) return;
+  const observedAt = result.lastActionAt || result.startedAt;
+  if (observedAt < lastRenderedAt) return;
+  lastRenderedAt = observedAt;
   document.getElementById("last-result").hidden = false;
   document.getElementById("last-result-name").textContent = result.name;
   document.getElementById("last-result-time").textContent = new Date(result.startedAt).toLocaleTimeString();
@@ -56,6 +62,27 @@ function renderLastResult(result) {
     const value = document.createElement("dd");
     value.textContent = result.receipt[key];
     fields.append(label, value);
+  }
+  const token = result.duplicateToken || null;
+  document.getElementById("duplicate-actions").hidden = !token;
+  if (duplicateToken === token) return;
+  duplicateToken = token;
+  sendAnywayBtn.disabled = true;
+  document.getElementById("duplicate-preview").textContent = "";
+  if (!token) return;
+  chrome.runtime.sendMessage({ type: "GET_DUPLICATE_CAPTURE", token }).catch(() => null).then((capture) => {
+    if (duplicateToken !== token) return;
+    document.getElementById("duplicate-preview").textContent = capture?.preview || t("captureExpired");
+    sendAnywayBtn.disabled = !capture?.preview;
+  });
+}
+
+function showSendResult(result) {
+  renderLastResult(result);
+  if (result?.ok) showToast(resultMessage(result), "success");
+  else {
+    const msg = result?.state ? resultMessage(result) : result?.error || t("failedStatus", [String(result?.status || "unknown")]);
+    showToast(msg, "error");
   }
 }
 
@@ -178,13 +205,7 @@ async function sendWebhook() {
       tab: currentTab,
     });
 
-    renderLastResult(result);
-    if (result?.ok) {
-      showToast(resultMessage(result), "success");
-    } else {
-      const msg = result?.state ? resultMessage(result) : result?.error || t("failedStatus", [String(result?.status || "unknown")]);
-      showToast(msg, "error");
-    }
+    showSendResult(result);
   } catch (err) {
     showToast(err.message || t("requestFailed"), "error");
   } finally {
@@ -247,6 +268,12 @@ templateSelect.addEventListener("change", async () => {
 settingsBtn.addEventListener("click", openSettings);
 goSettingsBtn.addEventListener("click", openSettings);
 sendBtn.addEventListener("click", sendWebhook);
+sendAnywayBtn.addEventListener("click", async () => {
+  if (!duplicateToken || sendAnywayBtn.disabled) return;
+  sendAnywayBtn.disabled = true;
+  try { showSendResult(await chrome.runtime.sendMessage({ type: "SEND_ANYWAY", token: duplicateToken })); }
+  catch { showToast(t("captureExpired"), "error"); }
+});
 pasteBtn.addEventListener("click", pasteClipboard);
 paramsPreview.addEventListener("focusin", (event) => {
   if (event.target.tagName === "TEXTAREA") {

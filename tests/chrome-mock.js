@@ -32,6 +32,7 @@ export function addFeedbackChrome(target, initial = {}) {
   target.tabs ||= {};
   target.tabs.create ||= vi.fn().mockResolvedValue();
   target.runtime ||= {};
+  target.runtime.id ||= "hooky";
   target.runtime.getURL ||= (path) => "chrome-extension://hooky/" + path;
   target.runtime.sendMessage ||= vi.fn().mockResolvedValue({ ok: true });
   target.permissions ||= { contains: vi.fn().mockResolvedValue(false), request: vi.fn().mockResolvedValue(false) };

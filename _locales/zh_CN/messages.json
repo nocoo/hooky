@@ -397,5 +397,29 @@
   },
   "receiptMessage": {
     "message": "消息"
+  },
+  "duplicateProtection": {
+    "message": "提醒重复发送"
+  },
+  "duplicateWindow": {
+    "message": "时间窗（秒）"
+  },
+  "duplicateHelp": {
+    "message": "默认关闭。此模板在时间窗内的相同请求会显示上次结果，可从结果面板明确选择再次发送。"
+  },
+  "duplicateSkipped": {
+    "message": "已拦下重复请求，显示上次结果。"
+  },
+  "sendAnyway": {
+    "message": "仍然发送"
+  },
+  "sendAnywayHelp": {
+    "message": "先检查这次采集，再以新发送 ID 重发。该操作仅在后台短暂保留原始采集时可用。"
+  },
+  "captureExpired": {
+    "message": "这次采集已不可用，请重新采集或粘贴内容后发送。"
+  },
+  "duplicateCheckFailed": {
+    "message": "无法检查或记录最近发送，尚未发出请求。请在会话存储恢复后再试。"
   }
 }

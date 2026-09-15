@@ -397,5 +397,29 @@
   },
   "receiptMessage": {
     "message": "Message"
+  },
+  "duplicateProtection": {
+    "message": "Confirmer les envois répétés"
+  },
+  "duplicateWindow": {
+    "message": "Délai (secondes)"
+  },
+  "duplicateHelp": {
+    "message": "Désactivé par défaut. Une requête identique pour ce modèle dans ce délai affiche le résultat précédent. Vous pouvez renvoyer explicitement depuis le panneau des résultats."
+  },
+  "duplicateSkipped": {
+    "message": "Requête répétée ignorée. Affichage du résultat précédent."
+  },
+  "sendAnyway": {
+    "message": "Envoyer quand même"
+  },
+  "sendAnywayHelp": {
+    "message": "Vérifiez cette capture, puis renvoyez avec un nouvel identifiant. Disponible brièvement tant que le processus en arrière-plan conserve la capture."
+  },
+  "captureExpired": {
+    "message": "Cette capture n’est plus disponible. Capturez ou collez à nouveau le contenu avant l’envoi."
+  },
+  "duplicateCheckFailed": {
+    "message": "Impossible de vérifier ou d’enregistrer les envois récents. Aucune requête n’a été envoyée. Réessayez quand le stockage de session sera disponible."
   }
 }

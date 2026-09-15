@@ -9,12 +9,14 @@ let writes = Promise.resolve();
 let opening;
 
 export function resultMessage(result) {
-  if (result.state === "sending") return t("sending");
-  if (result.state === "unknown") return t("requestUnconfirmed");
-  if (result.error) return t(result.error);
-  if (result.business === "matched" && result.ok) return t("businessConfirmed");
-  if (result.status === 202) return t("requestAccepted");
-  return t(result.ok ? "successStatus" : "failedStatus", [String(result.status)]);
+  let message;
+  if (result.state === "sending") message = t("sending");
+  else if (result.error) message = t(result.error);
+  else if (result.state === "unknown") message = t("requestUnconfirmed");
+  else if (result.business === "matched" && result.ok) message = t("businessConfirmed");
+  else if (result.status === 202) message = t("requestAccepted");
+  else message = t(result.ok ? "successStatus" : "failedStatus", [String(result.status)]);
+  return result.duplicateToken ? `${t("duplicateSkipped")} ${message}` : message;
 }
 
 /** Viewing the panel never evaluates a Quick Send rule. */
@@ -71,7 +73,7 @@ export function showPageFeedback(result, message, labels, expectedUrl) {
   root.appendChild(card);
   if (result.state === "success") {
     setTimeout(() => {
-      if (mount.dataset.sendId === result.id) mount.remove();
+      if (mount.dataset.sendId === result.id && mount.dataset.startedAt === String(result.startedAt)) mount.remove();
     }, 8000);
   }
   return true;
@@ -109,8 +111,9 @@ export function publishResult(result, { tab, source, start = false } = {}) {
     try { current = await chrome.storage.session.get([LAST_RESULT_KEY, tabKey]); }
     catch { /* Live feedback remains available if session storage is unavailable. */ }
     const updates = {};
-    if (start || current[LAST_RESULT_KEY]?.id === result.id) updates[LAST_RESULT_KEY] = result;
-    if (!start && current[tabKey] && current[tabKey].id !== result.id) return;
+    const canReplace = (previous) => !previous || ((start || previous.id === result.id) && (previous.lastActionAt || previous.startedAt) <= (result.lastActionAt || result.startedAt));
+    if (canReplace(current[LAST_RESULT_KEY])) updates[LAST_RESULT_KEY] = result;
+    if (!canReplace(current[tabKey])) return;
     updates[tabKey] = result;
     await Promise.allSettled([chrome.storage.session.set(updates), showBadge(result)]);
     await showDesktopNotification(result).catch(() => {});
@@ -122,7 +125,7 @@ export function publishResult(result, { tab, source, start = false } = {}) {
         target: { tabId: result.tabId },
         func: showPageFeedback,
         args: [
-          { id: result.id, name: result.name, state: result.state, startedAt: result.startedAt },
+          { id: result.id, name: result.name, state: result.state, startedAt: result.lastActionAt || result.startedAt },
           resultMessage(result), { view: t("viewLastResult"), close: t("dismiss") }, tab.url,
         ],
       }), new Promise((resolve) => { timer = setTimeout(() => resolve([]), PAGE_FEEDBACK_TIMEOUT); })]);

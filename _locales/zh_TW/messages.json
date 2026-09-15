@@ -397,5 +397,29 @@
   },
   "receiptMessage": {
     "message": "訊息"
+  },
+  "duplicateProtection": {
+    "message": "提醒重複傳送"
+  },
+  "duplicateWindow": {
+    "message": "時間窗（秒）"
+  },
+  "duplicateHelp": {
+    "message": "預設關閉。此範本在時間窗內的相同請求會顯示上次結果，可從結果面板明確選擇再次傳送。"
+  },
+  "duplicateSkipped": {
+    "message": "已攔下重複請求，顯示上次結果。"
+  },
+  "sendAnyway": {
+    "message": "仍然傳送"
+  },
+  "sendAnywayHelp": {
+    "message": "先檢查這次擷取，再以新的傳送 ID 重傳。此操作僅在背景短暫保留原始擷取時可用。"
+  },
+  "captureExpired": {
+    "message": "這次擷取已無法使用，請重新擷取或貼上內容後傳送。"
+  },
+  "duplicateCheckFailed": {
+    "message": "無法檢查或記錄最近傳送，尚未發出請求。請在工作階段儲存恢復後再試。"
   }
 }

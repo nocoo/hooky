@@ -403,6 +403,9 @@ async function selectTemplate(id) {
   document.getElementById("response-id-path").value = tpl.response?.receiptPath || "";
   document.getElementById("response-success-path").value = tpl.response?.successPath || "";
   document.getElementById("response-success-value").value = tpl.response?.successValue ?? "true";
+  document.getElementById("duplicate-protection").checked = tpl.duplicateWindow > 0;
+  document.getElementById("duplicate-window").value = tpl.duplicateWindow || 10;
+  document.getElementById("duplicate-window").disabled = !document.getElementById("duplicate-protection").checked;
   lastValueInput = null;
   updatePreview();
 }
@@ -540,6 +543,7 @@ function populateRuleTemplateSelect(templates, selectedId) {
 async function saveCurrentTemplate() {
   if (!currentTemplateId) return;
   if (!urlInput.reportValidity()) return;
+  if (document.getElementById("duplicate-protection").checked && !document.getElementById("duplicate-window").reportValidity()) return;
 
   const changes = {
     name: nameInput.value.trim() || t("defaultTemplateName"),
@@ -548,6 +552,7 @@ async function saveCurrentTemplate() {
     params: getParams(),
     headers: getParams(headersList, "header"),
     response: getResponseConfig(),
+    duplicateWindow: document.getElementById("duplicate-protection").checked ? Number(document.getElementById("duplicate-window").value) : 0,
   };
 
   buildHeaders(changes.headers, { send: { id: "{{send.id}}" } });
@@ -712,6 +717,9 @@ showHeaderValues.addEventListener("change", () => {
 document.getElementById("read-response").addEventListener("change", (event) => {
   document.getElementById("response-fields").disabled = !event.target.checked;
   updatePreview();
+});
+document.getElementById("duplicate-protection").addEventListener("change", (event) => {
+  document.getElementById("duplicate-window").disabled = !event.target.checked;
 });
 
 editorForm.addEventListener("input", updatePreview);

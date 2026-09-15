@@ -57,6 +57,16 @@ it("ignores a delayed sending toast after its final outcome has already appeared
   expect(mount().shadowRoot.textContent).not.toContain("Delayed sending");
 });
 
+it("keeps a repeated-result toast for its own full lifetime", async () => {
+  showPageFeedback({ ...result, state: "success" }, "Done", labels, location.href);
+  await vi.advanceTimersByTimeAsync(4000);
+  showPageFeedback({ ...result, state: "success", startedAt: 2 }, "Repeated request skipped", labels, location.href);
+  await vi.advanceTimersByTimeAsync(4000);
+  expect(mount().shadowRoot.textContent).toContain("Repeated request skipped");
+  await vi.advanceTimersByTimeAsync(4000);
+  expect(mount()).toBeNull();
+});
+
 it("allows result viewing to fail without an unhandled page error", async () => {
   chrome.runtime.sendMessage.mockRejectedValue(new Error("extension unavailable"));
   showPageFeedback({ ...result, state: "unknown" }, "Unconfirmed", labels, location.href);

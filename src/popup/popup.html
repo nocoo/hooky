@@ -30,6 +30,7 @@
       <p class="eyebrow" data-i18n="viewLastResult">Latest send</p>
       <div class="result-heading"><strong id="last-result-name"></strong><time id="last-result-time"></time></div>
       <p id="last-result-status"></p>
+      <div id="duplicate-actions" hidden><p class="hint" data-i18n="sendAnywayHelp">Review this capture, then send again with a new send ID. Available briefly while the background worker retains it.</p><details><summary data-i18n="requestPreview">Request preview</summary><pre id="duplicate-preview"></pre></details><button type="button" id="send-anyway" class="btn-secondary" data-i18n="sendAnyway" disabled>Send anyway</button></div>
       <p id="last-result-http" class="hint" hidden></p>
       <details id="last-response" hidden><summary data-i18n="responseReceipt">Response / receipt</summary><p id="response-note" class="hint"></p><p id="response-field-note" class="hint"></p><dl id="response-fields-summary"></dl><pre id="response-body"></pre></details>
       <details><summary data-i18n="sendDetails">Send details</summary><code id="last-result-id"></code><p class="hint" data-i18n="sessionResultHint">Kept for this browser session. Request content is not recorded.</p></details>

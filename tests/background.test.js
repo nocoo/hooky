@@ -54,7 +54,45 @@ async function loadBackground() {
   await import("../src/background.js");
 }
 
+const popupSender = () => ({ id: chrome.runtime.id, url: chrome.runtime.getURL("src/popup/popup.html") });
+
 describe("background.js", () => {
+  it.each(["EXECUTE_WEBHOOK", "GET_DUPLICATE_CAPTURE", "SEND_ANYWAY"])("accepts %s only from the extension's send panel", async (type) => {
+    await loadBackground();
+    const respond = vi.fn();
+    for (const sender of [
+      { id: "another-extension", url: popupSender().url },
+      { id: chrome.runtime.id, url: "https://example.com" },
+      { id: chrome.runtime.id },
+    ]) {
+      expect(onMessageListeners[0]({ type }, sender, respond)).toBe(false);
+      expect(respond).toHaveBeenLastCalledWith({ ok: false, state: "failed", error: "requestFailed" });
+    }
+  });
+
+  it("serves a masked transient preview and reports expired captures without sending", async () => {
+    await loadBackground();
+    const respond = vi.fn();
+    const { holdDuplicate } = await import("../src/duplicates.js");
+    const token = holdDuplicate({ url: "https://example.com", method: "POST", params: [], headers: [{ key: "X-Key", value: "secret" }] }, {}, { resolved: false });
+    onMessageListeners[0]({ type: "GET_DUPLICATE_CAPTURE", token }, { ...popupSender(), url: popupSender().url + "?view=last" }, respond);
+    expect(respond.mock.calls[0][0].preview).toContain("x-key: ••••");
+    expect(respond.mock.calls[0][0].preview).not.toContain("secret");
+    onMessageListeners[0]({ type: "SEND_ANYWAY", token: "expired" }, popupSender(), respond);
+    await vi.waitFor(() => expect(respond).toHaveBeenLastCalledWith({ ok: false, state: "failed", error: "captureExpired" }));
+  });
+
+  it("responds if an explicit repeat cannot be started", async () => {
+    await loadBackground();
+    const { holdDuplicate } = await import("../src/duplicates.js");
+    const token = holdDuplicate({ url: "https://example.com", method: "POST", params: [] }, {}, {});
+    const random = vi.spyOn(crypto, "randomUUID").mockImplementationOnce(() => { throw new Error("unavailable"); });
+    const respond = vi.fn();
+    onMessageListeners[0]({ type: "SEND_ANYWAY", token }, popupSender(), respond);
+    await vi.waitFor(() => expect(respond).toHaveBeenCalledWith({ ok: false, state: "failed", error: "requestFailed" }));
+    random.mockRestore();
+  });
+
   it("opens the panel from a desktop notification without sending", async () => {
     await loadBackground();
     const click = chrome.notifications.onClicked.addListener.mock.calls[0][0];
@@ -79,7 +117,7 @@ describe("background.js", () => {
   it("responds with an error for a malformed send instead of leaving the popup waiting", async () => {
     await loadBackground();
     const respond = vi.fn();
-    onMessageListeners[0]({ type: "EXECUTE_WEBHOOK" }, {}, respond);
+    onMessageListeners[0]({ type: "EXECUTE_WEBHOOK" }, popupSender(), respond);
     await vi.waitFor(() => expect(respond).toHaveBeenCalledWith({ ok: false, state: "failed", error: "requestFailed" }));
   });
 
@@ -195,7 +233,7 @@ describe("background.js", () => {
         },
         context: { page: {} },
       },
-      {},
+      popupSender(),
       sendResponse,
     );
 

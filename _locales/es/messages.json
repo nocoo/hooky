@@ -397,5 +397,29 @@
   },
   "receiptMessage": {
     "message": "Mensaje"
+  },
+  "duplicateProtection": {
+    "message": "Confirmar envíos repetidos"
+  },
+  "duplicateWindow": {
+    "message": "Intervalo (segundos)"
+  },
+  "duplicateHelp": {
+    "message": "Desactivado por defecto. Las solicitudes idénticas de esta plantilla dentro del intervalo muestran el resultado anterior. Puedes reenviar explícitamente desde el panel de resultados."
+  },
+  "duplicateSkipped": {
+    "message": "Solicitud repetida omitida. Se muestra el resultado anterior."
+  },
+  "sendAnyway": {
+    "message": "Enviar de todos modos"
+  },
+  "sendAnywayHelp": {
+    "message": "Revisa esta captura y reenvía con un nuevo ID. Disponible brevemente mientras el proceso en segundo plano conserva la captura original."
+  },
+  "captureExpired": {
+    "message": "Esta captura ya no está disponible. Captura o pega el contenido de nuevo antes de enviarlo."
+  },
+  "duplicateCheckFailed": {
+    "message": "No se pudieron comprobar o registrar los envíos recientes. No se envió ninguna solicitud. Reintenta cuando el almacenamiento de sesión esté disponible."
   }
 }

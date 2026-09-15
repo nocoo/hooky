@@ -68,6 +68,63 @@ async function setupPageContextMock(contextData) {
 }
 
 describe("popup.js", () => {
+  it("previews a blocked capture and repeats it only through the explicit action", async () => {
+    setupChromeMock({ hooky: { templates: [] } });
+    const result = { id: "previous", name: "Save", startedAt: 10, lastActionAt: 20, state: "success", ok: true, status: 201, duplicateToken: "token" };
+    await chrome.storage.session.set({ hookyLastResult: result });
+    chrome.runtime.sendMessage.mockResolvedValueOnce({ preview: "POST https://example.com\nx-key: ••••" }).mockResolvedValueOnce({ id: "new", name: "Save", startedAt: 30, state: "success", ok: true, status: 201 });
+    await import("../src/popup/popup.js");
+    const button = document.getElementById("send-anyway");
+    await vi.waitFor(() => expect(button.disabled).toBe(false));
+    expect(chrome.runtime.sendMessage).toHaveBeenCalledTimes(1);
+    expect(chrome.runtime.sendMessage).toHaveBeenCalledWith({ type: "GET_DUPLICATE_CAPTURE", token: "token" });
+    expect(document.getElementById("duplicate-preview").textContent).toContain("••••");
+    button.click();
+    button.dispatchEvent(new Event("click"));
+    await vi.waitFor(() => expect(chrome.runtime.sendMessage).toHaveBeenCalledWith({ type: "SEND_ANYWAY", token: "token" }));
+    expect(chrome.runtime.sendMessage).toHaveBeenCalledTimes(2);
+    await vi.waitFor(() => expect(document.getElementById("duplicate-actions").hidden).toBe(true));
+    const changed = chrome.storage.onChanged.addListener.mock.calls[0][0];
+    changed({ hookyLastResult: { newValue: { ...result, duplicateToken: undefined, lastActionAt: 15 } } }, "session");
+    expect(document.getElementById("last-result-id").textContent).toBe("new");
+  });
+
+  it("disables the repeat action for expired captures and failed preview reads", async () => {
+    setupChromeMock({ hooky: { templates: [] } });
+    await chrome.storage.session.set({ hookyLastResult: { id: "old", name: "Save", startedAt: 10, state: "success", ok: true, duplicateToken: "expired" } });
+    chrome.runtime.sendMessage.mockRejectedValue(new Error("worker stopped"));
+    await import("../src/popup/popup.js");
+    await vi.waitFor(() => expect(document.getElementById("duplicate-preview").textContent).toBe("captureExpired"));
+    expect(document.getElementById("send-anyway").disabled).toBe(true);
+  });
+
+  it("does not apply a stale preview after another send becomes the latest result", async () => {
+    setupChromeMock({ hooky: { templates: [] } });
+    let finish;
+    chrome.runtime.sendMessage.mockImplementation(() => new Promise((resolve) => { finish = resolve; }));
+    await chrome.storage.session.set({ hookyLastResult: { id: "old", name: "Save", startedAt: 10, state: "success", ok: true, duplicateToken: "old-token" } });
+    await import("../src/popup/popup.js");
+    await vi.waitFor(() => expect(chrome.runtime.sendMessage).toHaveBeenCalled());
+    const changed = chrome.storage.onChanged.addListener.mock.calls[0][0];
+    changed({ hookyLastResult: { newValue: { id: "new", name: "New", startedAt: 20, state: "sending" } } }, "session");
+    finish({ preview: "stale capture" });
+    await Promise.resolve();
+    await Promise.resolve();
+    expect(document.getElementById("duplicate-preview").textContent).toBe("");
+    expect(document.getElementById("duplicate-actions").hidden).toBe(true);
+  });
+
+  it("reports a repeat that cannot reach the background without retrying", async () => {
+    setupChromeMock({ hooky: { templates: [] } });
+    await chrome.storage.session.set({ hookyLastResult: { id: "old", name: "Save", startedAt: 10, state: "success", ok: true, duplicateToken: "token" } });
+    chrome.runtime.sendMessage.mockResolvedValueOnce({ preview: "POST https://example.com" }).mockRejectedValueOnce(new Error("worker unavailable"));
+    await import("../src/popup/popup.js");
+    await vi.waitFor(() => expect(document.getElementById("send-anyway").disabled).toBe(false));
+    document.getElementById("send-anyway").click();
+    await vi.waitFor(() => expect(document.getElementById("toast").textContent).toBe("captureExpired"));
+    expect(chrome.runtime.sendMessage).toHaveBeenCalledTimes(2);
+  });
+
   it("shows mapped receipt fields safely and retains HTTP evidence for a business failure", async () => {
     setupChromeMock({ hooky: { templates: [] } });
     await chrome.storage.session.set({ hookyLastResult: { id: "business", name: "Save", startedAt: Date.now(), status: 200, business: "rejected", ok: false, state: "failed", error: "businessRejected", receipt: { receiptId: "r1", message: "<script>attack()</script>", fieldNote: "responseFieldMissing" } } });

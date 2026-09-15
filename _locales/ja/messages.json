@@ -397,5 +397,29 @@
   },
   "receiptMessage": {
     "message": "メッセージ"
+  },
+  "duplicateProtection": {
+    "message": "繰り返し送信を確認する"
+  },
+  "duplicateWindow": {
+    "message": "時間枠（秒）"
+  },
+  "duplicateHelp": {
+    "message": "初期設定はオフ。同じテンプレートの同一リクエストが時間枠内にあれば、前回の結果を表示します。結果パネルから明示的に再送できます。"
+  },
+  "duplicateSkipped": {
+    "message": "重複リクエストを送信せず、前回の結果を表示しています。"
+  },
+  "sendAnyway": {
+    "message": "それでも送信"
+  },
+  "sendAnywayHelp": {
+    "message": "内容を確認してから、新しい送信 ID で再送します。元の内容がバックグラウンドに一時保持されている間のみ利用できます。"
+  },
+  "captureExpired": {
+    "message": "この取得内容は利用できなくなりました。もう一度取得または貼り付けて送信してください。"
+  },
+  "duplicateCheckFailed": {
+    "message": "最近の送信を確認または記録できませんでした。リクエストは送信していません。セッションストレージの復旧後に再試行してください。"
   }
 }

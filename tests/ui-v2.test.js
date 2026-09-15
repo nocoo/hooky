@@ -24,6 +24,28 @@ beforeEach(() => { vi.resetModules(); });
 afterEach(() => { vi.useRealTimers(); vi.unstubAllGlobals(); });
 
 describe("Hooky 2.0 workspace", () => {
+  it("keeps completed duplicate protection off by default and validates its window", async () => {
+    await setup();
+    expect(get("duplicate-protection").checked).toBe(false);
+    expect(get("duplicate-window").disabled).toBe(true);
+    get("duplicate-protection").checked = true;
+    get("duplicate-protection").dispatchEvent(new Event("change"));
+    expect(get("duplicate-window").disabled).toBe(false);
+    input("duplicate-window", "0");
+    get("save").click();
+    await vi.waitFor(() => expect(get("save").disabled).toBe(false));
+    expect(data.hooky.templates[0].duplicateWindow).toBeUndefined();
+    input("duplicate-window", "15");
+    get("save").click();
+    await vi.waitFor(() => expect(data.hooky.templates[0].duplicateWindow).toBe(15));
+    get("duplicate-protection").checked = false;
+    get("duplicate-protection").dispatchEvent(new Event("change"));
+    expect(get("duplicate-window").disabled).toBe(true);
+    document.querySelector('#template-list [data-id="t1"]').click();
+    await vi.waitFor(() => expect(get("duplicate-protection").checked).toBe(true));
+    expect(get("duplicate-window").value).toBe("15");
+  });
+
   it("saves optional JSON field mappings and validates a business success rule", async () => {
     await setup();
     expect(get("response-fields").disabled).toBe(true);

@@ -50,6 +50,8 @@ If your receiver supports idempotency keys, configure `Idempotency-Key = {{send.
 
 With receipts enabled, optionally map message and receipt ID fields using paths such as `data.message`, `data.id`, or `items.0.id`. Leave the business success field empty for HTTP-only evaluation. To require `saved: true`, set the path to `saved` and the expected JSON value to `true`; matching is type-sensitive. A mismatch reports business failure; missing, truncated, or unreadable fields leave business success unconfirmed. HTTP evidence remains visible, and a success flag never overrides an HTTP error. Your receiver defines what the matching condition means for durable storage.
 
+**Warn about repeated sends** is off by default and enabled per template, with a default 10-second window configurable from 1 to 300 seconds. Requests with the same template, destination, method, body, and headers show the previous result; automatically generated send UUIDs are ignored when comparing. **Send anyway** repeats the held capture with a new send ID and still respects the pending guard. Original captures stay in background memory for at most 60 seconds and are lost on worker restart. This guard keeps up to 50 session summaries and does not replace receiver-side idempotency.
+
 ## Usage
 
 Install from the Chrome Web Store link above, or load the source as described under Development.
@@ -59,7 +61,7 @@ Install from the Chrome Web Store link above, or load the source as described un
 3. Open a webpage and send using the template in the popup or context menu.
 4. For one-click sending, create an enabled rule with a URL or title condition and an associated template.
 
-The page and extension-icon context menus include **Open send panel** and **Latest send**; these actions never run quick-send rules. Identical pending requests for the same template and tab share one send. After completion you can send again. Requests time out after 20 seconds; a timeout or lost connection leaves the result unconfirmed, so check the receiver before sending again. Hooky never retries automatically. HTTP success confirms a successful response, not durable business storage.
+The page and extension-icon context menus include **Open send panel** and **Latest send**; these actions never run quick-send rules. Identical pending requests for the same template share one send, including across tabs. After completion you can send again, subject to any duplicate protection you enabled for that template. Requests time out after 20 seconds; a timeout or lost connection leaves the result unconfirmed, so check the receiver before sending again. Hooky never retries automatically. HTTP success confirms a successful response, not durable business storage.
 
 For example, POST with those two parameters sends:
 
