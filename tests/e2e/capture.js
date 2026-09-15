@@ -119,10 +119,10 @@ async function runCaptureScenarios({ browser, extensionId, port, requests, asser
   await panel.waitForFunction(() => document.getElementById("duplicate-actions").hidden && !document.getElementById("last-result-status").textContent.includes("Sending"));
   assert(requests.length === quickCount + 1 && requests.at(-1).body.notes === "quick capture {{page.title}}", "A context result can repeat its held capture even after page selection is cleared");
 
-  const sendCase = (route, response) => panel.evaluate(async ({ template, origin, tab, route, response }) => chrome.runtime.sendMessage({
+  const sendCase = (route, response, method = "POST") => panel.evaluate(async ({ template, origin, tab, route, response, method }) => chrome.runtime.sendMessage({
     type: "EXECUTE_WEBHOOK", tab, context: { page: { selection: route } },
-    config: { ...template, url: origin + route, duplicateWindow: 0, response },
-  }), { template, origin, tab, route, response });
+    config: { ...template, url: origin + route, duplicateWindow: 0, response, method },
+  }), { template, origin, tab, route, response, method });
   result = await sendCase("/business-failure", template.response);
   assert(result.status === 200 && result.httpOk && !result.ok && result.error === "businessRejected", "A 200 response can fail an explicitly configured business rule");
   result = await sendCase("/accepted", { enabled: true });
@@ -136,6 +136,12 @@ async function runCaptureScenarios({ browser, extensionId, port, requests, asser
   assert(result.ok && result.receipt.note === "responseUnavailable" && Date.now() - started < 5500, "Native slow-body reading stops near three seconds and preserves HTTP success");
   result = await sendCase("/redirect", { enabled: false });
   assert(result.state === "unknown" && !requests.some((request) => request.url === "/redirect-target"), "Custom credentials never reach a redirect destination");
+
+  for (const method of ["GET", "DELETE"]) {
+    result = await sendCase("/capture#view?ignored", { enabled: false }, method);
+    const sentUrl = new URL(requests.at(-1).url, origin);
+    assert(sentUrl.searchParams.get("request_id") === result.id && sentUrl.searchParams.get("notes") === "/capture#view?ignored" && !sentUrl.hash, `${method} sends UUID and literal query values ahead of URL fragments`);
+  }
 
   const beforeAttack = requests.length;
   const rejected = await worker.evaluate(async ({ tabId, config }) => {

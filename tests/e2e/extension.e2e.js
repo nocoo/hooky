@@ -40,10 +40,11 @@ function startWebhookServer() {
         return;
       }
 
+      const pathname = new URL(req.url, "http://127.0.0.1").pathname;
       let body = "";
       req.on("data", (chunk) => (body += chunk));
       req.on("end", () => {
-        if (["/hook", "/capture", "/business-failure", "/accepted", "/empty", "/large", "/slow", "/redirect", "/redirect-target"].includes(req.url)) {
+        if (["/hook", "/capture", "/business-failure", "/accepted", "/empty", "/large", "/slow", "/redirect", "/redirect-target"].includes(pathname)) {
           const received = {
             method: req.method,
             url: req.url,
@@ -51,24 +52,24 @@ function startWebhookServer() {
             body: body ? JSON.parse(body) : null,
           };
           webhookRequests.push(received);
-          if (req.url === "/hook") webhookReceived = received;
+          if (pathname === "/hook") webhookReceived = received;
         }
-        if (req.url === "/redirect") { res.writeHead(302, { Location: "/redirect-target" }); res.end(); return; }
-        if (req.url === "/empty") { res.writeHead(204); res.end(); return; }
-        if (req.url === "/slow") {
+        if (pathname === "/redirect") { res.writeHead(302, { Location: "/redirect-target" }); res.end(); return; }
+        if (pathname === "/empty") { res.writeHead(204); res.end(); return; }
+        if (pathname === "/slow") {
           res.writeHead(200, { "Content-Type": "text/plain" });
           res.write("partial receipt");
           const timer = setTimeout(() => res.end(" late"), 6000);
           res.on("close", () => clearTimeout(timer));
           return;
         }
-        if (req.url === "/large") { res.writeHead(200, { "Content-Type": "application/json" }); res.end(JSON.stringify({ data: "x".repeat(10000) })); return; }
-        if (req.url === "/capture" || req.url === "/business-failure") {
-          res.writeHead(req.url === "/capture" ? 201 : 200, { "Content-Type": "application/json" });
-          res.end(JSON.stringify({ saved: req.url === "/capture", data: { id: "receipt-" + webhookRequests.length, message: "<b>server-only receipt</b>" } }));
+        if (pathname === "/large") { res.writeHead(200, { "Content-Type": "application/json" }); res.end(JSON.stringify({ data: "x".repeat(10000) })); return; }
+        if (pathname === "/capture" || pathname === "/business-failure") {
+          res.writeHead(pathname === "/capture" ? 201 : 200, { "Content-Type": "application/json" });
+          res.end(JSON.stringify({ saved: pathname === "/capture", data: { id: "receipt-" + webhookRequests.length, message: "<b>server-only receipt</b>" } }));
           return;
         }
-        if (req.url === "/accepted") { res.writeHead(202, { "Content-Type": "application/json" }); res.end('{"accepted":true}'); return; }
+        if (pathname === "/accepted") { res.writeHead(202, { "Content-Type": "application/json" }); res.end('{"accepted":true}'); return; }
         res.writeHead(200, { "Content-Type": "application/json" });
         res.end(JSON.stringify({ status: "ok" }));
       });
@@ -135,6 +136,7 @@ async function runTests() {
     const extensionId = await browser.installExtension(testExtensionPath);
     console.log(`  Extension ID: ${extensionId}`);
     assert(!!extensionId, "Extension loaded successfully");
+    console.log(`  Browser: ${await browser.version()}`);
 
     // --- Test Options Page ---
     console.log("\nTesting Options page...");
