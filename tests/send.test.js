@@ -18,6 +18,17 @@ beforeEach(async () => {
 afterEach(() => { vi.useRealTimers(); });
 
 describe("shared send lifecycle", () => {
+  it("sends immediately even if page feedback stalls and bounds the wait for UI", async () => {
+    vi.useFakeTimers();
+    chrome.scripting.executeScript.mockImplementation(() => new Promise(() => {}));
+    const task = sendWebhook(config, context, { tab, source: "context" });
+    expect(fetch).toHaveBeenCalledOnce();
+    await vi.advanceTimersByTimeAsync(feedback.PAGE_FEEDBACK_TIMEOUT * 2);
+    expect(await task).toMatchObject({ ok: true, state: "success" });
+    expect(chrome.action.openPopup).toHaveBeenCalledOnce();
+    expect(session.hookyLastResult.state).toBe("success");
+  });
+
   it.each(["popup", "quick", "context"])("uses one UUID in headers and body through the %s entry path", async (source) => {
     const bound = { ...config, headers: [{ key: "Authorization", value: "Bearer private-token" }, { key: "Idempotency-Key", value: "{{send.id}}" }], params: [
       { key: "id", value: "{{ send.id }}", resolve: true },
@@ -77,7 +88,7 @@ describe("shared send lifecycle", () => {
     const second = sendWebhook({ ...config, params: [{ key: "text", value: "private selection" }] }, { page: {} }, { tab, source: "popup", resolved: true });
     expect(second).toBe(first);
     await vi.waitFor(() => expect(fetch).toHaveBeenCalledTimes(1));
-    expect(session.hookyLastResult.state).toBe("sending");
+    await vi.waitFor(() => expect(session.hookyLastResult?.state).toBe("sending"));
     finish({ ok: true, status: 201 });
     const [a, b] = await Promise.all([first, second]);
     expect(a.id).toBe(b.id);

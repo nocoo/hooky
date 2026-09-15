@@ -50,6 +50,13 @@ it("does not inject into a different page after navigation", () => {
   expect(mount()).toBeNull();
 });
 
+it("ignores a delayed sending toast after its final outcome has already appeared", () => {
+  showPageFeedback({ ...result, state: "success" }, "Done", labels, location.href);
+  showPageFeedback(result, "Delayed sending", labels, location.href);
+  expect(mount().shadowRoot.textContent).toContain("Done");
+  expect(mount().shadowRoot.textContent).not.toContain("Delayed sending");
+});
+
 it("allows result viewing to fail without an unhandled page error", async () => {
   chrome.runtime.sendMessage.mockRejectedValue(new Error("extension unavailable"));
   showPageFeedback({ ...result, state: "unknown" }, "Unconfirmed", labels, location.href);

@@ -1,6 +1,7 @@
 import { t } from "./i18n.js";
 
 export const LAST_RESULT_KEY = "hookyLastResult";
+export const PAGE_FEEDBACK_TIMEOUT = 1500;
 const TAB_RESULT_PREFIX = "hookyResult:";
 const POPUP_PATH = "src/popup/popup.html";
 let writes = Promise.resolve();
@@ -36,6 +37,7 @@ export function showPageFeedback(result, message, labels, expectedUrl) {
   const mountId = "__hooky_send_feedback";
   let mount = document.getElementById(mountId);
   if (mount && Number(mount.dataset.startedAt) > result.startedAt) return true;
+  if (mount?.dataset.sendId === result.id && mount.dataset.state !== "sending" && result.state === "sending") return true;
   if (!mount) {
     mount = document.createElement("div");
     mount.id = mountId;
@@ -44,6 +46,7 @@ export function showPageFeedback(result, message, labels, expectedUrl) {
   }
   mount.dataset.sendId = result.id;
   mount.dataset.startedAt = String(result.startedAt);
+  mount.dataset.state = result.state;
   mount.style.cssText = "position:fixed!important;right:20px!important;bottom:20px!important;z-index:2147483647!important;max-width:calc(100vw - 40px)!important;";
   const root = mount.shadowRoot;
   root.innerHTML = '<style>:host{all:initial}section{font:13px/1.5 system-ui,sans-serif;background:#fcfaff;color:#292330;border:1px solid #c8b4df;border-radius:10px;padding:14px;box-shadow:0 4px 24px #0003;max-width:340px;overflow-wrap:anywhere}strong{display:block;margin-bottom:4px}p{margin:0 0 8px}button{font:inherit;border:1px solid #c8b4df;border-radius:5px;background:#fff;color:#54377b;padding:4px 8px;cursor:pointer;margin-right:8px}button:focus-visible{outline:2px solid #7851a5}</style>';
@@ -97,17 +100,19 @@ export function publishResult(result, { tab, source, start = false } = {}) {
     await Promise.allSettled([chrome.storage.session.set(updates), showBadge(result)]);
 
     if (source === "popup" || result.tabId === null) return;
+    let timer;
     try {
-      const injected = await chrome.scripting.executeScript({
+      const injected = await Promise.race([chrome.scripting.executeScript({
         target: { tabId: result.tabId },
         func: showPageFeedback,
         args: [
           { id: result.id, name: result.name, state: result.state, startedAt: result.startedAt },
           resultMessage(result), { view: t("viewLastResult"), close: t("dismiss") }, tab.url,
         ],
-      });
+      }), new Promise((resolve) => { timer = setTimeout(() => resolve([]), PAGE_FEEDBACK_TIMEOUT); })]);
       if (injected[0]?.result === true) return;
     } catch { /* Internal pages and navigation can prevent injection. */ }
+    finally { clearTimeout(timer); }
     if (result.state !== "sending") await openPanel().catch(() => {});
   });
   writes = publish.catch(() => {});

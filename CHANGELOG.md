@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Preserve the selection supplied by a context-menu event, including selections inside frames.
 - Keep older completions from replacing a newer send's result or badge.
+- Keep stalled page feedback from delaying transport or overwriting a final outcome.
 
 ## [2.0.0] - 2026-09-14
 
