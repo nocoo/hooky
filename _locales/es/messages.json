@@ -352,5 +352,50 @@
   },
   "clipboardUnavailable": {
     "message": "No se pudo leer el portapapeles. Pega manualmente en el valor seleccionado."
+  },
+  "responseFields": {
+    "message": "Campos JSON (opcionales)"
+  },
+  "responseMessagePath": {
+    "message": "Campo del mensaje"
+  },
+  "responseIdPath": {
+    "message": "Campo del ID de recibo"
+  },
+  "responseSuccessPath": {
+    "message": "Campo de éxito de la operación"
+  },
+  "responseSuccessValue": {
+    "message": "Valor JSON esperado"
+  },
+  "responseFieldsHelp": {
+    "message": "Usa claves separadas por puntos, como data.id o items.0.id. La ausencia de campos de visualización no cambia el resultado HTTP."
+  },
+  "responseSuccessHelp": {
+    "message": "Deja vacío el campo de éxito para usar solo HTTP. De lo contrario, compara exactamente un valor JSON simple como true, 1 o \"ok\". Los valores ausentes o ilegibles quedan sin confirmar."
+  },
+  "invalidResponsePath": {
+    "message": "La ruta debe tener hasta 200 caracteres, con claves separadas por puntos, sin claves vacías ni espacios alrededor."
+  },
+  "invalidSuccessValue": {
+    "message": "El valor esperado debe ser una cadena JSON, número, booleano o null. Escribe las cadenas entre comillas, como \"ok\"."
+  },
+  "responseFieldMissing": {
+    "message": "Un campo de visualización configurado no existe o no contiene un valor JSON simple."
+  },
+  "businessConfirmed": {
+    "message": "La respuesta cumple tu regla de éxito de la operación."
+  },
+  "businessRejected": {
+    "message": "La respuesta no cumple tu regla de éxito. Revisa el recibo antes de volver a enviar."
+  },
+  "businessUnconfirmed": {
+    "message": "No se pudo confirmar el éxito de la operación. Revisa el receptor antes de volver a enviar."
+  },
+  "receiptId": {
+    "message": "ID de recibo"
+  },
+  "receiptMessage": {
+    "message": "Mensaje"
   }
 }

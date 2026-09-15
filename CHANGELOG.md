@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Multiline manual capture and a request preview in the send panel.
 - Optional per-template response reading, bounded while streaming to 8 KiB and 3 seconds, with plain-text session-only receipt display.
 - Opt-in desktop notification modes and an explicit clipboard-paste action, with permissions requested only from the relevant user gesture.
+- Optional JSON message/receipt field mappings and type-sensitive business success rules that preserve the HTTP outcome as separate evidence.
 
 ### Fixed
 

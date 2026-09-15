@@ -48,6 +48,8 @@ GET and DELETE place parameters in the query string. POST, PUT, and PATCH send a
 
 If your receiver supports idempotency keys, configure `Idempotency-Key = {{send.id}}` and optionally use the same variable in the body. New sends get new UUIDs; repeated triggers during a pending request share that send. A UUID alone does not deduplicate writes: the receiver must implement those semantics. Literal `{{…}}` in pasted or captured text is never resolved a second time.
 
+With receipts enabled, optionally map message and receipt ID fields using paths such as `data.message`, `data.id`, or `items.0.id`. Leave the business success field empty for HTTP-only evaluation. To require `saved: true`, set the path to `saved` and the expected JSON value to `true`; matching is type-sensitive. A mismatch reports business failure; missing, truncated, or unreadable fields leave business success unconfirmed. HTTP evidence remains visible, and a success flag never overrides an HTTP error. Your receiver defines what the matching condition means for durable storage.
+
 ## Usage
 
 Install from the Chrome Web Store link above, or load the source as described under Development.

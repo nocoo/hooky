@@ -352,5 +352,50 @@
   },
   "clipboardUnavailable": {
     "message": "无法读取剪贴板，请手动粘贴到选中的参数框。"
+  },
+  "responseFields": {
+    "message": "JSON 字段（可选）"
+  },
+  "responseMessagePath": {
+    "message": "消息字段"
+  },
+  "responseIdPath": {
+    "message": "回执 ID 字段"
+  },
+  "responseSuccessPath": {
+    "message": "业务成功字段"
+  },
+  "responseSuccessValue": {
+    "message": "期望的 JSON 值"
+  },
+  "responseFieldsHelp": {
+    "message": "使用点分隔字段名，例如 data.id 或 items.0.id。显示字段缺失不会改变 HTTP 结果。"
+  },
+  "responseSuccessHelp": {
+    "message": "留空业务成功字段时只判断 HTTP 状态。填写后严格匹配 JSON 标量，例如 true、1 或 \"ok\"。字段缺失或无法读取时，业务结果仍为未确认。"
+  },
+  "invalidResponsePath": {
+    "message": "字段路径最多 200 字符，用点分隔；字段名不能为空或带首尾空格。"
+  },
+  "invalidSuccessValue": {
+    "message": "期望值必须是 JSON 字符串、数字、布尔值或 null。字符串需加双引号，例如 \"ok\"。"
+  },
+  "responseFieldMissing": {
+    "message": "配置的显示字段不存在，或不是 JSON 标量。"
+  },
+  "businessConfirmed": {
+    "message": "接收端响应符合你设置的业务成功条件。"
+  },
+  "businessRejected": {
+    "message": "接收端响应不符合业务成功条件，再次发送前请检查回执。"
+  },
+  "businessUnconfirmed": {
+    "message": "无法确认业务成功，再次发送前请检查接收端。"
+  },
+  "receiptId": {
+    "message": "回执 ID"
+  },
+  "receiptMessage": {
+    "message": "消息"
   }
 }

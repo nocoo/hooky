@@ -352,5 +352,50 @@
   },
   "clipboardUnavailable": {
     "message": "クリップボードを読み取れませんでした。選択した値に手動で貼り付けてください。"
+  },
+  "responseFields": {
+    "message": "JSON フィールド（任意）"
+  },
+  "responseMessagePath": {
+    "message": "メッセージのフィールド"
+  },
+  "responseIdPath": {
+    "message": "受領 ID のフィールド"
+  },
+  "responseSuccessPath": {
+    "message": "処理成功のフィールド"
+  },
+  "responseSuccessValue": {
+    "message": "期待する JSON 値"
+  },
+  "responseFieldsHelp": {
+    "message": "data.id や items.0.id のようにドットで区切ります。表示用フィールドがなくても HTTP 結果は変わりません。"
+  },
+  "responseSuccessHelp": {
+    "message": "成功フィールドを空欄にすると HTTP 状態のみで判断します。指定した場合は true、1、\"ok\" などの JSON 値と厳密に比較します。値がない、または読み取れない場合は未確認です。"
+  },
+  "invalidResponsePath": {
+    "message": "フィールドパスは 200 文字以内でドット区切りにしてください。空のキーや前後の空白は使えません。"
+  },
+  "invalidSuccessValue": {
+    "message": "期待値は JSON の文字列、数値、真偽値、null のいずれかです。文字列は \"ok\" のように引用符で囲んでください。"
+  },
+  "responseFieldMissing": {
+    "message": "指定した表示フィールドがないか、単一の JSON 値ではありません。"
+  },
+  "businessConfirmed": {
+    "message": "受信側の応答が設定した成功条件と一致しました。"
+  },
+  "businessRejected": {
+    "message": "受信側の応答が成功条件と一致しません。再送前に受領情報を確認してください。"
+  },
+  "businessUnconfirmed": {
+    "message": "処理の成功を確認できません。再送前に受信側を確認してください。"
+  },
+  "receiptId": {
+    "message": "受領 ID"
+  },
+  "receiptMessage": {
+    "message": "メッセージ"
   }
 }

@@ -12,6 +12,7 @@ export function resultMessage(result) {
   if (result.state === "sending") return t("sending");
   if (result.state === "unknown") return t("requestUnconfirmed");
   if (result.error) return t(result.error);
+  if (result.business === "matched" && result.ok) return t("businessConfirmed");
   if (result.status === 202) return t("requestAccepted");
   return t(result.ok ? "successStatus" : "failedStatus", [String(result.status)]);
 }

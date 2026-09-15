@@ -352,5 +352,50 @@
   },
   "clipboardUnavailable": {
     "message": "Zwischenablage konnte nicht gelesen werden. Bitte manuell in den ausgewählten Wert einfügen."
+  },
+  "responseFields": {
+    "message": "JSON-Felder (optional)"
+  },
+  "responseMessagePath": {
+    "message": "Nachrichtenfeld"
+  },
+  "responseIdPath": {
+    "message": "Feld für Beleg-ID"
+  },
+  "responseSuccessPath": {
+    "message": "Feld für fachlichen Erfolg"
+  },
+  "responseSuccessValue": {
+    "message": "Erwarteter JSON-Wert"
+  },
+  "responseFieldsHelp": {
+    "message": "Schlüssel mit Punkten trennen, etwa data.id oder items.0.id. Fehlende Anzeigefelder ändern das HTTP-Ergebnis nicht."
+  },
+  "responseSuccessHelp": {
+    "message": "Erfolgsfeld leer lassen, um nur HTTP zu bewerten. Andernfalls wird ein einzelner JSON-Wert exakt verglichen, etwa true, 1 oder \"ok\". Fehlende oder unlesbare Werte bleiben unbestätigt."
+  },
+  "invalidResponsePath": {
+    "message": "Feldpfade dürfen bis zu 200 Zeichen haben. Schlüssel mit Punkten trennen, ohne leere Schlüssel oder äußere Leerzeichen."
+  },
+  "invalidSuccessValue": {
+    "message": "Erwartet wird eine JSON-Zeichenfolge, Zahl, ein boolescher Wert oder null. Zeichenfolgen in Anführungszeichen setzen, etwa \"ok\"."
+  },
+  "responseFieldMissing": {
+    "message": "Ein konfiguriertes Anzeigefeld fehlt oder ist kein einzelner JSON-Wert."
+  },
+  "businessConfirmed": {
+    "message": "Die Antwort erfüllt Ihre Regel für fachlichen Erfolg."
+  },
+  "businessRejected": {
+    "message": "Die Antwort erfüllt Ihre Erfolgsregel nicht. Vor erneutem Senden den Beleg prüfen."
+  },
+  "businessUnconfirmed": {
+    "message": "Fachlicher Erfolg konnte nicht bestätigt werden. Vor erneutem Senden den Empfänger prüfen."
+  },
+  "receiptId": {
+    "message": "Beleg-ID"
+  },
+  "receiptMessage": {
+    "message": "Nachricht"
   }
 }

@@ -352,5 +352,50 @@
   },
   "clipboardUnavailable": {
     "message": "클립보드를 읽을 수 없습니다. 선택한 값에 수동으로 붙여넣으세요."
+  },
+  "responseFields": {
+    "message": "JSON 필드 (선택 사항)"
+  },
+  "responseMessagePath": {
+    "message": "메시지 필드"
+  },
+  "responseIdPath": {
+    "message": "수신 확인 ID 필드"
+  },
+  "responseSuccessPath": {
+    "message": "업무 성공 필드"
+  },
+  "responseSuccessValue": {
+    "message": "예상 JSON 값"
+  },
+  "responseFieldsHelp": {
+    "message": "data.id 또는 items.0.id처럼 점으로 구분하세요. 표시 필드가 없어도 HTTP 결과는 유지됩니다."
+  },
+  "responseSuccessHelp": {
+    "message": "성공 필드를 비워 두면 HTTP 상태만 사용합니다. 지정하면 true, 1, \"ok\" 같은 JSON 단일 값과 정확히 비교합니다. 값이 없거나 읽을 수 없으면 미확인 상태입니다."
+  },
+  "invalidResponsePath": {
+    "message": "필드 경로는 200자 이내로 점으로 구분하세요. 빈 키나 앞뒤 공백은 사용할 수 없습니다."
+  },
+  "invalidSuccessValue": {
+    "message": "예상 값은 JSON 문자열, 숫자, 불리언 또는 null이어야 합니다. 문자열은 \"ok\"처럼 따옴표로 감싸세요."
+  },
+  "responseFieldMissing": {
+    "message": "설정한 표시 필드가 없거나 JSON 단일 값이 아닙니다."
+  },
+  "businessConfirmed": {
+    "message": "수신 응답이 설정한 업무 성공 조건과 일치합니다."
+  },
+  "businessRejected": {
+    "message": "수신 응답이 성공 조건과 일치하지 않습니다. 다시 보내기 전에 수신 확인을 확인하세요."
+  },
+  "businessUnconfirmed": {
+    "message": "업무 성공을 확인할 수 없습니다. 다시 보내기 전에 수신 측을 확인하세요."
+  },
+  "receiptId": {
+    "message": "수신 확인 ID"
+  },
+  "receiptMessage": {
+    "message": "메시지"
   }
 }

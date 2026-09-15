@@ -44,6 +44,19 @@ function renderLastResult(result) {
   document.getElementById("last-response").hidden = !result.receipt;
   document.getElementById("response-note").textContent = result.receipt?.note ? t(result.receipt.note) : "";
   document.getElementById("response-body").textContent = result.receipt?.text || "";
+  document.getElementById("last-result-http").hidden = !result.business;
+  document.getElementById("last-result-http").textContent = result.business ? `HTTP ${result.status}` : "";
+  document.getElementById("response-field-note").textContent = result.receipt?.fieldNote ? t(result.receipt.fieldNote) : "";
+  const fields = document.getElementById("response-fields-summary");
+  fields.replaceChildren();
+  for (const key of ["receiptId", "message"]) {
+    if (result.receipt?.[key] === undefined) continue;
+    const label = document.createElement("dt");
+    label.textContent = t(key === "receiptId" ? "receiptId" : "receiptMessage");
+    const value = document.createElement("dd");
+    value.textContent = result.receipt[key];
+    fields.append(label, value);
+  }
 }
 
 function openSettings() {

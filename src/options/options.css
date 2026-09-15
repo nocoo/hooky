@@ -45,6 +45,9 @@ body { padding: 36px 24px; }
 .template-hint button { text-align: left; color: var(--accent); background: transparent; padding: 4px 0; font: 10px ui-monospace, monospace; overflow-wrap: anywhere; }
 .template-hint button:hover { text-decoration: underline; }
 .request-preview { max-height: 240px; overflow-y: auto; margin-bottom: 12px; color: var(--muted); }
+#response-fields { border: 0; padding: 0; margin-top: 12px; }
+#response-fields label { margin-top: 10px; }
+#response-fields:disabled { opacity: .55; }
 .editor-actions { position: sticky; bottom: 0; display: flex; align-items: center; gap: 12px; padding: 16px 26px; border-top: 1px solid var(--line); background: var(--surface); }
 .editor-actions .status { flex: 1; opacity: 0; }
 .editor-actions .status.visible { opacity: 1; }

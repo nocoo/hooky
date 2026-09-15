@@ -14,6 +14,8 @@ Webhook templates, endpoint URLs, parameter values, custom request headers, rule
 
 Response reading is off by default and enabled separately for each template. When enabled, Hooky reads at most 8 KiB of response bytes for up to 3 seconds and retains the resulting text with the session summary. Receipts are shown as plain text only inside the extension, never inserted into page feedback. A receiver may include sensitive data in its response, including echoed request content. Empty, invalid, unsupported, truncated, or unavailable response bodies do not change the HTTP outcome.
 
+Optional JSON field mappings and business success rules are stored with their template. Extracted messages and receipt IDs are limited to 1,000 characters each and retained only with the opted-in session receipt. Field traversal reads own JSON properties and does not execute expressions or code. A business rule can report failure or an unconfirmed outcome while preserving the underlying HTTP status.
+
 Notification preferences are also stored locally and default to off. You can choose errors/unconfirmed results or all results. If enabled and permitted, desktop notifications show only the template name and generic status, never captured text, credentials, or receipts. Browser and OS settings can suppress notifications; badges and the result panel remain available. Switching notifications off stops delivery; previously granted permissions can also be revoked in Chrome's extension settings.
 
 ## Page data and requests

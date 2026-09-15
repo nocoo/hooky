@@ -15,6 +15,7 @@ import {
 import { applyTheme } from "../theme.js";
 import { matchRule } from "../rules.js";
 import { buildHeaders, previewRequest } from "../webhook.js";
+import { validateResponseConfig } from "../response.js";
 
 // ─── DOM refs ───
 
@@ -191,6 +192,16 @@ function showStatus(message, error = false) {
   statusTimer = setTimeout(() => statusEl.classList.remove("visible"), 3000);
 }
 
+function getResponseConfig() {
+  const response = { enabled: document.getElementById("read-response").checked };
+  for (const [key, id] of [["messagePath", "response-message-path"], ["receiptPath", "response-id-path"], ["successPath", "response-success-path"]]) {
+    const value = document.getElementById(id).value.trim();
+    if (value) response[key] = value;
+  }
+  if (response.successPath) response.successValue = document.getElementById("response-success-value").value;
+  return response;
+}
+
 function updatePreview() {
   const params = getParams();
   const context = { page: { url: "{{page.url}}", title: "{{page.title}}", selection: "{{page.selection}}", meta: {
@@ -199,7 +210,7 @@ function updatePreview() {
   const method = methodSelect.value;
   const url = urlInput.value || "https://example.com/webhook";
   try {
-    document.getElementById("request-preview").textContent = previewRequest({ method, url, params, headers: getParams(headersList, "header") }, context);
+    document.getElementById("request-preview").textContent = previewRequest({ method, url, params, headers: getParams(headersList, "header"), response: getResponseConfig() }, context);
   } catch (error) {
     document.getElementById("request-preview").textContent = t(error.message);
   }
@@ -387,6 +398,11 @@ async function selectTemplate(id) {
   for (const { key, value } of tpl.headers || []) headersList.appendChild(createParamRow(key, value, "header"));
   document.getElementById("template-advanced").open = false;
   document.getElementById("read-response").checked = tpl.response?.enabled === true;
+  document.getElementById("response-fields").disabled = !document.getElementById("read-response").checked;
+  document.getElementById("response-message-path").value = tpl.response?.messagePath || "";
+  document.getElementById("response-id-path").value = tpl.response?.receiptPath || "";
+  document.getElementById("response-success-path").value = tpl.response?.successPath || "";
+  document.getElementById("response-success-value").value = tpl.response?.successValue ?? "true";
   lastValueInput = null;
   updatePreview();
 }
@@ -531,10 +547,11 @@ async function saveCurrentTemplate() {
     method: methodSelect.value,
     params: getParams(),
     headers: getParams(headersList, "header"),
-    response: { enabled: document.getElementById("read-response").checked },
+    response: getResponseConfig(),
   };
 
   buildHeaders(changes.headers, { send: { id: "{{send.id}}" } });
+  validateResponseConfig(changes.response);
 
   await updateTemplate(currentTemplateId, changes);
 
@@ -691,6 +708,10 @@ document.getElementById("add-header").addEventListener("click", () => {
 });
 showHeaderValues.addEventListener("change", () => {
   for (const input of headersList.querySelectorAll(".header-value")) input.type = showHeaderValues.checked ? "text" : "password";
+});
+document.getElementById("read-response").addEventListener("change", (event) => {
+  document.getElementById("response-fields").disabled = !event.target.checked;
+  updatePreview();
 });
 
 editorForm.addEventListener("input", updatePreview);

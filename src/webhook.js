@@ -1,6 +1,6 @@
 import { buildRequestBody, buildRequestUrl } from "./params.js";
 import { resolveTemplate } from "./template.js";
-import { discardBody, readReceipt } from "./response.js";
+import { discardBody, readReceipt, validateResponseConfig, applyResponseFields } from "./response.js";
 
 /** HTTP methods that carry params in URL query string instead of body */
 const QUERY_METHODS = new Set(["GET", "DELETE"]);
@@ -41,6 +41,7 @@ export function prepareWebhook(config, context, alreadyResolved = false) {
   catch { throw new Error("invalidEndpoint"); }
   if (!["http:", "https:"].includes(endpoint.protocol)) throw new Error("invalidEndpoint");
   if (!METHODS.has(method)) throw new Error("invalidMethod");
+  validateResponseConfig(config.response);
 
   const options = { method, headers: buildHeaders(config.headers, context) };
   // Custom headers can contain secrets under any name. Do not forward them on redirects.
@@ -69,8 +70,10 @@ export async function executeRequest(request, responseConfig = {}) {
   try {
     const response = await fetch(request.url, { ...request.options, signal: controller.signal });
     const result = { ok: response.ok, status: response.status, state: response.ok ? "success" : "failed" };
-    if (responseConfig.enabled === true) result.receipt = await readReceipt(response).catch(() => ({ note: "responseUnavailable" }));
-    else discardBody(response.body);
+    if (responseConfig.enabled === true) {
+      result.receipt = await readReceipt(response).catch(() => ({ note: "responseUnavailable" }));
+      applyResponseFields(result, responseConfig);
+    } else discardBody(response.body);
     return result;
   } catch {
     return { ok: false, state: "unknown", error: "requestUnconfirmed" };

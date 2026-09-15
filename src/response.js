@@ -1,6 +1,53 @@
 export const RESPONSE_LIMIT = 8192;
 export const RESPONSE_TIMEOUT = 3000;
 
+export function validateResponseConfig(config = {}) {
+  if (config.enabled !== true) return;
+  for (const path of [config.messagePath, config.receiptPath, config.successPath]) {
+    if (path && (typeof path !== "string" || path.length > 200 || path.split(".").some((key) => !key || key !== key.trim()))) throw new Error("invalidResponsePath");
+  }
+  if (config.successPath) {
+    try {
+      const value = JSON.parse(config.successValue);
+      if (value !== null && typeof value === "object" || typeof value === "number" && !Number.isFinite(value)) throw new Error();
+    } catch { throw new Error("invalidSuccessValue"); }
+  }
+}
+
+/** Simple own-property traversal; no expressions, inherited properties or JSONPath. */
+function fieldAt(value, path) {
+  for (const key of path.split(".")) {
+    if (value === null || typeof value !== "object" || !Object.hasOwn(value, key)) return undefined;
+    value = value[key];
+  }
+  return value;
+}
+
+/** Business confirmation is opt-in and never overrides an HTTP failure. */
+export function applyResponseFields(result, config) {
+  if (!config.messagePath && !config.receiptPath && !config.successPath) return;
+  const receipt = result.receipt;
+  let data;
+  if (!receipt.note) {
+    try { data = JSON.parse(receipt.text); }
+    catch { receipt.fieldNote = "responseFieldMissing"; }
+  }
+  for (const [field, path] of [["message", config.messagePath], ["receiptId", config.receiptPath]]) {
+    if (!path) continue;
+    const value = fieldAt(data, path);
+    if (value === undefined || value !== null && typeof value === "object") receipt.fieldNote = "responseFieldMissing";
+    else receipt[field] = String(value).slice(0, 1000);
+  }
+  if (!config.successPath) return;
+  result.httpOk = result.ok;
+  const actual = fieldAt(data, config.successPath);
+  result.business = actual === undefined ? "unknown" : actual === JSON.parse(config.successValue) ? "matched" : "rejected";
+  if (!result.httpOk || result.business === "matched") return;
+  result.ok = false;
+  result.state = result.business === "rejected" ? "failed" : "unknown";
+  result.error = result.business === "rejected" ? "businessRejected" : "businessUnconfirmed";
+}
+
 /** Stop downloading an unused body without letting a stalled cancel hold up feedback. */
 export function discardBody(body) {
   if (body) body.cancel().catch(() => {});

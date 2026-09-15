@@ -352,5 +352,50 @@
   },
   "clipboardUnavailable": {
     "message": "Não foi possível ler a área de transferência. Cole manualmente no valor selecionado."
+  },
+  "responseFields": {
+    "message": "Campos JSON (opcionais)"
+  },
+  "responseMessagePath": {
+    "message": "Campo da mensagem"
+  },
+  "responseIdPath": {
+    "message": "Campo do ID do comprovante"
+  },
+  "responseSuccessPath": {
+    "message": "Campo de sucesso da operação"
+  },
+  "responseSuccessValue": {
+    "message": "Valor JSON esperado"
+  },
+  "responseFieldsHelp": {
+    "message": "Use chaves separadas por pontos, como data.id ou items.0.id. Campos de exibição ausentes não alteram o resultado HTTP."
+  },
+  "responseSuccessHelp": {
+    "message": "Deixe o campo de sucesso vazio para usar apenas HTTP. Caso contrário, compare exatamente um valor JSON simples, como true, 1 ou \"ok\". Valores ausentes ou ilegíveis ficam sem confirmação."
+  },
+  "invalidResponsePath": {
+    "message": "O caminho deve ter até 200 caracteres, com chaves separadas por pontos, sem chaves vazias ou espaços nas extremidades."
+  },
+  "invalidSuccessValue": {
+    "message": "O valor esperado deve ser uma string JSON, número, booleano ou null. Use aspas nas strings, como \"ok\"."
+  },
+  "responseFieldMissing": {
+    "message": "Um campo de exibição configurado está ausente ou não é um valor JSON simples."
+  },
+  "businessConfirmed": {
+    "message": "A resposta corresponde à sua regra de sucesso da operação."
+  },
+  "businessRejected": {
+    "message": "A resposta não corresponde à regra de sucesso. Verifique o comprovante antes de enviar novamente."
+  },
+  "businessUnconfirmed": {
+    "message": "Não foi possível confirmar o sucesso da operação. Verifique o destinatário antes de enviar novamente."
+  },
+  "receiptId": {
+    "message": "ID do comprovante"
+  },
+  "receiptMessage": {
+    "message": "Mensagem"
   }
 }

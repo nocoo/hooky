@@ -352,5 +352,50 @@
   },
   "clipboardUnavailable": {
     "message": "The clipboard could not be read. Paste manually into the selected value."
+  },
+  "responseFields": {
+    "message": "JSON fields (optional)"
+  },
+  "responseMessagePath": {
+    "message": "Message field"
+  },
+  "responseIdPath": {
+    "message": "Receipt ID field"
+  },
+  "responseSuccessPath": {
+    "message": "Business success field"
+  },
+  "responseSuccessValue": {
+    "message": "Expected JSON value"
+  },
+  "responseFieldsHelp": {
+    "message": "Use dot-separated keys, for example data.id or items.0.id. Missing display fields do not change the HTTP result."
+  },
+  "responseSuccessHelp": {
+    "message": "Leave the success field blank to use HTTP status only. Otherwise match a JSON scalar exactly, such as true, 1 or \"ok\". Missing or unreadable results remain unconfirmed."
+  },
+  "invalidResponsePath": {
+    "message": "Use a dot-separated field path of up to 200 characters, without empty keys or surrounding spaces."
+  },
+  "invalidSuccessValue": {
+    "message": "The expected value must be a JSON string, number, boolean or null. Quote string values, for example \"ok\"."
+  },
+  "responseFieldMissing": {
+    "message": "A configured display field is missing or is not a scalar JSON value."
+  },
+  "businessConfirmed": {
+    "message": "The receiver matched your business success rule."
+  },
+  "businessRejected": {
+    "message": "The receiver did not match your business success rule. Check the receipt before sending again."
+  },
+  "businessUnconfirmed": {
+    "message": "Business success could not be confirmed. Check the receiver before sending again."
+  },
+  "receiptId": {
+    "message": "Receipt ID"
+  },
+  "receiptMessage": {
+    "message": "Message"
   }
 }

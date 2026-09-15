@@ -352,5 +352,50 @@
   },
   "clipboardUnavailable": {
     "message": "Impossible de lire le presse-papiers. Collez manuellement dans la valeur sélectionnée."
+  },
+  "responseFields": {
+    "message": "Champs JSON (facultatif)"
+  },
+  "responseMessagePath": {
+    "message": "Champ du message"
+  },
+  "responseIdPath": {
+    "message": "Champ de l’identifiant du reçu"
+  },
+  "responseSuccessPath": {
+    "message": "Champ de réussite métier"
+  },
+  "responseSuccessValue": {
+    "message": "Valeur JSON attendue"
+  },
+  "responseFieldsHelp": {
+    "message": "Utilisez des clés séparées par des points, comme data.id ou items.0.id. Un champ d’affichage absent ne change pas le résultat HTTP."
+  },
+  "responseSuccessHelp": {
+    "message": "Laissez le champ de réussite vide pour utiliser uniquement HTTP. Sinon, comparez exactement une valeur JSON simple, comme true, 1 ou \"ok\". Un résultat absent ou illisible reste non confirmé."
+  },
+  "invalidResponsePath": {
+    "message": "Le chemin doit comporter au plus 200 caractères, avec des clés séparées par des points, sans clé vide ni espace au début ou à la fin."
+  },
+  "invalidSuccessValue": {
+    "message": "La valeur attendue doit être une chaîne JSON, un nombre, un booléen ou null. Encadrez les chaînes de guillemets, comme \"ok\"."
+  },
+  "responseFieldMissing": {
+    "message": "Un champ d’affichage configuré est absent ou n’est pas une valeur JSON simple."
+  },
+  "businessConfirmed": {
+    "message": "La réponse correspond à votre règle de réussite métier."
+  },
+  "businessRejected": {
+    "message": "La réponse ne correspond pas à votre règle de réussite métier. Vérifiez le reçu avant un nouvel envoi."
+  },
+  "businessUnconfirmed": {
+    "message": "La réussite métier n’a pas pu être confirmée. Vérifiez le destinataire avant un nouvel envoi."
+  },
+  "receiptId": {
+    "message": "Identifiant du reçu"
+  },
+  "receiptMessage": {
+    "message": "Message"
   }
 }

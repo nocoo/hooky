@@ -352,5 +352,50 @@
   },
   "clipboardUnavailable": {
     "message": "無法讀取剪貼簿，請手動貼上至選取的參數欄位。"
+  },
+  "responseFields": {
+    "message": "JSON 欄位（選用）"
+  },
+  "responseMessagePath": {
+    "message": "訊息欄位"
+  },
+  "responseIdPath": {
+    "message": "回執 ID 欄位"
+  },
+  "responseSuccessPath": {
+    "message": "業務成功欄位"
+  },
+  "responseSuccessValue": {
+    "message": "預期的 JSON 值"
+  },
+  "responseFieldsHelp": {
+    "message": "使用點分隔欄位名稱，例如 data.id 或 items.0.id。顯示欄位缺失不會改變 HTTP 結果。"
+  },
+  "responseSuccessHelp": {
+    "message": "留空業務成功欄位時只判斷 HTTP 狀態。填寫後嚴格比對 JSON 純量，例如 true、1 或 \"ok\"。欄位缺失或無法讀取時，業務結果仍為未確認。"
+  },
+  "invalidResponsePath": {
+    "message": "欄位路徑最多 200 字元，以點分隔；名稱不可為空或含首尾空格。"
+  },
+  "invalidSuccessValue": {
+    "message": "預期值必須是 JSON 字串、數字、布林值或 null。字串需加雙引號，例如 \"ok\"。"
+  },
+  "responseFieldMissing": {
+    "message": "設定的顯示欄位不存在，或不是 JSON 純量。"
+  },
+  "businessConfirmed": {
+    "message": "接收端回應符合你設定的業務成功條件。"
+  },
+  "businessRejected": {
+    "message": "接收端回應不符合業務成功條件，再次傳送前請檢查回執。"
+  },
+  "businessUnconfirmed": {
+    "message": "無法確認業務成功，再次傳送前請檢查接收端。"
+  },
+  "receiptId": {
+    "message": "回執 ID"
+  },
+  "receiptMessage": {
+    "message": "訊息"
   }
 }

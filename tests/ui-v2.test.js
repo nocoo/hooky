@@ -24,6 +24,31 @@ beforeEach(() => { vi.resetModules(); });
 afterEach(() => { vi.useRealTimers(); vi.unstubAllGlobals(); });
 
 describe("Hooky 2.0 workspace", () => {
+  it("saves optional JSON field mappings and validates a business success rule", async () => {
+    await setup();
+    expect(get("response-fields").disabled).toBe(true);
+    get("read-response").checked = true;
+    get("read-response").dispatchEvent(new Event("change"));
+    expect(get("response-fields").disabled).toBe(false);
+    input("response-message-path", "data.message");
+    input("response-id-path", "data.id");
+    input("response-success-path", "saved");
+    input("response-success-value", "ok");
+    expect(get("request-preview").textContent).toBe(messages.invalidSuccessValue.message);
+    get("save").click();
+    await vi.waitFor(() => expect(get("status").textContent).toBe(messages.invalidSuccessValue.message));
+    input("response-success-value", '"ok"');
+    get("save").click();
+    await vi.waitFor(() => expect(data.hooky.templates[0].response).toEqual({ enabled: true, messagePath: "data.message", receiptPath: "data.id", successPath: "saved", successValue: '"ok"' }));
+    get("read-response").checked = false;
+    get("read-response").dispatchEvent(new Event("change"));
+    expect(get("response-fields").disabled).toBe(true);
+    document.querySelector('#template-list [data-id="t1"]').click();
+    await vi.waitFor(() => expect(get("read-response").checked).toBe(true));
+    expect(get("response-id-path").value).toBe("data.id");
+    expect(get("response-success-value").value).toBe('"ok"');
+  });
+
   it("leaves response reading off for existing templates and saves an explicit opt-in", async () => {
     await setup();
     expect(get("read-response").checked).toBe(false);

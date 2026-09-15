@@ -68,6 +68,17 @@ async function setupPageContextMock(contextData) {
 }
 
 describe("popup.js", () => {
+  it("shows mapped receipt fields safely and retains HTTP evidence for a business failure", async () => {
+    setupChromeMock({ hooky: { templates: [] } });
+    await chrome.storage.session.set({ hookyLastResult: { id: "business", name: "Save", startedAt: Date.now(), status: 200, business: "rejected", ok: false, state: "failed", error: "businessRejected", receipt: { receiptId: "r1", message: "<script>attack()</script>", fieldNote: "responseFieldMissing" } } });
+    await import("../src/popup/popup.js");
+    await vi.waitFor(() => expect(document.getElementById("response-fields-summary").textContent).toContain("r1"));
+    expect(document.getElementById("response-fields-summary").querySelector("script")).toBeNull();
+    expect(document.getElementById("response-field-note").textContent).toBe("responseFieldMissing");
+    expect(document.getElementById("last-result-http").hidden).toBe(false);
+    expect(document.getElementById("last-result-http").textContent).toBe("HTTP 200");
+  });
+
   it("renders opted-in receipts as text and clears them on the next result", async () => {
     setupChromeMock({ hooky: { templates: [] } });
     const record = { id: "receipt", name: "Save", state: "success", status: 201, ok: true, startedAt: Date.now(), receipt: { text: '<img src="x" onerror="danger()">', note: "responseInvalidJson" } };
