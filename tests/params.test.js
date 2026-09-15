@@ -51,6 +51,11 @@ describe("buildRequestBody", () => {
 });
 
 describe("buildRequestUrl", () => {
+  it.each(["GET", "DELETE"])("appends %s parameters before fragments, including a question mark inside the fragment", (method) => {
+    expect(buildRequestUrl("https://example.com/hook#view?raw", [{ key: "text", value: "a b" }], {}, method)).toBe("https://example.com/hook?text=a%20b#view?raw");
+    expect(buildRequestUrl("https://example.com/hook?existing=1#view", [{ key: "text", value: "a b" }], {}, method)).toBe("https://example.com/hook?existing=1&text=a%20b#view");
+  });
+
   const context = {
     page: {
       url: "https://example.com",

@@ -20,8 +20,8 @@ export function sendWebhook(config, context, { tab = null, source = "popup", res
     const comparison = prepareWebhook(config, { ...context, send: { id: "<Hooky:send.id>" } }, resolved);
     // Distinguish an actual binding from pasted literal variable syntax.
     const bindings = [
-      ...config.params.filter((param) => (!resolved || param.resolve) && /\{\{\s*send\.id\s*\}\}/.test(param.value)).map((param) => ["param", param.key]),
-      ...(config.headers || []).filter((header) => /\{\{\s*send\.id\s*\}\}/.test(header.value)).map((header) => ["header", header.key.toLowerCase()]),
+      ...config.params.filter((param) => param.key && (!resolved || param.resolve) && /\{\{\s*send\.id\s*\}\}/.test(param.value)).map((param) => ["param", param.key]),
+      ...(config.headers || []).filter((header) => /\{\{\s*send\.id\s*\}\}/.test(header.value)).map((header) => ["header", header.key.trim().toLowerCase()]),
     ];
     key = JSON.stringify([record.templateId, comparison, bindings]);
   }

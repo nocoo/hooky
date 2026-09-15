@@ -49,7 +49,8 @@ export function prepareWebhook(config, context, alreadyResolved = false) {
   if (!QUERY_METHODS.has(method)) {
     options.body = JSON.stringify(buildRequestBody(params, context, alreadyResolved));
   }
-  return { url: buildRequestUrl(url, params, context, method, alreadyResolved), options };
+  // URL fragments never reach the receiver and must not affect duplicate identity.
+  return { url: buildRequestUrl(url, params, context, method, alreadyResolved).split("#")[0], options };
 }
 
 /** Preview requests with all custom header values redacted, including nonstandard API keys. */

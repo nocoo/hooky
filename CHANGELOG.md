@@ -27,6 +27,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Keep stalled page feedback from delaying transport or overwriting a final outcome.
 - Coalesce identical pending requests across tabs, preserve the latest observed action, and restrict capture previews and execution messages to the extension's send panel.
 - Show missing notification permission and offer explicit reauthorization while retaining the user's preference.
+- Keep GET/DELETE parameters ahead of URL fragments and ignore fragments and unused rows when guarding identical requests.
 
 ## [2.0.0] - 2026-09-14
 

@@ -18,6 +18,25 @@ beforeEach(async () => {
 afterEach(() => { vi.useRealTimers(); });
 
 describe("shared send lifecycle", () => {
+  it("coalesces requests when unused rows and URL fragments differ between capture surfaces", async () => {
+    let finish;
+    fetch.mockImplementation(() => new Promise((resolve) => { finish = resolve; }));
+    const a = sendWebhook({ ...config, url: config.url + "#settings", params: [...config.params, { key: "", value: "{{send.id}}" }], headers: [{ key: " Idempotency-Key ", value: "{{send.id}}" }] }, context, { tab });
+    const b = sendWebhook({ ...config, headers: [{ key: "Idempotency-Key", value: "{{send.id}}" }] }, context, { tab });
+    expect(b).toBe(a);
+    expect(fetch.mock.calls[0][0]).toBe(config.url);
+    finish({ ok: true, status: 200 });
+    await a;
+  });
+
+  it.each(["GET", "DELETE"])("sends the actual UUID and preserves literal query values for %s endpoints with fragments", async (method) => {
+    const result = await sendWebhook({ ...config, method, url: config.url + "#section", params: [{ key: "id", value: "{{send.id}}", resolve: true }, { key: "text", value: "  {{send.id}}\nline  " }] }, context, { tab, resolved: true });
+    const url = new URL(fetch.mock.calls[0][0]);
+    expect(url.hash).toBe("");
+    expect(url.searchParams.get("id")).toBe(result.id);
+    expect(url.searchParams.get("text")).toBe("  {{send.id}}\nline  ");
+  });
+
   it("sends immediately even if page feedback stalls and bounds the wait for UI", async () => {
     vi.useFakeTimers();
     chrome.scripting.executeScript.mockImplementation(() => new Promise(() => {}));

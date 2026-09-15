@@ -37,6 +37,9 @@ export function buildRequestUrl(baseUrl, params, context, method, alreadyResolve
     return `${encodeURIComponent(p.key)}=${encodeURIComponent(resolved)}`;
   });
 
-  const separator = baseUrl.includes("?") ? "&" : "?";
-  return baseUrl + separator + queryParts.join("&");
+  const fragmentAt = baseUrl.indexOf("#");
+  const target = fragmentAt < 0 ? baseUrl : baseUrl.slice(0, fragmentAt);
+  const fragment = fragmentAt < 0 ? "" : baseUrl.slice(fragmentAt);
+  const separator = target.includes("?") ? "&" : "?";
+  return target + separator + queryParts.join("&") + fragment;
 }
