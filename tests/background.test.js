@@ -1,3 +1,4 @@
+import { addFeedbackChrome } from "./chrome-mock.js";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
 // Mock chrome APIs before importing background.js
@@ -43,6 +44,7 @@ beforeEach(() => {
       create: vi.fn(),
     },
   };
+  addFeedbackChrome(global.chrome);
 });
 
 // We need to dynamically import background.js so it picks up our mocks.
@@ -53,6 +55,56 @@ async function loadBackground() {
 }
 
 describe("background.js", () => {
+  it("responds with an error for a malformed send instead of leaving the popup waiting", async () => {
+    await loadBackground();
+    const respond = vi.fn();
+    onMessageListeners[0]({ type: "EXECUTE_WEBHOOK" }, {}, respond);
+    await vi.waitFor(() => expect(respond).toHaveBeenCalledWith({ ok: false, state: "failed", error: "requestFailed" }));
+  });
+
+  it("reports when neither result-panel surface can be opened", async () => {
+    chrome.action.openPopup.mockRejectedValue(new Error("window closed"));
+    chrome.tabs.create.mockRejectedValue(new Error("browser closing"));
+    await loadBackground();
+    const respond = vi.fn();
+    onMessageListeners[0]({ type: "OPEN_PANEL" }, {}, respond);
+    await vi.waitFor(() => expect(respond).toHaveBeenCalledWith({ ok: false }));
+  });
+
+  it.each(["toolbar", "context"])("handles unavailable storage and UI during a %s action", async (entry) => {
+    chrome.storage.session.get.mockRejectedValue(new Error("session unavailable"));
+    chrome.storage.local.get.mockRejectedValue(new Error("local unavailable"));
+    chrome.action.openPopup.mockRejectedValue(new Error("window closed"));
+    chrome.tabs.create.mockRejectedValue(new Error("browser closing"));
+    await loadBackground();
+    if (entry === "toolbar") onClickedListeners[0]({ id: 1 });
+    else onMenuClickedListeners[0]({ menuItemId: "hooky-t1" }, { id: 1 });
+    await vi.waitFor(() => expect(chrome.tabs.create).toHaveBeenCalled());
+  });
+
+  it("handles a failed menu refresh after a settings change", async () => {
+    await loadBackground();
+    await vi.waitFor(() => expect(chrome.contextMenus.removeAll).toHaveBeenCalled());
+    chrome.contextMenus.removeAll.mockRejectedValue(new Error("browser closing"));
+    onChangedListeners[0]({ hooky: { newValue: { templates: [] } } }, "local");
+    await Promise.resolve();
+    expect(chrome.contextMenus.removeAll).toHaveBeenCalledTimes(2);
+  });
+  it("opens the result panel from a page toast without executing a webhook", async () => {
+    chrome.action.openPopup.mockResolvedValue();
+    await loadBackground();
+    const respond = vi.fn();
+    expect(onMessageListeners[0]({ type: "OPEN_PANEL" }, {}, respond)).toBe(true);
+    await vi.waitFor(() => expect(respond).toHaveBeenCalledWith({ ok: true }));
+  });
+
+  it("does not rebuild menus for session result writes", async () => {
+    await loadBackground();
+    await vi.waitFor(() => expect(chrome.contextMenus.removeAll).toHaveBeenCalled());
+    chrome.contextMenus.removeAll.mockClear();
+    onChangedListeners[0]({ hooky: { newValue: { templates: [] } } }, "session");
+    expect(chrome.contextMenus.removeAll).not.toHaveBeenCalled();
+  });
   it("should register chrome.runtime.onMessage listener", async () => {
     await loadBackground();
     expect(chrome.runtime.onMessage.addListener).toHaveBeenCalledOnce();
@@ -162,7 +214,7 @@ describe("background.js", () => {
           templates: [{ id: "a", name: "A", url: "https://a.com" }],
         },
       },
-    });
+    }, "local");
 
     expect(chrome.contextMenus.removeAll).toHaveBeenCalled();
   });
@@ -180,7 +232,7 @@ describe("background.js", () => {
           templates: [{ id: "a", name: "A", url: "https://a.com" }],
         },
       },
-    });
+    }, "local");
 
     expect(chrome.action.setPopup).not.toHaveBeenCalled();
   });

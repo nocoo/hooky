@@ -244,5 +244,32 @@
   },
   "privacyNote": {
     "message": "テンプレートとルールはブラウザに保存され、リクエストは指定先へ直接送信されます。"
+  },
+  "openSendPanel": {
+    "message": "送信パネルを開く"
+  },
+  "viewLastResult": {
+    "message": "最近の送信結果"
+  },
+  "dismiss": {
+    "message": "閉じる"
+  },
+  "requestUnconfirmed": {
+    "message": "結果を確認できません。再送信する前に受信側を確認してください。"
+  },
+  "requestAccepted": {
+    "message": "受付済み（HTTP 202）。処理が続いている可能性があります。"
+  },
+  "invalidEndpoint": {
+    "message": "HTTP または HTTPS の Webhook URL を入力してください。"
+  },
+  "invalidMethod": {
+    "message": "未対応の HTTP メソッドです。"
+  },
+  "sendDetails": {
+    "message": "送信の詳細"
+  },
+  "sessionResultHint": {
+    "message": "このブラウザーセッションでのみ保持します。リクエスト本文は記録しません。"
   }
 }

@@ -244,5 +244,32 @@
   },
   "privacyNote": {
     "message": "Шаблоны и правила остаются в браузере. Запросы идут напрямую на выбранные адреса."
+  },
+  "openSendPanel": {
+    "message": "Открыть панель отправки"
+  },
+  "viewLastResult": {
+    "message": "Последняя отправка"
+  },
+  "dismiss": {
+    "message": "Закрыть"
+  },
+  "requestUnconfirmed": {
+    "message": "Результат не подтверждён. Перед повторной отправкой проверьте получателя."
+  },
+  "requestAccepted": {
+    "message": "Принято (HTTP 202). Обработка может продолжаться."
+  },
+  "invalidEndpoint": {
+    "message": "Введите HTTP- или HTTPS-адрес вебхука."
+  },
+  "invalidMethod": {
+    "message": "Неподдерживаемый HTTP-метод."
+  },
+  "sendDetails": {
+    "message": "Подробности отправки"
+  },
+  "sessionResultHint": {
+    "message": "Хранится в текущем сеансе браузера. Тело запроса не записывается."
   }
 }

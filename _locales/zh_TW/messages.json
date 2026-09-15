@@ -244,5 +244,32 @@
   },
   "privacyNote": {
     "message": "範本和規則儲存在瀏覽器中，請求直接傳送到你指定的端點。"
+  },
+  "openSendPanel": {
+    "message": "開啟傳送面板"
+  },
+  "viewLastResult": {
+    "message": "最近傳送結果"
+  },
+  "dismiss": {
+    "message": "關閉"
+  },
+  "requestUnconfirmed": {
+    "message": "結果未確認。再次傳送前請先檢查接收端。"
+  },
+  "requestAccepted": {
+    "message": "已受理（HTTP 202），可能仍在處理中。"
+  },
+  "invalidEndpoint": {
+    "message": "請輸入 HTTP 或 HTTPS Webhook 網址。"
+  },
+  "invalidMethod": {
+    "message": "不支援此 HTTP 方法。"
+  },
+  "sendDetails": {
+    "message": "傳送詳情"
+  },
+  "sessionResultHint": {
+    "message": "僅在本次瀏覽器工作階段保留，不記錄請求本文。"
   }
 }

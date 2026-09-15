@@ -244,5 +244,32 @@
   },
   "privacyNote": {
     "message": "Templates and rules stay in your browser. Requests go directly to the endpoints you choose."
+  },
+  "openSendPanel": {
+    "message": "Open send panel"
+  },
+  "viewLastResult": {
+    "message": "Latest send"
+  },
+  "dismiss": {
+    "message": "Dismiss"
+  },
+  "requestUnconfirmed": {
+    "message": "Result unconfirmed. Check the receiver before sending again."
+  },
+  "requestAccepted": {
+    "message": "Accepted (HTTP 202). Processing may still be in progress."
+  },
+  "invalidEndpoint": {
+    "message": "Enter an HTTP or HTTPS webhook URL."
+  },
+  "invalidMethod": {
+    "message": "Unsupported HTTP method."
+  },
+  "sendDetails": {
+    "message": "Send details"
+  },
+  "sessionResultHint": {
+    "message": "Kept for this browser session. Request content is not recorded."
   }
 }

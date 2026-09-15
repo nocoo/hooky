@@ -2,6 +2,11 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { executeWebhook } from "../src/webhook.js";
 
 describe("executeWebhook", () => {
+  it("rejects unsupported methods before making a request", async () => {
+    const result = await executeWebhook({ url: "https://example.com", method: "TRACE", params: [] }, {});
+    expect(result).toEqual({ ok: false, state: "failed", error: "invalidMethod" });
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
   let fetchMock;
 
   beforeEach(() => {
@@ -35,6 +40,7 @@ describe("executeWebhook", () => {
     expect(fetchMock).toHaveBeenCalledWith("https://api.example.com/hook", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
+      signal: expect.any(AbortSignal),
       body: JSON.stringify({ url: "https://example.com", tag: "test" }),
     });
     expect(result.ok).toBe(true);
@@ -57,6 +63,7 @@ describe("executeWebhook", () => {
       {
         method: "GET",
         headers: { "Content-Type": "application/json" },
+        signal: expect.any(AbortSignal),
       },
     );
     expect(result.ok).toBe(true);
@@ -76,6 +83,7 @@ describe("executeWebhook", () => {
     expect(fetchMock).toHaveBeenCalledWith("https://api.example.com/hook", {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
+      signal: expect.any(AbortSignal),
       body: JSON.stringify({ data: "value" }),
     });
   });
@@ -94,6 +102,7 @@ describe("executeWebhook", () => {
     expect(fetchMock).toHaveBeenCalledWith("https://api.example.com/hook", {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
+      signal: expect.any(AbortSignal),
       body: JSON.stringify({ field: "updated" }),
     });
   });
@@ -114,6 +123,7 @@ describe("executeWebhook", () => {
       {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
+        signal: expect.any(AbortSignal),
       },
     );
     expect(result.status).toBe(204);
@@ -131,7 +141,8 @@ describe("executeWebhook", () => {
     const result = await executeWebhook(config, context);
 
     expect(result.ok).toBe(false);
-    expect(result.error).toBe("Network error");
+    expect(result.state).toBe("unknown");
+    expect(result.error).toBe("requestUnconfirmed");
   });
 
   it("should handle non-ok response", async () => {
@@ -163,6 +174,7 @@ describe("executeWebhook", () => {
     expect(fetchMock).toHaveBeenCalledWith("https://api.example.com/hook", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
+      signal: expect.any(AbortSignal),
       body: JSON.stringify({}),
     });
   });

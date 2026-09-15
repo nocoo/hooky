@@ -1,9 +1,10 @@
-import { executeWebhook } from "./webhook.js";
+import { sendWebhook } from "./send.js";
+import { openPanel } from "./feedback.js";
+import { t } from "./i18n.js";
 import { getPageContext } from "./pagecontext.js";
 
 const PARENT_ID = "hooky-parent";
 const PREFIX = "hooky-";
-const BADGE_CLEAR_DELAY = 3000;
 const STORE_KEY = "hooky";
 const CONTEXTS = ["page", "selection", "link", "image"];
 
@@ -18,6 +19,8 @@ const CONTEXTS = ["page", "selection", "link", "image"];
 export async function buildContextMenus(templates) {
   await chrome.contextMenus.removeAll();
 
+  chrome.contextMenus.create({ id: "hooky-open-panel", title: t("openSendPanel"), contexts: ["action"] });
+  chrome.contextMenus.create({ id: "hooky-view-result", title: t("viewLastResult"), contexts: ["action"] });
   if (!templates || templates.length === 0) return;
 
   chrome.contextMenus.create({
@@ -34,19 +37,9 @@ export async function buildContextMenus(templates) {
       contexts: CONTEXTS,
     });
   }
-}
-
-/**
- * Show a brief badge on the extension icon to indicate success/failure.
- *
- * @param {boolean} success
- */
-function flashBadge(success) {
-  chrome.action.setBadgeText({ text: success ? "✓" : "✗" });
-  chrome.action.setBadgeBackgroundColor({
-    color: success ? "#4a9" : "#c44",
-  });
-  setTimeout(() => chrome.action.setBadgeText({ text: "" }), BADGE_CLEAR_DELAY);
+  chrome.contextMenus.create({ id: "hooky-menu-divider", parentId: PARENT_ID, type: "separator", contexts: CONTEXTS });
+  chrome.contextMenus.create({ id: "hooky-menu-panel", parentId: PARENT_ID, title: t("openSendPanel"), contexts: CONTEXTS });
+  chrome.contextMenus.create({ id: "hooky-menu-result", parentId: PARENT_ID, title: t("viewLastResult"), contexts: CONTEXTS });
 }
 
 /**
@@ -63,6 +56,11 @@ function flashBadge(success) {
 export async function handleContextMenuClick(info, tab) {
   const menuId = String(info.menuItemId);
 
+  if (["hooky-open-panel", "hooky-view-result", "hooky-menu-panel", "hooky-menu-result"].includes(menuId)) {
+    await openPanel();
+    return;
+  }
+
   // Ignore non-hooky items or parent click
   if (!menuId.startsWith(PREFIX) || menuId === PARENT_ID) return;
 
@@ -77,7 +75,6 @@ export async function handleContextMenuClick(info, tab) {
   if (!config || !config.url) return;
 
   const context = await getPageContext(tab);
-  const result = await executeWebhook(config, context);
-
-  flashBadge(result.ok);
+  if (typeof info.selectionText === "string") context.page.selection = info.selectionText;
+  await sendWebhook(config, context, { tab, source: "context" });
 }

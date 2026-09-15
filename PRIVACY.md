@@ -10,13 +10,17 @@ Hooky sends user-configured webhook requests using context from the current brow
 
 Webhook templates, endpoint URLs, parameter values, rules, and theme preferences are stored in `chrome.storage.local`. They are not synced by Hooky and are removed when the extension is uninstalled. Template values may contain information you enter, including credentials; local extension storage is not a password vault.
 
+`chrome.storage.session` holds the latest send summary globally and for each sending tab: a random send ID, template ID and name, tab ID, entry point, timestamps, and request outcome. It does not contain request bodies, page selections, or credentials. Chrome clears this session data on browser restart or extension reload, update, or disable. Background worker restarts preserve the summary; interrupted sends become unconfirmed and are not replayed.
+
 ## Page data and requests
 
 When you open the popup or trigger a webhook, Hooky reads available page context: URL, title, selected text, description metadata, and Open Graph title, description, and image URL. Values appear in the popup and fill the variables you configured. Missing variables become empty strings. Hooky does not extract the complete page body, record browsing history, or run a persistent page script.
 
 Requests are sent when you press Send, choose a context-menu template, or click the toolbar icon on a page matching an enabled Quick Send rule. Quick Send does not send merely because you visit a matching page.
 
-The configured endpoint receives the request parameters, standard network information such as your IP address, and any data you included. Endpoint redirects follow the browser's Fetch behavior. The receiving service's storage and privacy practices are outside Hooky's control. Hooky does not proxy these requests or maintain a request history.
+The configured endpoint receives the request parameters, standard network information such as your IP address, and any data you included. Endpoint redirects follow the browser's Fetch behavior. The receiving service's storage and privacy practices are outside Hooky's control. Hooky does not proxy these requests or maintain a persistent request history.
+
+After a user-triggered send, a small temporary page UI may show the template name and generic request status. Page feedback does not receive request bodies or credentials. Restricted pages fall back to the extension's panel. HTTP success does not prove that the receiving service durably saved the data.
 
 ## Permissions
 

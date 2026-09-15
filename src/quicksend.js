@@ -1,32 +1,7 @@
-import { executeWebhook } from "./webhook.js";
+import { sendWebhook } from "./send.js";
+import { openPanel } from "./feedback.js";
 import { getPageContext } from "./pagecontext.js";
 import { findMatchingRule } from "./rules.js";
-
-const POPUP_PATH = "src/popup/popup.html";
-const BADGE_CLEAR_DELAY = 3000;
-
-/**
- * Show a brief badge on the extension icon to indicate success/failure.
- *
- * @param {boolean} success
- */
-function flashBadge(success) {
-  chrome.action.setBadgeText({ text: success ? "✓" : "✗" });
-  chrome.action.setBadgeBackgroundColor({
-    color: success ? "#4a9" : "#c44",
-  });
-  setTimeout(() => chrome.action.setBadgeText({ text: "" }), BADGE_CLEAR_DELAY);
-}
-
-/**
- * Open the popup as a fallback when no rules match.
- */
-function openPopupFallback() {
-  chrome.action.setPopup({ popup: POPUP_PATH });
-  chrome.action.openPopup().then(() => {
-    chrome.action.setPopup({ popup: "" });
-  });
-}
 
 /**
  * Handle a quick-send trigger: evaluate rules against the current page,
@@ -45,7 +20,7 @@ export async function handleQuickSend(tab) {
   const store = data[storeKey];
 
   if (!store || !store.templates || store.templates.length === 0) {
-    openPopupFallback();
+    await openPanel();
     return;
   }
 
@@ -57,12 +32,11 @@ export async function handleQuickSend(tab) {
   if (matchedRule) {
     const config = store.templates.find((t) => t.id === matchedRule.templateId);
     if (config && config.url) {
-      const result = await executeWebhook(config, context);
-      flashBadge(result.ok);
+      await sendWebhook(config, context, { tab, source: "quick" });
       return;
     }
   }
 
   // No rules matched or matched template invalid → open popup
-  openPopupFallback();
+  await openPanel();
 }

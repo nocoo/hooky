@@ -1,3 +1,4 @@
+import { addFeedbackChrome } from "./chrome-mock.js";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
 // Mock the pagecontext module
@@ -23,6 +24,7 @@ describe("buildContextMenus", () => {
       },
       runtime: { lastError: null },
     };
+    addFeedbackChrome(global.chrome);
   });
 
   it("should remove all existing menus before creating new ones", async () => {
@@ -30,9 +32,9 @@ describe("buildContextMenus", () => {
     expect(removeAllMock).toHaveBeenCalled();
   });
 
-  it("should not create any menus when templates list is empty", async () => {
+  it("keeps the panel and result actions available without templates", async () => {
     await buildContextMenus([]);
-    expect(createMock).not.toHaveBeenCalled();
+    expect(createMock).toHaveBeenCalledTimes(2);
   });
 
   it("should create parent menu and one child per template", async () => {
@@ -71,8 +73,8 @@ describe("buildContextMenus", () => {
       }),
     );
 
-    // 1 parent + 2 children = 3
-    expect(createMock).toHaveBeenCalledTimes(3);
+    // Two action entries, parent, two templates and three panel entries.
+    expect(createMock).toHaveBeenCalledTimes(8);
   });
 
   it("should use default name when template name is empty", async () => {
@@ -94,6 +96,20 @@ describe("buildContextMenus", () => {
 describe("handleContextMenuClick", () => {
   let fetchMock;
   let storageMock;
+
+  it("uses the selection captured by the context-menu event", async () => {
+    storageMock.local.get.mockResolvedValue({ hooky: { templates: [{ id: "t1", name: "Save", url: "https://example.com/capture", method: "POST", params: [{ key: "text", value: "{{page.selection}}" }] }] } });
+    getPageContext.mockResolvedValue({ page: { selection: "selection already changed", meta: {} } });
+    await handleContextMenuClick({ menuItemId: "hooky-t1", selectionText: "original iframe selection" }, { id: 1, url: "https://example.com" });
+    expect(JSON.parse(fetchMock.mock.calls[0][1].body)).toEqual({ text: "original iframe selection" });
+  });
+
+  it.each(["hooky-open-panel", "hooky-view-result", "hooky-menu-panel", "hooky-menu-result"])("opens %s without sending or evaluating rules", async (menuItemId) => {
+    await handleContextMenuClick({ menuItemId }, { id: 1 });
+    expect(chrome.action.openPopup).toHaveBeenCalledTimes(1);
+    expect(storageMock.local.get).not.toHaveBeenCalled();
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -119,6 +135,7 @@ describe("handleContextMenuClick", () => {
       },
       runtime: { lastError: null },
     };
+    addFeedbackChrome(global.chrome);
 
     // Default: return fallback context
     getPageContext.mockResolvedValue({
@@ -165,6 +182,7 @@ describe("handleContextMenuClick", () => {
     expect(fetchMock).toHaveBeenCalledWith("https://slack.com/hook", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
+      signal: expect.any(AbortSignal),
       body: JSON.stringify({ url: "https://example.com" }),
     });
   });
@@ -183,8 +201,8 @@ describe("handleContextMenuClick", () => {
 
     await handleContextMenuClick(info, tab);
 
-    expect(chrome.action.setBadgeText).toHaveBeenCalledWith({ text: "✓" });
-    expect(chrome.action.setBadgeBackgroundColor).toHaveBeenCalledWith({ color: "#4a9" });
+    expect(chrome.action.setBadgeText).toHaveBeenCalledWith(expect.objectContaining({ text: "✓" }));
+    expect(chrome.action.setBadgeBackgroundColor).toHaveBeenCalledWith({ tabId: 1, color: "#4a9" });
   });
 
   it("should show error badge after failed webhook", async () => {
@@ -201,8 +219,8 @@ describe("handleContextMenuClick", () => {
 
     await handleContextMenuClick(info, tab);
 
-    expect(chrome.action.setBadgeText).toHaveBeenCalledWith({ text: "✗" });
-    expect(chrome.action.setBadgeBackgroundColor).toHaveBeenCalledWith({ color: "#c44" });
+    expect(chrome.action.setBadgeText).toHaveBeenCalledWith(expect.objectContaining({ text: "✗" }));
+    expect(chrome.action.setBadgeBackgroundColor).toHaveBeenCalledWith({ tabId: 1, color: "#c44" });
   });
 
   it("should do nothing when template id not found in store", async () => {
@@ -257,6 +275,7 @@ describe("handleContextMenuClick", () => {
     expect(fetchMock).toHaveBeenCalledWith("https://slack.com/hook", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
+      signal: expect.any(AbortSignal),
       body: JSON.stringify({ title: "My Page", selected: "highlighted text" }),
     });
   });
@@ -283,6 +302,7 @@ describe("handleContextMenuClick", () => {
       {
         method: "GET",
         headers: { "Content-Type": "application/json" },
+        signal: expect.any(AbortSignal),
       },
     );
   });
@@ -307,6 +327,7 @@ describe("handleContextMenuClick", () => {
     expect(fetchMock).toHaveBeenCalledWith("https://hook.com", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
+      signal: expect.any(AbortSignal),
       body: JSON.stringify({ url: "chrome://extensions" }),
     });
   });
@@ -331,6 +352,7 @@ describe("handleContextMenuClick", () => {
     expect(fetchMock).toHaveBeenCalledWith("https://hook.com", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
+      signal: expect.any(AbortSignal),
       body: JSON.stringify({ title: "Tab Title" }),
     });
   });
@@ -368,6 +390,7 @@ describe("handleContextMenuClick", () => {
     expect(fetchMock).toHaveBeenCalledWith("https://hook.com", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
+      signal: expect.any(AbortSignal),
       body: JSON.stringify({ url: "" }),
     });
   });

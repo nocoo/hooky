@@ -1,3 +1,4 @@
+import { addFeedbackChrome } from "./chrome-mock.js";
 import { readFileSync } from "node:fs";
 // @vitest-environment jsdom
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
@@ -45,6 +46,7 @@ function setupChromeMock(storeData = {}) {
       }),
     },
   };
+  addFeedbackChrome(global.chrome);
 }
 
 /**
@@ -66,6 +68,22 @@ async function setupPageContextMock(contextData) {
 }
 
 describe("popup.js", () => {
+  it("shows a retained result without sending and updates it from session changes", async () => {
+    setupChromeMock({ hooky: { templates: [], theme: "system" } });
+    const record = { id: "retained", name: "Save", state: "sending", startedAt: Date.now() };
+    await chrome.storage.session.set({ hookyLastResult: record });
+    await setupPageContextMock();
+    await import("../src/popup/popup.js");
+    await vi.waitFor(() => expect(document.getElementById("last-result").hidden).toBe(false));
+    expect(document.getElementById("last-result-name").textContent).toBe("Save");
+    const changed = chrome.storage.onChanged.addListener.mock.calls[0][0];
+    changed({ hookyLastResult: { newValue: { ...record, state: "unknown", ok: false } } }, "session");
+    expect(document.getElementById("last-result-status").className).toBe("error");
+    changed({ hookyLastResult: { newValue: { ...record, state: "success", ok: true, status: 201 } } }, "local");
+    expect(document.getElementById("last-result-status").className).toBe("error");
+    changed({}, "session");
+    expect(chrome.runtime.sendMessage).not.toHaveBeenCalled();
+  });
   beforeEach(() => {
     vi.resetModules();
     vi.useFakeTimers();
@@ -94,7 +112,7 @@ describe("popup.js", () => {
       resolved: true,
       config: expect.objectContaining({ params: [{ key: "note", value: "  edited {{page.title}}\nSecond line  " }] }),
     })));
-    await vi.advanceTimersByTimeAsync(4100);
+    await vi.advanceTimersByTimeAsync(8100);
     expect(document.getElementById("toast").classList.contains("visible")).toBe(false);
   });
 

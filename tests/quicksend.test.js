@@ -1,3 +1,4 @@
+import { addFeedbackChrome } from "./chrome-mock.js";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
 // Mock the pagecontext module
@@ -36,6 +37,7 @@ describe("handleQuickSend", () => {
         openPopup: vi.fn().mockResolvedValue(),
       },
     };
+    addFeedbackChrome(global.chrome);
 
     // Default: return fallback context
     getPageContext.mockResolvedValue({
@@ -143,6 +145,7 @@ describe("handleQuickSend", () => {
     expect(fetchMock).toHaveBeenCalledWith("https://discord.com/hook", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
+      signal: expect.any(AbortSignal),
       body: "{}",
     });
   });
@@ -166,8 +169,9 @@ describe("handleQuickSend", () => {
     const tab = { id: 1, url: "https://example.com", title: "Example" };
     await handleQuickSend(tab);
 
-    expect(chrome.action.setBadgeText).toHaveBeenCalledWith({ text: "✓" });
+    expect(chrome.action.setBadgeText).toHaveBeenCalledWith(expect.objectContaining({ text: "✓" }));
     expect(chrome.action.setBadgeBackgroundColor).toHaveBeenCalledWith({
+      tabId: 1,
       color: "#4a9",
     });
   });
@@ -191,13 +195,14 @@ describe("handleQuickSend", () => {
     const tab = { id: 1, url: "https://example.com", title: "Example" };
     await handleQuickSend(tab);
 
-    expect(chrome.action.setBadgeText).toHaveBeenCalledWith({ text: "✗" });
+    expect(chrome.action.setBadgeText).toHaveBeenCalledWith(expect.objectContaining({ text: "✗" }));
     expect(chrome.action.setBadgeBackgroundColor).toHaveBeenCalledWith({
+      tabId: 1,
       color: "#c44",
     });
   });
 
-  it("should show error badge on network failure", async () => {
+  it("should show unconfirmed badge on network failure", async () => {
     const store = {
       templates: [
         { id: "t1", name: "A", url: "https://a.com/hook", method: "POST", params: [] },
@@ -216,7 +221,7 @@ describe("handleQuickSend", () => {
     const tab = { id: 1, url: "https://example.com", title: "Example" };
     await handleQuickSend(tab);
 
-    expect(chrome.action.setBadgeText).toHaveBeenCalledWith({ text: "✗" });
+    expect(chrome.action.setBadgeText).toHaveBeenCalledWith(expect.objectContaining({ text: "?" }));
   });
 
   it("should match by title field", async () => {
@@ -240,6 +245,7 @@ describe("handleQuickSend", () => {
     expect(fetchMock).toHaveBeenCalledWith("https://discord.com/hook", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
+      signal: expect.any(AbortSignal),
       body: "{}",
     });
   });
@@ -267,6 +273,7 @@ describe("handleQuickSend", () => {
     expect(fetchMock).toHaveBeenCalledWith("https://discord.com/hook", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
+      signal: expect.any(AbortSignal),
       body: "{}",
     });
   });
@@ -370,6 +377,7 @@ describe("handleQuickSend", () => {
     expect(fetchMock).toHaveBeenCalledWith("https://api.example.com/hook", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
+      signal: expect.any(AbortSignal),
       body: JSON.stringify({ url: "https://example.com/page" }),
     });
   });
@@ -400,6 +408,7 @@ describe("handleQuickSend", () => {
       {
         method: "GET",
         headers: { "Content-Type": "application/json" },
+        signal: expect.any(AbortSignal),
       },
     );
   });

@@ -23,6 +23,12 @@
       <button type="button" id="send-btn" class="btn-primary btn-send" data-i18n="send">Send</button>
     </main>
     <div id="toast" class="toast" role="status" aria-live="polite"></div>
+    <section id="last-result" class="last-result card" hidden aria-live="polite">
+      <p class="eyebrow" data-i18n="viewLastResult">Latest send</p>
+      <div class="result-heading"><strong id="last-result-name"></strong><time id="last-result-time"></time></div>
+      <p id="last-result-status"></p>
+      <details><summary data-i18n="sendDetails">Send details</summary><code id="last-result-id"></code><p class="hint" data-i18n="sessionResultHint">Kept for this browser session. Request content is not recorded.</p></details>
+    </section>
     <footer class="brand-footer"><span><i class="dot"></i><span data-i18n="localSettings">Settings stay local</span></span><a href="https://hexly.ai" target="_blank" rel="noopener noreferrer">a product of hexly.ai ↗</a></footer>
   </div>
   <script src="popup.js" type="module"></script>

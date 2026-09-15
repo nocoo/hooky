@@ -3,6 +3,7 @@ import { applyI18n, t } from "../i18n.js";
 import { loadStore, setActiveTemplateId } from "../store.js";
 import { applyTheme } from "../theme.js";
 import { getPageContext } from "../pagecontext.js";
+import { LAST_RESULT_KEY, readLastResult, resultMessage } from "../feedback.js";
 
 const noConfigEl = document.getElementById("no-config");
 const webhookPanel = document.getElementById("webhook-panel");
@@ -17,13 +18,25 @@ const toastEl = document.getElementById("toast");
 
 let currentTemplate = null;
 let pageContext = null;
+let currentTab = null;
 let toastTimer;
 
 function showToast(message, type = "success") {
   toastEl.textContent = message;
   toastEl.className = `toast ${type} visible`;
   clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => toastEl.classList.remove("visible"), 4000);
+  if (type === "success") toastTimer = setTimeout(() => toastEl.classList.remove("visible"), 8000);
+}
+
+function renderLastResult(result) {
+  if (!result?.id) return;
+  document.getElementById("last-result").hidden = false;
+  document.getElementById("last-result-name").textContent = result.name;
+  document.getElementById("last-result-time").textContent = new Date(result.startedAt).toLocaleTimeString();
+  const status = document.getElementById("last-result-status");
+  status.textContent = resultMessage(result);
+  status.className = result.state === "failed" || result.state === "unknown" ? "error" : "";
+  document.getElementById("last-result-id").textContent = result.id;
 }
 
 function openSettings() {
@@ -32,6 +45,7 @@ function openSettings() {
 
 async function getPopupPageContext() {
   const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+  currentTab = tab || null;
   return getPageContext(tab);
 }
 
@@ -86,7 +100,7 @@ function getResolvedParams() {
 }
 
 async function sendWebhook() {
-  if (!currentTemplate) return;
+  if (!currentTemplate || sendBtn.disabled) return;
 
   sendBtn.disabled = true;
   sendBtn.textContent = t("sending");
@@ -100,12 +114,14 @@ async function sendWebhook() {
       resolved: true,
       config,
       context: { page: {} },
+      tab: currentTab,
     });
 
+    renderLastResult(result);
     if (result?.ok) {
-      showToast(t("successStatus", [String(result.status)]), "success");
+      showToast(resultMessage(result), "success");
     } else {
-      const msg = result?.error || t("failedStatus", [String(result?.status || "unknown")]);
+      const msg = result?.state ? resultMessage(result) : result?.error || t("failedStatus", [String(result?.status || "unknown")]);
       showToast(msg, "error");
     }
   } catch (err) {
@@ -120,6 +136,7 @@ async function init() {
   applyI18n();
 
   const store = await loadStore();
+  renderLastResult(await readLastResult());
 
   // Apply theme
   applyTheme(store.theme || "system");
@@ -169,5 +186,8 @@ templateSelect.addEventListener("change", async () => {
 settingsBtn.addEventListener("click", openSettings);
 goSettingsBtn.addEventListener("click", openSettings);
 sendBtn.addEventListener("click", sendWebhook);
+chrome.storage.onChanged.addListener((changes, area) => {
+  if (area === "session" && changes[LAST_RESULT_KEY]?.newValue) renderLastResult(changes[LAST_RESULT_KEY].newValue);
+});
 
 init().catch((err) => showToast(err.message || t("requestFailed"), "error"));

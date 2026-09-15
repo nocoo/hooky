@@ -244,5 +244,32 @@
   },
   "privacyNote": {
     "message": "Vorlagen und Regeln bleiben im Browser. Anfragen gehen direkt an die gewählten Endpunkte."
+  },
+  "openSendPanel": {
+    "message": "Sendefenster öffnen"
+  },
+  "viewLastResult": {
+    "message": "Letzter Sendevorgang"
+  },
+  "dismiss": {
+    "message": "Schließen"
+  },
+  "requestUnconfirmed": {
+    "message": "Ergebnis unbestätigt. Vor erneutem Senden beim Empfänger prüfen."
+  },
+  "requestAccepted": {
+    "message": "Angenommen (HTTP 202). Verarbeitung möglicherweise noch nicht abgeschlossen."
+  },
+  "invalidEndpoint": {
+    "message": "Eine HTTP- oder HTTPS-Webhook-URL eingeben."
+  },
+  "invalidMethod": {
+    "message": "Nicht unterstützte HTTP-Methode."
+  },
+  "sendDetails": {
+    "message": "Sendedetails"
+  },
+  "sessionResultHint": {
+    "message": "Nur für diese Browsersitzung gespeichert. Der Anfrageinhalt wird nicht aufgezeichnet."
   }
 }

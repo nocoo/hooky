@@ -26,3 +26,8 @@ body { width: 360px; background: var(--surface); }
 .toast.visible { display: block; }
 .toast.success { color: var(--success); }
 .toast.error { color: var(--danger); }
+.last-result { padding: 10px; margin-top: 12px; font-size: 12px; overflow-wrap: anywhere; }
+.result-heading { display: flex; justify-content: space-between; gap: 8px; margin: 6px 0; }
+.result-heading time { color: var(--muted); font-size: 10px; flex-shrink: 0; }
+.last-result details { margin-top: 8px; font-size: 10px; color: var(--muted); }
+.last-result summary { cursor: pointer; margin-bottom: 5px; }

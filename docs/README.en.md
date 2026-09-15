@@ -24,7 +24,7 @@ A compact wisteria workspace in the hexly.ai family, with a current-page card, e
 - **Page variables**: Reference page context in parameter values and resolve it when sending.
 - **Quick-send rules**: On a toolbar click, match the page URL or title in order. Send through the first enabled matching rule when its template is valid; otherwise open the popup.
 - **Context menu sending**: Choose a template from the right-click menu on a page, selection, link, or image.
-- **Result feedback**: View request results in the popup, or success/failure badges for quick-send and context menu actions.
+- **Result feedback**: All entry points show sending, success, receiver errors, or unconfirmed results. Quick-send and context menu actions show page feedback and persistent badges; the panel retains the latest result for this browser session.
 - **Appearance and language**: System, light, and dark themes. The UI follows Chrome's language and includes English, Chinese, and other locales.
 
 Rules support contains, equals, starts-with, ends-with, and regular-expression matching, without case sensitivity. Page variables include:
@@ -49,6 +49,8 @@ Install from the Chrome Web Store link above, or load the source as described un
 2. Add parameters such as `url = {{page.url}}` and `title = {{page.title}}`, then save.
 3. Open a webpage and send using the template in the popup or context menu.
 4. For one-click sending, create an enabled rule with a URL or title condition and an associated template.
+
+The page and extension-icon context menus include **Open send panel** and **Latest send**; these actions never run quick-send rules. Identical pending requests for the same template and tab share one send. After completion you can send again. Requests time out after 20 seconds; a timeout or lost connection leaves the result unconfirmed, so check the receiver before sending again. Hooky never retries automatically. HTTP success confirms a successful response, not durable business storage.
 
 For example, POST with those two parameters sends:
 

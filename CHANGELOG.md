@@ -5,6 +5,19 @@ All notable changes to Hooky will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- Shared sending, success, rejection, and unconfirmed-result feedback for popup, Quick Send, and context-menu sends.
+- Page notifications, persistent toolbar badges, and a session-only latest-result panel with independent view/open actions.
+- A pending-request guard and a 20-second deadline; interrupted requests are never replayed automatically.
+
+### Fixed
+
+- Preserve the selection supplied by a context-menu event, including selections inside frames.
+- Keep older completions from replacing a newer send's result or badge.
+
 ## [2.0.0] - 2026-09-14
 
 ### Added

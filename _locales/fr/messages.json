@@ -244,5 +244,32 @@
   },
   "privacyNote": {
     "message": "Modèles et règles restent dans le navigateur. Les requêtes vont directement aux adresses choisies."
+  },
+  "openSendPanel": {
+    "message": "Ouvrir le panneau d’envoi"
+  },
+  "viewLastResult": {
+    "message": "Dernier envoi"
+  },
+  "dismiss": {
+    "message": "Fermer"
+  },
+  "requestUnconfirmed": {
+    "message": "Résultat non confirmé. Vérifiez le destinataire avant de renvoyer."
+  },
+  "requestAccepted": {
+    "message": "Accepté (HTTP 202). Le traitement peut être en cours."
+  },
+  "invalidEndpoint": {
+    "message": "Saisissez une URL de webhook HTTP ou HTTPS."
+  },
+  "invalidMethod": {
+    "message": "Méthode HTTP non prise en charge."
+  },
+  "sendDetails": {
+    "message": "Détails de l’envoi"
+  },
+  "sessionResultHint": {
+    "message": "Conservé pour cette session du navigateur. Le corps de la requête n’est pas enregistré."
   }
 }
