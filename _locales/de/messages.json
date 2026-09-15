@@ -298,5 +298,29 @@
   },
   "invalidHeader": {
     "message": "Ungültiger Header-Name oder -Wert. Zeilenumbrüche sind nicht erlaubt."
+  },
+  "readResponse": {
+    "message": "Kurze Antwort lesen"
+  },
+  "responseHelp": {
+    "message": "Standardmäßig aus. Liest höchstens 8 KiB Text oder JSON in 3 Sekunden. Nur in Hooky sichtbar und für diese Browsersitzung gespeichert."
+  },
+  "responseReceipt": {
+    "message": "Antwort / Beleg"
+  },
+  "responseUnsupported": {
+    "message": "Dieser Antworttyp kann nicht angezeigt werden. Das HTTP-Ergebnis bleibt unverändert."
+  },
+  "responseEmpty": {
+    "message": "Der Antworttext ist leer."
+  },
+  "responseTruncated": {
+    "message": "Lesen bei 8 KiB gestoppt. Die Antwort ist möglicherweise unvollständig."
+  },
+  "responseUnavailable": {
+    "message": "Die Antwort konnte nicht in 3 Sekunden vollständig gelesen werden. Das HTTP-Ergebnis bleibt unverändert."
+  },
+  "responseInvalidJson": {
+    "message": "Der Empfänger hat ungültiges JSON zurückgegeben. Anzeige als Text."
   }
 }

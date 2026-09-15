@@ -298,5 +298,29 @@
   },
   "invalidHeader": {
     "message": "Nom ou valeur d’en-tête invalide. Les sauts de ligne sont interdits."
+  },
+  "readResponse": {
+    "message": "Lire une courte réponse"
+  },
+  "responseHelp": {
+    "message": "Désactivé par défaut. Lit au plus 8 Kio de texte ou JSON en 3 secondes. Visible uniquement dans Hooky et conservé pendant cette session du navigateur."
+  },
+  "responseReceipt": {
+    "message": "Réponse / reçu"
+  },
+  "responseUnsupported": {
+    "message": "Ce type de réponse ne peut pas être affiché. Le résultat HTTP reste inchangé."
+  },
+  "responseEmpty": {
+    "message": "Le corps de la réponse est vide."
+  },
+  "responseTruncated": {
+    "message": "Lecture arrêtée à la limite de 8 Kio. La réponse peut être incomplète."
+  },
+  "responseUnavailable": {
+    "message": "La réponse n’a pas pu être entièrement lue en 3 secondes. Le résultat HTTP reste inchangé."
+  },
+  "responseInvalidJson": {
+    "message": "Le destinataire a renvoyé du JSON invalide. Affichage en texte."
   }
 }

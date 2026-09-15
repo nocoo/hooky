@@ -68,6 +68,21 @@ async function setupPageContextMock(contextData) {
 }
 
 describe("popup.js", () => {
+  it("renders opted-in receipts as text and clears them on the next result", async () => {
+    setupChromeMock({ hooky: { templates: [] } });
+    const record = { id: "receipt", name: "Save", state: "success", status: 201, ok: true, startedAt: Date.now(), receipt: { text: '<img src="x" onerror="danger()">', note: "responseInvalidJson" } };
+    await chrome.storage.session.set({ hookyLastResult: record });
+    await import("../src/popup/popup.js");
+    await vi.waitFor(() => expect(document.getElementById("last-response").hidden).toBe(false));
+    expect(document.getElementById("response-body").textContent).toBe(record.receipt.text);
+    expect(document.getElementById("response-body").querySelector("img")).toBeNull();
+    expect(document.getElementById("response-note").textContent).toBe("responseInvalidJson");
+    const changed = chrome.storage.onChanged.addListener.mock.calls[0][0];
+    changed({ hookyLastResult: { newValue: { ...record, receipt: undefined } } }, "session");
+    expect(document.getElementById("last-response").hidden).toBe(true);
+    expect(document.getElementById("response-body").textContent).toBe("");
+  });
+
   it("previews masked headers, preserves untouched bindings, and allows manual multiline input", async () => {
     const template = { id: "t1", name: "Notes", url: "https://example.com/hook", method: "POST", headers: [{ key: "X-API-Key", value: "private-token" }], params: [
       { key: "id", value: "{{send.id}}" }, { key: "text", value: "" }, { key: "selected", value: "{{page.selection}}" },

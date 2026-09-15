@@ -31,6 +31,7 @@ body { width: 360px; background: var(--surface); }
 .result-heading time { color: var(--muted); font-size: 10px; flex-shrink: 0; }
 .last-result details { margin-top: 8px; font-size: 10px; color: var(--muted); }
 .last-result summary { cursor: pointer; margin-bottom: 5px; }
+.last-result pre { white-space: pre-wrap; overflow-wrap: anywhere; max-height: 180px; overflow: auto; }
 .capture-hint { margin: -6px 0 10px; }
 .popup-preview { font-size: 11px; color: var(--muted); margin: 10px 0; }
 .popup-preview summary { cursor: pointer; }

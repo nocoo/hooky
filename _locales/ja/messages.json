@@ -298,5 +298,29 @@
   },
   "invalidHeader": {
     "message": "ヘッダー名または値が無効です。改行は使用できません。"
+  },
+  "readResponse": {
+    "message": "短いレスポンスを読み取る"
+  },
+  "responseHelp": {
+    "message": "初期設定はオフ。テキストまたは JSON を最大 8 KiB、3 秒まで読み取ります。Hooky 内だけに表示し、このブラウザセッション中保持します。"
+  },
+  "responseReceipt": {
+    "message": "レスポンス / 受領情報"
+  },
+  "responseUnsupported": {
+    "message": "このレスポンス形式は表示できません。HTTP 結果は変わりません。"
+  },
+  "responseEmpty": {
+    "message": "レスポンス本文は空です。"
+  },
+  "responseTruncated": {
+    "message": "8 KiB の上限で読み取りを停止しました。内容が不完全な場合があります。"
+  },
+  "responseUnavailable": {
+    "message": "3 秒以内にレスポンス本文を読み取れませんでした。HTTP 結果は変わりません。"
+  },
+  "responseInvalidJson": {
+    "message": "無効な JSON が返されました。テキストとして表示します。"
   }
 }

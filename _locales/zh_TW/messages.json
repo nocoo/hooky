@@ -298,5 +298,29 @@
   },
   "invalidHeader": {
     "message": "標頭名稱或值無效，不允許換行。"
+  },
+  "readResponse": {
+    "message": "讀取少量回應內容"
+  },
+  "responseHelp": {
+    "message": "預設關閉。最多讀取 8 KiB 文字或 JSON，限時 3 秒。僅在 Hooky 內顯示，並保留至本次瀏覽器工作階段結束。"
+  },
+  "responseReceipt": {
+    "message": "回應 / 回執"
+  },
+  "responseUnsupported": {
+    "message": "無法顯示此回應類型，HTTP 結果不變。"
+  },
+  "responseEmpty": {
+    "message": "回應本文為空。"
+  },
+  "responseTruncated": {
+    "message": "讀取已達 8 KiB 上限，內容可能不完整。"
+  },
+  "responseUnavailable": {
+    "message": "未能在 3 秒內完整讀取回應本文，HTTP 結果不變。"
+  },
+  "responseInvalidJson": {
+    "message": "接收端傳回無效 JSON，以文字顯示。"
   }
 }

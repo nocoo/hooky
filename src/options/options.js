@@ -381,6 +381,7 @@ async function selectTemplate(id) {
   headersList.replaceChildren();
   for (const { key, value } of tpl.headers || []) headersList.appendChild(createParamRow(key, value, "header"));
   document.getElementById("template-advanced").open = false;
+  document.getElementById("read-response").checked = tpl.response?.enabled === true;
   lastValueInput = null;
   updatePreview();
 }
@@ -525,6 +526,7 @@ async function saveCurrentTemplate() {
     method: methodSelect.value,
     params: getParams(),
     headers: getParams(headersList, "header"),
+    response: { enabled: document.getElementById("read-response").checked },
   };
 
   buildHeaders(changes.headers, { send: { id: "{{send.id}}" } });

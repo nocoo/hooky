@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Per-template custom headers with validation, masked previews, and redirect protection.
 - A `{{send.id}}` UUID variable shared by request headers and parameters, without resolving captured or edited literals again.
 - Multiline manual capture and a request preview in the send panel.
+- Optional per-template response reading, bounded while streaming to 8 KiB and 3 seconds, with plain-text session-only receipt display.
 
 ### Fixed
 

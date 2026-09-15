@@ -38,6 +38,9 @@ function renderLastResult(result) {
   status.textContent = resultMessage(result);
   status.className = result.state === "failed" || result.state === "unknown" ? "error" : "";
   document.getElementById("last-result-id").textContent = result.id;
+  document.getElementById("last-response").hidden = !result.receipt;
+  document.getElementById("response-note").textContent = result.receipt?.note ? t(result.receipt.note) : "";
+  document.getElementById("response-body").textContent = result.receipt?.text || "";
 }
 
 function openSettings() {

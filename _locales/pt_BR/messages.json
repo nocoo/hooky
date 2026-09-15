@@ -298,5 +298,29 @@
   },
   "invalidHeader": {
     "message": "Nome ou valor de cabeçalho inválido. Quebras de linha não são permitidas."
+  },
+  "readResponse": {
+    "message": "Ler uma resposta curta"
+  },
+  "responseHelp": {
+    "message": "Desativado por padrão. Lê até 8 KiB de texto ou JSON em até 3 segundos. Exibido apenas no Hooky e mantido nesta sessão do navegador."
+  },
+  "responseReceipt": {
+    "message": "Resposta / comprovante"
+  },
+  "responseUnsupported": {
+    "message": "Este tipo de resposta não pode ser exibido. O resultado HTTP não muda."
+  },
+  "responseEmpty": {
+    "message": "O corpo da resposta está vazio."
+  },
+  "responseTruncated": {
+    "message": "Leitura interrompida no limite de 8 KiB. A resposta pode estar incompleta."
+  },
+  "responseUnavailable": {
+    "message": "Não foi possível ler toda a resposta em 3 segundos. O resultado HTTP não muda."
+  },
+  "responseInvalidJson": {
+    "message": "O destinatário retornou JSON inválido. Exibindo como texto."
   }
 }

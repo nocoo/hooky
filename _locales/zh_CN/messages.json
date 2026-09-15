@@ -298,5 +298,29 @@
   },
   "invalidHeader": {
     "message": "请求头名称或值无效，不允许换行。"
+  },
+  "readResponse": {
+    "message": "读取少量响应内容"
+  },
+  "responseHelp": {
+    "message": "默认关闭。最多读取 8 KiB 文本或 JSON，限时 3 秒。仅在 Hooky 内显示，并保留至本次浏览器会话结束。"
+  },
+  "responseReceipt": {
+    "message": "响应 / 回执"
+  },
+  "responseUnsupported": {
+    "message": "无法显示此响应类型，HTTP 结果不变。"
+  },
+  "responseEmpty": {
+    "message": "响应正文为空。"
+  },
+  "responseTruncated": {
+    "message": "读取已达到 8 KiB 上限，内容可能不完整。"
+  },
+  "responseUnavailable": {
+    "message": "未能在 3 秒内完整读取响应正文，HTTP 结果不变。"
+  },
+  "responseInvalidJson": {
+    "message": "接收端返回了无效 JSON，按文本显示。"
   }
 }

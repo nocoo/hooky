@@ -24,6 +24,17 @@ beforeEach(() => { vi.resetModules(); });
 afterEach(() => { vi.useRealTimers(); vi.unstubAllGlobals(); });
 
 describe("Hooky 2.0 workspace", () => {
+  it("leaves response reading off for existing templates and saves an explicit opt-in", async () => {
+    await setup();
+    expect(get("read-response").checked).toBe(false);
+    get("read-response").checked = true;
+    get("save").click();
+    await vi.waitFor(() => expect(data.hooky.templates[0].response).toEqual({ enabled: true }));
+    get("read-response").checked = false;
+    document.querySelector('#template-list [data-id="t1"]').click();
+    await vi.waitFor(() => expect(get("read-response").checked).toBe(true));
+  });
+
   it("edits per-template headers, masks previews and resets the reveal control", async () => {
     await setup();
     expect(get("template-advanced").open).toBe(false);

@@ -298,5 +298,29 @@
   },
   "invalidHeader": {
     "message": "Invalid header name or value. Line breaks are not allowed."
+  },
+  "readResponse": {
+    "message": "Read a small response"
+  },
+  "responseHelp": {
+    "message": "Off by default. Read up to 8 KiB of text or JSON, for up to 3 seconds. Visible only inside Hooky and kept for this browser session."
+  },
+  "responseReceipt": {
+    "message": "Response / receipt"
+  },
+  "responseUnsupported": {
+    "message": "This response type cannot be displayed. The HTTP result is unchanged."
+  },
+  "responseEmpty": {
+    "message": "The response body is empty."
+  },
+  "responseTruncated": {
+    "message": "Reading stopped at the 8 KiB limit. The response may be incomplete."
+  },
+  "responseUnavailable": {
+    "message": "The response body could not be fully read within 3 seconds. The HTTP result is unchanged."
+  },
+  "responseInvalidJson": {
+    "message": "The receiver returned invalid JSON. Displaying it as text."
   }
 }

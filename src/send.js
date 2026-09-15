@@ -32,7 +32,7 @@ export function sendWebhook(config, context, { tab = null, source = "popup", res
 
   const task = (async () => {
     await publishResult(record, { ...surface, start: true });
-    const result = { ...record, ...await executeRequest(request), finishedAt: Date.now() };
+    const result = { ...record, ...await executeRequest(request, config.response), finishedAt: Date.now() };
     await publishResult(result, surface);
     return result;
   })().finally(() => inFlight.delete(key));

@@ -1,5 +1,6 @@
 import { buildRequestBody, buildRequestUrl } from "./params.js";
 import { resolveTemplate } from "./template.js";
+import { discardBody, readReceipt } from "./response.js";
 
 /** HTTP methods that carry params in URL query string instead of body */
 const QUERY_METHODS = new Set(["GET", "DELETE"]);
@@ -62,12 +63,15 @@ export function previewRequest(config, context, alreadyResolved = false) {
 }
 
 /** A lost response cannot tell us whether the receiver committed the write. */
-export async function executeRequest(request) {
+export async function executeRequest(request, responseConfig = {}) {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), REQUEST_TIMEOUT);
   try {
     const response = await fetch(request.url, { ...request.options, signal: controller.signal });
-    return { ok: response.ok, status: response.status, state: response.ok ? "success" : "failed" };
+    const result = { ok: response.ok, status: response.status, state: response.ok ? "success" : "failed" };
+    if (responseConfig.enabled === true) result.receipt = await readReceipt(response).catch(() => ({ note: "responseUnavailable" }));
+    else discardBody(response.body);
+    return result;
   } catch {
     return { ok: false, state: "unknown", error: "requestUnconfirmed" };
   } finally {
@@ -87,7 +91,7 @@ export async function executeRequest(request) {
  */
 export async function executeWebhook(config, context, alreadyResolved = false) {
   try {
-    return await executeRequest(prepareWebhook(config, context, alreadyResolved));
+    return await executeRequest(prepareWebhook(config, context, alreadyResolved), config.response);
   } catch (err) {
     return { ok: false, state: "failed", error: err.message };
   }

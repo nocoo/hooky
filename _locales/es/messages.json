@@ -298,5 +298,29 @@
   },
   "invalidHeader": {
     "message": "Nombre o valor de cabecera no válido. No se permiten saltos de línea."
+  },
+  "readResponse": {
+    "message": "Leer una respuesta breve"
+  },
+  "responseHelp": {
+    "message": "Desactivado por defecto. Lee hasta 8 KiB de texto o JSON durante un máximo de 3 segundos. Solo se muestra en Hooky y se guarda durante esta sesión del navegador."
+  },
+  "responseReceipt": {
+    "message": "Respuesta / recibo"
+  },
+  "responseUnsupported": {
+    "message": "No se puede mostrar este tipo de respuesta. El resultado HTTP no cambia."
+  },
+  "responseEmpty": {
+    "message": "El cuerpo de la respuesta está vacío."
+  },
+  "responseTruncated": {
+    "message": "Lectura detenida en el límite de 8 KiB. La respuesta puede estar incompleta."
+  },
+  "responseUnavailable": {
+    "message": "No se pudo leer toda la respuesta en 3 segundos. El resultado HTTP no cambia."
+  },
+  "responseInvalidJson": {
+    "message": "El receptor devolvió JSON no válido. Se muestra como texto."
   }
 }
