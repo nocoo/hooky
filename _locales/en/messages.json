@@ -421,5 +421,11 @@
   },
   "duplicateCheckFailed": {
     "message": "Recent sends could not be checked or recorded. No request was sent. Try again after session storage is available."
+  },
+  "notificationPermissionMissing": {
+    "message": "Notification permission is missing. Your preference is saved; allow access to receive notifications."
+  },
+  "grantNotificationPermission": {
+    "message": "Allow notifications"
   }
 }

@@ -421,5 +421,11 @@
   },
   "duplicateCheckFailed": {
     "message": "無法檢查或記錄最近傳送，尚未發出請求。請在工作階段儲存恢復後再試。"
+  },
+  "notificationPermissionMissing": {
+    "message": "通知權限無法使用，已保留你的偏好設定。允許權限後即可接收通知。"
+  },
+  "grantNotificationPermission": {
+    "message": "允許通知"
   }
 }

@@ -421,5 +421,11 @@
   },
   "duplicateCheckFailed": {
     "message": "无法检查或记录最近发送，尚未发出请求。请在会话存储恢复后再试。"
+  },
+  "notificationPermissionMissing": {
+    "message": "通知权限不可用，已保留你的偏好设置。允许权限后即可接收通知。"
+  },
+  "grantNotificationPermission": {
+    "message": "允许通知"
   }
 }

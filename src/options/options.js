@@ -60,6 +60,7 @@ let editorMode = null; // "template" | "rule" | "rules-list" | "settings" | null
 let lastValueInput = null;
 let statusTimer;
 let notificationMode = "off";
+let notificationCheck = 0;
 
 // ─── Sidebar navigation ───
 
@@ -303,6 +304,17 @@ function showSettings(store) {
   applyTheme(theme);
   notificationMode = store.notificationMode || "off";
   notificationSelect.value = notificationMode;
+  refreshNotificationPermission();
+}
+
+async function refreshNotificationPermission() {
+  const check = ++notificationCheck;
+  const panel = document.getElementById("notification-permission");
+  if (notificationMode === "off") { panel.hidden = true; return; }
+  let granted = false;
+  try { granted = await chrome.permissions.contains({ permissions: ["notifications"] }); }
+  catch { /* Keep the saved preference and offer an explicit permission request. */ }
+  if (check === notificationCheck) panel.hidden = granted;
 }
 
 // ─── Settings items ───
@@ -776,10 +788,11 @@ themeSelect.addEventListener("change", async () => {
   applyTheme(theme);
 });
 
-notificationSelect.addEventListener("change", async () => {
+async function saveNotifications() {
   const mode = notificationSelect.value;
   const status = document.getElementById("preferences-status");
   notificationSelect.disabled = true;
+  document.getElementById("grant-notification-permission").disabled = true;
   try {
     // Call from the change gesture before any other await.
     if (mode !== "off" && !await chrome.permissions.request({ permissions: ["notifications"] })) throw new Error("notificationDenied");
@@ -791,8 +804,17 @@ notificationSelect.addEventListener("change", async () => {
     notificationSelect.value = notificationMode;
     status.textContent = t(error.message);
     status.classList.add("error");
-  } finally { notificationSelect.disabled = false; }
-});
+  } finally {
+    notificationSelect.disabled = false;
+    document.getElementById("grant-notification-permission").disabled = false;
+    await refreshNotificationPermission();
+  }
+}
+notificationSelect.addEventListener("change", saveNotifications);
+document.getElementById("grant-notification-permission").addEventListener("click", saveNotifications);
+chrome.permissions?.onRemoved?.addListener(refreshNotificationPermission);
+chrome.permissions?.onAdded?.addListener(refreshNotificationPermission);
+window.addEventListener("focus", refreshNotificationPermission);
 
 // ─── Start ───
 

@@ -421,5 +421,11 @@
   },
   "duplicateCheckFailed": {
     "message": "Letzte Sendungen konnten nicht geprüft oder gespeichert werden. Es wurde keine Anfrage gesendet. Nach Wiederherstellung des Sitzungsspeichers erneut versuchen."
+  },
+  "notificationPermissionMissing": {
+    "message": "Die Berechtigung für Benachrichtigungen fehlt. Ihre Einstellung bleibt gespeichert. Erlauben Sie den Zugriff, um Benachrichtigungen zu erhalten."
+  },
+  "grantNotificationPermission": {
+    "message": "Benachrichtigungen erlauben"
   }
 }

@@ -421,5 +421,11 @@
   },
   "duplicateCheckFailed": {
     "message": "Impossible de vérifier ou d’enregistrer les envois récents. Aucune requête n’a été envoyée. Réessayez quand le stockage de session sera disponible."
+  },
+  "notificationPermissionMissing": {
+    "message": "L’autorisation de notification est absente. Votre préférence est conservée ; autorisez l’accès pour recevoir des notifications."
+  },
+  "grantNotificationPermission": {
+    "message": "Autoriser les notifications"
   }
 }

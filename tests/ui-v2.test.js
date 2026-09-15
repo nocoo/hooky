@@ -7,12 +7,13 @@ const messages = JSON.parse(readFileSync("_locales/en/messages.json", "utf8"));
 const get = (id) => document.getElementById(id);
 const input = (id, value) => { get(id).value = value; get(id).dispatchEvent(new Event("input", { bubbles: true })); };
 let data;
+let windowListeners;
 const rule = (id, value) => ({ id, field: "url", operator: "contains", value, templateId: "t1", enabled: true });
 
 async function setup(overrides = {}, loadError) {
   data = { hooky: { templates: [{ id: "t1", name: "Reading list", url: "https://example.com/hook", method: "POST", params: [{ key: "title", value: "{{page.title}}" }] }], activeTemplateId: "t1", quickSendRules: [rule("r1", "github.com"), rule("r2", "example.com")], theme: "light", ...overrides } };
   document.body.innerHTML = readFileSync("src/options/options.html", "utf8").split("<body>")[1].split("<script")[0];
-  vi.stubGlobal("chrome", { runtime: { getManifest: () => ({ version: "2.0.0" }) }, i18n: { getMessage: (key) => messages[key]?.message || key }, storage: { local: { get: vi.fn(async () => { if (loadError) throw loadError; return structuredClone(data); }), set: vi.fn(async (values) => Object.assign(data, structuredClone(values))) } } });
+  vi.stubGlobal("chrome", { runtime: { getManifest: () => ({ version: "2.0.0" }) }, permissions: { contains: vi.fn().mockResolvedValue(true), request: vi.fn().mockResolvedValue(false), onRemoved: { addListener: vi.fn() }, onAdded: { addListener: vi.fn() } }, i18n: { getMessage: (key) => messages[key]?.message || key }, storage: { local: { get: vi.fn(async () => { if (loadError) throw loadError; return structuredClone(data); }), set: vi.fn(async (values) => Object.assign(data, structuredClone(values))) } } });
   await import("../src/options/options.js");
   if (loadError) { await vi.waitFor(() => expect(get("status").textContent).toBe(loadError.message)); return; }
   await vi.waitFor(() => expect(get("new-template")).not.toBeNull());
@@ -20,10 +21,36 @@ async function setup(overrides = {}, loadError) {
   else await vi.waitFor(() => expect(get("editor-empty").style.display).toBe("flex"));
 }
 
-beforeEach(() => { vi.resetModules(); });
-afterEach(() => { vi.useRealTimers(); vi.unstubAllGlobals(); });
+beforeEach(() => { vi.resetModules(); windowListeners = vi.spyOn(window, "addEventListener"); });
+afterEach(() => {
+  for (const [type, listener, options] of windowListeners.mock.calls) window.removeEventListener(type, listener, options);
+  windowListeners.mockRestore();
+  vi.useRealTimers();
+  vi.unstubAllGlobals();
+});
 
 describe("Hooky 2.0 workspace", () => {
+  it("preserves collapsed advanced settings and never carries credentials into a new template", async () => {
+    const original = { id: "t1", name: "Private", url: "https://example.com", method: "POST", params: [], headers: [{ key: "Authorization", value: "Bearer private-key" }], response: { enabled: true, receiptPath: "data.id", successPath: "saved", successValue: "true" }, duplicateWindow: 30 };
+    await setup({ templates: [original] });
+    expect(get("template-advanced").open).toBe(false);
+    input("template-name", "Renamed");
+    get("save").click();
+    await vi.waitFor(() => expect(data.hooky.templates[0].name).toBe("Renamed"));
+    expect(data.hooky.templates[0]).toMatchObject({ headers: original.headers, response: original.response, duplicateWindow: 30 });
+    get("new-template").click();
+    await vi.waitFor(() => expect(data.hooky.templates).toHaveLength(2));
+    await vi.waitFor(() => expect(get("webhook-url").value).toBe(""));
+    expect(get("headers-list").children).toHaveLength(0);
+    expect(get("read-response").checked).toBe(false);
+    expect(get("response-id-path").value).toBe("");
+    expect(get("duplicate-protection").checked).toBe(false);
+    input("webhook-url", "https://public.example");
+    get("save").click();
+    await vi.waitFor(() => expect(data.hooky.templates[1].url).toBe("https://public.example"));
+    expect(data.hooky.templates[1]).toMatchObject({ headers: [], response: { enabled: false }, duplicateWindow: 0 });
+  });
+
   it("keeps completed duplicate protection off by default and validates its window", async () => {
     await setup();
     expect(get("duplicate-protection").checked).toBe(false);
@@ -240,9 +267,49 @@ describe("edited popup payloads", () => {
 
 
 describe("workspace feedback and failures", () => {
+  it("shows revoked notification permission without losing the preference and restores it on a gesture", async () => {
+    await setup({ notificationMode: "all" });
+    chrome.permissions.contains.mockResolvedValue(false);
+    document.querySelector('[data-panel="panel-settings"]').click();
+    await vi.waitFor(() => expect(get("notification-permission").hidden).toBe(false));
+    expect(get("notification-mode").value).toBe("all");
+    expect(chrome.permissions.request).not.toHaveBeenCalled();
+    chrome.permissions.request.mockImplementation(async () => { chrome.permissions.contains.mockResolvedValue(true); return true; });
+    get("grant-notification-permission").click();
+    expect(chrome.permissions.request).toHaveBeenCalledOnce();
+    await vi.waitFor(() => expect(get("notification-permission").hidden).toBe(true));
+    expect(data.hooky.notificationMode).toBe("all");
+    chrome.permissions.contains.mockResolvedValue(false);
+    chrome.permissions.onRemoved.addListener.mock.calls[0][0]();
+    await vi.waitFor(() => expect(get("notification-permission").hidden).toBe(false));
+    chrome.permissions.contains.mockResolvedValue(true);
+    chrome.permissions.onAdded.addListener.mock.calls[0][0]();
+    await vi.waitFor(() => expect(get("notification-permission").hidden).toBe(true));
+  });
+
+  it("ignores stale permission checks and handles unavailable permission APIs", async () => {
+    await setup({ notificationMode: "errors" });
+    document.querySelector('[data-panel="panel-settings"]').click();
+    await vi.waitFor(() => expect(get("notification-mode").value).toBe("errors"));
+    let finish;
+    chrome.permissions.contains.mockImplementationOnce(() => new Promise((resolve) => { finish = resolve; }));
+    window.dispatchEvent(new Event("focus"));
+    get("notification-mode").value = "off";
+    get("notification-mode").dispatchEvent(new Event("change"));
+    await vi.waitFor(() => expect(data.hooky.notificationMode).toBe("off"));
+    finish(false);
+    await Promise.resolve();
+    expect(get("notification-permission").hidden).toBe(true);
+    chrome.permissions.request.mockResolvedValue(true);
+    chrome.permissions.contains.mockRejectedValue(new Error("unavailable"));
+    get("notification-mode").value = "errors";
+    get("notification-mode").dispatchEvent(new Event("change"));
+    await vi.waitFor(() => expect(get("notification-permission").hidden).toBe(false));
+  });
+
   it("requests notifications only on an explicit setting change and handles denial", async () => {
     await setup();
-    chrome.permissions = { request: vi.fn().mockResolvedValue(false) };
+    chrome.permissions.request.mockResolvedValue(false);
     document.querySelector('[data-panel="panel-settings"]').click();
     await vi.waitFor(() => expect(get("settings-form").style.display).toBe("block"));
     expect(get("notification-mode").value).toBe("off");

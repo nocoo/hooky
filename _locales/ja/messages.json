@@ -421,5 +421,11 @@
   },
   "duplicateCheckFailed": {
     "message": "最近の送信を確認または記録できませんでした。リクエストは送信していません。セッションストレージの復旧後に再試行してください。"
+  },
+  "notificationPermissionMissing": {
+    "message": "通知の権限がありません。設定は保存されています。権限を許可すると通知を受け取れます。"
+  },
+  "grantNotificationPermission": {
+    "message": "通知を許可"
   }
 }

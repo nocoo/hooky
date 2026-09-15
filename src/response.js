@@ -55,6 +55,7 @@ export function discardBody(body) {
 
 /** Bound retained bytes during streaming, including when the receiver never closes. */
 export async function readReceipt(response) {
+  // Small local adapters may omit Content-Type. Treat that case as bounded plain text.
   const type = (response.headers.get("content-type") || "").split(";")[0].trim().toLowerCase();
   const json = type === "application/json" || type.endsWith("+json");
   if (type && !json && !type.startsWith("text/")) {

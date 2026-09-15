@@ -421,5 +421,11 @@
   },
   "duplicateCheckFailed": {
     "message": "Não foi possível verificar ou registrar os envios recentes. Nenhuma solicitação foi enviada. Tente novamente quando o armazenamento da sessão estiver disponível."
+  },
+  "notificationPermissionMissing": {
+    "message": "A permissão de notificação está ausente. Sua preferência foi mantida; permita o acesso para receber notificações."
+  },
+  "grantNotificationPermission": {
+    "message": "Permitir notificações"
   }
 }

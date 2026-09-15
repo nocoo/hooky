@@ -421,5 +421,11 @@
   },
   "duplicateCheckFailed": {
     "message": "최근 전송을 확인하거나 기록할 수 없어 요청을 보내지 않았습니다. 세션 저장소가 복구된 후 다시 시도하세요."
+  },
+  "notificationPermissionMissing": {
+    "message": "알림 권한이 없습니다. 환경설정은 저장되어 있습니다. 권한을 허용하면 알림을 받을 수 있습니다."
+  },
+  "grantNotificationPermission": {
+    "message": "알림 허용"
   }
 }
