@@ -11,7 +11,7 @@ Hooky is a Chrome Extension (Manifest V3) for configuring and triggering webhook
 - **Test runner**: Vitest (`vitest run`)
 - **E2E**: Puppeteer
 - **Lint**: ESLint v10, flat config (`eslint.config.mjs`)
-- **Hooks**: Husky — pre-commit: `bun run test`, pre-push: `bun run test && bun run lint`
+- **Hooks**: Husky — pre-commit: `bun run test:coverage && bun run lint`; pre-push: `bun run build && bun run test && bun run lint`
 - **Module format**: `"type": "commonjs"` in package.json
 
 ## Architecture
@@ -22,22 +22,31 @@ Stored under `chrome.storage.local` key `"hooky"`:
 
 ```json
 {
-  "templates": [{ "id": "...", "name": "...", "url": "...", "method": "GET", "params": [...] }],
+  "templates": [{ "id": "...", "name": "...", "url": "...", "method": "GET", "params": [], "headers": [], "response": { "enabled": false }, "duplicateWindow": 0 }],
   "activeTemplateId": "...",
   "quickSendRules": [],
-  "theme": "system"
+  "theme": "system",
+  "notificationMode": "off"
 }
 ```
 
+Advanced fields are optional; missing values preserve the old HTTP-only behavior. `response` can include `messagePath`, `receiptPath`, `successPath`, and a JSON scalar string `successValue`. `duplicateWindow` is 0/off or 1–300 seconds. Notification modes are `off`, `errors`, and `all`.
+
+`chrome.storage.session` stores `hookyLastResult`, per-tab `hookyResult:<tabId>` summaries, and (only for enabled templates) up to 50 `hookyRecentSends` fingerprints/summaries. Raw request bodies and credentials are not stored there. Opted-in receipts are limited while streaming to 8 KiB and 3 seconds. Explicit duplicate repeats use captures held only in worker memory for at most 60 seconds; they are lost on worker restart.
+
 ### Template Variables
 
-Values in params can use: `{{page.url}}`, `{{page.title}}`, `{{page.selection}}`, `{{page.meta.description}}`, `{{page.meta.og:title}}`, `{{page.meta.og:description}}`, `{{page.meta.og:image}}`
+Values in params and headers can use: `{{page.url}}`, `{{page.title}}`, `{{page.selection}}`, `{{page.meta.description}}`, `{{page.meta.og:title}}`, `{{page.meta.og:description}}`, `{{page.meta.og:image}}`, `{{send.id}}`.
+
+The send pipeline owns UUID generation. Header and body bindings share one logical send ID. Preserve the distinction between untouched templates (`resolve: true` in an already-resolved popup payload) and literal edited/pasted values. Never resolve captured variable syntax a second time. Hooky does not automatically retry requests or promise server-side idempotency.
 
 ### HTTP Methods
 
 - GET, DELETE → query string parameters
 - POST, PUT, PATCH → JSON body with `Content-Type: application/json`
-- No custom headers support
+- Optional custom headers per template, with masked previews and browser-managed header validation
+- Custom-header requests use `redirect: "error"` to prevent credential forwarding
+- A 20-second deadline yields an unconfirmed result on transport loss; HTTP evidence remains separate from optional business confirmation
 
 ### Page Context Extraction
 
@@ -51,8 +60,12 @@ Uses `chrome.scripting.executeScript()` to inject `extractPageContext()` from `s
 | template | `src/template.js` | Variable resolution engine |
 | params | `src/params.js` | Request body/URL builder |
 | webhook | `src/webhook.js` | HTTP request executor |
+| send | `src/send.js` | Shared send identity, pending guard and result orchestration |
+| feedback | `src/feedback.js` | Session summaries, badges, page/desktop feedback and recovery |
+| response | `src/response.js` | Bounded receipt reads, safe JSON fields and business rules |
+| duplicates | `src/duplicates.js` | Optional recent fingerprints and transient explicit repeats |
 | rules | `src/rules.js` | Rule engine (matchRule, findMatchingRule) |
-| quicksend | `src/quicksend.js` | Quick Send mode + badge feedback |
+| quicksend | `src/quicksend.js` | Rule-based dispatch to the shared sending pipeline |
 | contextmenu | `src/contextmenu.js` | Right-click menu management |
 | background | `src/background.js` | Service worker orchestration |
 | pagecontext | `src/pagecontext.js` | Page metadata extraction (injected) |
@@ -74,11 +87,13 @@ Uses `chrome.scripting.executeScript()` to inject `extractPageContext()` from `s
 - `jsdom` environment used for DOM tests (via `// @vitest-environment jsdom` directive)
 - DOM-dependent modules (popup.js, options.js) do `document.getElementById()` at top level — tests must set up DOM before importing, using `vi.resetModules()`
 - Content script can't run on `chrome://` pages — popup.js and quicksend.js have fallbacks
+- E2E uses an isolated temporary extension copy with a statically imported worker driver. Dynamic `import()` is not supported inside MV3 service workers; test hooks must never enter the production package.
+- Execution and transient capture-preview messages are accepted only from the extension's own popup URL. Page feedback may request opening the panel but cannot send or read captures.
 
 ## Quality Gates
 
-- Pre-commit: `bun run test`
-- Pre-push: `bun run test && bun run lint`
+- Pre-commit: `bun run test:coverage && bun run lint`
+- Pre-push: `bun run build && bun run test && bun run lint`
 - Coverage gates: 95% minimum for statements, branches, functions, and lines
 
 ## Version & Release Process
