@@ -24,6 +24,55 @@ beforeEach(() => { vi.resetModules(); });
 afterEach(() => { vi.useRealTimers(); vi.unstubAllGlobals(); });
 
 describe("Hooky 2.0 workspace", () => {
+  it("edits per-template headers, masks previews and resets the reveal control", async () => {
+    await setup();
+    expect(get("template-advanced").open).toBe(false);
+    get("add-header").click();
+    const key = document.querySelector(".header-key");
+    const value = document.querySelector(".header-value");
+    key.value = "Authorization";
+    value.value = "Bearer secret-token";
+    value.dispatchEvent(new Event("input", { bubbles: true }));
+    expect(value.type).toBe("password");
+    expect(get("request-preview").textContent).toContain("authorization: ••••");
+    expect(get("request-preview").textContent).not.toContain("secret-token");
+    get("show-header-values").checked = true;
+    get("show-header-values").dispatchEvent(new Event("change"));
+    expect(value.type).toBe("text");
+    get("add-header").click();
+    const keys = document.querySelectorAll(".header-key");
+    const values = document.querySelectorAll(".header-value");
+    expect(values[1].type).toBe("text");
+    keys[1].value = "Idempotency-Key";
+    values[1].focus();
+    document.querySelector('[data-variable="{{send.id}}"]') .click();
+    expect(values[1].value).toBe("{{send.id}}");
+    get("show-header-values").checked = false;
+    get("show-header-values").dispatchEvent(new Event("change"));
+    expect(value.type).toBe("password");
+    get("save").click();
+    await vi.waitFor(() => expect(data.hooky.templates[0].headers).toEqual([
+      { key: "Authorization", value: "Bearer secret-token" }, { key: "Idempotency-Key", value: "{{send.id}}" },
+    ]));
+    document.querySelector('#template-list [data-id="t1"]').click();
+    await vi.waitFor(() => expect(document.querySelector(".header-value")).not.toBe(value));
+    expect(document.querySelector(".header-value").type).toBe("password");
+    document.querySelector("#headers-list .btn-remove").click();
+    expect(get("request-preview").textContent).not.toContain("authorization");
+  });
+
+  it("explains header validation errors in both preview and save", async () => {
+    await setup();
+    get("add-header").click();
+    const key = document.querySelector(".header-key");
+    key.value = "Content-Type";
+    key.dispatchEvent(new Event("input", { bubbles: true }));
+    expect(get("request-preview").textContent).toBe(messages.managedHeader.message);
+    get("save").click();
+    await vi.waitFor(() => expect(get("status").textContent).toBe(messages.managedHeader.message));
+    expect(data.hooky.templates[0].headers).toBeUndefined();
+  });
+
   it("shows the real method and body preview and preserves multiline values on save", async () => {
     await setup();
     expect(get("request-preview").textContent).toContain('"title": "{{page.title}}"');

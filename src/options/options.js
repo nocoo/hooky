@@ -13,7 +13,7 @@ import {
 } from "../store.js";
 import { applyTheme } from "../theme.js";
 import { matchRule } from "../rules.js";
-import { buildRequestBody, buildRequestUrl } from "../params.js";
+import { buildHeaders, previewRequest } from "../webhook.js";
 
 // ─── DOM refs ───
 
@@ -32,6 +32,8 @@ const urlInput = document.getElementById("webhook-url");
 const methodSelect = document.getElementById("http-method");
 const paramsList = document.getElementById("params-list");
 const addParamBtn = document.getElementById("add-param");
+const headersList = document.getElementById("headers-list");
+const showHeaderValues = document.getElementById("show-header-values");
 const saveBtn = document.getElementById("save");
 const statusEl = document.getElementById("status");
 const deleteBtn = document.getElementById("delete-template");
@@ -121,7 +123,7 @@ async function navigateToSettings() {
 
 // ─── Param row helpers ───
 
-function createParamRow(key = "", value = "") {
+function createParamRow(key = "", value = "", kind = "param") {
   const row = document.createElement("div");
   row.className = "param-row";
 
@@ -129,14 +131,17 @@ function createParamRow(key = "", value = "") {
   keyInput.type = "text";
   keyInput.placeholder = t("paramKeyPlaceholder");
   keyInput.value = key;
-  keyInput.className = "param-key";
+  keyInput.className = `${kind}-key`;
   keyInput.setAttribute("aria-label", t("paramKeyPlaceholder"));
 
-  const valueInput = document.createElement("textarea");
-  valueInput.rows = 2;
+  const valueInput = document.createElement(kind === "header" ? "input" : "textarea");
+  if (kind === "header") {
+    valueInput.type = showHeaderValues.checked ? "text" : "password";
+    valueInput.autocomplete = "off";
+  } else valueInput.rows = 2;
   valueInput.placeholder = t("paramValuePlaceholder");
   valueInput.value = value;
-  valueInput.className = "param-value";
+  valueInput.className = `${kind}-value`;
   valueInput.setAttribute("aria-label", t("paramValuePlaceholder"));
   valueInput.addEventListener("focus", () => { lastValueInput = valueInput; });
 
@@ -157,12 +162,12 @@ function createParamRow(key = "", value = "") {
   return row;
 }
 
-function getParams() {
-  const rows = paramsList.querySelectorAll(".param-row");
+function getParams(list = paramsList, kind = "param") {
+  const rows = list.querySelectorAll(".param-row");
   const params = [];
   for (const row of rows) {
-    const key = row.querySelector(".param-key").value.trim();
-    const value = row.querySelector(".param-value").value;
+    const key = row.querySelector(`.${kind}-key`).value.trim();
+    const value = row.querySelector(`.${kind}-value`).value;
     params.push({ key, value });
   }
   return params;
@@ -187,12 +192,14 @@ function updatePreview() {
   const params = getParams();
   const context = { page: { url: "{{page.url}}", title: "{{page.title}}", selection: "{{page.selection}}", meta: {
     description: "{{page.meta.description}}", "og:title": "{{page.meta.og:title}}", "og:description": "{{page.meta.og:description}}", "og:image": "{{page.meta.og:image}}",
-  } } };
+  } }, send: { id: "{{send.id}}" } };
   const method = methodSelect.value;
   const url = urlInput.value || "https://example.com/webhook";
-  document.getElementById("request-preview").textContent = method === "GET" || method === "DELETE"
-    ? method + " " + buildRequestUrl(url, params, context, method)
-    : method + " " + url + "\n\n" + JSON.stringify(buildRequestBody(params, context), null, 2);
+  try {
+    document.getElementById("request-preview").textContent = previewRequest({ method, url, params, headers: getParams(headersList, "header") }, context);
+  } catch (error) {
+    document.getElementById("request-preview").textContent = t(error.message);
+  }
 }
 
 function makeKeyboardItem(li) {
@@ -370,6 +377,10 @@ async function selectTemplate(id) {
       paramsList.appendChild(createParamRow(key, value));
     }
   }
+  showHeaderValues.checked = false;
+  headersList.replaceChildren();
+  for (const { key, value } of tpl.headers || []) headersList.appendChild(createParamRow(key, value, "header"));
+  document.getElementById("template-advanced").open = false;
   lastValueInput = null;
   updatePreview();
 }
@@ -513,7 +524,10 @@ async function saveCurrentTemplate() {
     url: urlInput.value.trim(),
     method: methodSelect.value,
     params: getParams(),
+    headers: getParams(headersList, "header"),
   };
+
+  buildHeaders(changes.headers, { send: { id: "{{send.id}}" } });
 
   await updateTemplate(currentTemplateId, changes);
 
@@ -563,7 +577,7 @@ async function handleSave() {
     if (editorMode === "template") await saveCurrentTemplate();
     else if (editorMode === "rule") await saveCurrentRule();
   } catch (error) {
-    showStatus(error.message || t("requestFailed"), true);
+    showStatus(error.message ? t(error.message) : t("requestFailed"), true);
   } finally {
     saveBtn.disabled = false;
   }
@@ -661,6 +675,15 @@ addParamBtn.addEventListener("click", () => {
   paramsList.appendChild(row);
   row.querySelector(".param-value").focus();
   updatePreview();
+});
+document.getElementById("add-header").addEventListener("click", () => {
+  const row = createParamRow("", "", "header");
+  headersList.appendChild(row);
+  row.querySelector(".header-key").focus();
+  updatePreview();
+});
+showHeaderValues.addEventListener("change", () => {
+  for (const input of headersList.querySelectorAll(".header-value")) input.type = showHeaderValues.checked ? "text" : "password";
 });
 
 editorForm.addEventListener("input", updatePreview);

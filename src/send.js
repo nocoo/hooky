@@ -13,12 +13,21 @@ export function sendWebhook(config, context, { tab = null, source = "popup", res
   };
   const surface = { tab, source };
   let request;
-  try { request = prepareWebhook(config, context, resolved); }
+  let key;
+  try {
+    request = prepareWebhook(config, { ...context, send: { id: record.id } }, resolved);
+    const comparison = prepareWebhook(config, { ...context, send: { id: "<Hooky:send.id>" } }, resolved);
+    // Distinguish an actual binding from pasted literal variable syntax.
+    const bindings = [
+      ...config.params.filter((param) => (!resolved || param.resolve) && /\{\{\s*send\.id\s*\}\}/.test(param.value)).map((param) => ["param", param.key]),
+      ...(config.headers || []).filter((header) => /\{\{\s*send\.id\s*\}\}/.test(header.value)).map((header) => ["header", header.key.toLowerCase()]),
+    ];
+    key = JSON.stringify([record.tabId, record.templateId, comparison, bindings]);
+  }
   catch (error) {
     const result = { ...record, ok: false, state: "failed", error: error.message, finishedAt: Date.now() };
     return publishResult(result, { ...surface, start: true }).then(() => result);
   }
-  const key = JSON.stringify([record.tabId, record.templateId, request]);
   if (inFlight.has(key)) return inFlight.get(key);
 
   const task = (async () => {

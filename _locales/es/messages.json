@@ -51,7 +51,7 @@
     "message": "Enviando..."
   },
   "successStatus": {
-    "message": "Éxito ($STATUS$)",
+    "message": "El receptor respondió (HTTP $STATUS$)",
     "placeholders": {
       "status": {
         "content": "$1"
@@ -271,5 +271,32 @@
   },
   "sessionResultHint": {
     "message": "Se conserva durante esta sesión del navegador. No se registra el cuerpo de la solicitud."
+  },
+  "advancedSettings": {
+    "message": "Avanzado"
+  },
+  "requestHeaders": {
+    "message": "Cabeceras de solicitud"
+  },
+  "showHeaderValues": {
+    "message": "Mostrar valores de cabeceras"
+  },
+  "headersHelp": {
+    "message": "Se guardan localmente y se ocultan en las vistas previas. Las solicitudes con cabeceras personalizadas no siguen redirecciones. Content-Type permanece application/json."
+  },
+  "sendIdHelp": {
+    "message": "send.id es un UUID por captura. El receptor debe admitir idempotencia para evitar registros duplicados."
+  },
+  "manualPasteHelp": {
+    "message": "Escribe o pega un valor. Los cambios se aplican solo a este envío."
+  },
+  "managedHeader": {
+    "message": "Esta cabecera la administra Hooky o el navegador."
+  },
+  "duplicateHeader": {
+    "message": "Los nombres de cabecera deben ser únicos, sin distinguir mayúsculas."
+  },
+  "invalidHeader": {
+    "message": "Nombre o valor de cabecera no válido. No se permiten saltos de línea."
   }
 }

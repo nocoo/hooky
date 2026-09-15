@@ -51,7 +51,7 @@
     "message": "Sending..."
   },
   "successStatus": {
-    "message": "Success ($STATUS$)",
+    "message": "Receiver responded (HTTP $STATUS$)",
     "placeholders": {
       "status": {
         "content": "$1"
@@ -271,5 +271,32 @@
   },
   "sessionResultHint": {
     "message": "Kept for this browser session. Request content is not recorded."
+  },
+  "advancedSettings": {
+    "message": "Advanced"
+  },
+  "requestHeaders": {
+    "message": "Request headers"
+  },
+  "showHeaderValues": {
+    "message": "Show header values"
+  },
+  "headersHelp": {
+    "message": "Stored locally, redacted in previews. Requests with custom headers do not follow redirects. Content-Type stays application/json."
+  },
+  "sendIdHelp": {
+    "message": "send.id is one UUID per capture. The receiver must support idempotency to prevent duplicate writes."
+  },
+  "manualPasteHelp": {
+    "message": "Type or paste into a value. Changes apply to this send only."
+  },
+  "managedHeader": {
+    "message": "This header is managed by Hooky or the browser."
+  },
+  "duplicateHeader": {
+    "message": "Header names must be unique (case-insensitive)."
+  },
+  "invalidHeader": {
+    "message": "Invalid header name or value. Line breaks are not allowed."
   }
 }

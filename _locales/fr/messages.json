@@ -51,7 +51,7 @@
     "message": "Envoi..."
   },
   "successStatus": {
-    "message": "Succès ($STATUS$)",
+    "message": "Le destinataire a répondu (HTTP $STATUS$)",
     "placeholders": {
       "status": {
         "content": "$1"
@@ -271,5 +271,32 @@
   },
   "sessionResultHint": {
     "message": "Conservé pour cette session du navigateur. Le corps de la requête n’est pas enregistré."
+  },
+  "advancedSettings": {
+    "message": "Avancé"
+  },
+  "requestHeaders": {
+    "message": "En-têtes de requête"
+  },
+  "showHeaderValues": {
+    "message": "Afficher les valeurs des en-têtes"
+  },
+  "headersHelp": {
+    "message": "Stockés localement, masqués dans les aperçus. Les requêtes avec des en-têtes personnalisés ne suivent pas les redirections. Content-Type reste application/json."
+  },
+  "sendIdHelp": {
+    "message": "send.id est un UUID par capture. Le destinataire doit gérer l’idempotence pour éviter les doublons."
+  },
+  "manualPasteHelp": {
+    "message": "Saisissez ou collez une valeur. Les modifications concernent cet envoi uniquement."
+  },
+  "managedHeader": {
+    "message": "Cet en-tête est géré par Hooky ou le navigateur."
+  },
+  "duplicateHeader": {
+    "message": "Les noms d’en-tête doivent être uniques, sans distinction de casse."
+  },
+  "invalidHeader": {
+    "message": "Nom ou valeur d’en-tête invalide. Les sauts de ligne sont interdits."
   }
 }

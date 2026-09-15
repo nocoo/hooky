@@ -51,7 +51,7 @@
     "message": "Enviando..."
   },
   "successStatus": {
-    "message": "Sucesso ($STATUS$)",
+    "message": "O destinatário respondeu (HTTP $STATUS$)",
     "placeholders": {
       "status": {
         "content": "$1"
@@ -271,5 +271,32 @@
   },
   "sessionResultHint": {
     "message": "Mantido nesta sessão do navegador. O corpo da solicitação não é registrado."
+  },
+  "advancedSettings": {
+    "message": "Avançado"
+  },
+  "requestHeaders": {
+    "message": "Cabeçalhos da solicitação"
+  },
+  "showHeaderValues": {
+    "message": "Mostrar valores dos cabeçalhos"
+  },
+  "headersHelp": {
+    "message": "Armazenados localmente e ocultos nas prévias. Solicitações com cabeçalhos personalizados não seguem redirecionamentos. Content-Type permanece application/json."
+  },
+  "sendIdHelp": {
+    "message": "send.id é um UUID por captura. O destinatário deve suportar idempotência para evitar gravações duplicadas."
+  },
+  "manualPasteHelp": {
+    "message": "Digite ou cole um valor. As alterações valem apenas para este envio."
+  },
+  "managedHeader": {
+    "message": "Este cabeçalho é gerenciado pelo Hooky ou pelo navegador."
+  },
+  "duplicateHeader": {
+    "message": "Os nomes dos cabeçalhos devem ser únicos, sem diferenciar maiúsculas."
+  },
+  "invalidHeader": {
+    "message": "Nome ou valor de cabeçalho inválido. Quebras de linha não são permitidas."
   }
 }

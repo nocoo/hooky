@@ -51,7 +51,7 @@
     "message": "전송 중..."
   },
   "successStatus": {
-    "message": "성공 ($STATUS$)",
+    "message": "수신 측 응답 (HTTP $STATUS$)",
     "placeholders": {
       "status": {
         "content": "$1"
@@ -271,5 +271,32 @@
   },
   "sessionResultHint": {
     "message": "현재 브라우저 세션에서만 유지됩니다. 요청 본문은 기록하지 않습니다."
+  },
+  "advancedSettings": {
+    "message": "고급"
+  },
+  "requestHeaders": {
+    "message": "요청 헤더"
+  },
+  "showHeaderValues": {
+    "message": "헤더 값 표시"
+  },
+  "headersHelp": {
+    "message": "로컬에 저장되며 미리보기에서는 숨겨집니다. 사용자 지정 헤더가 있는 요청은 리디렉션을 따르지 않습니다. Content-Type은 application/json입니다."
+  },
+  "sendIdHelp": {
+    "message": "send.id는 캡처마다 생성하는 UUID입니다. 중복 저장 방지를 위해 수신 측에서 멱등성을 지원해야 합니다."
+  },
+  "manualPasteHelp": {
+    "message": "값을 입력하거나 붙여 넣으세요. 이번 전송에만 적용됩니다."
+  },
+  "managedHeader": {
+    "message": "이 헤더는 Hooky 또는 브라우저에서 관리합니다."
+  },
+  "duplicateHeader": {
+    "message": "헤더 이름은 대소문자 구분 없이 고유해야 합니다."
+  },
+  "invalidHeader": {
+    "message": "잘못된 헤더 이름 또는 값입니다. 줄바꿈은 허용되지 않습니다."
   }
 }

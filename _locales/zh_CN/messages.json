@@ -51,7 +51,7 @@
     "message": "发送中..."
   },
   "successStatus": {
-    "message": "成功 ($STATUS$)",
+    "message": "接收端已响应（HTTP $STATUS$）",
     "placeholders": {
       "status": {
         "content": "$1"
@@ -271,5 +271,32 @@
   },
   "sessionResultHint": {
     "message": "仅在本次浏览器会话内保留，不记录请求正文。"
+  },
+  "advancedSettings": {
+    "message": "高级"
+  },
+  "requestHeaders": {
+    "message": "请求头"
+  },
+  "showHeaderValues": {
+    "message": "显示请求头值"
+  },
+  "headersHelp": {
+    "message": "本地保存，预览时隐藏。带自定义头的请求不跟随重定向。Content-Type 固定为 application/json。"
+  },
+  "sendIdHelp": {
+    "message": "send.id 为每次采集生成一个 UUID。接收端必须支持幂等处理才能避免重复写入。"
+  },
+  "manualPasteHelp": {
+    "message": "可在参数值中输入或粘贴，仅用于本次发送。"
+  },
+  "managedHeader": {
+    "message": "此请求头由 Hooky 或浏览器管理。"
+  },
+  "duplicateHeader": {
+    "message": "请求头名称不可重复（不区分大小写）。"
+  },
+  "invalidHeader": {
+    "message": "请求头名称或值无效，不允许换行。"
   }
 }

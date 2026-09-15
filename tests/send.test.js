@@ -18,6 +18,46 @@ beforeEach(async () => {
 afterEach(() => { vi.useRealTimers(); });
 
 describe("shared send lifecycle", () => {
+  it.each(["popup", "quick", "context"])("uses one UUID in headers and body through the %s entry path", async (source) => {
+    const bound = { ...config, headers: [{ key: "Authorization", value: "Bearer private-token" }, { key: "Idempotency-Key", value: "{{send.id}}" }], params: [
+      { key: "id", value: "{{ send.id }}", resolve: true },
+      { key: "text", value: "{{page.selection}}", resolve: true },
+    ] };
+    const result = await sendWebhook(bound, { page: { selection: "  literal {{send.id}}\n{{page.title}}  " } }, { tab, source, resolved: source === "popup" });
+    const options = fetch.mock.calls[0][1];
+    expect(result.id).toMatch(/^[a-f0-9-]{36}$/);
+    expect(options.headers["idempotency-key"]).toBe(result.id);
+    expect(JSON.parse(options.body)).toEqual({ id: result.id, text: "  literal {{send.id}}\n{{page.title}}  " });
+    expect(JSON.stringify(session)).not.toContain("private-token");
+    expect(JSON.stringify(chrome.scripting.executeScript.mock.calls)).not.toContain("private-token");
+    const next = await sendWebhook(bound, context, { tab, source });
+    expect(next.id).not.toBe(result.id);
+  });
+
+  it("does not let generated UUIDs defeat the pending guard", async () => {
+    let finish;
+    fetch.mockImplementation(() => new Promise((resolve) => { finish = resolve; }));
+    const bound = { ...config, headers: [{ key: "Idempotency-Key", value: "{{send.id}}" }], params: [{ key: "id", value: "{{send.id}}" }] };
+    const a = sendWebhook(bound, context, { tab });
+    const b = sendWebhook({ ...bound, params: [{ ...bound.params[0], resolve: true }] }, context, { tab, resolved: true });
+    expect(b).toBe(a);
+    await vi.waitFor(() => expect(fetch).toHaveBeenCalledTimes(1));
+    finish({ ok: true, status: 200 });
+    await a;
+  });
+
+  it("keeps edited literal fields separate from UUID bindings", async () => {
+    const result = await sendWebhook({ ...config, params: [
+      { key: "id", value: "{{send.id}}", resolve: true },
+      { key: "pasted", value: "  {{send.id}}\n{{page.title}}  " },
+      { key: "__proto__", value: "literal" },
+    ] }, context, { tab, resolved: true });
+    const body = JSON.parse(fetch.mock.calls[0][1].body);
+    expect(body.id).toBe(result.id);
+    expect(body.pasted).toBe("  {{send.id}}\n{{page.title}}  ");
+    expect(Object.hasOwn(body, "__proto__")).toBe(true);
+  });
+
   it("retains status after the toast expires without retaining captured content", async () => {
     vi.useFakeTimers();
     const result = await sendWebhook(config, context, { tab, source: "context" });

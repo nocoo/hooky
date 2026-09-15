@@ -51,7 +51,7 @@
     "message": "傳送中..."
   },
   "successStatus": {
-    "message": "成功 ($STATUS$)",
+    "message": "接收端已回應（HTTP $STATUS$）",
     "placeholders": {
       "status": {
         "content": "$1"
@@ -271,5 +271,32 @@
   },
   "sessionResultHint": {
     "message": "僅在本次瀏覽器工作階段保留，不記錄請求本文。"
+  },
+  "advancedSettings": {
+    "message": "進階"
+  },
+  "requestHeaders": {
+    "message": "請求標頭"
+  },
+  "showHeaderValues": {
+    "message": "顯示標頭值"
+  },
+  "headersHelp": {
+    "message": "儲存在本機，預覽時隱藏。含自訂標頭的請求不跟隨重新導向。Content-Type 固定為 application/json。"
+  },
+  "sendIdHelp": {
+    "message": "send.id 為每次擷取產生一個 UUID。接收端必須支援冪等處理才能避免重複寫入。"
+  },
+  "manualPasteHelp": {
+    "message": "可在參數值中輸入或貼上，僅用於本次傳送。"
+  },
+  "managedHeader": {
+    "message": "此標頭由 Hooky 或瀏覽器管理。"
+  },
+  "duplicateHeader": {
+    "message": "標頭名稱不可重複（不區分大小寫）。"
+  },
+  "invalidHeader": {
+    "message": "標頭名稱或值無效，不允許換行。"
   }
 }

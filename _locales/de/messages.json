@@ -51,7 +51,7 @@
     "message": "Wird gesendet..."
   },
   "successStatus": {
-    "message": "Erfolg ($STATUS$)",
+    "message": "Empfänger hat geantwortet (HTTP $STATUS$)",
     "placeholders": {
       "status": {
         "content": "$1"
@@ -271,5 +271,32 @@
   },
   "sessionResultHint": {
     "message": "Nur für diese Browsersitzung gespeichert. Der Anfrageinhalt wird nicht aufgezeichnet."
+  },
+  "advancedSettings": {
+    "message": "Erweitert"
+  },
+  "requestHeaders": {
+    "message": "Anfrage-Header"
+  },
+  "showHeaderValues": {
+    "message": "Header-Werte anzeigen"
+  },
+  "headersHelp": {
+    "message": "Lokal gespeichert, in Vorschauen verborgen. Anfragen mit eigenen Headern folgen keinen Weiterleitungen. Content-Type bleibt application/json."
+  },
+  "sendIdHelp": {
+    "message": "send.id ist eine UUID pro Erfassung. Der Empfänger muss Idempotenz unterstützen, um doppelte Einträge zu verhindern."
+  },
+  "manualPasteHelp": {
+    "message": "Wert eingeben oder einfügen. Änderungen gelten nur für diesen Sendevorgang."
+  },
+  "managedHeader": {
+    "message": "Dieser Header wird von Hooky oder dem Browser verwaltet."
+  },
+  "duplicateHeader": {
+    "message": "Header-Namen müssen unabhängig von Groß- und Kleinschreibung eindeutig sein."
+  },
+  "invalidHeader": {
+    "message": "Ungültiger Header-Name oder -Wert. Zeilenumbrüche sind nicht erlaubt."
   }
 }

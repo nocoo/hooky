@@ -22,6 +22,8 @@ A compact wisteria workspace in the hexly.ai family, with a current-page card, e
 
 - **Multiple templates**: Save a name, target URL, HTTP method, and key-value parameters for each webhook.
 - **Page variables**: Reference page context in parameter values and resolve it when sending.
+- **Optional request headers**: Configure Authorization, X-API-Key, or other headers per template under Advanced. Previews always hide custom header values.
+- **Manual capture**: Type or paste multiline text into a parameter in the send panel. Edits apply to that send only.
 - **Quick-send rules**: On a toolbar click, match the page URL or title in order. Send through the first enabled matching rule when its template is valid; otherwise open the popup.
 - **Context menu sending**: Choose a template from the right-click menu on a page, selection, link, or image.
 - **Result feedback**: All entry points show sending, success, receiver errors, or unconfirmed results. Quick-send and context menu actions show page feedback and persistent badges; the panel retains the latest result for this browser session.
@@ -38,8 +40,11 @@ Rules support contains, equals, starts-with, ends-with, and regular-expression m
 | `{{page.meta.og:title}}` | Open Graph title |
 | `{{page.meta.og:description}}` | Open Graph description |
 | `{{page.meta.og:image}}` | Open Graph image URL |
+| `{{send.id}}` | One UUID per logical send, shared by body and headers |
 
-GET and DELETE place parameters in the query string. POST, PUT, and PATCH send a JSON object whose parameter values are strings. Custom HTTP headers are not supported. Pages that block script injection, such as Chrome's internal pages, fall back to available tab information; selection and metadata may be empty.
+GET and DELETE place parameters in the query string. POST, PUT, and PATCH send a JSON object whose parameter values are strings. Content-Type stays application/json. Requests with custom headers do not follow redirects, and browser-managed headers such as Cookie and Host cannot be overridden. Pages that block script injection, such as Chrome's internal pages, fall back to available tab information; selection and metadata may be empty.
+
+If your receiver supports idempotency keys, configure `Idempotency-Key = {{send.id}}` and optionally use the same variable in the body. New sends get new UUIDs; repeated triggers during a pending request share that send. A UUID alone does not deduplicate writes: the receiver must implement those semantics. Literal `{{…}}` in pasted or captured text is never resolved a second time.
 
 ## Usage
 

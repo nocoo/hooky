@@ -51,7 +51,7 @@
     "message": "送信中..."
   },
   "successStatus": {
-    "message": "成功 ($STATUS$)",
+    "message": "受信側が応答しました（HTTP $STATUS$）",
     "placeholders": {
       "status": {
         "content": "$1"
@@ -271,5 +271,32 @@
   },
   "sessionResultHint": {
     "message": "このブラウザーセッションでのみ保持します。リクエスト本文は記録しません。"
+  },
+  "advancedSettings": {
+    "message": "詳細設定"
+  },
+  "requestHeaders": {
+    "message": "リクエストヘッダー"
+  },
+  "showHeaderValues": {
+    "message": "ヘッダーの値を表示"
+  },
+  "headersHelp": {
+    "message": "ローカル保存し、プレビューでは非表示にします。カスタムヘッダー付きのリクエストはリダイレクトしません。Content-Type は application/json です。"
+  },
+  "sendIdHelp": {
+    "message": "send.id はキャプチャごとに生成する UUID です。重複書き込みの防止には受信側の冪等性対応が必要です。"
+  },
+  "manualPasteHelp": {
+    "message": "値を入力または貼り付けできます。変更は今回の送信にのみ適用されます。"
+  },
+  "managedHeader": {
+    "message": "このヘッダーは Hooky またはブラウザーが管理します。"
+  },
+  "duplicateHeader": {
+    "message": "ヘッダー名は大文字小文字を区別せず一意にしてください。"
+  },
+  "invalidHeader": {
+    "message": "ヘッダー名または値が無効です。改行は使用できません。"
   }
 }

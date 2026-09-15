@@ -68,6 +68,41 @@ async function setupPageContextMock(contextData) {
 }
 
 describe("popup.js", () => {
+  it("previews masked headers, preserves untouched bindings, and allows manual multiline input", async () => {
+    const template = { id: "t1", name: "Notes", url: "https://example.com/hook", method: "POST", headers: [{ key: "X-API-Key", value: "private-token" }], params: [
+      { key: "id", value: "{{send.id}}" }, { key: "text", value: "" }, { key: "selected", value: "{{page.selection}}" },
+    ] };
+    setupChromeMock({ hooky: { templates: [template], activeTemplateId: "t1" } });
+    await setupPageContextMock({ page: { url: "https://example.com", title: "Example", selection: "{{send.id}}", meta: {} } });
+    await import("../src/popup/popup.js");
+    await vi.waitFor(() => expect(document.querySelectorAll(".param-item textarea")).toHaveLength(3));
+    const values = document.querySelectorAll(".param-item textarea");
+    expect(values[0].value).toBe("{{send.id}}");
+    values[1].value = "  manual {{page.title}}\nsecond line  ";
+    values[1].dispatchEvent(new Event("input", { bubbles: true }));
+    const preview = document.getElementById("popup-request-preview").textContent;
+    expect(preview).toContain("x-api-key: ••••");
+    expect(preview).not.toContain("private-token");
+    expect(preview).toContain('"selected": "{{send.id}}"');
+    document.getElementById("send-btn").click();
+    await vi.waitFor(() => expect(chrome.runtime.sendMessage).toHaveBeenCalled());
+    const message = chrome.runtime.sendMessage.mock.calls[0][0];
+    expect(message.config.params).toEqual([
+      { key: "id", value: "{{send.id}}", resolve: true },
+      { key: "text", value: "  manual {{page.title}}\nsecond line  " },
+      { key: "selected", value: "{{page.selection}}", resolve: true },
+    ]);
+    expect(message.context.page.selection).toBe("{{send.id}}");
+    expect(chrome.storage.local.set).not.toHaveBeenCalled();
+  });
+
+  it("shows request validation errors without exposing header values", async () => {
+    setupChromeMock({ hooky: { templates: [{ id: "t1", name: "Notes", url: "https://example.com", method: "POST", params: [], headers: [{ key: "Cookie", value: "secret" }] }] } });
+    await setupPageContextMock();
+    await import("../src/popup/popup.js");
+    await vi.waitFor(() => expect(document.getElementById("popup-request-preview").textContent).toBe("managedHeader"));
+  });
+
   it("shows a retained result without sending and updates it from session changes", async () => {
     setupChromeMock({ hooky: { templates: [], theme: "system" } });
     const record = { id: "retained", name: "Save", state: "sending", startedAt: Date.now() };
@@ -215,8 +250,8 @@ describe("popup.js", () => {
 
     const items = document.querySelectorAll(".param-item");
     expect(items[0].querySelector(".param-key").textContent).toBe("url");
-    expect(items[0].querySelector("input").value).toBe("https://example.com");
-    expect(items[1].querySelector("input").value).toBe("static value");
+    expect(items[0].querySelector("textarea").value).toBe("https://example.com");
+    expect(items[1].querySelector("textarea").value).toBe("static value");
   });
 
   it("should open settings page when settings button is clicked", async () => {
@@ -360,7 +395,7 @@ describe("popup.js", () => {
     });
 
     // Should fall back to tab.url
-    const input = document.querySelector(".param-item input");
+    const input = document.querySelector(".param-item textarea");
     expect(input.value).toBe("https://example.com");
   });
 
@@ -587,7 +622,7 @@ describe("popup.js", () => {
     });
 
     // Should use tab title from fallback
-    const input = document.querySelector(".param-item input");
+    const input = document.querySelector(".param-item textarea");
     expect(input.value).toBe("Example Tab");
   });
 

@@ -12,6 +12,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Shared sending, success, rejection, and unconfirmed-result feedback for popup, Quick Send, and context-menu sends.
 - Page notifications, persistent toolbar badges, and a session-only latest-result panel with independent view/open actions.
 - A pending-request guard and a 20-second deadline; interrupted requests are never replayed automatically.
+- Per-template custom headers with validation, masked previews, and redirect protection.
+- A `{{send.id}}` UUID variable shared by request headers and parameters, without resolving captured or edited literals again.
+- Multiline manual capture and a request preview in the send panel.
 
 ### Fixed
 

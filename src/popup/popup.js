@@ -4,6 +4,7 @@ import { loadStore, setActiveTemplateId } from "../store.js";
 import { applyTheme } from "../theme.js";
 import { getPageContext } from "../pagecontext.js";
 import { LAST_RESULT_KEY, readLastResult, resultMessage } from "../feedback.js";
+import { previewRequest } from "../webhook.js";
 
 const noConfigEl = document.getElementById("no-config");
 const webhookPanel = document.getElementById("webhook-panel");
@@ -64,11 +65,13 @@ function renderParams(params, context) {
     keyLabel.className = "param-key";
     keyLabel.textContent = param.key;
 
-    const resolved = resolveTemplate(param.value, context);
-    const valueInput = document.createElement(resolved.includes("\n") ? "textarea" : "input");
+    const resolved = resolveTemplate(param.value, { ...context, send: { id: "{{send.id}}" } });
+    const valueInput = document.createElement("textarea");
+    valueInput.rows = 2;
     valueInput.value = resolved;
     valueInput.setAttribute("aria-label", param.key);
     valueInput.dataset.originalTemplate = param.value;
+    valueInput.dataset.originalValue = resolved;
 
     item.appendChild(keyLabel);
     item.appendChild(valueInput);
@@ -86,6 +89,7 @@ function showTemplate(tpl) {
   urlDisplay.title = tpl.url;
 
   renderParams(tpl.params, pageContext);
+  updateRequestPreview();
 }
 
 function getResolvedParams() {
@@ -93,10 +97,22 @@ function getResolvedParams() {
   const params = [];
   for (const item of items) {
     const key = item.querySelector(".param-key").textContent;
-    const value = item.querySelector("input, textarea").value;
-    params.push({ key, value });
+    const input = item.querySelector("textarea");
+    if (input.value === input.dataset.originalValue) {
+      params.push({ key, value: input.dataset.originalTemplate, resolve: true });
+    } else params.push({ key, value: input.value });
   }
   return params;
+}
+
+function updateRequestPreview() {
+  try {
+    document.getElementById("popup-request-preview").textContent = previewRequest(
+      { ...currentTemplate, params: getResolvedParams() }, { ...pageContext, send: { id: "{{send.id}}" } }, true,
+    );
+  } catch (error) {
+    document.getElementById("popup-request-preview").textContent = t(error.message);
+  }
 }
 
 async function sendWebhook() {
@@ -113,7 +129,7 @@ async function sendWebhook() {
       type: "EXECUTE_WEBHOOK",
       resolved: true,
       config,
-      context: { page: {} },
+      context: pageContext,
       tab: currentTab,
     });
 
@@ -186,6 +202,7 @@ templateSelect.addEventListener("change", async () => {
 settingsBtn.addEventListener("click", openSettings);
 goSettingsBtn.addEventListener("click", openSettings);
 sendBtn.addEventListener("click", sendWebhook);
+paramsPreview.addEventListener("input", updateRequestPreview);
 chrome.storage.onChanged.addListener((changes, area) => {
   if (area === "session" && changes[LAST_RESULT_KEY]?.newValue) renderLastResult(changes[LAST_RESULT_KEY].newValue);
 });

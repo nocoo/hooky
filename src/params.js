@@ -11,12 +11,9 @@ const QUERY_METHODS = new Set(["GET", "DELETE"]);
  * @returns {object} The resolved JSON body
  */
 export function buildRequestBody(params, context, alreadyResolved = false) {
-  const body = {};
-  for (const { key, value } of params) {
-    if (!key) continue;
-    body[key] = alreadyResolved ? value : resolveTemplate(value, context);
-  }
-  return body;
+  return Object.fromEntries(params.filter(({ key }) => key).map(({ key, value, resolve }) => [
+    key, alreadyResolved && !resolve ? value : resolveTemplate(value, context),
+  ]));
 }
 
 /**
@@ -36,7 +33,7 @@ export function buildRequestUrl(baseUrl, params, context, method, alreadyResolve
   if (validParams.length === 0) return baseUrl;
 
   const queryParts = validParams.map((p) => {
-    const resolved = alreadyResolved ? p.value : resolveTemplate(p.value, context);
+    const resolved = alreadyResolved && !p.resolve ? p.value : resolveTemplate(p.value, context);
     return `${encodeURIComponent(p.key)}=${encodeURIComponent(resolved)}`;
   });
 
