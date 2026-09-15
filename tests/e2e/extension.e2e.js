@@ -10,12 +10,16 @@
 const puppeteer = require("puppeteer");
 const path = require("path");
 const http = require("http");
+const fs = require("node:fs/promises");
+const os = require("node:os");
+const { runCaptureScenarios } = require("./capture.js");
 
 const EXTENSION_PATH = process.env.EXTENSION_PATH || path.resolve(__dirname, "../..");
 const TIMEOUT = 15000;
 
 let server;
 let webhookReceived = null;
+const webhookRequests = [];
 
 /** Start a local HTTP server to receive webhook calls */
 function startWebhookServer() {
@@ -24,25 +28,47 @@ function startWebhookServer() {
       // Handle CORS preflight
       res.setHeader("Access-Control-Allow-Origin", "*");
       res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS");
-      res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+      res.setHeader("Access-Control-Allow-Headers", req.headers["access-control-request-headers"] || "Content-Type");
       if (req.method === "OPTIONS") {
         res.writeHead(204);
         res.end();
+        return;
+      }
+      if (req.url === "/article") {
+        res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
+        res.end('<!doctype html><html><head><title>Hooky capture test</title><meta name="description" content="Capture test page"></head><body><h1>Capture test</h1><p id="selection">quick capture {{page.title}}</p></body></html>');
         return;
       }
 
       let body = "";
       req.on("data", (chunk) => (body += chunk));
       req.on("end", () => {
-        // Only capture requests to /hook (ignore favicon, etc.)
-        if (req.url === "/hook") {
-          webhookReceived = {
+        if (["/hook", "/capture", "/business-failure", "/accepted", "/empty", "/large", "/slow", "/redirect", "/redirect-target"].includes(req.url)) {
+          const received = {
             method: req.method,
             url: req.url,
             headers: req.headers,
             body: body ? JSON.parse(body) : null,
           };
+          webhookRequests.push(received);
+          if (req.url === "/hook") webhookReceived = received;
         }
+        if (req.url === "/redirect") { res.writeHead(302, { Location: "/redirect-target" }); res.end(); return; }
+        if (req.url === "/empty") { res.writeHead(204); res.end(); return; }
+        if (req.url === "/slow") {
+          res.writeHead(200, { "Content-Type": "text/plain" });
+          res.write("partial receipt");
+          const timer = setTimeout(() => res.end(" late"), 6000);
+          res.on("close", () => clearTimeout(timer));
+          return;
+        }
+        if (req.url === "/large") { res.writeHead(200, { "Content-Type": "application/json" }); res.end(JSON.stringify({ data: "x".repeat(10000) })); return; }
+        if (req.url === "/capture" || req.url === "/business-failure") {
+          res.writeHead(req.url === "/capture" ? 201 : 200, { "Content-Type": "application/json" });
+          res.end(JSON.stringify({ saved: req.url === "/capture", data: { id: "receipt-" + webhookRequests.length, message: "<b>server-only receipt</b>" } }));
+          return;
+        }
+        if (req.url === "/accepted") { res.writeHead(202, { "Content-Type": "application/json" }); res.end('{"accepted":true}'); return; }
         res.writeHead(200, { "Content-Type": "application/json" });
         res.end(JSON.stringify({ status: "ok" }));
       });
@@ -65,6 +91,7 @@ function stopWebhookServer() {
 async function runTests() {
   const port = await startWebhookServer();
   let browser;
+  let testExtensionPath;
   let passed = 0;
   let failed = 0;
 
@@ -79,6 +106,18 @@ async function runTests() {
   }
 
   try {
+    // Static imports are required in MV3 workers. The driver exists only in this temporary copy.
+    testExtensionPath = await fs.mkdtemp(path.join(os.tmpdir(), "hooky-e2e-"));
+    for (const item of ["src", "_locales", "manifest.json"]) await fs.cp(path.join(EXTENSION_PATH, item), path.join(testExtensionPath, item), { recursive: true });
+    const manifest = JSON.parse(await fs.readFile(path.join(testExtensionPath, "manifest.json"), "utf8"));
+    manifest.background.service_worker = "e2e-background.js";
+    await fs.writeFile(path.join(testExtensionPath, "manifest.json"), JSON.stringify(manifest));
+    await fs.writeFile(path.join(testExtensionPath, "e2e-background.js"), [
+      'import "./src/background.js";',
+      'import { handleQuickSend } from "./src/quicksend.js";',
+      'import { handleContextMenuClick } from "./src/contextmenu.js";',
+      'globalThis.hookyE2E = { handleQuickSend, handleContextMenuClick };',
+    ].join("\n"));
     console.log("\nLaunching browser with extension...");
     browser = await puppeteer.launch({
       executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || undefined,
@@ -93,7 +132,7 @@ async function runTests() {
       ],
     });
 
-    const extensionId = await browser.installExtension(EXTENSION_PATH);
+    const extensionId = await browser.installExtension(testExtensionPath);
     console.log(`  Extension ID: ${extensionId}`);
     assert(!!extensionId, "Extension loaded successfully");
 
@@ -366,11 +405,15 @@ async function runTests() {
     assert(webhooksActiveAgain, "Rules: Can switch back to Webhooks panel");
 
     await rulesPage.close();
+
+    console.log("\nTesting capture reliability and optional features...");
+    await runCaptureScenarios({ browser, extensionId, port, requests: webhookRequests, assert });
   } catch (err) {
     console.error(`\n  ERROR: ${err.message}`);
     failed++;
   } finally {
     if (browser) await browser.close();
+    if (testExtensionPath) await fs.rm(testExtensionPath, { recursive: true, force: true });
     await stopWebhookServer();
 
     console.log(`\n  Results: ${passed} passed, ${failed} failed`);
