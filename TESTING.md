@@ -30,4 +30,4 @@ The following checks require a person using Chrome's toolbar, menus, permission 
 - [ ] Enable duplicate protection for one webhook. Repeat a capture, inspect the earlier result and masked preview, then choose **Send anyway**. The new request must use a new UUID. After the worker stops or the capture expires, the panel must ask for a fresh capture instead of substituting the current page.
 - [ ] Inspect light/dark themes, keyboard focus, and long translated labels in the settings and result panel.
 
-HTTP 2xx is evidence of a successful HTTP response. A configured business condition means only what the receiver promises. A lost response leaves the result unconfirmed; Hooky does not retry automatically. Durable storage and end-to-end idempotency still need receiver support.
+HTTP response headers have a 20-second deadline; opted-in receipt reading then has its own 3-second budget. HTTP 2xx is evidence of a successful HTTP response. A configured business condition means only what the receiver promises. A lost response leaves the result unconfirmed; Hooky does not retry automatically. Durable storage and end-to-end idempotency still need receiver support.

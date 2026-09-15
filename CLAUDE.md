@@ -46,7 +46,7 @@ The send pipeline owns UUID generation. Header and body bindings share one logic
 - POST, PUT, PATCH → JSON body with `Content-Type: application/json`
 - Optional custom headers per template, with masked previews and browser-managed header validation
 - Custom-header requests use `redirect: "error"` to prevent credential forwarding
-- A 20-second deadline yields an unconfirmed result on transport loss; HTTP evidence remains separate from optional business confirmation
+- A 20-second deadline applies until HTTP response headers arrive, followed by a separate 3-second budget for opted-in receipt reading; HTTP evidence remains separate from optional business confirmation
 
 ### Page Context Extraction
 

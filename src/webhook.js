@@ -70,6 +70,7 @@ export async function executeRequest(request, responseConfig = {}) {
   const timer = setTimeout(() => controller.abort(), REQUEST_TIMEOUT);
   try {
     const response = await fetch(request.url, { ...request.options, signal: controller.signal });
+    clearTimeout(timer); // Receipt reading has its own deadline once HTTP headers arrive.
     const result = { ok: response.ok, status: response.status, state: response.ok ? "success" : "failed" };
     if (responseConfig.enabled === true) {
       result.receipt = await readReceipt(response).catch(() => ({ note: "responseUnavailable" }));

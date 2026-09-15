@@ -134,6 +134,8 @@ async function runCaptureScenarios({ browser, extensionId, port, requests, asser
   const started = Date.now();
   result = await sendCase("/slow", { enabled: true });
   assert(result.ok && result.receipt.note === "responseUnavailable" && Date.now() - started < 5500, "Native slow-body reading stops near three seconds and preserves HTTP success");
+  result = await sendCase("/late-receipt", { enabled: true, successPath: "saved", successValue: "true" });
+  assert(result.status === 200 && result.httpOk && result.ok && result.business === "matched", "Late HTTP headers leave a full receipt budget for native business confirmation beyond 20 seconds");
   result = await sendCase("/redirect", { enabled: false });
   assert(result.state === "unknown" && !requests.some((request) => request.url === "/redirect-target"), "Custom credentials never reach a redirect destination");
 

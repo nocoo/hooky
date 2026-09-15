@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Shared sending, success, rejection, and unconfirmed-result feedback for popup, Quick Send, and context-menu sends.
 - Page notifications, persistent toolbar badges, and a session-only latest-result panel with independent view/open actions.
-- A pending-request guard and a 20-second deadline; interrupted requests are never replayed automatically.
+- A pending-request guard and a 20-second deadline for HTTP response headers; interrupted requests are never replayed automatically.
 - Per-template custom headers with validation, masked previews, and redirect protection.
 - A `{{send.id}}` UUID variable shared by request headers and parameters, without resolving captured or edited literals again.
 - Multiline manual capture and a request preview in the send panel.
@@ -28,6 +28,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Coalesce identical pending requests across tabs, preserve the latest observed action, and restrict capture previews and execution messages to the extension's send panel.
 - Show missing notification permission and offer explicit reauthorization while retaining the user's preference.
 - Keep GET/DELETE parameters ahead of URL fragments and ignore fragments and unused rows when guarding identical requests.
+- Give optional receipt reading its full 3-second budget after late HTTP headers arrive, without the earlier request deadline aborting the stream.
 
 ## [2.0.0] - 2026-09-14
 

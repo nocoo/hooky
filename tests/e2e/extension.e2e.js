@@ -44,7 +44,7 @@ function startWebhookServer() {
       let body = "";
       req.on("data", (chunk) => (body += chunk));
       req.on("end", () => {
-        if (["/hook", "/capture", "/business-failure", "/accepted", "/empty", "/large", "/slow", "/redirect", "/redirect-target"].includes(pathname)) {
+        if (["/hook", "/capture", "/business-failure", "/accepted", "/empty", "/large", "/slow", "/late-receipt", "/redirect", "/redirect-target"].includes(pathname)) {
           const received = {
             method: req.method,
             url: req.url,
@@ -61,6 +61,16 @@ function startWebhookServer() {
           res.write("partial receipt");
           const timer = setTimeout(() => res.end(" late"), 6000);
           res.on("close", () => clearTimeout(timer));
+          return;
+        }
+        if (pathname === "/late-receipt") {
+          let bodyTimer;
+          const headerTimer = setTimeout(() => {
+            res.writeHead(200, { "Content-Type": "application/json" });
+            res.flushHeaders();
+            bodyTimer = setTimeout(() => res.end('{"saved":true}'), 2500);
+          }, 18500);
+          res.on("close", () => { clearTimeout(headerTimer); clearTimeout(bodyTimer); });
           return;
         }
         if (pathname === "/large") { res.writeHead(200, { "Content-Type": "application/json" }); res.end(JSON.stringify({ data: "x".repeat(10000) })); return; }

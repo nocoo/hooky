@@ -88,6 +88,30 @@ describe("bounded optional response reading", () => {
     expect(cancel).toHaveBeenCalledOnce();
   });
 
+  it("gives late HTTP headers a separate receipt deadline without aborting business confirmation", async () => {
+    vi.useFakeTimers();
+    fetch.mockImplementation((_url, { signal }) => new Promise((resolve) => {
+      setTimeout(() => {
+        const stream = new ReadableStream({ start(controller) {
+          const timer = setTimeout(() => {
+            controller.enqueue(new TextEncoder().encode('{"saved":true}'));
+            controller.close();
+          }, 2500);
+          signal.addEventListener("abort", () => {
+            clearTimeout(timer);
+            controller.error(signal.reason);
+          }, { once: true });
+        } });
+        resolve(new Response(stream, { headers: { "Content-Type": "application/json" } }));
+      }, 18500);
+    }));
+    const task = executeWebhook({ ...enabled, response: { enabled: true, successPath: "saved", successValue: "true" } }, {});
+    await vi.advanceTimersByTimeAsync(21000);
+    expect(await task).toMatchObject({ ok: true, httpOk: true, state: "success", status: 200, business: "matched", receipt: { text: '{"saved":true}' } });
+    expect(fetch).toHaveBeenCalledOnce();
+    expect(vi.getTimerCount()).toBe(0);
+  });
+
   it("keeps opted-in receipts in session storage but never sends them into the page", async () => {
     vi.resetModules();
     global.chrome = {};
