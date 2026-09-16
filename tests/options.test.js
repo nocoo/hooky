@@ -552,6 +552,8 @@ describe("options.js", () => {
     await vi.waitFor(() => {
       expect(document.getElementById("panel-webhooks").classList.contains("active")).toBe(true);
     });
+    expect(document.querySelector('[data-panel="panel-webhooks"]').getAttribute("aria-expanded")).toBe("true");
+    expect(document.getElementById("rules-items").inert).toBe(true);
 
     // Click settings trigger
     const settingsTrigger = document.querySelector('[data-panel="panel-settings"]');
@@ -562,6 +564,10 @@ describe("options.js", () => {
     });
     expect(document.getElementById("panel-webhooks").classList.contains("active")).toBe(false);
     expect(document.getElementById("panel-rules").classList.contains("active")).toBe(false);
+    expect(settingsTrigger.getAttribute("aria-expanded")).toBe("true");
+    expect(document.getElementById(settingsTrigger.getAttribute("aria-controls")).inert).toBe(false);
+    expect(document.querySelector('[data-panel="panel-webhooks"]').getAttribute("aria-expanded")).toBe("false");
+    expect(document.getElementById("webhooks-items").inert).toBe(true);
   });
 
   it("should not deactivate an already active panel when clicked", async () => {

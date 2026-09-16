@@ -74,14 +74,7 @@ function initSidebar() {
 
       if (panel.classList.contains("active")) return; // already active, no-op
 
-      // Deactivate all panels
-      const panels = document.querySelectorAll(".sidebar-panel");
-      for (const p of panels) {
-        p.classList.remove("active");
-      }
-
-      // Activate clicked panel
-      panel.classList.add("active");
+      openPanel(panelId);
 
       // Navigate to the correct right-pane view
       if (panelId === "panel-webhooks") {
@@ -143,7 +136,7 @@ function createParamRow(key = "", value = "", kind = "param") {
   if (kind === "header") {
     valueInput.type = showHeaderValues.checked ? "text" : "password";
     valueInput.autocomplete = "off";
-  } else valueInput.rows = 2;
+  } else valueInput.rows = 1;
   valueInput.placeholder = t("paramValuePlaceholder");
   valueInput.value = value;
   valueInput.className = `${kind}-value`;
@@ -664,10 +657,11 @@ async function handleDelete() {
 function openPanel(panelId) {
   const panels = document.querySelectorAll(".sidebar-panel");
   for (const p of panels) {
-    p.classList.remove("active");
+    const active = p.id === panelId;
+    p.classList.toggle("active", active);
+    p.querySelector(".sidebar-nav-btn").setAttribute("aria-expanded", String(active));
+    p.querySelector(".sidebar-panel-content").inert = !active;
   }
-  const panel = document.getElementById(panelId);
-  if (panel) panel.classList.add("active");
 }
 
 // ─── Init ───
