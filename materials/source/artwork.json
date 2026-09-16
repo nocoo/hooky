@@ -4,23 +4,23 @@
   "accent": "#7851a5",
   "page": "#f4eff9",
   "titles": [
-    "Your page.<br>In motion.",
-    "Make a template.<br>Keep your flow.",
+    "Capture once.<br>See the result.",
+    "Your webhook.<br>Your options.",
     "The right page.<br>The right webhook."
   ],
   "short": [
-    "Send the useful parts of a page<br>to the webhooks you choose.",
-    "Reusable templates. Live page variables.<br>A request you can review before sending.",
+    "Send a selection or a note.<br>Keep the result within reach.",
+    "Custom headers. Optional receipts.<br>Configure each webhook your way.",
     "One toolbar click. Your rules choose<br>the next step."
   ],
   "compact": [
-    "Your page.<br>In motion.",
-    "Make a template.<br>Keep your flow.",
+    "Capture once.<br>See the result.",
+    "Your webhook.<br>Your options.",
     "Let the page pick<br>the webhook."
   ],
   "features": [
-    "Page context → your webhook",
-    "7 variables · 5 HTTP methods",
+    "Clear feedback · Latest send",
+    "Custom headers · Receipts · UUIDs",
     "Quick Send · Ordered rules"
   ],
   "ui": [

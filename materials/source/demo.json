@@ -1,0 +1,52 @@
+{
+  "store": {
+    "templates": [
+      {
+        "id": "reading",
+        "name": "Knowledge inbox",
+        "url": "https://hooks.example.com/capture",
+        "method": "POST",
+        "params": [
+          { "key": "url", "value": "{{page.url}}" },
+          { "key": "note", "value": "{{page.selection}}" }
+        ],
+        "headers": [
+          { "key": "Authorization", "value": "Bearer EXAMPLE_TOKEN_FOR_DEMO" },
+          { "key": "Idempotency-Key", "value": "{{send.id}}" }
+        ],
+        "response": { "enabled": true, "messagePath": "message", "receiptPath": "id", "successPath": "saved", "successValue": "true" },
+        "duplicateWindow": 10
+      },
+      {
+        "id": "team",
+        "name": "Share with the team",
+        "url": "https://hooks.example.com/team",
+        "method": "POST",
+        "params": [{ "key": "text", "value": "{{page.title}} — {{page.url}}" }]
+      },
+      {
+        "id": "deploy",
+        "name": "Deploy preview",
+        "url": "https://hooks.example.com/deploy",
+        "method": "POST",
+        "params": [{ "key": "repository", "value": "{{page.url}}" }]
+      }
+    ],
+    "activeTemplateId": "reading",
+    "quickSendRules": [
+      { "id": "notes", "field": "url", "operator": "startsWith", "value": "https://notes.example.com", "templateId": "reading", "enabled": true },
+      { "id": "github", "field": "url", "operator": "contains", "value": "github.com", "templateId": "deploy", "enabled": true }
+    ],
+    "theme": "light",
+    "notificationMode": "off"
+  },
+  "context": {
+    "page": {
+      "url": "https://notes.example.com/field-notes",
+      "title": "Designing a calmer workflow",
+      "selection": "Good tools give your attention back.",
+      "meta": { "description": "A field guide to thoughtful browser tools.", "og:title": "Small tools, useful connections", "og:description": "A calmer workflow starts with a few thoughtful tools.", "og:image": "https://notes.example.com/cover.jpg" }
+    }
+  },
+  "receipt": { "saved": true, "id": "note-1042", "message": "Added to your knowledge inbox." }
+}

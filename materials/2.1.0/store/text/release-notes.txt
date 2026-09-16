@@ -1,0 +1,14 @@
+Hooky 2.1.0
+
+• Clear feedback across popup, Quick Send, and context-menu sends, with persistent badges and session results.
+• Shared protection for identical requests already in progress; no automatic replay after interruption.
+• Optional custom headers, masked previews, and a shared {{send.id}} UUID.
+• Optional bounded text/JSON receipts, JSON fields, and typed business success rules.
+• Optional completed duplicate protection and explicit Send anyway.
+• Multiline manual capture and an explicit clipboard action; pasted text is never sent automatically.
+• Optional desktop notifications with permission recovery controls.
+• Preserve literal edited values and GET/DELETE query parameters, including URLs with fragments.
+• Existing templates and rules remain compatible; all 10 interface languages are updated.
+• Requires Chrome 127 or later. Notifications and clipboardRead are new optional permissions, requested from the relevant user action.
+
+A product of hexly.ai.

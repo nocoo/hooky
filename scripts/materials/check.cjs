@@ -69,6 +69,23 @@ const {root, slug, version, output, executablePath} = require('./paths.cjs');
     await page.$eval('#demo-title', element => { element.value = 'A page from this repository'; });
     await page.$eval('#context-form', form => form.requestSubmit());
     await page.waitForFunction(slug => document.getElementById(slug + '-popup')?.contentDocument?.body.textContent.includes('A page from this repository'), {}, slug);
+    if (slug === 'hooky') {
+      const popup = await (await page.$('#hooky-popup')).contentFrame();
+      await popup.click('#send-btn');
+      await popup.waitForFunction(() => !document.getElementById('send-btn').disabled && document.getElementById('last-result-id').textContent);
+      const firstId = await popup.$eval('#last-result-id', element => element.textContent);
+      const first = await popup.evaluate(async () => (await chrome.storage.session.get('hookyLastResult')).hookyLastResult);
+      assert.equal(first.business, 'matched');
+      assert.equal(first.status, 201);
+      assert.equal(first.receipt.receiptId, 'note-1042');
+      assert(!await page.$eval('#hooky-activity', element => element.textContent.includes('EXAMPLE_TOKEN')));
+      await popup.click('#send-btn');
+      await popup.waitForFunction(() => !document.getElementById('duplicate-actions').hidden && !document.getElementById('send-anyway').disabled);
+      assert.equal(await popup.$eval('#last-result-id', element => element.textContent), firstId);
+      await popup.click('#send-anyway');
+      await popup.waitForFunction(firstId => document.getElementById('duplicate-actions').hidden && document.getElementById('last-result-id').textContent !== firstId, {}, firstId);
+      checks.push('Offline preview uses the packaged sender for receipts, masked headers, duplicate protection and explicit repeats');
+    }
     await page.click('#reset');
     checks.push('Independent packaged-UI preview updates page context and resets');
     assert.deepEqual(errors, [], 'Console errors');

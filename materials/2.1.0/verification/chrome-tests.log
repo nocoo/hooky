@@ -1,0 +1,80 @@
+$ node tests/e2e/extension.e2e.js
+  Webhook server listening on port 64800
+
+Launching browser with extension...
+  Extension ID: ffbnfiafeefcchkhmkcnddnonjbnkiie
+  PASS: Extension loaded successfully
+  Browser: Chrome/153.0.8010.48
+
+Testing Options page...
+  PASS: Options page: Empty state shown initially
+  PASS: Options page: Template list exists
+  PASS: Options page: Editor form visible after creating template
+  PASS: Options page: Template list has one entry
+  PASS: Options page: URL input exists
+  PASS: Options page: Method select exists
+  PASS: Options page: Add param button exists
+  PASS: Options page: Param row added
+  PASS: Options page: Config saved successfully
+
+Testing Popup page...
+  PASS: Popup: Webhook panel is visible
+  PASS: Popup: Template select has one option
+  PASS: Popup: Template select shows correct name
+  PASS: Popup: Method badge shows POST
+  PASS: Popup: URL display shows webhook URL
+  PASS: Webhook: Request received by server
+  PASS: Webhook: Method is POST
+  PASS: Webhook: Body contains correct param
+  PASS: Popup: Success toast displayed
+
+Testing Quick Send Rules...
+  PASS: Rules: Three sidebar panels exist
+  PASS: Rules: Webhooks panel is active by default
+  PASS: Rules: Rules panel is active after click
+  PASS: Rules: Webhooks panel closed when Rules opened
+  PASS: Rules: Rules manager visible in right pane
+  PASS: Rules: 'No rules' message shown initially
+  PASS: Rules: Rule editor form is visible after adding rule
+  PASS: Rules: Rules list has one entry
+  PASS: Rules: Template dropdown contains 'E2E Test Hook'
+  PASS: Rules: Rule saved successfully
+  PASS: Rules: 'No rules' message hidden after adding rule
+  PASS: Rules: Rules manager visible after delete
+  PASS: Rules: Rules list empty after delete
+  PASS: Rules: 'No rules' message shown after delete
+  PASS: Rules: Can switch back to Webhooks panel
+
+Testing capture reliability and optional features...
+  PASS: Optional permissions are absent on a fresh install
+  PASS: Options save per-template headers, receipt rules and the duplicate window
+  PASS: Native settings preview masks authentication
+  PASS: Native send preview masks headers while retaining edited text
+  PASS: Chrome sends the configured Authorization header
+  PASS: Chrome shares one UUID between body, header and result
+  PASS: Native popup send preserves manual whitespace, newlines and literal variables
+  PASS: HTTP evidence and configured business success are both retained
+  PASS: Native receipt rendering treats HTML as text
+  PASS: A completed duplicate is stopped before making a second request
+  PASS: Explicit Send anyway creates one new logical send
+  PASS: Explicit repeat uses the original capture
+  PASS: Manual capture does not rewrite the saved template
+  PASS: Context-menu sends preserve the event selection snapshot and literal send.id text
+  PASS: Real page feedback is visible and carries no capture, credential or receipt contents
+  PASS: Chrome retains the tab's success badge
+  PASS: Quick Send extracts the real selection without recursively resolving it
+  PASS: Quick Send uses the same completed duplicate guard
+  PASS: Opening the result panel never evaluates the matching Quick Send rule
+  PASS: A context result can repeat its held capture even after page selection is cleared
+  PASS: A 200 response can fail an explicitly configured business rule
+  PASS: HTTP 202 remains acceptance without claiming durable storage
+  PASS: A native empty 204 response succeeds without a receipt body
+  PASS: Native streaming truncates retained receipt bytes at 8 KiB
+  PASS: Native slow-body reading stops near three seconds and preserves HTTP success
+  PASS: Late HTTP headers leave a full receipt budget for native business confirmation beyond 20 seconds
+  PASS: Custom credentials never reach a redirect destination
+  PASS: GET sends UUID and literal query values ahead of URL fragments
+  PASS: DELETE sends UUID and literal query values ahead of URL fragments
+  PASS: An injected page context cannot call the privileged send message
+
+  Results: 64 passed, 0 failed

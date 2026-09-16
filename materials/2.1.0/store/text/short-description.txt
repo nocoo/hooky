@@ -1,0 +1,1 @@
+Send page context to webhooks with clear feedback, reusable templates, and optional headers and receipts. A product of hexly.ai.

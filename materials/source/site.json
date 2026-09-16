@@ -9,20 +9,20 @@
   "intro": "A small action.<br>A useful connection.",
   "features": [
     [
-      "A request of your own",
-      "Keep reusable webhook templates for the things you do often. Choose a method, add parameters, and check the request preview."
+      "See the result",
+      "Clear feedback, a persistent badge, and a latest-result panel help you confirm a send without clicking again."
     ],
     [
-      "Context, already filled in",
-      "Page URL, title, selection, and metadata are ready as variables. Review and edit their values in the popup before sending."
+      "Options for your endpoint",
+      "Add custom headers, a shared send UUID, or a small response receipt to the webhooks that need them."
     ],
     [
-      "Rules on your terms",
-      "Match a URL or title to a template. Test the condition, set its priority, and send with a toolbar click when the page matches."
+      "Capture on your terms",
+      "Use page context, type a note, or explicitly paste into a value. Quick Send and right-click actions keep the capture close."
     ]
   ],
   "showcase": "A place for every next step.",
-  "showcaseNote": "Templates, variables, and rules share one focused workspace.",
+  "showcaseNote": "Start with a simple template. Open advanced options when your endpoint needs more.",
   "views": [
     "Template editor",
     "Quick Send rules · dark"
@@ -52,7 +52,7 @@
     ],
     [
       "What kinds of endpoints work?",
-      "Use a webhook or automation endpoint that accepts your chosen method and parameters. GET and DELETE use query parameters; POST, PUT, and PATCH send a flat JSON object with string values. Custom HTTP headers are not supported."
+      "Use an endpoint that accepts your chosen method and parameters. GET and DELETE use query parameters; POST, PUT, and PATCH send a JSON object with string values. Optional custom headers support Authorization and API keys. Content-Type stays application/json; requests with custom headers refuse redirects."
     ],
     [
       "Do rules send automatically as I browse?",
@@ -61,6 +61,14 @@
     [
       "Which page data can I use?",
       "URL, title, selected text, description metadata, and Open Graph title, description, and image URL. Missing values become empty strings. Hooky does not extract the complete page body."
+    ],
+    [
+      "Does success mean my data is stored?",
+      "HTTP success confirms the HTTP response. An optional JSON business condition reflects the promise your receiver makes. Lost responses remain unconfirmed; Hooky does not retry automatically. Durable storage and idempotency need receiver support."
+    ],
+    [
+      "Which new features are optional?",
+      "Headers, response reading, business rules, and completed duplicate protection are configured per webhook. Desktop notifications are a user preference. Clipboard access requires an explicit action and permission. Clear feedback and protection for sends already in progress apply to everyone."
     ]
   ]
 }

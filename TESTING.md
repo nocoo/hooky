@@ -1,6 +1,6 @@
 # Hooky 2.1.0 testing
 
-This branch prepares an unreleased local test package. It does not publish to GitHub Releases or the Chrome Web Store. Historical 2.0.0 design and submission materials remain in `materials/2.0.0/`.
+The 2.1.0 package and [upload materials](materials/2.1.0/README.md) are prepared for testing and submission. Committing them does not publish to GitHub Releases or the Chrome Web Store. Historical 2.0.0 design and submission materials remain in `materials/2.0.0/`.
 
 ## Automated checks
 

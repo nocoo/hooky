@@ -1,0 +1,1 @@
+Send user-configured webhook requests with page context or explicitly entered text, using reusable templates and optional click-triggered matching rules, and report the outcome.

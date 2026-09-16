@@ -2,10 +2,11 @@
 
 Everything needed to produce Hooky's submission package lives in this repository. No sibling project, joint delivery directory, brand-site checkout, or image-generation API is needed to reproduce the approved artwork.
 
-- [2.0.0 gallery](2.0.0/index.html)
-- [2.0.0 interactive preview](2.0.0/preview.html)
-- [2.0.0 standalone English website](2.0.0/site/index.html)
-- [Manual testing guide](2.0.0/TESTING.md)
+- [2.1.0 gallery](2.1.0/index.html)
+- [2.1.0 interactive preview](2.1.0/preview.html)
+- [2.1.0 standalone English website](2.1.0/site/index.html)
+- [Manual testing guide](2.1.0/TESTING.md)
+- [2.0.0 archive](2.0.0/index.html)
 - [Earlier designs and the approved family HTML](../docs/design/README.md)
 
 ## Layout
@@ -16,9 +17,10 @@ materials/
     copy.json           English listing, permissions, privacy handling, release copy
     artwork.json        Product palette and three campaign variants
     site.json           Landing-page sections and FAQ copy
+    demo.json           Synthetic template, page context and receipt fixtures
     brand/              Unchanged logo, reference tokens, fonts and OFL licenses
     images/             Original Azure background and optimized web image
-    captures/           Actual 2.0.0 UI captures, sample page, provenance and hashes
+    captures/           Current installed UI captures, sample page, provenance and hashes
     prompts/            Original prompts and generation provenance
     layouts/            Reproducible HTML compositions for the store images
     gallery.css         Approved gallery styling
@@ -44,7 +46,7 @@ Requires Bun, Node.js, Python 3, Bash/zip and Chrome. Puppeteer is a development
 bun run materials
 ```
 
-This runs unit tests with the existing coverage gates, lint, repository E2E/workflow tests, and a production build; extracts the ZIP and tests it in Chrome; writes the English copy; builds the interactive UI preview; renders the 9 store images; creates the standalone website and gallery; and checks the HTML and assets in Chrome. It never commits, pushes, publishes, or submits to a store.
+This runs unit tests with the existing coverage gates, lint, and a production build; extracts the ZIP and runs the Chrome E2E suite; captures the installed UI with synthetic data; writes the English copy; builds the interactive preview; renders the 9 store images; creates the standalone website and gallery; and checks the HTML and assets in Chrome. It never commits, pushes, publishes, or submits to a store.
 
 On macOS it uses the installed Google Chrome. Elsewhere, set `PUPPETEER_EXECUTABLE_PATH` to your Chrome executable, or use Puppeteer's installed browser. To recheck materials without rebuilding:
 
@@ -56,7 +58,7 @@ ZIPs are checked in for direct download. `unpacked/` is reproducible and exclude
 
 ## Updating a later version
 
-Keep the manifest and `package.json` versions synchronized. Edit `source/copy.json` (including its version), `artwork.json` and `site.json` for the new release. Update the UI images and `captures/provenance.json` when the interface changes; those images must depict the tested version and use synthetic configuration. The generator refuses a different copy/capture version so it cannot silently relabel an old campaign as a new release. Preserve the dated references in `docs/design/`.
+Keep the manifest and `package.json` versions synchronized. Edit `source/copy.json` (including its version), `artwork.json`, `site.json`, and the synthetic demo data for the new release. `capture-hooky.cjs` captures the actual installed ZIP and writes `captures/provenance.json`; the generator checks its version, package checksum, and image hashes. Receipts in artwork use a documented fixture; real request behavior is checked separately by the Chrome E2E suite. Preserve the dated references in `docs/design/`.
 
 Original decorative images and prompts are retained; only a new art direction needs the Azure image-generation skill. Original logos are never regenerated or recolored. Fonts retain their included SIL Open Font License notices.
 

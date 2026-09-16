@@ -1,0 +1,101 @@
+[
+  {
+    "product": "hooky",
+    "kind": "screenshots",
+    "variant": 1,
+    "file": "store/screenshots/hooky-screenshots-01-1280x800.png",
+    "width": 1280,
+    "height": 800,
+    "language": "en",
+    "source": "../source/layouts/hooky-screenshots-01-1280x800.html",
+    "description": "Capture once. See the result."
+  },
+  {
+    "product": "hooky",
+    "kind": "screenshots",
+    "variant": 2,
+    "file": "store/screenshots/hooky-screenshots-02-1280x800.png",
+    "width": 1280,
+    "height": 800,
+    "language": "en",
+    "source": "../source/layouts/hooky-screenshots-02-1280x800.html",
+    "description": "Your webhook. Your options."
+  },
+  {
+    "product": "hooky",
+    "kind": "screenshots",
+    "variant": 3,
+    "file": "store/screenshots/hooky-screenshots-03-1280x800.png",
+    "width": 1280,
+    "height": 800,
+    "language": "en",
+    "source": "../source/layouts/hooky-screenshots-03-1280x800.html",
+    "description": "The right page. The right webhook."
+  },
+  {
+    "product": "hooky",
+    "kind": "banners",
+    "variant": 1,
+    "file": "store/banners/hooky-banners-01-440x280.png",
+    "width": 440,
+    "height": 280,
+    "language": "en",
+    "source": "../source/layouts/hooky-banners-01-440x280.html",
+    "description": "Capture once. See the result."
+  },
+  {
+    "product": "hooky",
+    "kind": "banners",
+    "variant": 2,
+    "file": "store/banners/hooky-banners-02-440x280.png",
+    "width": 440,
+    "height": 280,
+    "language": "en",
+    "source": "../source/layouts/hooky-banners-02-440x280.html",
+    "description": "Your webhook. Your options."
+  },
+  {
+    "product": "hooky",
+    "kind": "banners",
+    "variant": 3,
+    "file": "store/banners/hooky-banners-03-440x280.png",
+    "width": 440,
+    "height": 280,
+    "language": "en",
+    "source": "../source/layouts/hooky-banners-03-440x280.html",
+    "description": "The right page. The right webhook."
+  },
+  {
+    "product": "hooky",
+    "kind": "marquee",
+    "variant": 1,
+    "file": "store/marquee/hooky-marquee-01-1400x560.png",
+    "width": 1400,
+    "height": 560,
+    "language": "en",
+    "source": "../source/layouts/hooky-marquee-01-1400x560.html",
+    "description": "Capture once. See the result."
+  },
+  {
+    "product": "hooky",
+    "kind": "marquee",
+    "variant": 2,
+    "file": "store/marquee/hooky-marquee-02-1400x560.png",
+    "width": 1400,
+    "height": 560,
+    "language": "en",
+    "source": "../source/layouts/hooky-marquee-02-1400x560.html",
+    "description": "Your webhook. Your options."
+  },
+  {
+    "product": "hooky",
+    "kind": "marquee",
+    "variant": 3,
+    "file": "store/marquee/hooky-marquee-03-1400x560.png",
+    "width": 1400,
+    "height": 560,
+    "language": "en",
+    "source": "../source/layouts/hooky-marquee-03-1400x560.html",
+    "description": "The right page. The right webhook."
+  }
+]

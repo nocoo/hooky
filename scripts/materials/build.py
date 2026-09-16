@@ -22,7 +22,6 @@ for folder in ['verification', 'site', 'store/text', 'store/screenshots', 'store
     (OUT / folder).mkdir(parents=True, exist_ok=True)
 copy = json.loads((SOURCE / 'copy.json').read_text())
 assert copy['version'] == version, 'Update the local listing copy for this version first'
-assert json.loads((SOURCE / 'captures/provenance.json').read_text())['version'] == version, 'Update UI captures for this version first'
 escape = html.escape
 env = os.environ.copy()
 if 'PUPPETEER_EXECUTABLE_PATH' not in env and Path('/Applications/Google Chrome.app/Contents/MacOS/Google Chrome').is_file():
@@ -68,7 +67,8 @@ digest = hashlib.sha256(archive.read_bytes()).hexdigest()
 (OUT / 'SHA256SUMS.txt').write_text(f'{digest}  {archive.name}\n')
 env['EXTENSION_PATH'] = str(unpacked)
 if slug == 'hooky':
-    run(['bun', 'run', 'test:e2e'], 'chrome-tests.log')
+    chrome_log = run(['bun', 'run', 'test:e2e'], 'chrome-tests.log')
+    run(['node', str(ROOT / 'scripts/materials/capture-hooky.cjs')], 'capture-tests.log')
 else:
     run(['node', str(ROOT / 'scripts/materials/test-extension.cjs')], 'chrome-tests.log')
     capture_files = ['r2shot-settings-light.png', 'r2shot-popup-light.png', 'r2shot-result-dark.png', 'captured-visible.jpg', 'captured-full-page.jpg']
@@ -77,6 +77,10 @@ else:
     provenance = dict(version=version, package_sha256=digest, source='Actual installed ZIP in Chrome; synthetic R2 responses. See verification/chrome-extension.json.', files={name: hashlib.sha256((SOURCE / 'captures' / name).read_bytes()).hexdigest() for name in capture_files})
     (SOURCE / 'captures/provenance.json').write_text(json.dumps(provenance, indent=2) + '\n')
 
+provenance = json.loads((SOURCE / 'captures/provenance.json').read_text())
+assert provenance['version'] == version and provenance['package_sha256'] == digest, 'UI captures must match the tested package'
+for name, checksum in provenance['files'].items():
+    assert hashlib.sha256((SOURCE / 'captures' / name).read_bytes()).hexdigest() == checksum, f'UI capture changed: {name}'
 
 texts = {
     'name.txt': copy['name'], 'short-description.txt': copy['short'],
@@ -119,12 +123,21 @@ report = {
     'manual_acceptance': 'pending',
     'network_boundary': 'Local HTTP receiver; isolated Chrome profile.' if slug == 'hooky' else 'Real Chrome capture, stitching and signing against the extracted ZIP; R2 HTTP responses intercepted with synthetic credentials. A live bucket/CDN still needs manual testing.',
 }
+if slug == 'hooky':
+    report['chrome_e2e_assertions_passed'] = int(re.search(r'Results:\s+(\d+) passed', chrome_log)[1])
+    report['browser'] = re.search(r'Browser:\s+(\S+)', chrome_log)[1]
 (OUT / 'verification/build.json').write_text(json.dumps(report, indent=2) + '\n')
 
 manual = '''1. Configure a receiving webhook you control, create a template with page URL/title/selection, and send from an ordinary page. Confirm the received values.
 2. Edit a popup value before sending. Confirm your exact text arrives, including whitespace or literal `{{...}}` when used.
 3. Try one matching Quick Send rule and one non-matching page, then send from the right-click menu.
 4. Reopen settings and Chrome to confirm saved templates/rules. Check light/dark/system themes and one failure response.
+5. Miss a context-menu success toast, then inspect the persistent badge and Latest send without sending again. Try a restricted Chrome page too.
+6. Configure headers and a shared send UUID for one webhook. Enable receipts and test HTTP failure, a matching business condition, and an unreadable response. Verify previews hide credentials.
+7. Enable completed duplicate protection for one webhook. Inspect the previous result and masked capture, then choose Send anyway. It must use a new UUID. Repeat after the worker stops to check capture expiry.
+8. Enable, deny, revoke, and restore optional notification permission. Check actual OS delivery and Do Not Disturb. Test explicit clipboard access and manual paste without permission; neither should send automatically.
+
+See [the full 2.1 acceptance checklist](../../TESTING.md) for details. System notification presentation and native permission dialogs remain pending manual acceptance.
 ''' if slug == 'hooky' else '''1. Enter your own R2 endpoint, bucket, scoped credentials, and working public domain. Test Connection and save.
 2. Capture the visible area on an ordinary page. Click Copy URL and open that link to confirm the actual image is publicly accessible.
 3. Capture a longer page with Full Page, keeping the tab active. Check image completeness, height limit, and restored scroll position.
@@ -139,7 +152,7 @@ Use [{archive.name}]({archive.name}) or the generated `unpacked/` directory. In 
 Minimum Chrome: {manifest['minimum_chrome_version']}. The interactive HTML uses demo data; test real requests and captures in the installed extension.
 
 {manual}
-Automated checks: {count} unit tests, the existing coverage gates, lint, repository E2E/workflow tests, and the production build passed. See [verification/build.json](verification/build.json) and its logs. Native clipboard interaction and real receiving services remain part of manual acceptance. R2 HTTP responses in the Chrome checks were simulated; no live R2 bucket or public CDN was used.
+Automated checks: {count} unit tests, the existing coverage gates, lint, repository E2E/workflow tests, and the production build passed. See [verification/build.json](verification/build.json) and its logs. {report['network_boundary']} Native clipboard interaction, OS notifications, and your own receiving service remain part of manual acceptance.
 
 When reporting a result, include the Chrome version, tested ZIP SHA-256, reproduction steps, and expected/actual behavior. Keep credentials out of reports.
 

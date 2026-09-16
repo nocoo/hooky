@@ -1,0 +1,20 @@
+activeTab
+Reads the active page URL and title after a user gesture and authorizes on-demand selection and metadata access. Used by the popup, Quick Send, and context menu.
+
+scripting
+Extracts page context on demand and displays generic feedback after a triggered send. No persistent content script runs on navigation. Feedback excludes captured text, credentials, and receipts.
+
+storage
+Uses chrome.storage.local for templates, custom headers, rules, theme, and notification preferences. Uses chrome.storage.session for send summaries, opted-in bounded receipts, and optional recent duplicate fingerprints. No cloud sync.
+
+contextMenus
+Lists configured templates and provides separate Open send panel and Latest send actions that do not trigger a Quick Send rule.
+
+notifications (optional)
+Shows generic desktop feedback only after the user enables a notification preference and grants permission from Settings. Off by default. Notifications contain only template name and status.
+
+clipboardRead (optional)
+Reads plain text into the focused parameter only after the user clicks Paste from clipboard and grants permission. No polling, background reading, or automatic send. Manual paste remains available without this permission.
+
+Host permissions: <all_urls>
+Allows cross-origin HTTP/HTTPS requests to arbitrary endpoints explicitly configured by the user, including endpoints without browser CORS support. Domains cannot be known at installation. Hooky does not crawl tabs or send browsing activity to the publisher.
