@@ -246,7 +246,7 @@
     "message": "Modèles et règles restent dans le navigateur. Les requêtes vont directement aux adresses choisies."
   },
   "openSendPanel": {
-    "message": "Ouvrir le panneau d’envoi"
+    "message": "Aperçu de l’envoi"
   },
   "viewLastResult": {
     "message": "Dernier envoi"

@@ -246,7 +246,7 @@
     "message": "Las plantillas y reglas quedan en tu navegador. Las solicitudes van a los destinos que eliges."
   },
   "openSendPanel": {
-    "message": "Abrir panel de envío"
+    "message": "Vista previa del envío"
   },
   "viewLastResult": {
     "message": "Último envío"

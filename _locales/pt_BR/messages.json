@@ -246,7 +246,7 @@
     "message": "Modelos e regras ficam no navegador. As requisições vão diretamente aos destinos escolhidos."
   },
   "openSendPanel": {
-    "message": "Abrir painel de envio"
+    "message": "Prévia do envio"
   },
   "viewLastResult": {
     "message": "Último envio"

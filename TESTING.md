@@ -24,10 +24,13 @@ The following checks require a person using Chrome's toolbar, menus, permission 
 
 - [ ] Start with existing 2.0 templates/rules. Verify that headers, response reading, completed duplicate protection and desktop notifications remain off unless configured.
 - [ ] Select text, use right-click → Hooky → a template, and deliberately miss the toast. Verify the persistent badge and **Latest send** entry make the outcome available without another request. Try both an ordinary webpage and a restricted Chrome page.
-- [ ] Exercise the actual toolbar Quick Send gesture, then use **Open send panel** and **Latest send** without triggering its rule.
+- [ ] Exercise the actual toolbar Quick Send gesture, then use **Preview send** and **Latest send** without triggering its rule.
 - [ ] Configure notifications for errors only, then all results. Accept and deny permission, revoke it, and restore it from the explicit settings button. Check actual OS delivery with and without Do Not Disturb. Notifications must contain no captured content, credentials or receipt text.
 - [ ] Focus a parameter, click **Paste from clipboard**, and accept/deny permission. Nothing is sent automatically. Verify ordinary manual paste still works without that permission.
 - [ ] Enable duplicate protection for one webhook. Repeat a capture, inspect the earlier result and masked preview, then choose **Send anyway**. The new request must use a new UUID. After the worker stops or the capture expires, the panel must ask for a fresh capture instead of substituting the current page.
 - [ ] Inspect light/dark themes, keyboard focus, and long translated labels in the settings and result panel.
+- [ ] Switch settings navigation groups. Expansion should animate, nested items should be visually distinct, and collapsed items must be skipped by keyboard focus. Reduced-motion mode should remove the transitions.
+- [ ] Save a webhook, rule, theme, or notification preference. Success should appear in a visible card for eight seconds; a failed save should remain visible until dismissed or edited. New edits should clear the earlier success notice.
+- [ ] Check single-line and multiline parameter rows, masked headers, checkboxes, and narrow settings windows. Keys, values, and remove controls should align without clipping the text or causing horizontal page scrolling.
 
 HTTP response headers have a 20-second deadline; opted-in receipt reading then has its own 3-second budget. HTTP 2xx is evidence of a successful HTTP response. A configured business condition means only what the receiver promises. A lost response leaves the result unconfirmed; Hooky does not retry automatically. Durable storage and end-to-end idempotency still need receiver support.

@@ -246,7 +246,7 @@
     "message": "模板和规则保存在浏览器中，请求直接发送到你指定的端点。"
   },
   "openSendPanel": {
-    "message": "打开发送面板"
+    "message": "预览发送"
   },
   "viewLastResult": {
     "message": "最近发送结果"

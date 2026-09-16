@@ -246,7 +246,7 @@
     "message": "テンプレートとルールはブラウザに保存され、リクエストは指定先へ直接送信されます。"
   },
   "openSendPanel": {
-    "message": "送信パネルを開く"
+    "message": "送信プレビュー"
   },
   "viewLastResult": {
     "message": "最近の送信結果"

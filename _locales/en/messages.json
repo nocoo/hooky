@@ -246,7 +246,7 @@
     "message": "Templates and rules stay in your browser. Requests go directly to the endpoints you choose."
   },
   "openSendPanel": {
-    "message": "Open send panel"
+    "message": "Preview send"
   },
   "viewLastResult": {
     "message": "Latest send"

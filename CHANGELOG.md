@@ -20,6 +20,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Optional JSON message/receipt field mappings and type-sensitive business success rules that preserve the HTTP outcome as separate evidence.
 - Per-template completed duplicate protection with bounded session fingerprints, a configurable window, and an explicit Send anyway action backed by a short-lived in-memory capture.
 
+### Changed
+
+- Distinguish settings navigation groups from nested items with animated expansion, chevrons, indentation, and accessible collapsed states.
+- Align controls and parameter rows, including multiline values, headers, checkboxes, and narrow layouts.
+- Show settings save outcomes in a dismissible card: success stays for eight seconds and errors remain until dismissed or edited. Theme save failures restore the previous preference.
+- Restyle capture feedback with status icons, light/dark colors, and reduced-motion support; focused or hovered success notifications remain available.
+- Shorten the view-only menu action to **Preview send**, with corresponding labels in all 10 locales.
+
 ### Fixed
 
 - Preserve the selection supplied by a context-menu event, including selections inside frames.

@@ -246,7 +246,7 @@
     "message": "範本和規則儲存在瀏覽器中，請求直接傳送到你指定的端點。"
   },
   "openSendPanel": {
-    "message": "開啟傳送面板"
+    "message": "預覽傳送"
   },
   "viewLastResult": {
     "message": "最近傳送結果"

@@ -246,7 +246,7 @@
     "message": "Vorlagen und Regeln bleiben im Browser. Anfragen gehen direkt an die gewählten Endpunkte."
   },
   "openSendPanel": {
-    "message": "Sendefenster öffnen"
+    "message": "Sendevorschau"
   },
   "viewLastResult": {
     "message": "Letzter Sendevorgang"

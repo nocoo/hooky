@@ -246,7 +246,7 @@
     "message": "템플릿과 규칙은 브라우저에 저장되며 요청은 지정한 주소로 직접 전송됩니다."
   },
   "openSendPanel": {
-    "message": "전송 패널 열기"
+    "message": "전송 미리보기"
   },
   "viewLastResult": {
     "message": "최근 전송 결과"
