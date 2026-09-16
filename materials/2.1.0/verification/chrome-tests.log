@@ -1,8 +1,8 @@
 $ node tests/e2e/extension.e2e.js
-  Webhook server listening on port 64800
+  Webhook server listening on port 51014
 
 Launching browser with extension...
-  Extension ID: ffbnfiafeefcchkhmkcnddnonjbnkiie
+  Extension ID: bckcpekgehbgjkldcdcaebjmgnjdhaij
   PASS: Extension loaded successfully
   Browser: Chrome/153.0.8010.48
 

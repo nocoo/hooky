@@ -17,8 +17,8 @@ Minimum Chrome: 127. The interactive HTML uses demo data; test real requests and
 
 See [the full 2.1 acceptance checklist](../../TESTING.md) for details. System notification presentation and native permission dialogs remain pending manual acceptance.
 
-Automated checks: 460 unit tests, the existing coverage gates, lint, repository E2E/workflow tests, and the production build passed. See [verification/build.json](verification/build.json) and its logs. Local HTTP receiver; isolated Chrome profile. Native clipboard interaction, OS notifications, and your own receiving service remain part of manual acceptance.
+Automated checks: 465 unit tests, the existing coverage gates, lint, repository E2E/workflow tests, and the production build passed. See [verification/build.json](verification/build.json) and its logs. Local HTTP receiver; isolated Chrome profile. Native clipboard interaction, OS notifications, and your own receiving service remain part of manual acceptance.
 
 When reporting a result, include the Chrome version, tested ZIP SHA-256, reproduction steps, and expected/actual behavior. Keep credentials out of reports.
 
-SHA-256: `08cb70db7219522134d0572ef3d26eda27bd28a1ec05bca588bbe1e4e99ccbb0`
+SHA-256: `5a5daa9b96c0676513602654959ffce20da86544e76fd86de6b19c77dadf721b`

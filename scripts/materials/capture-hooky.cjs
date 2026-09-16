@@ -28,6 +28,7 @@ const demo = require(path.join(source, 'demo.json'));
     await options.evaluate(async () => { const {hooky} = await chrome.storage.local.get('hooky'); await chrome.storage.local.set({hooky:{...hooky, theme:'dark'}}); });
     await options.reload();
     await options.click('[data-panel="panel-rules"]');
+    await options.evaluate(async () => { await Promise.all(document.getElementById('rules-items').getAnimations().map(animation => animation.finished)); });
     await options.click('#rules-list [data-id="notes"]');
     await options.waitForFunction(() => getComputedStyle(document.getElementById('rule-editor-form')).display !== 'none' && document.documentElement.dataset.theme === 'dark');
     await options.type('#rule-sample', demo.context.page.url);

@@ -8,7 +8,7 @@ storage
 Uses chrome.storage.local for templates, custom headers, rules, theme, and notification preferences. Uses chrome.storage.session for send summaries, opted-in bounded receipts, and optional recent duplicate fingerprints. No cloud sync.
 
 contextMenus
-Lists configured templates and provides separate Open send panel and Latest send actions that do not trigger a Quick Send rule.
+Lists configured templates and provides separate Preview send and Latest send actions that do not trigger a Quick Send rule.
 
 notifications (optional)
 Shows generic desktop feedback only after the user enables a notification preference and grants permission from Settings. Off by default. Notifications contain only template name and status.
