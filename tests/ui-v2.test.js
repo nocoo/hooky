@@ -267,6 +267,32 @@ describe("edited popup payloads", () => {
 
 
 describe("workspace feedback and failures", () => {
+  it("defers success dismissal during interaction, then closes on focus or pointer leave", async () => {
+    await setup();
+    vi.useFakeTimers();
+    const notice = get("settings-feedback");
+    const interacting = vi.spyOn(notice, "matches").mockReturnValue(true);
+    get("save").click();
+    await vi.waitFor(() => expect(notice.hidden).toBe(false));
+    notice.dispatchEvent(new Event("pointerleave"));
+    await vi.advanceTimersByTimeAsync(8100);
+    expect(notice.hidden).toBe(false);
+    notice.dispatchEvent(new Event("focusout"));
+    await vi.advanceTimersByTimeAsync(0);
+    expect(notice.hidden).toBe(false);
+    interacting.mockReturnValue(false);
+    notice.dispatchEvent(new Event("focusout"));
+    await vi.advanceTimersByTimeAsync(0);
+    expect(notice.hidden).toBe(true);
+    get("save").click();
+    await vi.waitFor(() => expect(notice.hidden).toBe(false));
+    interacting.mockReturnValue(true);
+    await vi.advanceTimersByTimeAsync(8100);
+    interacting.mockReturnValue(false);
+    notice.dispatchEvent(new Event("pointerleave"));
+    expect(notice.hidden).toBe(true);
+  });
+
   it("keeps failed saves visible until dismissed and clears success when editing resumes", async () => {
     await setup();
     vi.useFakeTimers();
@@ -287,6 +313,12 @@ describe("workspace feedback and failures", () => {
     expect(get("save").hasAttribute("aria-busy")).toBe(false);
     input("template-name", "Another edit");
     expect(get("settings-feedback").hidden).toBe(true);
+    chrome.storage.local.set.mockRejectedValueOnce(new Error("Still full"));
+    get("save").click();
+    await vi.waitFor(() => expect(get("status").textContent).toBe("Still full"));
+    input("template-name", "Correcting the failed draft");
+    expect(get("settings-feedback").hidden).toBe(true);
+    expect(data.hooky.templates[0].name).toBe("Reading list");
   });
 
   it.each(["light", "system"])("reports a failed theme save and restores the %s preference", async (theme) => {

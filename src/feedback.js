@@ -100,9 +100,13 @@ export function showPageFeedback(result, message, labels, expectedUrl) {
   card.append(icon, copy, close);
   root.appendChild(card);
   if (result.state === "success") {
-    setTimeout(() => {
-      if (mount.dataset.sendId === result.id && mount.dataset.startedAt === String(result.startedAt) && !card.matches(":hover, :focus-within")) mount.remove();
-    }, 8000);
+    let expired = false;
+    const dismissIfInactive = () => {
+      if (expired && mount.dataset.sendId === result.id && mount.dataset.startedAt === String(result.startedAt) && !card.matches(":hover, :focus-within")) mount.remove();
+    };
+    setTimeout(() => { expired = true; dismissIfInactive(); }, 8000);
+    card.addEventListener("pointerleave", dismissIfInactive);
+    card.addEventListener("focusout", () => setTimeout(dismissIfInactive, 0));
   }
   return true;
 }

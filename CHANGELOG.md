@@ -25,7 +25,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Distinguish settings navigation groups from nested items with animated expansion, chevrons, indentation, and accessible collapsed states.
 - Align controls and parameter rows, including multiline values, headers, checkboxes, and narrow layouts.
 - Show settings save outcomes in a dismissible card: success stays for eight seconds and errors remain until dismissed or edited. Theme save failures restore the previous preference.
-- Restyle capture feedback with status icons, light/dark colors, and reduced-motion support; focused or hovered success notifications remain available.
+- Restyle capture feedback with status icons, light/dark colors, and reduced-motion support; focused or hovered success notifications defer dismissal until interaction ends.
 - Shorten the view-only menu action to **Preview send**, with corresponding labels in all 10 locales.
 
 ### Fixed

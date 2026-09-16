@@ -60,6 +60,7 @@ let currentSettingsItem = null;
 let editorMode = null; // "template" | "rule" | "rules-list" | "settings" | null
 let lastValueInput = null;
 let statusTimer;
+let statusExpired = false;
 let notificationMode = "off";
 let notificationCheck = 0;
 
@@ -177,8 +178,13 @@ function getParams(list = paramsList, kind = "param") {
 
 function clearStatus() {
   clearTimeout(statusTimer);
+  statusExpired = false;
   statusEl.classList.remove("visible");
   statusNotice.hidden = true;
+}
+
+function dismissExpiredStatus() {
+  if (statusExpired && !statusNotice.matches(":hover, :focus-within")) clearStatus();
 }
 
 function showStatus(message, error = false) {
@@ -191,7 +197,8 @@ function showStatus(message, error = false) {
   statusEl.classList.toggle("error", error);
   statusEl.classList.add("visible");
   if (!error) statusTimer = setTimeout(() => {
-    if (!statusNotice.matches(":hover, :focus-within")) clearStatus();
+    statusExpired = true;
+    dismissExpiredStatus();
   }, 8000);
 }
 
@@ -747,6 +754,8 @@ document.getElementById("duplicate-protection").addEventListener("change", (even
 editorForm.addEventListener("input", updatePreview);
 for (const form of [editorForm, ruleEditorForm, settingsFormEl]) form.addEventListener("input", clearStatus);
 document.getElementById("dismiss-status").addEventListener("click", clearStatus);
+statusNotice.addEventListener("pointerleave", dismissExpiredStatus);
+statusNotice.addEventListener("focusout", () => setTimeout(dismissExpiredStatus, 0));
 document.getElementById("empty-new-template").addEventListener("click", handleNewTemplate);
 document.getElementById("empty-add-rule").addEventListener("click", handleNewRule);
 for (const list of [templateListEl, rulesListEl, settingsListEl]) {

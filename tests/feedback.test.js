@@ -35,14 +35,20 @@ it("keeps errors visible and treats all supplied text as text", async () => {
   expect(mount()).not.toBeNull();
 });
 
-it("keeps a success available while the user is interacting with its controls", async () => {
+it("keeps a success available during interaction and dismisses it after leaving", async () => {
   showPageFeedback({ ...result, state: "success" }, "Done", labels, location.href);
   const card = mount().shadowRoot.querySelector("section");
   // jsdom does not evaluate focus-within across shadow roots; the browser smoke check covers real focus.
-  vi.spyOn(card, "matches").mockReturnValue(true);
+  const interacting = vi.spyOn(card, "matches").mockReturnValue(true);
+  card.dispatchEvent(new Event("pointerleave"));
+  expect(mount()).not.toBeNull();
   await vi.advanceTimersByTimeAsync(8000);
   expect(mount()).not.toBeNull();
-  mount().shadowRoot.querySelector(".close").click();
+  card.dispatchEvent(new Event("focusout"));
+  await vi.advanceTimersByTimeAsync(0);
+  expect(mount()).not.toBeNull();
+  interacting.mockReturnValue(false);
+  card.dispatchEvent(new Event("pointerleave"));
   expect(mount()).toBeNull();
 });
 
