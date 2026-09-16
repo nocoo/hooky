@@ -56,9 +56,20 @@ body { padding: 36px 24px; }
 #response-fields label { margin-top: 10px; }
 #response-fields:disabled { opacity: .55; }
 .editor-actions { position: sticky; bottom: 0; display: flex; align-items: center; gap: 12px; padding: 16px 26px; border-top: 1px solid var(--line); background: var(--surface); }
-.editor-actions .status { flex: 1; opacity: 0; }
-.editor-actions .status.visible { opacity: 1; }
+.editor-actions .btn-danger { margin-right: auto; }
 .editor-actions .btn-primary { min-width: 104px; }
+.editor-actions [aria-busy="true"]::before { content: ""; width: 12px; height: 12px; border: 1.5px solid currentColor; border-right-color: transparent; border-radius: 50%; animation: save-spin .7s linear infinite; }
+.settings-feedback { --feedback-color: var(--success); position: fixed; z-index: 10; top: 24px; right: 24px; display: grid; grid-template-columns: 36px minmax(0, 1fr) 28px; align-items: start; gap: 12px; width: 360px; max-width: calc(100vw - 32px); padding: 16px; border: 1px solid color-mix(in srgb, var(--feedback-color) 28%, var(--line)); border-left: 3px solid var(--feedback-color); border-radius: 12px; background: var(--surface); box-shadow: 0 4px 12px #21122f0a, 0 16px 48px #21122f1a; animation: feedback-enter .2s ease-out; }
+.settings-feedback.error { --feedback-color: var(--danger); }
+.feedback-icon { display: grid; place-items: center; width: 36px; height: 36px; border-radius: 50%; color: var(--feedback-color); background: color-mix(in srgb, var(--feedback-color) 12%, var(--surface)); }
+.feedback-icon svg { width: 20px; height: 20px; stroke-width: 2; }
+.feedback-error, .settings-feedback.error .feedback-success { display: none; }
+.settings-feedback.error .feedback-error { display: initial; }
+.feedback-copy .eyebrow { margin-bottom: 3px; }
+.settings-feedback .status { font-size: 13px; font-weight: 550; line-height: 1.6; color: var(--text); overflow-wrap: anywhere; }
+#dismiss-status { width: 28px; height: 28px; min-height: 28px; margin-top: -3px; }
+@keyframes feedback-enter { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: none; } }
+@keyframes save-spin { to { transform: rotate(360deg); } }
 .toggle-row { display: flex; align-items: center; gap: 12px; justify-content: space-between; background: var(--soft); padding: 12px; border-radius: 8px; }
 input[type="checkbox"] { width: 18px; height: 18px; min-height: 18px; flex: 0 0 18px; margin: 0; accent-color: var(--accent); }
 .rule-info { padding: 16px; margin-bottom: 20px; background: var(--soft); border-radius: 8px; color: var(--muted); line-height: 1.75; }

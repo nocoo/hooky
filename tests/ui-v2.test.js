@@ -267,6 +267,46 @@ describe("edited popup payloads", () => {
 
 
 describe("workspace feedback and failures", () => {
+  it("keeps failed saves visible until dismissed and clears success when editing resumes", async () => {
+    await setup();
+    vi.useFakeTimers();
+    chrome.storage.local.set.mockRejectedValueOnce(new Error("Storage full"));
+    get("save").click();
+    await vi.waitFor(() => expect(get("status").textContent).toBe("Storage full"));
+    expect(get("settings-feedback").hidden).toBe(false);
+    expect(get("status").getAttribute("role")).toBe("alert");
+    await vi.advanceTimersByTimeAsync(30000);
+    expect(get("settings-feedback").hidden).toBe(false);
+    get("dismiss-status").click();
+    expect(get("settings-feedback").hidden).toBe(true);
+
+    get("save").click();
+    await vi.waitFor(() => expect(get("status").textContent).toBe(messages.saved.message));
+    expect(get("status").getAttribute("role")).toBe("status");
+    expect(get("settings-feedback").classList.contains("error")).toBe(false);
+    expect(get("save").hasAttribute("aria-busy")).toBe(false);
+    input("template-name", "Another edit");
+    expect(get("settings-feedback").hidden).toBe(true);
+  });
+
+  it.each(["light", "system"])("reports a failed theme save and restores the %s preference", async (theme) => {
+    await setup({ theme });
+    document.querySelector('[data-panel="panel-settings"]').click();
+    await vi.waitFor(() => expect(get("settings-form").style.display).toBe("block"));
+    chrome.storage.local.set.mockRejectedValueOnce(new Error("Theme not saved"));
+    get("theme-select").value = "dark";
+    get("theme-select").dispatchEvent(new Event("change"));
+    await vi.waitFor(() => expect(get("status").textContent).toBe("Theme not saved"));
+    expect(get("theme-select").value).toBe(theme);
+    expect(get("theme-select").disabled).toBe(false);
+    expect(data.hooky.theme).toBe(theme);
+    expect(get("settings-feedback").hidden).toBe(false);
+    get("theme-select").value = "dark";
+    get("theme-select").dispatchEvent(new Event("change"));
+    await vi.waitFor(() => expect(data.hooky.theme).toBe("dark"));
+    expect(get("status").textContent).toBe(messages.saved.message);
+  });
+
   it("shows revoked notification permission without losing the preference and restores it on a gesture", async () => {
     await setup({ notificationMode: "all" });
     chrome.permissions.contains.mockResolvedValue(false);
@@ -317,14 +357,14 @@ describe("workspace feedback and failures", () => {
     get("notification-mode").value = "all";
     get("notification-mode").dispatchEvent(new Event("change"));
     expect(chrome.permissions.request).toHaveBeenCalledWith({ permissions: ["notifications"] });
-    await vi.waitFor(() => expect(get("preferences-status").textContent).toBe(messages.notificationDenied.message));
+    await vi.waitFor(() => expect(get("status").textContent).toBe(messages.notificationDenied.message));
     expect(get("notification-mode").value).toBe("off");
     expect(data.hooky.notificationMode).toBeUndefined();
     chrome.permissions.request.mockResolvedValue(true);
     get("notification-mode").value = "errors";
     get("notification-mode").dispatchEvent(new Event("change"));
     await vi.waitFor(() => expect(data.hooky.notificationMode).toBe("errors"));
-    expect(get("preferences-status").textContent).toBe(messages.saved.message);
+    expect(get("status").textContent).toBe(messages.saved.message);
     chrome.permissions.request.mockClear();
     get("notification-mode").value = "off";
     get("notification-mode").dispatchEvent(new Event("change"));
@@ -339,7 +379,7 @@ describe("workspace feedback and failures", () => {
     chrome.storage.local.set.mockRejectedValue(new Error("Storage unavailable"));
     get("notification-mode").value = "off";
     get("notification-mode").dispatchEvent(new Event("change"));
-    await vi.waitFor(() => expect(get("preferences-status").textContent).toBe("Storage unavailable"));
+    await vi.waitFor(() => expect(get("status").textContent).toBe("Storage unavailable"));
     expect(get("notification-mode").value).toBe("all");
     expect(get("notification-mode").disabled).toBe(false);
   });
@@ -354,12 +394,14 @@ describe("workspace feedback and failures", () => {
     vi.useFakeTimers();
     get("save").click();
     await vi.waitFor(() => expect(get("status").classList.contains("visible")).toBe(true));
-    await vi.advanceTimersByTimeAsync(3100);
+    await vi.advanceTimersByTimeAsync(8100);
     expect(get("status").classList.contains("visible")).toBe(false);
   });
   it("shows a loading error without overwriting saved configuration", async () => {
     await setup({}, new Error("Storage unavailable"));
     expect(chrome.storage.local.set).not.toHaveBeenCalled();
+    expect(get("settings-feedback").hidden).toBe(false);
+    expect(get("empty-new-template")).not.toBeNull();
   });
   it.each(["rule-up", "rule-down"])("reports a failed priority change from %s", async (id) => {
     await setup();

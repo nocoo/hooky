@@ -29,8 +29,21 @@ it("keeps errors visible and treats all supplied text as text", async () => {
   showPageFeedback({ ...result, state: "failed", name: '<img src=x onerror="alert(1)">' }, "<b>Failed</b>", labels, location.href);
   expect(mount().shadowRoot.querySelector("img")).toBeNull();
   expect(mount().shadowRoot.querySelector('[role="alert"]').textContent).toContain("<b>Failed</b>");
+  expect(mount().shadowRoot.querySelector('[role="alert"]').getAttribute("aria-live")).toBe("assertive");
+  expect(mount().shadowRoot.querySelector(".close").getAttribute("aria-label")).toBe("Dismiss");
   await vi.advanceTimersByTimeAsync(60000);
   expect(mount()).not.toBeNull();
+});
+
+it("keeps a success available while the user is interacting with its controls", async () => {
+  showPageFeedback({ ...result, state: "success" }, "Done", labels, location.href);
+  const card = mount().shadowRoot.querySelector("section");
+  // jsdom does not evaluate focus-within across shadow roots; the browser smoke check covers real focus.
+  vi.spyOn(card, "matches").mockReturnValue(true);
+  await vi.advanceTimersByTimeAsync(8000);
+  expect(mount()).not.toBeNull();
+  mount().shadowRoot.querySelector(".close").click();
+  expect(mount()).toBeNull();
 });
 
 it("expires success after eight seconds without dismissing a subsequent send", async () => {

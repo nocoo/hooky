@@ -39,6 +39,7 @@ const headersList = document.getElementById("headers-list");
 const showHeaderValues = document.getElementById("show-header-values");
 const saveBtn = document.getElementById("save");
 const statusEl = document.getElementById("status");
+const statusNotice = document.getElementById("settings-feedback");
 const deleteBtn = document.getElementById("delete-template");
 
 // Sidebar lists
@@ -149,6 +150,7 @@ function createParamRow(key = "", value = "", kind = "param") {
   removeBtn.textContent = "\u00d7";
   removeBtn.setAttribute("aria-label", t("removeParam"));
   removeBtn.addEventListener("click", () => {
+    clearStatus();
     row.remove();
     updatePreview();
   });
@@ -171,19 +173,26 @@ function getParams(list = paramsList, kind = "param") {
   return params;
 }
 
-// ─── Status flash ───
+// ─── Save feedback ───
+
+function clearStatus() {
+  clearTimeout(statusTimer);
+  statusEl.classList.remove("visible");
+  statusNotice.hidden = true;
+}
 
 function showStatus(message, error = false) {
+  clearStatus();
+  statusNotice.hidden = false;
+  statusNotice.classList.toggle("error", error);
+  statusEl.setAttribute("role", error ? "alert" : "status");
+  statusEl.setAttribute("aria-live", error ? "assertive" : "polite");
   statusEl.textContent = message;
   statusEl.classList.toggle("error", error);
-  if (error && editorActions.style.display === "none") {
-    editorEmpty.textContent = message;
-    editorEmpty.style.display = "flex";
-    editorEmpty.setAttribute("role", "alert");
-  }
   statusEl.classList.add("visible");
-  clearTimeout(statusTimer);
-  statusTimer = setTimeout(() => statusEl.classList.remove("visible"), 3000);
+  if (!error) statusTimer = setTimeout(() => {
+    if (!statusNotice.matches(":hover, :focus-within")) clearStatus();
+  }, 8000);
 }
 
 function getResponseConfig() {
@@ -245,6 +254,7 @@ function showTemplateEditor() {
 }
 
 function showRuleEditor() {
+  clearStatus();
   editorMode = "rule";
   currentTemplateId = null;
   currentSettingsItem = null;
@@ -606,7 +616,9 @@ async function saveCurrentRule() {
 }
 
 async function handleSave() {
+  clearStatus();
   saveBtn.disabled = true;
+  saveBtn.setAttribute("aria-busy", "true");
   try {
     if (editorMode === "template") await saveCurrentTemplate();
     else if (editorMode === "rule") await saveCurrentRule();
@@ -614,6 +626,7 @@ async function handleSave() {
     showStatus(error.message ? t(error.message) : t("requestFailed"), true);
   } finally {
     saveBtn.disabled = false;
+    saveBtn.removeAttribute("aria-busy");
   }
 }
 
@@ -655,6 +668,7 @@ async function handleDelete() {
 // ─── Panel helpers ───
 
 function openPanel(panelId) {
+  clearStatus();
   const panels = document.querySelectorAll(".sidebar-panel");
   for (const p of panels) {
     const active = p.id === panelId;
@@ -706,12 +720,14 @@ async function renderAll() {
 // ─── Events ───
 
 addParamBtn.addEventListener("click", () => {
+  clearStatus();
   const row = createParamRow();
   paramsList.appendChild(row);
   row.querySelector(".param-value").focus();
   updatePreview();
 });
 document.getElementById("add-header").addEventListener("click", () => {
+  clearStatus();
   const row = createParamRow("", "", "header");
   headersList.appendChild(row);
   row.querySelector(".header-key").focus();
@@ -729,6 +745,8 @@ document.getElementById("duplicate-protection").addEventListener("change", (even
 });
 
 editorForm.addEventListener("input", updatePreview);
+for (const form of [editorForm, ruleEditorForm, settingsFormEl]) form.addEventListener("input", clearStatus);
+document.getElementById("dismiss-status").addEventListener("click", clearStatus);
 document.getElementById("empty-new-template").addEventListener("click", handleNewTemplate);
 document.getElementById("empty-add-rule").addEventListener("click", handleNewRule);
 for (const list of [templateListEl, rulesListEl, settingsListEl]) {
@@ -741,6 +759,7 @@ for (const list of [templateListEl, rulesListEl, settingsListEl]) {
 }
 for (const button of document.querySelectorAll("[data-variable]")) {
   button.addEventListener("click", () => {
+    clearStatus();
     if (!lastValueInput || !lastValueInput.isConnected) {
       const row = createParamRow();
       paramsList.appendChild(row);
@@ -778,13 +797,22 @@ deleteBtn.addEventListener("click", handleDelete);
 
 themeSelect.addEventListener("change", async () => {
   const theme = themeSelect.value;
-  await setTheme(theme);
-  applyTheme(theme);
+  const previousTheme = document.documentElement.dataset.theme || "system";
+  themeSelect.disabled = true;
+  try {
+    await setTheme(theme);
+    applyTheme(theme);
+    showStatus(t("saved"));
+  } catch (error) {
+    themeSelect.value = previousTheme;
+    showStatus(t(error.message), true);
+  } finally {
+    themeSelect.disabled = false;
+  }
 });
 
 async function saveNotifications() {
   const mode = notificationSelect.value;
-  const status = document.getElementById("preferences-status");
   notificationSelect.disabled = true;
   document.getElementById("grant-notification-permission").disabled = true;
   try {
@@ -792,12 +820,10 @@ async function saveNotifications() {
     if (mode !== "off" && !await chrome.permissions.request({ permissions: ["notifications"] })) throw new Error("notificationDenied");
     await setNotificationMode(mode);
     notificationMode = mode;
-    status.textContent = t("saved");
-    status.classList.remove("error");
+    showStatus(t("saved"));
   } catch (error) {
     notificationSelect.value = notificationMode;
-    status.textContent = t(error.message);
-    status.classList.add("error");
+    showStatus(t(error.message), true);
   } finally {
     notificationSelect.disabled = false;
     document.getElementById("grant-notification-permission").disabled = false;
