@@ -1,14 +1,14 @@
 {
   "version": "2.1.0",
   "browser": "Chrome/153.0.8010.48",
-  "package_sha256": "5a5daa9b96c0676513602654959ffce20da86544e76fd86de6b19c77dadf721b",
+  "package_sha256": "24db83888f0b4981763f0524e0673caedf6bba2a35ca3aacde181cce9c4cedb4",
   "source": "Actual installed ZIP in isolated Chrome. Synthetic templates, intercepted sample page, and a seeded receipt fixture; these screenshots are not evidence of a live receiver or OS notification.",
   "script": "scripts/materials/capture-hooky.cjs",
   "files": {
     "hooky-settings-light.png": "e4904899647468c545d322be90addc0a416223bee283be8aaa144e7037d1cc7e",
-    "hooky-popup-light.png": "8e567e66393bbea9d27d75ea1297ab394605a82b33496842b4ff86d55bf19962",
-    "hooky-rules-dark.png": "3638ac55f364ae49d2cea9389bebd39f5dd3624206b394d6b2bb1779464e697f",
-    "hooky-result-light.png": "447298749f9dc99fc06123c4eb338c4c70439e891689808850f7771b3efc4964"
+    "hooky-popup-light.png": "1ce11f43d22f9d45eb7c99fe6ea15d3deb1b71d9d9d0dfb800b63e593078bd58",
+    "hooky-rules-dark.png": "b731bc0551753732919cf452aee605f9933f29b43b881786119c969b6dfaf97c",
+    "hooky-result-light.png": "54fcd195ad715b70c0025d6afcf55e8564dd2364d034137db93c2efeb9c384f7"
   },
   "retained_sample_images": "captured-visible.jpg and captured-full-page.jpg are unchanged decorative sample-page captures from the original campaign.",
   "console_errors": []

@@ -26,7 +26,7 @@ When you open the popup or trigger a webhook, Hooky reads available page context
 
 Requests are sent when you press Send, choose a context-menu template, or click the toolbar icon on a page matching an enabled Quick Send rule. Quick Send does not send merely because you visit a matching page.
 
-Clipboard access occurs only when you focus a parameter and explicitly click **Paste from clipboard** in the send panel. Hooky requests the optional clipboard permission at that point and reads plain text into that parameter. It does not poll the clipboard, access it in the background, or automatically send pasted text. Manual typing and paste remain available without granting clipboard permission.
+You can type or use the browser's standard paste command in parameter fields. Hooky does not request clipboard permissions or read the clipboard programmatically. Entered text is sent only when you choose to send.
 
 The configured endpoint receives the request parameters and headers, standard network information such as your IP address, and any data you included. Requests with custom headers refuse redirects to avoid forwarding credentials; other requests follow the browser's Fetch behavior. The receiving service's storage and privacy practices are outside Hooky's control. Hooky does not proxy these requests or maintain a persistent request history.
 
@@ -41,7 +41,6 @@ After a user-triggered send, a small temporary page UI may show the template nam
 | `storage` | Save templates, rules, and preferences locally. |
 | `contextMenus` | Show configured templates in the browser's right-click menu. |
 | `notifications` (optional) | Show generic desktop feedback after explicitly enabling it in Settings. |
-| `clipboardRead` (optional) | Read plain text only when the user clicks Paste from clipboard. |
 | `<all_urls>` host permission | Allow requests to user-configured HTTP/HTTPS endpoints across domains, including endpoints without browser CORS support. This broad capability is used for the configured webhook destinations; Hooky does not scan other tabs. |
 
 Hooky requests no history, bookmarks, cookies, or downloads permission. It contains no analytics, advertising, remote executable code, account system, or publisher cloud sync. It does not sell data or use it for advertising. Links to hexly.ai and GitHub open only when clicked and are governed by those sites' policies.

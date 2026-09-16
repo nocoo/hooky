@@ -2,8 +2,8 @@ Publisher collection: none. No analytics, advertising, account, relay, cloud syn
 Local storage: template names, endpoints, parameters, custom headers, rules, theme, and notification preferences. Values may include credentials or personal information. Headers are masked in previews; local storage is not a password vault.
 Session storage: latest send metadata and outcome; bounded response text only when enabled. Optional duplicate protection stores request fingerprints and summaries. Raw request bodies and credentials are not stored in duplicate history.
 Temporary captures: explicit repeats can use original captures held only in worker memory, up to 20 captures for at most 60 seconds or until the worker stops.
-Website content: URL/title, selected text, description, and Open Graph fields are read on demand. Configured variables determine what is sent. Manual and explicitly pasted text is sent only by a subsequent send action.
-Clipboard: plain text is read only from the explicit Paste from clipboard action after optional permission is granted.
+Website content: URL/title, selected text, description, and Open Graph fields are read on demand. Configured variables determine what is sent. Manually entered or pasted text is sent only by a subsequent send action.
+Clipboard: Hooky does not request clipboard permissions or read the clipboard programmatically. Users can paste into parameter fields using standard browser controls.
 Browsing data: no ongoing navigation history is recorded. Active page URL/title may be included in a triggered request.
 Destinations: user-configured endpoints. Custom-header requests refuse redirects; other requests use browser redirect handling. Receivers can see normal network metadata such as IP address.
 Feedback: page and optional desktop feedback show only template name and generic status. Opted-in receipts remain inside Hooky and may contain sensitive content returned by the receiver.

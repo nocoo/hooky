@@ -1,8 +1,8 @@
 $ node tests/e2e/extension.e2e.js
-  Webhook server listening on port 51014
+  Webhook server listening on port 60430
 
 Launching browser with extension...
-  Extension ID: bckcpekgehbgjkldcdcaebjmgnjdhaij
+  Extension ID: epdfmliahjhooieoopghccohobnbndjp
   PASS: Extension loaded successfully
   Browser: Chrome/153.0.8010.48
 
@@ -46,7 +46,8 @@ Testing Quick Send Rules...
   PASS: Rules: Can switch back to Webhooks panel
 
 Testing capture reliability and optional features...
-  PASS: Optional permissions are absent on a fresh install
+  PASS: Optional notifications are absent on a fresh install
+  PASS: The installed extension declares no clipboard permission
   PASS: Options save per-template headers, receipt rules and the duplicate window
   PASS: Native settings preview masks authentication
   PASS: Native send preview masks headers while retaining edited text
@@ -77,4 +78,4 @@ Testing capture reliability and optional features...
   PASS: DELETE sends UUID and literal query values ahead of URL fragments
   PASS: An injected page context cannot call the privileged send message
 
-  Results: 64 passed, 0 failed
+  Results: 65 passed, 0 failed

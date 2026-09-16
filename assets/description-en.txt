@@ -27,7 +27,7 @@ Use these variables in parameter or header values:
 • {{page.meta.og:image}} — Open Graph image URL
 • {{send.id}} — one UUID shared by the headers and parameters of a logical send
 
-Review resolved values in the popup. Type or paste multiline notes without changing the saved template. Edited text keeps whitespace, line breaks, and literal {{...}} syntax. Paste from clipboard fills the selected value after you grant optional permission; ordinary manual paste needs no extension clipboard permission. Pasting never sends automatically.
+Review resolved values in the popup. Type or paste multiline notes without changing the saved template. Edited text keeps whitespace, line breaks, and literal {{...}} syntax. Pasting never sends automatically.
 
 KNOW WHAT THE RECEIVER SAID
 

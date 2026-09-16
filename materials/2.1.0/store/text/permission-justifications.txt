@@ -13,8 +13,5 @@ Lists configured templates and provides separate Preview send and Latest send ac
 notifications (optional)
 Shows generic desktop feedback only after the user enables a notification preference and grants permission from Settings. Off by default. Notifications contain only template name and status.
 
-clipboardRead (optional)
-Reads plain text into the focused parameter only after the user clicks Paste from clipboard and grants permission. No polling, background reading, or automatic send. Manual paste remains available without this permission.
-
 Host permissions: <all_urls>
 Allows cross-origin HTTP/HTTPS requests to arbitrary endpoints explicitly configured by the user, including endpoints without browser CORS support. Domains cannot be known at installation. Hooky does not crawl tabs or send browsing activity to the publisher.
