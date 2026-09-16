@@ -341,18 +341,6 @@
   "notificationDenied": {
     "message": "A permissão de notificação não foi concedida. A configuração anterior foi mantida."
   },
-  "pasteClipboard": {
-    "message": "Colar da área de transferência"
-  },
-  "clipboardHelp": {
-    "message": "Selecione um valor acima e cole. O acesso direto exige permissão; colar manualmente não exige."
-  },
-  "clipboardDenied": {
-    "message": "O acesso à área de transferência não foi permitido. Você ainda pode colar manualmente."
-  },
-  "clipboardUnavailable": {
-    "message": "Não foi possível ler a área de transferência. Cole manualmente no valor selecionado."
-  },
   "responseFields": {
     "message": "Campos JSON (opcionais)"
   },

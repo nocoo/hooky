@@ -135,7 +135,7 @@ manual = '''1. Configure a receiving webhook you control, create a template with
 5. Miss a context-menu success toast, then inspect the persistent badge and Latest send without sending again. Try a restricted Chrome page too.
 6. Configure headers and a shared send UUID for one webhook. Enable receipts and test HTTP failure, a matching business condition, and an unreadable response. Verify previews hide credentials.
 7. Enable completed duplicate protection for one webhook. Inspect the previous result and masked capture, then choose Send anyway. It must use a new UUID. Repeat after the worker stops to check capture expiry.
-8. Enable, deny, revoke, and restore optional notification permission. Check actual OS delivery and Do Not Disturb. Test explicit clipboard access and manual paste without permission; neither should send automatically.
+8. Enable, deny, revoke, and restore optional notification permission. Check actual OS delivery and Do Not Disturb. Paste text into a parameter using the browser's standard paste command; it must not request permission or send automatically.
 
 See [the full 2.1 acceptance checklist](../../TESTING.md) for details. System notification presentation and native permission dialogs remain pending manual acceptance.
 ''' if slug == 'hooky' else '''1. Enter your own R2 endpoint, bucket, scoped credentials, and working public domain. Test Connection and save.
@@ -152,7 +152,7 @@ Use [{archive.name}]({archive.name}) or the generated `unpacked/` directory. In 
 Minimum Chrome: {manifest['minimum_chrome_version']}. The interactive HTML uses demo data; test real requests and captures in the installed extension.
 
 {manual}
-Automated checks: {count} unit tests, the existing coverage gates, lint, repository E2E/workflow tests, and the production build passed. See [verification/build.json](verification/build.json) and its logs. {report['network_boundary']} Native clipboard interaction, OS notifications, and your own receiving service remain part of manual acceptance.
+Automated checks: {count} unit tests, the existing coverage gates, lint, repository E2E/workflow tests, and the production build passed. See [verification/build.json](verification/build.json) and its logs. {report['network_boundary']} Native paste interaction, OS notifications, and your own receiving service remain part of manual acceptance.
 
 When reporting a result, include the Chrome version, tested ZIP SHA-256, reproduction steps, and expected/actual behavior. Keep credentials out of reports.
 

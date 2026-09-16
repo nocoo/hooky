@@ -16,7 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - A `{{send.id}}` UUID variable shared by request headers and parameters, without resolving captured or edited literals again.
 - Multiline manual capture and a request preview in the send panel.
 - Optional per-template response reading, bounded while streaming to 8 KiB and 3 seconds, with plain-text session-only receipt display.
-- Opt-in desktop notification modes and an explicit clipboard-paste action, with permissions requested only from the relevant user gesture.
+- Opt-in desktop notification modes, with permission requested when enabled in Settings.
 - Optional JSON message/receipt field mappings and type-sensitive business success rules that preserve the HTTP outcome as separate evidence.
 - Per-template completed duplicate protection with bounded session fingerprints, a configurable window, and an explicit Send anyway action backed by a short-lived in-memory capture.
 
@@ -27,6 +27,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Show settings save outcomes in a dismissible card: success stays for eight seconds and errors remain until dismissed or edited. Theme save failures restore the previous preference.
 - Restyle capture feedback with status icons, light/dark colors, and reduced-motion support; focused or hovered success notifications defer dismissal until interaction ends.
 - Shorten the view-only menu action to **Preview send**, with corresponding labels in all 10 locales.
+- Use native typing and paste for manual capture without requesting clipboard access.
 
 ### Fixed
 

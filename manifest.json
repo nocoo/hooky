@@ -13,7 +13,7 @@
   "host_permissions": [
     "<all_urls>"
   ],
-  "optional_permissions": ["notifications", "clipboardRead"],
+  "optional_permissions": ["notifications"],
   "action": {
     "default_popup": "",
     "default_icon": {

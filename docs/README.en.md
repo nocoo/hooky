@@ -23,7 +23,7 @@ Keeps the 2.0 workspace, templates, and rules, adding clearer send feedback and 
 | Default for everyone | Shared send states, persistent badges, session results, pending-request protection, multiline manual input |
 | Configured per webhook | Custom headers, `{{send.id}}` bindings, receipts, JSON fields and business conditions, completed duplicate protection |
 | Optional user preference | Desktop notifications: off / errors and unconfirmed outcomes / all results |
-| Explicit action each time | Read the clipboard into a selected field; review a held capture and choose Send anyway |
+| Explicit action each time | Review a held capture and choose Send anyway |
 
 ## Features
 
@@ -32,7 +32,7 @@ Keeps the 2.0 workspace, templates, and rules, adding clearer send feedback and 
 - **Optional request headers**: Configure Authorization, X-API-Key, or other headers per template under Advanced. Previews always hide custom header values.
 - **Manual capture**: Type or paste multiline text into a parameter in the send panel. Edits apply to that send only.
 - **Optional receipts**: Enable response reading per template, bounded to 8 KiB and 3 seconds. Text or JSON is displayed only in the extension panel.
-- **Optional permissions**: Desktop notifications default to off, with settings for errors/unconfirmed results or all results. Focus a parameter and choose **Paste from clipboard** for an explicit clipboard read. These actions request their respective permissions; declining does not prevent sending or manual paste.
+- **Optional permission**: Desktop notifications default to off, with settings for errors/unconfirmed results or all results. Enabling notifications requests permission; declining does not prevent sending.
 - **Quick-send rules**: On a toolbar click, match the page URL or title in order. Send through the first enabled matching rule when its template is valid; otherwise open the popup.
 - **Context menu sending**: Choose a template from the right-click menu on a page, selection, link, or image.
 - **Result feedback**: All entry points show sending, success, receiver errors, or unconfirmed results. Quick-send and context menu actions show page feedback and persistent badges; the panel retains the latest result for this browser session.
@@ -68,7 +68,7 @@ Install from the Chrome Web Store link above, or load the source as described un
 3. Open a webpage and send using the template in the popup or context menu.
 4. For one-click sending, create an enabled rule with a URL or title condition and an associated template.
 
-The page and extension-icon context menus include **Open send panel** and **Latest send**; these actions never run quick-send rules. Identical pending requests for the same template share one send, including across tabs. After completion you can send again, subject to any duplicate protection you enabled for that template. Requests time out after 20 seconds; a timeout or lost connection leaves the result unconfirmed, so check the receiver before sending again. Hooky never retries automatically. HTTP success confirms a successful response, not durable business storage.
+The page and extension-icon context menus include **Preview send** and **Latest send**; these actions never run quick-send rules. Identical pending requests for the same template share one send, including across tabs. After completion you can send again, subject to any duplicate protection you enabled for that template. Requests time out after 20 seconds; a timeout or lost connection leaves the result unconfirmed, so check the receiver before sending again. Hooky never retries automatically. HTTP success confirms a successful response, not durable business storage.
 
 For example, POST with those two parameters sends:
 

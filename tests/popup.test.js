@@ -167,6 +167,7 @@ describe("popup.js", () => {
     expect(preview).toContain("x-api-key: ••••");
     expect(preview).not.toContain("private-token");
     expect(preview).toContain('"selected": "{{send.id}}"');
+    expect(chrome.runtime.sendMessage).not.toHaveBeenCalled();
     document.getElementById("send-btn").click();
     await vi.waitFor(() => expect(chrome.runtime.sendMessage).toHaveBeenCalled());
     const message = chrome.runtime.sendMessage.mock.calls[0][0];
@@ -176,6 +177,24 @@ describe("popup.js", () => {
       { key: "selected", value: "{{page.selection}}", resolve: true },
     ]);
     expect(message.context.page.selection).toBe("{{send.id}}");
+    expect(chrome.storage.local.set).not.toHaveBeenCalled();
+    expect(chrome.permissions.request).not.toHaveBeenCalled();
+  });
+
+  it("keeps manually pasted text literal when it matches the original variable preview", async () => {
+    setupChromeMock({ hooky: { templates: [{ id: "t1", name: "Notes", url: "https://example.com", method: "POST", params: [{ key: "id", value: "{{send.id}}" }] }] } });
+    await setupPageContextMock();
+    await import("../src/popup/popup.js");
+    await vi.waitFor(() => expect(document.querySelector(".param-item textarea")).not.toBeNull());
+    const field = document.querySelector(".param-item textarea");
+    field.focus();
+    field.value = "{{send.id}}";
+    field.dispatchEvent(new InputEvent("input", { bubbles: true, inputType: "insertFromPaste", data: field.value }));
+    expect(chrome.runtime.sendMessage).not.toHaveBeenCalled();
+    document.getElementById("send-btn").click();
+    await vi.waitFor(() => expect(chrome.runtime.sendMessage).toHaveBeenCalled());
+    expect(chrome.runtime.sendMessage.mock.calls[0][0].config.params).toEqual([{ key: "id", value: "{{send.id}}" }]);
+    expect(chrome.permissions.request).not.toHaveBeenCalled();
     expect(chrome.storage.local.set).not.toHaveBeenCalled();
   });
 
@@ -909,93 +928,5 @@ describe("popup.js", () => {
 
     // Should not crash, method badge should remain unchanged
     expect(document.getElementById("method-badge").textContent).toBe("GET");
-  });
-});
-
-describe("explicit clipboard capture", () => {
-  const template = { id: "t1", name: "Notes", url: "https://example.com", method: "POST", params: [{ key: "id", value: "{{send.id}}" }, { key: "text", value: "original" }] };
-  const get = (id) => document.getElementById(id);
-  beforeEach(async () => {
-    vi.resetModules();
-    setupPopupDOM();
-    setupChromeMock({ hooky: { templates: [template], activeTemplateId: "t1" } });
-    await setupPageContextMock();
-    vi.stubGlobal("navigator", { clipboard: { readText: vi.fn().mockResolvedValue("  clipboard\n{{page.title}}  ") } });
-    await import("../src/popup/popup.js");
-    await vi.waitFor(() => expect(document.querySelectorAll(".param-item textarea")).toHaveLength(2));
-  });
-  afterEach(() => { vi.unstubAllGlobals(); });
-
-  it("reads only after a click and fills the selected field without saving or sending", async () => {
-    expect(get("paste-clipboard").disabled).toBe(true);
-    expect(navigator.clipboard.readText).not.toHaveBeenCalled();
-    get("paste-clipboard").dispatchEvent(new Event("click"));
-    const fields = document.querySelectorAll("textarea");
-    fields[1].focus();
-    chrome.permissions.request.mockResolvedValue(true);
-    get("paste-clipboard").click();
-    expect(chrome.permissions.request).toHaveBeenCalledWith({ permissions: ["clipboardRead"] });
-    get("paste-clipboard").dispatchEvent(new Event("click"));
-    await vi.waitFor(() => expect(fields[1].value).toBe("  clipboard\n{{page.title}}  "));
-    expect(fields[0].value).toBe("{{send.id}}");
-    expect(navigator.clipboard.readText).toHaveBeenCalledOnce();
-    expect(chrome.runtime.sendMessage).not.toHaveBeenCalled();
-    expect(chrome.storage.local.set).not.toHaveBeenCalled();
-    expect(get("popup-request-preview").textContent).toContain("clipboard\\n{{page.title}}");
-  });
-
-  it("keeps explicitly pasted text literal even when it matches the original variable preview", async () => {
-    chrome.permissions.request.mockResolvedValue(true);
-    navigator.clipboard.readText.mockResolvedValue("{{send.id}}");
-    document.querySelector("textarea").focus();
-    get("paste-clipboard").click();
-    await vi.waitFor(() => expect(get("paste-clipboard").disabled).toBe(false));
-    get("send-btn").click();
-    await vi.waitFor(() => expect(chrome.runtime.sendMessage).toHaveBeenCalled());
-    expect(chrome.runtime.sendMessage.mock.calls[0][0].config.params[0]).toEqual({ key: "id", value: "{{send.id}}" });
-  });
-
-  it("preserves manual input after permission denial or read failure", async () => {
-    const field = document.querySelector("textarea");
-    field.focus();
-    get("paste-clipboard").click();
-    await vi.waitFor(() => expect(get("toast").textContent).toBe("clipboardDenied"));
-    expect(navigator.clipboard.readText).not.toHaveBeenCalled();
-    chrome.permissions.request.mockResolvedValue(true);
-    navigator.clipboard.readText.mockRejectedValue(new Error("not focused"));
-    get("paste-clipboard").click();
-    await vi.waitFor(() => expect(get("toast").textContent).toBe("clipboardUnavailable"));
-    expect(field.value).toBe("{{send.id}}");
-    expect(get("paste-clipboard").disabled).toBe(false);
-  });
-
-  it("does not paste into a different field selected while reading", async () => {
-    chrome.permissions.request.mockResolvedValue(true);
-    let finish;
-    navigator.clipboard.readText.mockImplementation(() => new Promise((resolve) => { finish = resolve; }));
-    const fields = document.querySelectorAll("textarea");
-    fields[0].focus();
-    get("paste-clipboard").click();
-    await vi.waitFor(() => expect(navigator.clipboard.readText).toHaveBeenCalled());
-    fields[1].focus();
-    finish("stale paste");
-    await vi.waitFor(() => expect(get("paste-clipboard").disabled).toBe(false));
-    expect(fields[0].value).toBe("{{send.id}}");
-    expect(fields[1].value).toBe("original");
-    get("params-preview").dispatchEvent(new Event("focusin"));
-  });
-
-  it("does not overwrite a newly selected template while awaiting clipboard permission", async () => {
-    let grant;
-    chrome.permissions.request.mockImplementation(() => new Promise((resolve) => { grant = resolve; }));
-    const field = document.querySelector("textarea");
-    field.focus();
-    get("paste-clipboard").click();
-    get("template-select").dispatchEvent(new Event("change"));
-    await vi.waitFor(() => expect(field.isConnected).toBe(false));
-    grant(true);
-    await vi.waitFor(() => expect(navigator.clipboard.readText).toHaveBeenCalled());
-    expect(document.querySelector("textarea").value).toBe("{{send.id}}");
-    expect(get("paste-clipboard").disabled).toBe(true);
   });
 });

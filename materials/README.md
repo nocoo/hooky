@@ -62,6 +62,6 @@ Keep the manifest and `package.json` versions synchronized. Edit `source/copy.js
 
 Original decorative images and prompts are retained; only a new art direction needs the Azure image-generation skill. Original logos are never regenerated or recolored. Fonts retain their included SIL Open Font License notices.
 
-`verification/build.json` binds the current tests to the package checksum and runtime-file hashes. `approved-family-*` files preserve the original joint review and are historical records. HTML preview requests are simulated. Real webhook endpoints, Chrome clipboard behavior, and a live R2 bucket/CDN are covered by manual acceptance with the installed extension. The gallery marks manual acceptance as pending until it is recorded.
+`verification/build.json` binds the current tests to the package checksum and runtime-file hashes. `approved-family-*` files preserve the original joint review and are historical records. HTML preview requests are simulated. Real webhook endpoints, native paste behavior, OS notifications, and a live R2 bucket/CDN are covered by manual acceptance with the installed extension. The gallery marks manual acceptance as pending until it is recorded.
 
 Store requirements: screenshots 1280×800 (3 ordered uploads); small promos 440×280 (3 alternatives for one slot); optional marquees 1400×560 (3 alternatives for one slot). All supplied images are opaque RGB PNGs. Use variant 01 for a general-purpose promo.

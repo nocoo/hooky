@@ -8,11 +8,15 @@ async function runCaptureScenarios({ browser, extensionId, port, requests, asser
   const options = await browser.newPage();
   await options.goto(extension + "src/options/options.html");
   await options.waitForSelector("#params-list .param-value");
-  const permissions = await options.evaluate(async () => ({
-    notifications: await chrome.permissions.contains({ permissions: ["notifications"] }),
-    clipboard: await chrome.permissions.contains({ permissions: ["clipboardRead"] }),
-  }));
-  assert(!permissions.notifications && !permissions.clipboard, "Optional permissions are absent on a fresh install");
+  const permissions = await options.evaluate(async () => {
+    const manifest = chrome.runtime.getManifest();
+    return {
+      notifications: await chrome.permissions.contains({ permissions: ["notifications"] }),
+      declared: [...manifest.permissions, ...manifest.optional_permissions],
+    };
+  });
+  assert(!permissions.notifications, "Optional notifications are absent on a fresh install");
+  assert(!permissions.declared.some((permission) => permission.startsWith("clipboard")), "The installed extension declares no clipboard permission");
   await options.$eval("#webhook-url", (input, url) => { input.value = url; input.dispatchEvent(new Event("input", { bubbles: true })); }, origin + "/capture");
   for (const [key, value] of [["notes", "{{page.selection}}"], ["request_id", "{{send.id}}"]]) {
     await options.click("#add-param");

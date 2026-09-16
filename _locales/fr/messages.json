@@ -341,18 +341,6 @@
   "notificationDenied": {
     "message": "L’autorisation de notification a été refusée. Le réglage précédent est conservé."
   },
-  "pasteClipboard": {
-    "message": "Coller depuis le presse-papiers"
-  },
-  "clipboardHelp": {
-    "message": "Sélectionnez une valeur ci-dessus, puis collez. L’accès direct au presse-papiers nécessite une autorisation, contrairement au collage manuel."
-  },
-  "clipboardDenied": {
-    "message": "L’accès au presse-papiers a été refusé. Vous pouvez toujours coller manuellement."
-  },
-  "clipboardUnavailable": {
-    "message": "Impossible de lire le presse-papiers. Collez manuellement dans la valeur sélectionnée."
-  },
   "responseFields": {
     "message": "Champs JSON (facultatif)"
   },

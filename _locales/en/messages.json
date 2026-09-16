@@ -341,18 +341,6 @@
   "notificationDenied": {
     "message": "Notification permission was not granted. Your previous setting is unchanged."
   },
-  "pasteClipboard": {
-    "message": "Paste from clipboard"
-  },
-  "clipboardHelp": {
-    "message": "Select a value above, then paste. Direct clipboard access requires permission; manual paste does not."
-  },
-  "clipboardDenied": {
-    "message": "Clipboard permission was not granted. You can still paste manually."
-  },
-  "clipboardUnavailable": {
-    "message": "The clipboard could not be read. Paste manually into the selected value."
-  },
   "responseFields": {
     "message": "JSON fields (optional)"
   },

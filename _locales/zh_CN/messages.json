@@ -341,18 +341,6 @@
   "notificationDenied": {
     "message": "未获得通知权限，原设置保持不变。"
   },
-  "pasteClipboard": {
-    "message": "从剪贴板粘贴"
-  },
-  "clipboardHelp": {
-    "message": "先选择上方参数框，再点击粘贴。直接读取剪贴板需要权限，手动粘贴不需要。"
-  },
-  "clipboardDenied": {
-    "message": "未获得剪贴板权限，仍可手动粘贴。"
-  },
-  "clipboardUnavailable": {
-    "message": "无法读取剪贴板，请手动粘贴到选中的参数框。"
-  },
   "responseFields": {
     "message": "JSON 字段（可选）"
   },

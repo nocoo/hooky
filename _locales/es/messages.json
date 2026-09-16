@@ -341,18 +341,6 @@
   "notificationDenied": {
     "message": "No se concedió permiso para notificaciones. Se mantiene el ajuste anterior."
   },
-  "pasteClipboard": {
-    "message": "Pegar desde el portapapeles"
-  },
-  "clipboardHelp": {
-    "message": "Selecciona un valor arriba y luego pega. El acceso directo al portapapeles requiere permiso; pegar manualmente no."
-  },
-  "clipboardDenied": {
-    "message": "No se concedió acceso al portapapeles. Puedes pegar manualmente."
-  },
-  "clipboardUnavailable": {
-    "message": "No se pudo leer el portapapeles. Pega manualmente en el valor seleccionado."
-  },
   "responseFields": {
     "message": "Campos JSON (opcionales)"
   },

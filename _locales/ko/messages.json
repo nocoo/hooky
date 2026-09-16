@@ -341,18 +341,6 @@
   "notificationDenied": {
     "message": "알림 권한이 허용되지 않았습니다. 기존 설정을 유지합니다."
   },
-  "pasteClipboard": {
-    "message": "클립보드에서 붙여넣기"
-  },
-  "clipboardHelp": {
-    "message": "위의 값을 선택한 뒤 붙여넣으세요. 클립보드를 직접 읽으려면 권한이 필요하지만 수동 붙여넣기에는 필요하지 않습니다."
-  },
-  "clipboardDenied": {
-    "message": "클립보드 권한이 허용되지 않았습니다. 수동으로 붙여넣을 수 있습니다."
-  },
-  "clipboardUnavailable": {
-    "message": "클립보드를 읽을 수 없습니다. 선택한 값에 수동으로 붙여넣으세요."
-  },
   "responseFields": {
     "message": "JSON 필드 (선택 사항)"
   },

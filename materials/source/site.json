@@ -68,7 +68,7 @@
     ],
     [
       "Which new features are optional?",
-      "Headers, response reading, business rules, and completed duplicate protection are configured per webhook. Desktop notifications are a user preference. Clipboard access requires an explicit action and permission. Clear feedback and protection for sends already in progress apply to everyone."
+      "Headers, response reading, business rules, and completed duplicate protection are configured per webhook. Desktop notifications are a user preference. Clear feedback and protection for sends already in progress apply to everyone."
     ]
   ]
 }
