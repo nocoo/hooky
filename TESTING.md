@@ -12,7 +12,7 @@ bun run build
 bun run test:e2e
 ```
 
-Coverage gates remain at 95% for statements, branches, functions, and lines. Unit tests cover all five HTTP methods, template/literal separation, shared UUIDs, concurrent requests, worker recovery, header validation and redaction, bounded response streams, typed business conditions, duplicate protection, notification permission denial/revocation, transient capture expiry, and the shipped UI.
+Coverage gates remain at the native 95% thresholds for statements, branches, functions, and lines. Vitest sets `allowOnly` and `passWithNoTests` to false, and a selected-test reporter rejects skipped, todo, and empty collections. Unit tests cover all five HTTP methods, template/literal separation, shared UUIDs, concurrent requests, worker recovery, header validation and redaction, bounded response streams, typed business conditions, duplicate protection, notification permission denial/revocation, transient capture expiry, and the shipped UI.
 
 The Chrome suite launches a separate headless browser and a local receiver. It tests real extension messaging, requests and headers, session storage, page injection, and the production context-menu/Quick Send handlers. It copies runtime files to a temporary extension and adds a static worker driver there; no test entry points are packaged in Hooky. Use `EXTENSION_PATH` to test an unpacked build. Screenshots are written to `dist/verification/`.
 

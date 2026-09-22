@@ -55,7 +55,7 @@ Set `PUPPETEER_EXECUTABLE_PATH` only when selecting an installed Chrome. `bun ru
 
 ## Verification
 
-6DQ = L1/L2/L3 + G1/G2 + D1. Status: `enforced`, `planned`, `manual`, `N/A`. L1 statements/branches/functions/lines each ≥95%; no skipped/focused tests.
+6DQ = L1/L2/L3 + G1/G2 + D1. Status: `enforced`, `planned`, `manual`, `N/A`. L1 statements/branches/functions/lines each ≥95%. Vitest rejects focused tests, skipped or todo tests, and empty runs.
 
 | Piece | Requirement and current reality | Status | Evidence |
 | --- | --- | --- | --- |
@@ -68,7 +68,7 @@ Set `PUPPETEER_EXECUTABLE_PATH` only when selecting an installed Chrome. `bun ru
 | Package | Valid extension ZIP without test hooks | enforced | `scripts/build.sh`; pre-push and CI preparation |
 | Materials | Versioned outputs and actual manual acceptance | manual | `materials:check`, TESTING.md |
 
-Current pre-commit checks coverage/lint; pre-push builds and checks tests/lint, both on working files. Target: check-only index-snapshot L1/G1 <30s and stdin-ref L2/G2 <3min; missing scanners must fail. Never bypass commit/branch-push hooks.
+Current pre-commit checks the Git index snapshot with coverage and lint. Pre-push builds and checks tests and lint on the working tree. Native coverage floors remain 95% for statements, branches, functions, and lines. Target: check-only index-snapshot L1/G1 <30s and stdin-ref L2/G2 <3min; missing scanners must fail. Never bypass commit/branch-push hooks.
 
 ## Resources / Isolation
 

@@ -1,9 +1,13 @@
 import { defineConfig } from "vitest/config";
+import RequireSelectedTests from "./tests/require-selected-tests.js";
 
 export default defineConfig({
   test: {
     include: ["tests/**/*.test.js"],
     environment: "node",
+    allowOnly: false,
+    passWithNoTests: false,
+    reporters: ["default", new RequireSelectedTests()],
     coverage: {
       provider: "v8",
       // AST-aware remapping is built into vitest v4+; no opt-in needed.
