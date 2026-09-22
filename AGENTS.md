@@ -2,7 +2,7 @@
 
 Chrome Manifest V3 extension for configuring and sending webhook templates from popup, context menu and Quick Send.
 Profile: ts-worker-web (browser extension with JavaScript; no application server).
-Direction: [extension contract](docs/01-extension-contract.md), [TESTING.md](TESTING.md).
+Human overview: [README.md](README.md). Direction: [extension contract](docs/01-extension-contract.md), [TESTING.md](TESTING.md). Maintain this root `AGENTS.md` as the only project handbook; do not create a `CLAUDE.md` alias, copy or import.
 
 ## Sources of Truth
 
@@ -55,20 +55,19 @@ Set `PUPPETEER_EXECUTABLE_PATH` only when selecting an installed Chrome. `bun ru
 
 ## Verification
 
-6DQ = L1/L2/L3 + G1/G2 + D1. Status: `enforced`, `planned`, `manual`, `N/A`. L1 statements/branches/functions/lines each ≥95%. Vitest rejects focused tests, skipped or todo tests, and empty runs.
+6DQ = L1/L2/L3 + G2 + D1; the former G1 dimension was merged into L1 on 2026-09-21. Status: `enforced`, `planned`, `manual`, `N/A`. L1 statements/branches/functions/lines each ≥95% plus check-only lint with zero errors/warnings; the JavaScript-only source keeps the TypeScript lane N/A. Vitest rejects focused tests, skipped or todo tests, and empty runs.
 
 | Piece | Requirement and current reality | Status | Evidence |
 | --- | --- | --- | --- |
-| L1 | Core, UI and extension source at four-metric 95% | enforced | Vitest config; pre-commit and CI coverage |
+| L1 (incl. former G1 static) | Core, UI and extension source at four-metric 95%; ESLint with zero errors/warnings | planned | Installed pre-commit and CI already check the Git index snapshot with coverage and lint at the 95% floors (Vitest config; ESLint via `lint`). Full unified L1 stays planned: <30s timing measurement and isolated rejection proof remain unverified |
 | L2 | Real extension-to-HTTP protocol/method combinations | planned | Puppeteer local receiver covers flows; full method/error matrix is not a gate |
 | L3 | Popup/options/context-menu/Quick Send journeys | manual | `test:e2e`, [acceptance checklist](TESTING.md); absent from hooks/CI |
-| G1 | JavaScript ESLint, zero errors/warnings | enforced | `lint` and hooks/CI; TypeScript lane N/A because source is JS |
 | G2 | Required dependency and secret scanning | enforced | Shared quality CI runs OSV + gitleaks; local hooks omit security |
 | D1 | Temporary browser profile, copied extension and loopback receiver | manual | Puppeteer runner; confirm each run targets its own fixtures |
 | Package | Valid extension ZIP without test hooks | enforced | `scripts/build.sh`; pre-push and CI preparation |
 | Materials | Versioned outputs and actual manual acceptance | manual | `materials:check`, TESTING.md |
 
-Current pre-commit checks the Git index snapshot with coverage and lint. Pre-push builds and checks tests and lint on the working tree. Native coverage floors remain 95% for statements, branches, functions, and lines. Target: check-only index-snapshot L1/G1 <30s and stdin-ref L2/G2 <3min; missing scanners must fail. Never bypass commit/branch-push hooks.
+Current pre-commit checks the Git index snapshot with coverage and lint. Pre-push builds and checks tests and lint on the working tree. Native coverage floors remain 95% for statements, branches, functions, and lines. Target: check-only index-snapshot unified L1 (types where applicable, check-only lint, coverage) <30s and stdin-ref L2/G2 <3min; missing scanners must fail. Never bypass commit/branch-push hooks.
 
 ## Resources / Isolation
 
