@@ -1,6 +1,6 @@
-# Hooky 2.1.0 testing
+# Hooky 2.1.1 testing
 
-The 2.1.0 package and [upload materials](materials/2.1.0/README.md) are prepared for testing and submission. Committing them does not publish to GitHub Releases or the Chrome Web Store. Historical 2.0.0 design and submission materials remain in `materials/2.0.0/`.
+The 2.1.1 package is the local test build. [2.1.0 upload materials](materials/2.1.0/README.md) remain the previous submission set. Committing this package does not publish to GitHub Releases or the Chrome Web Store. Historical 2.0.0 and 2.1.0 design and submission materials remain in `materials/`.
 
 ## Automated checks
 
@@ -18,7 +18,7 @@ The Chrome suite launches a separate headless browser and a local receiver. It t
 
 ## Local package and manual acceptance
 
-`bun run build` creates `dist/hooky-2.1.0.zip`. Unzip it, then use **Load unpacked** in a separate Chrome profile. A build clears `dist/`, so run browser checks after building if you want to keep verification screenshots.
+`bun run build` creates `dist/hooky-2.1.1.zip`. Unzip it, then use **Load unpacked** in a separate Chrome profile. A build clears `dist/`, so run browser checks after building if you want to keep verification screenshots.
 
 The following checks require a person using Chrome's toolbar, menus, permission prompts and OS notification settings. They are not recorded as accepted by the automated suite:
 

@@ -5,6 +5,17 @@ All notable changes to Hooky will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.1] - 2026-09-22
+
+### Fixed
+
+- Run pre-commit coverage and lint against the Git index snapshot, so a staged fault is rejected even when the worktree copy is already corrected.
+- Reject focused, skipped, todo, and empty Vitest runs. Native coverage floors remain 95% for statements, branches, functions, and lines.
+
+### Changed
+
+- Update the development toolchain to Vitest 5.0.1, ESLint 10.11.0, and jsdom 30.1.0, and keep the existing Rollup override.
+
 ## [2.1.0] - Unreleased
 
 ### Added

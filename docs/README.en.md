@@ -14,7 +14,7 @@ Hooky is a Chrome extension for saving webhook templates and sending a page URL,
 
 Templates, rules, and appearance settings stay in local browser storage. The extension sends requests to your configured endpoints; parameter templates determine which page data enters each request. No account is required, and you provide the receiving webhook service.
 
-## Version 2.1.0 (unreleased)
+## Version 2.1.1 (unreleased)
 
 Keeps the 2.0 workspace, templates, and rules, adding clearer send feedback and optional capture capabilities. Existing templates require no migration. Requires Chrome 127 or later.
 
@@ -138,7 +138,7 @@ bunx puppeteer browsers install chrome
 
 - [Privacy policy](../PRIVACY.md)
 - [Changelog](../CHANGELOG.md)
-- [2.1.0 testing and manual acceptance](../TESTING.md)
+- [2.1.1 testing and manual acceptance](../TESTING.md)
 - [Request parameter handling](../src/params.js)
 - [Rule matching](../src/rules.js)
 

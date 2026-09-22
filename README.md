@@ -14,7 +14,7 @@ Hooky 是一个 Chrome 扩展，用于保存 Webhook 模板，并在浏览网页
 
 模板、规则和外观设置保存在浏览器本地。请求由扩展发送到你配置的地址，页面数据是否进入请求取决于参数模板。扩展无需账号，接收请求的 Webhook 服务需要自行准备。
 
-## 2.1.0（待发布）
+## 2.1.1（待发布）
 
 保留 2.0 的紧凑界面、模板和规则，增加更明确的发送反馈与可选采集能力。现有模板无需迁移。需要 Chrome 127 或更高版本。
 
@@ -138,7 +138,7 @@ bunx puppeteer browsers install chrome
 
 - [隐私说明](PRIVACY.md)
 - [版本记录](CHANGELOG.md)
-- [2.1.0 测试与人工验收](TESTING.md)
+- [2.1.1 测试与人工验收](TESTING.md)
 - [请求参数处理](src/params.js)
 - [规则匹配](src/rules.js)
 
