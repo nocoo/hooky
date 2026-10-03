@@ -13,6 +13,7 @@ const http = require("http");
 const fs = require("node:fs/promises");
 const os = require("node:os");
 const { runCaptureScenarios } = require("./capture.js");
+const { runPopupLayoutScenarios } = require("./popup-layout.js");
 
 const EXTENSION_PATH = process.env.EXTENSION_PATH || path.resolve(__dirname, "../..");
 const TIMEOUT = 15000;
@@ -276,15 +277,8 @@ async function runTests() {
       "Webhook: Body contains correct param",
     );
 
-    // Check toast notification
-    const toastClasses = await popupPage.$eval(
-      "#toast",
-      (el) => el.className,
-    );
-    assert(
-      toastClasses.includes("success"),
-      "Popup: Success toast displayed",
-    );
+    assert(await popupPage.$eval("#last-result", (el) => !el.hidden && el.dataset.state === "success"), "Popup: Persistent success result displayed");
+    assert(await popupPage.$eval("#toast", (el) => !el.classList.contains("visible")), "Popup: Result is not duplicated in a toast");
 
     await popupPage.close();
 
@@ -420,6 +414,7 @@ async function runTests() {
 
     console.log("\nTesting capture reliability and optional features...");
     await runCaptureScenarios({ browser, extensionId, port, requests: webhookRequests, assert });
+    await runPopupLayoutScenarios({ browser, extensionId, assert });
   } catch (err) {
     console.error(`\n  ERROR: ${err.message}`);
     failed++;

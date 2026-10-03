@@ -32,5 +32,11 @@ The following checks require a person using Chrome's toolbar, menus, permission 
 - [ ] Switch settings navigation groups. Expansion should animate, nested items should be visually distinct, and collapsed items must be skipped by keyboard focus. Reduced-motion mode should remove the transitions.
 - [ ] Save a webhook, rule, theme, or notification preference. Success should appear in a visible card for eight seconds; a failed save should remain visible until dismissed or edited. New edits should clear the earlier success notice.
 - [ ] Check single-line and multiline parameter rows, masked headers, checkboxes, and narrow settings windows. Keys, values, and remove controls should align without clipping the text or causing horizontal page scrolling.
+- [ ] In the popup, check the compact template/parameter editor and collapsed request preview. Send, its busy state, and the persistent result must remain visible while long captures scroll independently. Verify result/receipt disclosures, failure feedback, explicit repeats, light/dark themes, keyboard focus, and reduced motion. The browser suite exercises layouts at 380 x 540 and 320 x 400 with synthetic data; actual toolbar popup sizing remains a manual check.
+
+Popup icons inline only selected Lucide paths (send-horizontal, loader-circle,
+circle-check, circle-alert, chevron-right), sourced from lucide-icons/lucide
+revision `500620a2e8123f8d1db191538886dc0c223f69a9`. Their license is shipped in
+`src/icons/LUCIDE-LICENSE`; no icon package or animation dependency is loaded.
 
 HTTP response headers have a 20-second deadline; opted-in receipt reading then has its own 3-second budget. HTTP 2xx is evidence of a successful HTTP response. A configured business condition means only what the receiver promises. A lost response leaves the result unconfirmed; Hooky does not retry automatically. Durable storage and end-to-end idempotency still need receiver support.

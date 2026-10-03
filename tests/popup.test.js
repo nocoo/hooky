@@ -68,6 +68,49 @@ async function setupPageContextMock(contextData) {
 }
 
 describe("popup.js", () => {
+  it("keeps one persistent result and locks the capture throughout a send", async () => {
+    setupChromeMock({ hooky: { templates: [{ id: "t1", name: "Notes", url: "https://example.com", params: [{ key: "note", value: "hello" }] }] } });
+    await setupPageContextMock();
+    let finish;
+    chrome.runtime.sendMessage.mockImplementation(() => new Promise((resolve) => { finish = resolve; }));
+    await import("../src/popup/popup.js");
+    const button = document.getElementById("send-btn");
+    await vi.waitFor(() => expect(button.hidden).toBe(false));
+    document.getElementById("result-details").open = true;
+    document.getElementById("toast").className = "toast success visible";
+    button.click();
+    button.dispatchEvent(new Event("click"));
+    expect(chrome.runtime.sendMessage).toHaveBeenCalledTimes(1);
+    expect(button.getAttribute("aria-busy")).toBe("true");
+    expect(document.getElementById("send-label").textContent).toBe("Sending...");
+    expect(button.querySelectorAll("svg")).toHaveLength(2);
+    expect(document.getElementById("template-select").disabled).toBe(true);
+    expect(document.querySelector(".param-item textarea").disabled).toBe(true);
+    expect(document.getElementById("result-details").open).toBe(false);
+    expect(document.getElementById("toast").classList.contains("visible")).toBe(false);
+    finish({ id: "sent", name: "Notes", startedAt: 10, state: "success", ok: true, status: 201 });
+    await vi.waitFor(() => expect(button.disabled).toBe(false));
+    expect(button.getAttribute("aria-busy")).toBe("false");
+    expect(document.querySelector(".param-item textarea").disabled).toBe(false);
+    expect(document.getElementById("template-select").disabled).toBe(false);
+    expect(document.getElementById("last-result").dataset.state).toBe("success");
+    expect(document.getElementById("last-result").hidden).toBe(false);
+    expect(document.getElementById("toast").classList.contains("visible")).toBe(false);
+    await vi.advanceTimersByTimeAsync(10000);
+    expect(document.getElementById("last-result").hidden).toBe(false);
+  });
+
+  it("hides empty parameters and keeps secondary content collapsed", async () => {
+    setupChromeMock({ hooky: { templates: [{ id: "t1", name: "Notes", url: "https://example.com", params: [{ key: "", value: "ignored" }] }] } });
+    await setupPageContextMock();
+    await import("../src/popup/popup.js");
+    await vi.waitFor(() => expect(document.getElementById("send-btn").hidden).toBe(false));
+    expect(document.getElementById("params-section").hidden).toBe(true);
+    expect(document.querySelector(".popup-preview").open).toBe(false);
+    expect(document.getElementById("result-details").open).toBe(false);
+    expect(document.getElementById("url-display").closest("details").open).toBe(false);
+  });
+
   it("previews a blocked capture and repeats it only through the explicit action", async () => {
     setupChromeMock({ hooky: { templates: [] } });
     const result = { id: "previous", name: "Save", startedAt: 10, lastActionAt: 20, state: "success", ok: true, status: 201, duplicateToken: "token" };

@@ -13,6 +13,7 @@ const methodBadge = document.getElementById("method-badge");
 const urlDisplay = document.getElementById("url-display");
 const paramsPreview = document.getElementById("params-preview");
 const sendBtn = document.getElementById("send-btn");
+const sendLabel = document.getElementById("send-label");
 const settingsBtn = document.getElementById("settings-btn");
 const goSettingsBtn = document.getElementById("go-settings");
 const toastEl = document.getElementById("toast");
@@ -24,6 +25,21 @@ let currentTab = null;
 let toastTimer;
 let duplicateToken = null;
 let lastRenderedAt = 0;
+
+function setSending(sending) {
+  sendBtn.hidden = !sending && !currentTemplate;
+  sendBtn.disabled = sending;
+  sendBtn.setAttribute("aria-busy", String(sending));
+  sendLabel.textContent = t(sending ? "sending" : "send");
+  templateSelect.disabled = sending;
+  for (const field of paramsPreview.querySelectorAll("textarea")) field.disabled = sending;
+  if (sending) {
+    clearTimeout(toastTimer);
+    toastEl.classList.remove("visible");
+    document.getElementById("last-result").hidden = true;
+    document.getElementById("result-details").open = false;
+  }
+}
 
 function showToast(message, type = "success") {
   toastEl.textContent = message;
@@ -37,9 +53,11 @@ function renderLastResult(result) {
   const observedAt = result.lastActionAt || result.startedAt;
   if (observedAt < lastRenderedAt) return;
   lastRenderedAt = observedAt;
-  document.getElementById("last-result").hidden = false;
+  const resultEl = document.getElementById("last-result");
+  resultEl.hidden = false;
+  resultEl.dataset.state = result.state;
   document.getElementById("last-result-name").textContent = result.name;
-  document.getElementById("last-result-time").textContent = new Date(result.startedAt).toLocaleTimeString();
+  document.getElementById("last-result-time").textContent = new Date(result.startedAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
   const status = document.getElementById("last-result-status");
   status.textContent = resultMessage(result);
   status.className = result.state === "failed" || result.state === "unknown" ? "error" : "";
@@ -76,6 +94,11 @@ function renderLastResult(result) {
 
 function showSendResult(result) {
   renderLastResult(result);
+  if (result?.id) {
+    clearTimeout(toastTimer);
+    toastEl.classList.remove("visible");
+    return;
+  }
   if (result?.ok) showToast(resultMessage(result), "success");
   else {
     const msg = result?.state ? resultMessage(result) : result?.error || t("failedStatus", [String(result?.status || "unknown")]);
@@ -96,9 +119,7 @@ async function getPopupPageContext() {
 function renderParams(params, context) {
   paramsPreview.innerHTML = "";
 
-  if (!params || params.length === 0) return;
-
-  for (const param of params) {
+  for (const param of params || []) {
     if (!param.key) continue;
 
     const item = document.createElement("div");
@@ -110,7 +131,7 @@ function renderParams(params, context) {
 
     const resolved = resolveTemplate(param.value, { ...context, send: { id: "{{send.id}}" } });
     const valueInput = document.createElement("textarea");
-    valueInput.rows = 2;
+    valueInput.rows = 1;
     valueInput.value = resolved;
     valueInput.setAttribute("aria-label", param.key);
     valueInput.dataset.originalTemplate = param.value;
@@ -120,6 +141,7 @@ function renderParams(params, context) {
     item.appendChild(valueInput);
     paramsPreview.appendChild(item);
   }
+  document.getElementById("params-section").hidden = !paramsPreview.childElementCount;
 }
 
 function showTemplate(tpl) {
@@ -161,8 +183,7 @@ function updateRequestPreview() {
 async function sendWebhook() {
   if (!currentTemplate || sendBtn.disabled) return;
 
-  sendBtn.disabled = true;
-  sendBtn.textContent = t("sending");
+  setSending(true);
 
   try {
     const resolvedParams = getResolvedParams();
@@ -180,8 +201,7 @@ async function sendWebhook() {
   } catch (err) {
     showToast(err.message || t("requestFailed"), "error");
   } finally {
-    sendBtn.disabled = false;
-    sendBtn.textContent = t("send");
+    setSending(false);
   }
 }
 
@@ -225,6 +245,7 @@ async function init() {
   const activeTpl = store.templates.find((t) => t.id === activeId) || store.templates[0];
   templateSelect.value = activeTpl.id;
   showTemplate(activeTpl);
+  sendBtn.hidden = false;
 }
 
 templateSelect.addEventListener("change", async () => {
@@ -240,10 +261,12 @@ settingsBtn.addEventListener("click", openSettings);
 goSettingsBtn.addEventListener("click", openSettings);
 sendBtn.addEventListener("click", sendWebhook);
 sendAnywayBtn.addEventListener("click", async () => {
-  if (!duplicateToken || sendAnywayBtn.disabled) return;
+  if (!duplicateToken || sendAnywayBtn.disabled || sendBtn.disabled) return;
   sendAnywayBtn.disabled = true;
+  setSending(true);
   try { showSendResult(await chrome.runtime.sendMessage({ type: "SEND_ANYWAY", token: duplicateToken })); }
   catch { showToast(t("captureExpired"), "error"); }
+  finally { setSending(false); }
 });
 paramsPreview.addEventListener("input", (event) => {
   event.target.dataset.literal = "true";
