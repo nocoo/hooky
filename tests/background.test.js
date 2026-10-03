@@ -100,6 +100,7 @@ describe("background.js", () => {
     expect(chrome.action.openPopup).not.toHaveBeenCalled();
     click("hooky:receipt");
     await vi.waitFor(() => expect(chrome.action.openPopup).toHaveBeenCalledOnce());
+    expect(chrome.action.setPopup).toHaveBeenCalledWith({ popup: "src/popup/popup.html?view=last" });
     chrome.action.openPopup.mockRejectedValue(new Error("window gone"));
     chrome.tabs.create.mockRejectedValue(new Error("window gone"));
     await Promise.resolve();
@@ -153,8 +154,9 @@ describe("background.js", () => {
     chrome.action.openPopup.mockResolvedValue();
     await loadBackground();
     const respond = vi.fn();
-    expect(onMessageListeners[0]({ type: "OPEN_PANEL" }, {}, respond)).toBe(true);
+    expect(onMessageListeners[0]({ type: "OPEN_PANEL", showResult: true }, {}, respond)).toBe(true);
     await vi.waitFor(() => expect(respond).toHaveBeenCalledWith({ ok: true }));
+    expect(chrome.action.setPopup).toHaveBeenCalledWith({ popup: "src/popup/popup.html?view=last" });
   });
 
   it("does not rebuild menus for session result writes", async () => {

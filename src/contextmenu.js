@@ -57,7 +57,7 @@ export async function handleContextMenuClick(info, tab) {
   const menuId = String(info.menuItemId);
 
   if (["hooky-open-panel", "hooky-view-result", "hooky-menu-panel", "hooky-menu-result"].includes(menuId)) {
-    await openPanel();
+    await openPanel({ showResult: ["hooky-view-result", "hooky-menu-result"].includes(menuId) });
     return;
   }
 

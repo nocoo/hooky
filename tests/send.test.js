@@ -191,6 +191,14 @@ describe("shared send lifecycle", () => {
 });
 
 describe("viewing and recovering results", () => {
+  it("opens retained results only through the explicit result route, including fallback", async () => {
+    chrome.action.openPopup.mockRejectedValue(new Error("not focused"));
+    await feedback.openPanel({ showResult: true });
+    expect(chrome.action.setPopup).toHaveBeenCalledWith({ popup: "src/popup/popup.html?view=last" });
+    expect(chrome.tabs.create).toHaveBeenCalledWith({ url: "chrome-extension://hooky/src/popup/popup.html?view=last" });
+    expect(chrome.action.setPopup).toHaveBeenLastCalledWith({ popup: "" });
+    expect(fetch).not.toHaveBeenCalled();
+  });
   it("opens a panel independently of sending, and resets the toolbar even on fallback", async () => {
     chrome.action.openPopup.mockRejectedValue(new Error("not focused"));
     const a = feedback.openPanel();

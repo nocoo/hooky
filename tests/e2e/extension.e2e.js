@@ -181,6 +181,7 @@ async function runTests() {
       (el) => el.style.display !== "none",
     );
     assert(formVisible, "Options page: Editor form visible after creating template");
+    assert(await optionsPage.$$eval(".sidebar-nav-btn > svg", (icons) => icons.every((el) => getComputedStyle(el).strokeWidth === "2px" && el.dataset.lucide)), "Options: Navigation uses complete official Lucide icons");
 
     // Template list should have one item (plus the "+ New Webhook" action item)
     const listItems = await optionsPage.$$("#template-list li:not(.new-item)");

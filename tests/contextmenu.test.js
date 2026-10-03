@@ -107,6 +107,7 @@ describe("handleContextMenuClick", () => {
   it.each(["hooky-open-panel", "hooky-view-result", "hooky-menu-panel", "hooky-menu-result"])("opens %s without sending or evaluating rules", async (menuItemId) => {
     await handleContextMenuClick({ menuItemId }, { id: 1 });
     expect(chrome.action.openPopup).toHaveBeenCalledTimes(1);
+    expect(chrome.action.setPopup).toHaveBeenCalledWith({ popup: "src/popup/popup.html" + (menuItemId.endsWith("result") ? "?view=last" : "") });
     expect(storageMock.local.get).not.toHaveBeenCalled();
     expect(fetchMock).not.toHaveBeenCalled();
   });

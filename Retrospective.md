@@ -68,3 +68,13 @@ rejected the visual result. Copy complete upstream SVGs, preserve their geometry
 and 2px stroke, and switch whole SVGs for state changes. Keep exact upstream
 fixtures and compare shipped markup to them so later edits cannot silently
 deform icons. Historical design archives remain unchanged.
+
+## 2026-10-04: Retained feedback looked like a result for a new capture
+
+The popup read and rendered the last session result on every opening, so a new
+page showed an earlier HTTP 201 before any request was made. Separate opening a
+capture from explicitly inspecting a result. The normal route does not read or
+subscribe to historical result display; its own send response populates the
+footer. The `?view=last` route keeps the existing session result and update flow
+for view-result menu items, notifications and page feedback. Keep session data
+intact and test both routes; hiding history is not permission to delete it.

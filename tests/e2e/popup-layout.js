@@ -40,6 +40,7 @@ async function runPopupLayoutScenarios({ browser, extensionId, assert }) {
     });
     assert(await page.$eval(".container", (el) => el.getBoundingClientRect().height < 400), "Popup: Two-parameter flow fits below 400 CSS pixels");
     assert(await visibleFlow(), "Popup: No outer scrolling for the compact flow");
+    assert(await page.$eval('#settings-btn [data-lucide="settings"]', (el) => getComputedStyle(el).strokeWidth === "2px" && el.getAttribute("viewBox") === "0 0 24 24"), "Popup: Official Lucide gear retains its viewBox and 2px stroke");
     await screenshot("dark-ready");
     await page.click("#send-btn");
     assert(await page.$eval("#send-btn", (el) => el.disabled && el.getAttribute("aria-busy") === "true"), "Popup: Send has an accessible busy state");
@@ -49,6 +50,7 @@ async function runPopupLayoutScenarios({ browser, extensionId, assert }) {
     await page.waitForFunction(() => !document.getElementById("send-btn").disabled);
     assert(await visibleFlow(), "Popup: Completed feedback and Send remain visible together");
     assert(await page.$eval("#toast", (el) => getComputedStyle(el).display === "none"), "Popup: Successful send has only one visible result");
+    assert(await page.$$eval(".result-icons svg", (icons) => icons.filter((el) => getComputedStyle(el).display !== "none").map((el) => el.dataset.lucide).join() === "circle-check"), "Popup: Success displays one complete Lucide icon rather than stacked paths");
     await screenshot("dark-success");
     await page.evaluate(() => { document.documentElement.dataset.theme = "light"; });
     await screenshot("light-success");
@@ -118,6 +120,21 @@ async function runPopupLayoutScenarios({ browser, extensionId, assert }) {
     assert(await page.$eval("#toast", (el) => el.classList.contains("error") && getComputedStyle(el).display !== "none"), "Popup: Transport failures remain visible without a stored result");
     await screenshot("transport-error");
 
+    await page.evaluate(async () => {
+      await chrome.storage.session.set({ hookyLastResult: { id: "old-success", name: "Earlier send", state: "success", ok: true, status: 201, startedAt: 10 } });
+    });
+    await page.reload();
+    await page.waitForSelector("#send-btn:not([hidden])");
+    assert(await page.$eval("#last-result", (el) => el.hidden), "Popup: Reopening a fresh capture hides the previous HTTP 201");
+    await page.evaluate(async () => {
+      await chrome.storage.session.set({ hookyLastResult: { id: "other-send", name: "Another tab", state: "success", ok: true, status: 201, startedAt: 20 } });
+    });
+    assert(await page.$eval("#last-result", (el) => el.hidden), "Popup: Other sends do not populate a fresh capture footer");
+    await page.goto(url + "?view=last");
+    await page.waitForFunction(() => document.getElementById("last-result-id").textContent === "other-send");
+    assert(await page.$eval("#last-result", (el) => !el.hidden), "Popup: Explicit result viewing retains access to session history");
+    await page.goto(url);
+
     const failureInjection = await page.evaluateOnNewDocument(() => {
       chrome.storage.local.get = async () => { throw new Error("private diagnostic"); };
     });
@@ -143,6 +160,7 @@ async function runPopupLayoutScenarios({ browser, extensionId, assert }) {
     for (const count of [2, 20, 0]) {
       await page.evaluate(async (count) => {
         await chrome.storage.session.clear();
+        await chrome.storage.session.set({ hookyLastResult: { id: "prior", name: "Prior send", state: "success", ok: true, status: 201, startedAt: 10 } });
         await chrome.storage.local.set({ hooky: {
           theme: "dark", templates: count ? [{ id: "native", name: "Reading list", method: "POST", url: "https://example.invalid/hook", params: Array.from({ length: count }, (_, index) => ({ key: "note" + index, value: "Captured page title and content" })) }] : [],
         } });
@@ -156,6 +174,7 @@ async function runPopupLayoutScenarios({ browser, extensionId, assert }) {
         await popup.waitForFunction(() => innerWidth === 380 && innerHeight >= 160 && innerHeight <= 480);
         const sizes = await popup.evaluate(() => ({ width: innerWidth, height: innerHeight }));
         assert(sizes.width === 380, `Native popup: ${count} parameters open at 380px without viewport emulation`);
+        assert(await popup.$eval("#last-result", (el) => el.hidden), "Native popup: Ordinary opening does not display retained results");
         if (!count) {
           assert(sizes.height <= 240, "Native popup: Branded setup and footer action fit within 240px");
           assert(await popup.evaluate(() => document.querySelector(".popup-header .brand").textContent === "Hooky" && !!document.getElementById("go-settings").closest("footer") && getComputedStyle(document.querySelector(".feedback-slot")).display === "none"), "Native popup: Empty state preserves identity without blank feedback");

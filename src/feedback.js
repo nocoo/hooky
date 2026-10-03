@@ -20,14 +20,15 @@ export function resultMessage(result) {
 }
 
 /** Viewing the panel never evaluates a Quick Send rule. */
-export function openPanel() {
+export function openPanel({ showResult = false } = {}) {
   if (opening) return opening;
+  const popup = POPUP_PATH + (showResult ? "?view=last" : "");
   opening = (async () => {
-    await chrome.action.setPopup({ popup: POPUP_PATH });
+    await chrome.action.setPopup({ popup });
     try {
       await chrome.action.openPopup();
     } catch {
-      await chrome.tabs.create({ url: chrome.runtime.getURL(POPUP_PATH) });
+      await chrome.tabs.create({ url: chrome.runtime.getURL(popup) });
     } finally {
       await chrome.action.setPopup({ popup: "" });
     }
@@ -88,7 +89,7 @@ export function showPageFeedback(result, message, labels, expectedUrl) {
   view.textContent = labels.view;
   view.insertAdjacentHTML("beforeend", '<svg class="icon" data-lucide="arrow-right" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M5 12h14" /><path d="m12 5 7 7-7 7" /></svg>');
   view.addEventListener("click", () => {
-    chrome.runtime.sendMessage({ type: "OPEN_PANEL" }).catch(() => {});
+    chrome.runtime.sendMessage({ type: "OPEN_PANEL", showResult: true }).catch(() => {});
   });
   const close = document.createElement("button");
   close.type = "button";
@@ -165,7 +166,7 @@ export function publishResult(result, { tab, source, start = false } = {}) {
       if (injected[0]?.result === true) return;
     } catch { /* Internal pages and navigation can prevent injection. */ }
     finally { clearTimeout(timer); }
-    if (result.state !== "sending") await openPanel().catch(() => {});
+    if (result.state !== "sending") await openPanel({ showResult: true }).catch(() => {});
   });
   writes = publish.catch(() => {});
   return writes;

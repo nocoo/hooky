@@ -93,6 +93,10 @@ async function runCaptureScenarios({ browser, extensionId, port, requests, asser
   assert(received.body.notes === selection, "Context-menu sends preserve the event selection snapshot and literal send.id text");
   const pageFeedback = await article.evaluate(() => document.getElementById("__hooky_send_feedback")?.shadowRoot.textContent);
   assert(pageFeedback?.includes("business success rule") && !pageFeedback.includes(selection) && !pageFeedback.includes("server-only receipt") && !pageFeedback.includes("e2e-secret"), "Real page feedback is visible and carries no capture, credential or receipt contents");
+  assert(await article.evaluate(() => {
+    const icons = [...document.getElementById("__hooky_send_feedback").shadowRoot.querySelectorAll(".state-icon svg")];
+    return icons.filter((el) => getComputedStyle(el).display !== "none").map((el) => el.dataset.lucide).join() === "circle-check" && icons.every((el) => getComputedStyle(el).strokeWidth === "2px");
+  }), "Page feedback shows one complete official Lucide status icon");
   assert(await worker.evaluate(async (tabId) => await chrome.action.getBadgeText({ tabId }) === "✓", tab.id), "Chrome retains the tab's success badge");
 
   await worker.evaluate(async ({ templateId }) => {
@@ -118,7 +122,7 @@ async function runCaptureScenarios({ browser, extensionId, port, requests, asser
   await article.evaluate(() => getSelection().removeAllRanges());
 
   const panel = await browser.newPage();
-  await panel.goto(extension + "src/popup/popup.html");
+  await panel.goto(extension + "src/popup/popup.html?view=last");
   await panel.waitForFunction(() => !document.getElementById("send-anyway").disabled);
   assert(requests.length === quickCount, "Opening the result panel never evaluates the matching Quick Send rule");
   await panel.click("#send-anyway");

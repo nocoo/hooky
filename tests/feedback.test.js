@@ -18,7 +18,7 @@ it("shows accessible feedback at the capture location and provides a view-only a
   const root = mount().shadowRoot;
   expect(root.querySelector('[role="status"]').textContent).toContain("Save");
   root.querySelector("button").click();
-  expect(chrome.runtime.sendMessage).toHaveBeenCalledWith({ type: "OPEN_PANEL" });
+  expect(chrome.runtime.sendMessage).toHaveBeenCalledWith({ type: "OPEN_PANEL", showResult: true });
   await vi.advanceTimersByTimeAsync(9000);
   expect(mount()).not.toBeNull();
   root.querySelectorAll("button")[1].click();

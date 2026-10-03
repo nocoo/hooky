@@ -35,7 +35,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     return true;
   }
   if (message.type === "OPEN_PANEL") {
-    openPanel().then(() => sendResponse({ ok: true })).catch(() => sendResponse({ ok: false }));
+    openPanel({ showResult: message.showResult === true }).then(() => sendResponse({ ok: true })).catch(() => sendResponse({ ok: false }));
     return true;
   }
 });
@@ -65,5 +65,5 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
 });
 
 chrome.notifications?.onClicked.addListener((id) => {
-  if (id.startsWith("hooky:")) openPanel().catch(() => {});
+  if (id.startsWith("hooky:")) openPanel({ showResult: true }).catch(() => {});
 });

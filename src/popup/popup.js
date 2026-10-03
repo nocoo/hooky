@@ -21,6 +21,7 @@ const sendAnywayBtn = document.getElementById("send-anyway");
 const container = document.querySelector(".container");
 const validationError = document.getElementById("validation-error");
 const editTemplateBtn = document.getElementById("edit-template");
+const showResult = new URLSearchParams(location.search).get("view") === "last";
 
 let currentTemplate = null;
 let pageContext = null;
@@ -262,7 +263,7 @@ async function init() {
 
   const store = await loadStore();
   applyTheme(store.theme || "system");
-  renderLastResult(await readLastResult());
+  if (showResult) renderLastResult(await readLastResult());
 
   if (!store.templates || store.templates.length === 0) {
     showView("empty");
@@ -328,7 +329,7 @@ paramsPreview.addEventListener("input", (event) => {
   updateRequestPreview();
 });
 chrome.storage.onChanged.addListener((changes, area) => {
-  if (area === "session" && changes[LAST_RESULT_KEY]?.newValue) renderLastResult(changes[LAST_RESULT_KEY].newValue);
+  if (showResult && area === "session" && changes[LAST_RESULT_KEY]?.newValue) renderLastResult(changes[LAST_RESULT_KEY].newValue);
 });
 
 init().catch(showLoadError);
