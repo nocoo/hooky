@@ -4,6 +4,7 @@ These files preserve the design exploration and the approved 2.0.0 family presen
 
 | Stage | Reference |
 | --- | --- |
+| Popup proposal, pending review (2026-10-04) | [Twelve before/after scenarios, offline HTML](2026-10-04-popup-review/index.html) |
 | Initial exploration, before implementation | [Interactive concepts: soft / line, compact / comfortable](2026-09-14-concepts/index.html) |
 | Approved 2.0.0 implementation | [Both products, working UI with demo data](2.0.0/preview.html) |
 | Approved joint submission presentation | [Family materials gallery](2.0.0/index.html) |

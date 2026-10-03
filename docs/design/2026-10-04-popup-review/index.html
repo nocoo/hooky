@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en" data-theme="dark" data-view="compare">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' data:; frame-src 'self'; connect-src 'none'; base-uri 'none'; form-action 'none'">
+  <title>Hooky / Popup Design Review</title>
+  <link rel="icon" href="assets/icon32.png">
+  <link rel="stylesheet" href="review.css">
+  <script src="review.js" defer></script>
+</head>
+<body>
+  <header class="review-bar">
+    <a href="#top" class="review-brand"><img src="assets/icon64.png" width="26" height="26" alt=""><strong>Hooky</strong><span>/ Design review</span></a>
+    <span class="draft-mark">PROPOSAL 01 · NOT IMPLEMENTED</span>
+  </header>
+  <main id="top">
+    <section class="intro">
+      <div><p class="overline">POPUP STUDY / 04 OCT 2026</p><h1>One small window.<br>One clear next step.</h1><p class="intro-copy">Keep the identity. Remove the ceremony. A task-first popup with a quiet brand, 12px working text and a send flow that never disappears.</p></div>
+      <aside class="review-key"><span class="key-label">WHAT TO REVIEW</span><p><b>01</b> Brand belongs inside the task.</p><p><b>02</b> Feedback replaces, not accumulates.</p><p><b>03</b> Details expand only when needed.</p><small>All requests, addresses and results are synthetic.<br>No extension APIs. No network. No saved data.</small></aside>
+    </section>
+    <section class="toolbar" aria-label="Review controls">
+      <label class="jump">Scenario<select id="scenario-jump" aria-label="Jump to scenario"></select></label>
+      <div class="segmented" aria-label="Preview theme"><button type="button" data-theme-choice="dark" aria-pressed="true">Dark</button><button type="button" data-theme-choice="light" aria-pressed="false">Light</button></div>
+      <div class="segmented" aria-label="Review view"><button type="button" data-view-choice="compare" aria-pressed="true">Before / After</button><button type="button" data-view-choice="proposal" aria-pressed="false">Proposal only</button></div>
+      <span class="actual-size">380px · Actual size</span>
+    </section>
+    <details class="tokens"><summary>Design tokens &amp; interaction contract <span>12px body / 16px identity / 4px spacing scale</span></summary><div class="token-grid">
+      <div><h2>Type</h2><p><b>12 / 18</b> Body, fields, buttons, feedback</p><p><b>16 / 22</b> Brand and task title</p><p><b>11 / 16</b> Timestamp, method, technical metadata</p></div>
+      <div><h2>Geometry</h2><p><b>380px</b> Content-owned width; never 100vw</p><p><b>480px</b> Maximum frame height</p><p><b>36 / 40px</b> Field / primary action</p><p><b>4 / 8 / 12 / 16 / 24</b> Spacing</p></div>
+      <div><h2>Hierarchy</h2><p><b>Wisteria</b> Primary action and quiet identity</p><p><b>Green</b> HTTP response, not a storage guarantee</p><p><b>Amber</b> Unconfirmed or possible repeat</p><p><b>Rose</b> A failure with a useful next step</p></div>
+      <div><h2>Motion</h2><p><b>160ms</b> Press and disclosure feedback</p><p><b>200ms</b> New result reveal</p><p>No decorative progress percentages. Reduced motion disables animation. Send only runs after a click.</p></div>
+    </div></details>
+    <div class="column-key"><span>BASELINE · 7a0dfbe · Static reconstruction</span><span>PROPOSAL · Pending your review</span></div>
+    <div id="scenarios"></div>
+    <section class="decision-note"><p class="overline">REVIEW FIRST. IMPLEMENT SECOND.</p><h2>The product does not change when you click here.</h2><p>Try Send in the ready state, open request and receipt details, switch templates, and inspect the long-capture editor. These are local visual simulations. Existing runtime changes and the installed unpacked extension are not modified by this review.</p></section>
+  </main>
+  <footer class="review-footer"><span>Hooky / Interaction &amp; visual study</span><span>Self-contained archive · No external assets</span></footer>
+</body>
+</html>

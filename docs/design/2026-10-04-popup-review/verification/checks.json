@@ -1,0 +1,14 @@
+{
+  "browser": "Chrome/154.0.8037.57",
+  "checks": [
+    "Twelve before/after scenarios load at actual size without page overflow",
+    "All proposals retain identity, 12px actions and visible primary controls within 480px",
+    "Branded empty task has no footer and stays below 260px",
+    "Editing, template switching and simulated sending work without a request",
+    "Repeat details stay masked and long captures scroll independently of Send",
+    "Theme and proposal-only review controls work",
+    "Mobile shell contains 380px previews without document overflow; reduced motion is honored"
+  ],
+  "network": [],
+  "errors": []
+}

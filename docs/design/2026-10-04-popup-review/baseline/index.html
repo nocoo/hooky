@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Hooky baseline - static reconstruction</title>
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'none'; base-uri 'none'; form-action 'none'"><link rel="icon" href="../assets/icon32.png">
+  <link rel="stylesheet" href="ui.css"><link rel="stylesheet" href="popup.css">
+</head>
+<body data-variant="baseline">
+  <div class="container">
+    <header class="header">
+      <div class="brand"><img src="../assets/icon64.png" alt="" width="28" height="28"><h1>Hooky</h1></div>
+      <button type="button" id="settings-btn" class="btn-icon" data-i18n-title="settingsTooltip" data-i18n-aria-label="settingsTooltip" title="Settings" aria-label="Settings"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 2 3 3 .5 2 3-1 3 1 3-2 3-3 .5-2 3-2-3-3-.5-2-3 1-3-1-3 2-3 3-.5Z"/><circle cx="12" cy="12" r="3"/></svg></button>
+    </header>
+    <div class="editor-scroll">
+      <div id="no-config" class="empty-state" style="display:none">
+        <img src="../assets/icon128.png" alt="" width="58" height="58"><p data-i18n="noTemplates">No templates yet. Open settings to create one.</p>
+        <button type="button" id="go-settings" class="btn-primary" data-i18n="openSettings">Open Settings</button>
+      </div>
+      <main id="webhook-panel" style="display:none">
+        <div class="template-select"><label for="template-select" data-i18n="selectTemplate">Select a template</label><div class="template-control"><span class="method-badge" id="method-badge">POST</span><select id="template-select"></select></div></div>
+        <div id="params-section"><div id="params-preview" class="params-preview" role="group" data-i18n-aria-label="parameters" aria-label="Parameters" aria-describedby="capture-hint"></div></div>
+        <details class="popup-preview">
+          <summary><svg class="icon disclosure-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg><span data-i18n="requestPreview">Request preview</span></summary>
+          <div class="preview-content"><div class="context-copy"><span class="eyebrow" data-i18n="currentPage">Current page</span><strong id="page-title"></strong><small id="page-host"></small></div><label data-i18n="webhookUrl">Webhook URL</label><code id="url-display"></code><p class="hint" id="capture-hint" data-i18n="manualPasteHelp">Type or paste into a value. Changes apply to this send only.</p><pre id="popup-request-preview"></pre></div>
+        </details>
+      </main>
+    </div>
+    <footer class="send-dock">
+      <button type="button" id="send-btn" class="btn-primary btn-send" hidden aria-busy="false"><svg class="icon send-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3.714 3.048a.498.498 0 0 0-.683.627l2.843 7.627a2 2 0 0 1 0 1.396l-2.842 7.627a.498.498 0 0 0 .682.627l18-8.5a.5.5 0 0 0 0-.904z"/><path d="M6 12h16"/></svg><svg class="icon sending-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg><span id="send-label" data-i18n="send">Send</span></button>
+      <div class="feedback-slot">
+        <div id="toast" class="toast" role="status" aria-live="polite" aria-atomic="true"></div>
+        <section id="last-result" class="last-result" hidden>
+          <div class="result-status" role="status" aria-live="polite" aria-atomic="true"><svg class="icon result-icon" viewBox="0 0 24 24" aria-hidden="true"><g class="result-success"><circle cx="12" cy="12" r="10"/><path d="m16 9-5.5 5.5L8 12"/></g><g class="result-error"><circle cx="12" cy="12" r="10"/><path d="M12 8v4m0 4h.01"/></g><path class="result-sending" d="M21 12a9 9 0 1 1-6.219-8.56"/></svg><p id="last-result-status"></p></div>
+          <div id="duplicate-actions" hidden><details><summary data-i18n="requestPreview">Request preview</summary><p class="hint" data-i18n="sendAnywayHelp">Review this capture, then send again with a new send ID. Available briefly while the background worker retains it.</p><pre id="duplicate-preview"></pre></details><button type="button" id="send-anyway" class="btn-secondary" data-i18n="sendAnyway" disabled>Send anyway</button></div>
+          <details id="result-details">
+            <summary class="result-heading"><svg class="icon disclosure-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg><span data-i18n="viewLastResult">Latest send</span><strong id="last-result-name"></strong><time id="last-result-time"></time></summary>
+            <div class="result-detail-content">
+              <p id="last-result-http" class="hint" hidden></p>
+              <details id="last-response" hidden><summary data-i18n="responseReceipt">Response / receipt</summary><p id="response-note" class="hint"></p><p id="response-field-note" class="hint"></p><dl id="response-fields-summary"></dl><pre id="response-body"></pre></details>
+              <details><summary data-i18n="sendDetails">Send details</summary><code id="last-result-id"></code><p class="hint" data-i18n="sessionResultHint">Kept for this browser session. Request content is not recorded.</p></details>
+            </div>
+          </details>
+        </section>
+      </div>
+    </footer>
+  </div>
+  <script src="../preview.js" defer></script>
+</body>
+</html>
