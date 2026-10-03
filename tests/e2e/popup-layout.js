@@ -58,9 +58,32 @@ async function runPopupLayoutScenarios({ browser, extensionId, assert }) {
       await page.evaluate((messages) => {
         for (const element of document.querySelectorAll("[data-i18n]")) element.textContent = messages[element.dataset.i18n].message;
         document.getElementById("last-result").dataset.state = "unknown";
+        document.getElementById("last-result").dataset.tone = "warning";
         document.getElementById("last-result-status").textContent = messages.requestUnconfirmed.message;
       }, messages);
       assert(await visibleFlow(), `Popup: ${locale} labels and unconfirmed feedback fit without outer scrolling`);
+      await page.evaluate(() => {
+        document.querySelector(".container").dataset.view = "empty";
+        document.getElementById("webhook-panel").style.display = "none";
+        document.getElementById("no-config").style.display = "block";
+        document.getElementById("send-btn").hidden = true;
+        document.getElementById("go-settings").hidden = false;
+        document.getElementById("last-result").hidden = true;
+      });
+      assert(await page.evaluate(() => {
+        const button = document.getElementById("go-settings").getBoundingClientRect();
+        return getComputedStyle(document.querySelector(".feedback-slot")).display === "none"
+          && document.querySelector(".container").getBoundingClientRect().height <= 240
+          && button.bottom <= innerHeight && document.documentElement.scrollWidth <= innerWidth;
+      }), `Popup: ${locale} setup retains its footer action without blank feedback space`);
+      await page.evaluate(() => {
+        document.querySelector(".container").dataset.view = "ready";
+        document.getElementById("webhook-panel").style.display = "block";
+        document.getElementById("no-config").style.display = "none";
+        document.getElementById("send-btn").hidden = false;
+        document.getElementById("go-settings").hidden = true;
+        document.getElementById("last-result").hidden = false;
+      });
     }
 
     await page.evaluate(() => {
@@ -75,7 +98,6 @@ async function runPopupLayoutScenarios({ browser, extensionId, assert }) {
       document.querySelector(".popup-preview").open = true;
       document.getElementById("result-details").open = true;
       document.getElementById("last-response").hidden = false;
-      document.getElementById("last-response").open = true;
       document.getElementById("response-body").textContent = "Large receipt\n".repeat(200);
       document.querySelector(".editor-scroll").scrollTop = 99999;
     });
@@ -94,9 +116,31 @@ async function runPopupLayoutScenarios({ browser, extensionId, assert }) {
     await page.evaluate(() => globalThis.finishPopupSend({ ok: false, error: "Transport unavailable" }));
     await page.waitForFunction(() => !document.getElementById("send-btn").disabled);
     assert(await page.$eval("#toast", (el) => el.classList.contains("error") && getComputedStyle(el).display !== "none"), "Popup: Transport failures remain visible without a stored result");
+    await screenshot("transport-error");
+
+    const failureInjection = await page.evaluateOnNewDocument(() => {
+      chrome.storage.local.get = async () => { throw new Error("private diagnostic"); };
+    });
+    await page.reload();
+    await page.waitForFunction(() => document.querySelector(".container").dataset.view === "error");
+    assert(await page.evaluate(() => !document.getElementById("retry-load").hidden && document.getElementById("send-btn").hidden && !document.body.textContent.includes("private diagnostic")), "Popup: Loading failure keeps only the footer recovery action without technical data");
+    assert(await page.$eval("#retry-load", (el) => getComputedStyle(el).fontSize === "12px"), "Popup: Recovery action uses the shared 12px control token");
+    await screenshot("startup-error");
+    await page.removeScriptToEvaluateOnNewDocument(failureInjection.identifier);
+    await page.reload();
+    await page.waitForSelector("#send-btn:not([hidden])");
+    await page.evaluate(async () => {
+      const { hooky } = await chrome.storage.local.get("hooky");
+      hooky.templates[0].url = "ftp://example.invalid";
+      await chrome.storage.local.set({ hooky });
+    });
+    await page.reload();
+    await page.waitForSelector("#edit-template:not([hidden])");
+    assert(await page.evaluate(() => document.getElementById("send-btn").hidden && !document.getElementById("validation-error").hidden && !!document.getElementById("edit-template").closest("footer")), "Popup: Invalid template blocks Send and offers a footer edit action");
+    await screenshot("invalid-template");
     assert(errors.length === 0, "Popup: Layout and state scenarios have no browser errors");
     await page.goto(`chrome-extension://${extensionId}/src/options/options.html`);
-    for (const count of [0, 2, 20]) {
+    for (const count of [2, 20, 0]) {
       await page.evaluate(async (count) => {
         await chrome.storage.session.clear();
         await chrome.storage.local.set({ hooky: {
@@ -109,12 +153,27 @@ async function runPopupLayoutScenarios({ browser, extensionId, assert }) {
       const popup = await target.asPage();
       try {
         await popup.waitForFunction((count) => count ? !document.getElementById("send-btn").hidden : document.getElementById("no-config").style.display === "block", {}, count);
-        await popup.waitForFunction(() => innerWidth === 380 && innerHeight >= 200 && innerHeight <= 480);
+        await popup.waitForFunction(() => innerWidth === 380 && innerHeight >= 160 && innerHeight <= 480);
         const sizes = await popup.evaluate(() => ({ width: innerWidth, height: innerHeight }));
         assert(sizes.width === 380, `Native popup: ${count} parameters open at 380px without viewport emulation`);
+        if (!count) {
+          assert(sizes.height <= 240, "Native popup: Branded setup and footer action fit within 240px");
+          assert(await popup.evaluate(() => document.querySelector(".popup-header .brand").textContent === "Hooky" && !!document.getElementById("go-settings").closest("footer") && getComputedStyle(document.querySelector(".feedback-slot")).display === "none"), "Native popup: Empty state preserves identity without blank feedback");
+          assert(await popup.$eval(".task-copy", (el) => getComputedStyle(el).fontSize === "12px"), "Native popup: Setup body copy is 12px");
+          await popup.evaluate(async () => { await Promise.allSettled(document.getAnimations().map((animation) => animation.finished)); });
+          await popup.screenshot({ path: path.resolve("dist/verification/popup-empty-dark.png") });
+          await popup.evaluate(() => { document.documentElement.dataset.theme = "light"; });
+          await popup.screenshot({ path: path.resolve("dist/verification/popup-empty-light.png") });
+          await page.goto("about:blank");
+          const opened = browser.waitForTarget((target) => target.url() === `chrome-extension://${extensionId}/src/options/options.html`);
+          await popup.click("#go-settings");
+          const options = await (await opened).asPage();
+          assert(!!options, "Native popup: Setup action opens settings");
+          if (options.target() !== page.target()) await options.close();
+        }
         if (count) {
           await popup.evaluate(() => {
-            chrome.runtime.sendMessage = () => new Promise((resolve) => { globalThis.finishPopupSend = resolve; });
+            chrome.runtime.sendMessage = (message) => message.type === "GET_DUPLICATE_CAPTURE" ? Promise.resolve({ preview: "POST https://example.invalid\nAuthorization: ••••" }) : new Promise((resolve) => { globalThis.finishPopupSend = resolve; });
           });
           const visibleNativeFlow = () => popup.evaluate(() => {
             const button = document.getElementById("send-btn").getBoundingClientRect();
@@ -129,14 +188,43 @@ async function runPopupLayoutScenarios({ browser, extensionId, assert }) {
           await popup.waitForFunction(() => document.querySelector(".container").getBoundingClientRect().height <= innerHeight + 1);
           assert(await visibleNativeFlow(), "Native popup: Send and completed result fit the actual action viewport");
           await popup.click("#result-details > summary");
+          if (count === 2) {
+            for (const result of [
+              { state: "success", ok: true, status: 202, tone: "warning" },
+              { state: "failed", ok: false, status: 401, tone: "failed" },
+              { state: "unknown", ok: false, error: "requestUnconfirmed", tone: "warning" },
+              { state: "success", ok: true, status: 201, duplicateToken: "held", tone: "warning" },
+            ]) {
+              await popup.click("#send-btn");
+              await popup.evaluate((result) => globalThis.finishPopupSend({ ...result, id: "native-state-" + Date.now(), name: "Reading list", startedAt: Date.now() }), result);
+              await popup.waitForFunction(() => !document.getElementById("send-btn").disabled);
+              await popup.waitForFunction(() => document.querySelector(".container").getBoundingClientRect().height <= innerHeight + 1);
+              assert(await popup.$eval("#last-result", (el, tone) => el.dataset.tone === tone, result.tone), `Native popup: ${result.status || result.state} uses ${result.tone} feedback`);
+              assert(await visibleNativeFlow(), "Native popup: Result stays visible across response outcomes");
+              if (result.duplicateToken) {
+                await popup.waitForFunction(() => !document.getElementById("send-anyway").disabled);
+                await popup.click("#duplicate-actions summary");
+                assert(await popup.$eval("#send-anyway", (el) => el.getBoundingClientRect().bottom <= innerHeight + 1), "Native popup: Repeat action stays visible with expanded capture preview");
+                await popup.screenshot({ path: path.resolve("dist/verification/popup-native-duplicate.png") });
+                await popup.click("#back-to-capture");
+                assert(await popup.$eval("#send-btn", (el) => !el.hidden), "Native popup: Back to capture restores the editor action without resending");
+              }
+            }
+          }
           await popup.waitForFunction(() => document.querySelector(".container").getBoundingClientRect().height <= innerHeight + 1);
           assert(await visibleNativeFlow(), "Native popup: Expanding result details grows the popup without clipping Send");
-          if (count === 20) assert(await popup.$eval(".editor-scroll", (el) => el.scrollHeight > el.clientHeight), "Native popup: Long captures scroll within the editor");
+          if (count === 20) {
+            const positions = await popup.evaluate(() => ({ header: document.querySelector("header").getBoundingClientRect().top, footer: document.querySelector("footer").getBoundingClientRect().top }));
+            await popup.$eval(".editor-scroll", (el) => { el.scrollTop = el.scrollHeight; });
+            assert(await popup.$eval(".editor-scroll", (el) => el.scrollHeight > el.clientHeight && el.scrollTop > 0), "Native popup: Long captures scroll within the content");
+            assert(await popup.evaluate((positions) => document.querySelector("header").getBoundingClientRect().top === positions.header && document.querySelector("footer").getBoundingClientRect().top === positions.footer, positions), "Native popup: Header and footer do not move while content scrolls");
+            assert(await visibleNativeFlow(), "Native popup: Scrolling content leaves the footer result and action visible");
+          }
           await popup.click("#result-details > summary");
         }
-        await popup.screenshot({ path: path.resolve(`dist/verification/popup-native-${count}.png`) });
+        if (count) await popup.screenshot({ path: path.resolve(`dist/verification/popup-native-${count}.png`) });
       } finally {
-        await popup.close();
+        if (count && !popup.isClosed()) await popup.close();
       }
     }
   } finally {

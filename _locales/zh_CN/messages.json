@@ -415,5 +415,47 @@
   },
   "grantNotificationPermission": {
     "message": "允许通知"
+  },
+  "popupLoading": {
+    "message": "正在打开 Hooky…"
+  },
+  "popupSetupTitle": {
+    "message": "添加第一个 Webhook"
+  },
+  "popupSetupHelp": {
+    "message": "设置接收地址，选择要发送的页面信息。"
+  },
+  "popupSetupAction": {
+    "message": "设置 Webhook"
+  },
+  "popupLoadErrorTitle": {
+    "message": "无法打开 Hooky"
+  },
+  "popupLoadErrorHelp": {
+    "message": "面板未能完成加载。请重试；若仍有问题，请重新加载扩展。"
+  },
+  "popupRetry": {
+    "message": "重试"
+  },
+  "popupCheckReceiver": {
+    "message": "再次发送前，请先检查接收端。"
+  },
+  "popupReviewTemplate": {
+    "message": "检查此模板"
+  },
+  "popupDuplicateTitle": {
+    "message": "这份内容已经发送过"
+  },
+  "popupEditWebhook": {
+    "message": "编辑 Webhook"
+  },
+  "popupWaiting": {
+    "message": "正在等待接收端，尚未收到响应。"
+  },
+  "popupBackToCapture": {
+    "message": "返回编辑"
+  },
+  "popupCheckAuthorization": {
+    "message": "再次发送前，请在设置中检查此 Webhook 的凭据。"
   }
 }

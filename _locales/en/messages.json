@@ -415,5 +415,47 @@
   },
   "grantNotificationPermission": {
     "message": "Allow notifications"
+  },
+  "popupLoading": {
+    "message": "Opening Hooky..."
+  },
+  "popupSetupTitle": {
+    "message": "Add your first webhook"
+  },
+  "popupSetupHelp": {
+    "message": "Set a destination and choose which page details to send."
+  },
+  "popupSetupAction": {
+    "message": "Set up a webhook"
+  },
+  "popupLoadErrorTitle": {
+    "message": "Couldn't open Hooky"
+  },
+  "popupLoadErrorHelp": {
+    "message": "The panel couldn't finish loading. Try again, or reload the extension if this continues."
+  },
+  "popupRetry": {
+    "message": "Try again"
+  },
+  "popupCheckReceiver": {
+    "message": "Check the receiver before sending again."
+  },
+  "popupReviewTemplate": {
+    "message": "Check this template"
+  },
+  "popupDuplicateTitle": {
+    "message": "This capture was already sent"
+  },
+  "popupEditWebhook": {
+    "message": "Edit webhook"
+  },
+  "popupWaiting": {
+    "message": "Waiting for the receiver. No response yet."
+  },
+  "popupBackToCapture": {
+    "message": "Back to capture"
+  },
+  "popupCheckAuthorization": {
+    "message": "Check this webhook's credentials in settings before sending again."
   }
 }

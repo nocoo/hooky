@@ -75,9 +75,10 @@ async function runCaptureScenarios({ browser, extensionId, port, requests, asser
   await popup.click("#send-btn");
   await popup.waitForFunction(() => !document.getElementById("duplicate-actions").hidden && !document.getElementById("send-anyway").disabled);
   assert(requests.length === count, "A completed duplicate is stopped before making a second request");
+  assert(await popup.evaluate(() => document.getElementById("send-btn").hidden && !document.getElementById("send-anyway").hidden && !!document.getElementById("send-anyway").closest("footer")), "Duplicate confirmation has one explicit footer send action");
   await popup.screenshot({ path: path.resolve("dist/verification/duplicate-result.png"), fullPage: true });
   await popup.click("#send-anyway");
-  await popup.waitForFunction(() => document.getElementById("duplicate-actions").hidden && !document.getElementById("last-result-status").textContent.includes("Sending"));
+  await popup.waitForFunction(() => !document.getElementById("send-btn").disabled && document.getElementById("duplicate-actions").hidden && !document.getElementById("last-result-status").textContent.includes("Sending"));
   result = await popup.evaluate(async () => (await chrome.storage.session.get("hookyLastResult")).hookyLastResult);
   assert(requests.length === count + 1 && result.id !== firstId, "Explicit Send anyway creates one new logical send");
   assert(requests.at(-1).body.notes === manual, "Explicit repeat uses the original capture");
@@ -121,7 +122,7 @@ async function runCaptureScenarios({ browser, extensionId, port, requests, asser
   await panel.waitForFunction(() => !document.getElementById("send-anyway").disabled);
   assert(requests.length === quickCount, "Opening the result panel never evaluates the matching Quick Send rule");
   await panel.click("#send-anyway");
-  await panel.waitForFunction(() => document.getElementById("duplicate-actions").hidden && !document.getElementById("last-result-status").textContent.includes("Sending"));
+  await panel.waitForFunction(() => !document.getElementById("send-btn").disabled && document.getElementById("duplicate-actions").hidden && !document.getElementById("last-result-status").textContent.includes("Sending"));
   assert(requests.length === quickCount + 1 && requests.at(-1).body.notes === "quick capture {{page.title}}", "A context result can repeat its held capture even after page selection is cleared");
 
   const sendCase = (route, response, method = "POST") => panel.evaluate(async ({ template, origin, tab, route, response, method }) => chrome.runtime.sendMessage({

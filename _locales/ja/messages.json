@@ -415,5 +415,47 @@
   },
   "grantNotificationPermission": {
     "message": "通知を許可"
+  },
+  "popupLoading": {
+    "message": "Hooky を開いています…"
+  },
+  "popupSetupTitle": {
+    "message": "最初の Webhook を追加"
+  },
+  "popupSetupHelp": {
+    "message": "送信先と、送信するページ情報を設定します。"
+  },
+  "popupSetupAction": {
+    "message": "Webhook を設定"
+  },
+  "popupLoadErrorTitle": {
+    "message": "Hooky を開けませんでした"
+  },
+  "popupLoadErrorHelp": {
+    "message": "パネルを読み込めませんでした。再試行し、解決しない場合は拡張機能を再読み込みしてください。"
+  },
+  "popupRetry": {
+    "message": "再試行"
+  },
+  "popupCheckReceiver": {
+    "message": "再送信する前に受信側を確認してください。"
+  },
+  "popupReviewTemplate": {
+    "message": "テンプレートを確認"
+  },
+  "popupDuplicateTitle": {
+    "message": "この内容は送信済みです"
+  },
+  "popupEditWebhook": {
+    "message": "Webhook を編集"
+  },
+  "popupWaiting": {
+    "message": "受信側からの応答を待っています。"
+  },
+  "popupBackToCapture": {
+    "message": "内容の編集に戻る"
+  },
+  "popupCheckAuthorization": {
+    "message": "再送信する前に、設定でこの Webhook の認証情報を確認してください。"
   }
 }

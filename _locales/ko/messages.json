@@ -415,5 +415,47 @@
   },
   "grantNotificationPermission": {
     "message": "알림 허용"
+  },
+  "popupLoading": {
+    "message": "Hooky 여는 중…"
+  },
+  "popupSetupTitle": {
+    "message": "첫 Webhook 추가"
+  },
+  "popupSetupHelp": {
+    "message": "수신 주소와 보낼 페이지 정보를 설정하세요."
+  },
+  "popupSetupAction": {
+    "message": "Webhook 설정"
+  },
+  "popupLoadErrorTitle": {
+    "message": "Hooky를 열 수 없습니다"
+  },
+  "popupLoadErrorHelp": {
+    "message": "패널을 불러오지 못했습니다. 다시 시도하고, 문제가 계속되면 확장 프로그램을 새로고침하세요."
+  },
+  "popupRetry": {
+    "message": "다시 시도"
+  },
+  "popupCheckReceiver": {
+    "message": "다시 보내기 전에 수신 측을 확인하세요."
+  },
+  "popupReviewTemplate": {
+    "message": "템플릿 확인"
+  },
+  "popupDuplicateTitle": {
+    "message": "이미 전송한 내용입니다"
+  },
+  "popupEditWebhook": {
+    "message": "Webhook 편집"
+  },
+  "popupWaiting": {
+    "message": "수신 측의 응답을 기다리고 있습니다."
+  },
+  "popupBackToCapture": {
+    "message": "내용 편집으로 돌아가기"
+  },
+  "popupCheckAuthorization": {
+    "message": "다시 보내기 전에 설정에서 이 Webhook의 인증 정보를 확인하세요."
   }
 }

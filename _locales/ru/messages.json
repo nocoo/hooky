@@ -415,5 +415,47 @@
   },
   "grantNotificationPermission": {
     "message": "Разрешить уведомления"
+  },
+  "popupLoading": {
+    "message": "Открытие Hooky…"
+  },
+  "popupSetupTitle": {
+    "message": "Добавьте первый вебхук"
+  },
+  "popupSetupHelp": {
+    "message": "Укажите адрес получателя и выберите данные страницы для отправки."
+  },
+  "popupSetupAction": {
+    "message": "Настроить вебхук"
+  },
+  "popupLoadErrorTitle": {
+    "message": "Не удалось открыть Hooky"
+  },
+  "popupLoadErrorHelp": {
+    "message": "Не удалось загрузить панель. Повторите попытку или перезагрузите расширение, если проблема сохраняется."
+  },
+  "popupRetry": {
+    "message": "Повторить"
+  },
+  "popupCheckReceiver": {
+    "message": "Проверьте получателя перед повторной отправкой."
+  },
+  "popupReviewTemplate": {
+    "message": "Проверьте шаблон"
+  },
+  "popupDuplicateTitle": {
+    "message": "Эти данные уже отправлены"
+  },
+  "popupEditWebhook": {
+    "message": "Изменить вебхук"
+  },
+  "popupWaiting": {
+    "message": "Ожидание ответа получателя. Ответ ещё не получен."
+  },
+  "popupBackToCapture": {
+    "message": "Вернуться к данным"
+  },
+  "popupCheckAuthorization": {
+    "message": "Проверьте учётные данные вебхука в настройках перед повторной отправкой."
   }
 }

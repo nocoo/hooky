@@ -18,6 +18,9 @@ const settingsBtn = document.getElementById("settings-btn");
 const goSettingsBtn = document.getElementById("go-settings");
 const toastEl = document.getElementById("toast");
 const sendAnywayBtn = document.getElementById("send-anyway");
+const container = document.querySelector(".container");
+const validationError = document.getElementById("validation-error");
+const editTemplateBtn = document.getElementById("edit-template");
 
 let currentTemplate = null;
 let pageContext = null;
@@ -25,12 +28,45 @@ let currentTab = null;
 let toastTimer;
 let duplicateToken = null;
 let lastRenderedAt = 0;
+let sending = false;
+let duplicateOpen = false;
 
-function setSending(sending) {
-  sendBtn.hidden = !sending && !currentTemplate;
+function renderActions() {
+  const view = container.dataset.view;
+  const repeat = duplicateOpen && view !== "loading" && view !== "error";
+  const ready = view === "ready" && !!currentTemplate;
+  sendBtn.hidden = !sending && (!ready || repeat || !validationError.hidden);
   sendBtn.disabled = sending;
   sendBtn.setAttribute("aria-busy", String(sending));
   sendLabel.textContent = t(sending ? "sending" : "send");
+  goSettingsBtn.hidden = view !== "empty" || repeat || sending;
+  document.getElementById("retry-load").hidden = view !== "error";
+  editTemplateBtn.hidden = !ready || repeat || sending || validationError.hidden;
+  sendAnywayBtn.hidden = !repeat || sending;
+  document.getElementById("back-to-capture").hidden = !repeat || sending;
+  document.getElementById("pending-help").hidden = !sending;
+  document.getElementById("duplicate-actions").hidden = !repeat || sending;
+  noConfigEl.style.display = view === "empty" && !repeat ? "block" : "none";
+  webhookPanel.style.display = view === "ready" && !repeat ? "block" : "none";
+  settingsBtn.hidden = view !== "ready";
+}
+
+function showView(view) {
+  container.dataset.view = view;
+  document.getElementById("loading").hidden = view !== "loading";
+  document.getElementById("startup-error").hidden = view !== "error";
+  renderActions();
+}
+
+function showLoadError() {
+  currentTemplate = null;
+  sendBtn.hidden = true;
+  showView("error");
+}
+
+function setSending(value) {
+  sending = value;
+  container.dataset.sending = String(sending);
   templateSelect.disabled = sending;
   for (const field of paramsPreview.querySelectorAll("textarea")) field.disabled = sending;
   if (sending) {
@@ -39,11 +75,14 @@ function setSending(sending) {
     document.getElementById("last-result").hidden = true;
     document.getElementById("result-details").open = false;
   }
+  renderActions();
 }
 
 function showToast(message, type = "success") {
-  toastEl.textContent = message;
+  document.getElementById("toast-message").textContent = message;
   toastEl.className = `toast ${type} visible`;
+  toastEl.setAttribute("role", type === "error" ? "alert" : "status");
+  toastEl.setAttribute("aria-live", type === "error" ? "assertive" : "polite");
   clearTimeout(toastTimer);
   if (type === "success") toastTimer = setTimeout(() => toastEl.classList.remove("visible"), 8000);
 }
@@ -60,13 +99,20 @@ function renderLastResult(result) {
   document.getElementById("last-result-time").textContent = new Date(result.startedAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
   const status = document.getElementById("last-result-status");
   status.textContent = resultMessage(result);
-  status.className = result.state === "failed" || result.state === "unknown" ? "error" : "";
+  const warning = result.state === "unknown" || !!result.duplicateToken || (result.state === "success" && result.status === 202);
+  status.className = result.state === "failed" && !warning ? "error" : "";
+  resultEl.dataset.tone = warning ? "warning" : result.state;
+  const help = document.getElementById("result-help");
+  const authorizationFailed = result.state === "failed" && [401, 403].includes(result.status);
+  help.hidden = result.state !== "failed" || !!result.error || !!result.duplicateToken;
+  help.textContent = t(authorizationFailed ? "popupCheckAuthorization" : "popupCheckReceiver");
+  document.getElementById("result-settings").hidden = !authorizationFailed;
   document.getElementById("last-result-id").textContent = result.id;
   document.getElementById("last-response").hidden = !result.receipt;
   document.getElementById("response-note").textContent = result.receipt?.note ? t(result.receipt.note) : "";
   document.getElementById("response-body").textContent = result.receipt?.text || "";
-  document.getElementById("last-result-http").hidden = !result.business;
-  document.getElementById("last-result-http").textContent = result.business ? `HTTP ${result.status}` : "";
+  document.getElementById("last-result-http").hidden = !result.status;
+  document.getElementById("last-result-http").textContent = result.status ? `HTTP ${result.status}` : "";
   document.getElementById("response-field-note").textContent = result.receipt?.fieldNote ? t(result.receipt.fieldNote) : "";
   const fields = document.getElementById("response-fields-summary");
   fields.replaceChildren();
@@ -79,9 +125,10 @@ function renderLastResult(result) {
     fields.append(label, value);
   }
   const token = result.duplicateToken || null;
-  document.getElementById("duplicate-actions").hidden = !token;
-  if (duplicateToken === token) return;
+  if (duplicateToken === token) { renderActions(); return; }
   duplicateToken = token;
+  duplicateOpen = !!token;
+  renderActions();
   sendAnywayBtn.disabled = true;
   document.getElementById("duplicate-preview").textContent = "";
   if (!token) return;
@@ -145,7 +192,7 @@ function renderParams(params, context) {
 }
 
 function showTemplate(tpl) {
-  currentTemplate = tpl;
+  currentTemplate = { ...tpl, method: tpl.method || "POST" };
 
   const method = tpl.method || "POST";
   methodBadge.textContent = method;
@@ -171,17 +218,21 @@ function getResolvedParams() {
 }
 
 function updateRequestPreview() {
+  validationError.hidden = true;
   try {
     document.getElementById("popup-request-preview").textContent = previewRequest(
       { ...currentTemplate, params: getResolvedParams() }, { ...pageContext, send: { id: "{{send.id}}" } }, true,
     );
   } catch (error) {
     document.getElementById("popup-request-preview").textContent = t(error.message);
+    document.getElementById("validation-message").textContent = t(error.message);
+    validationError.hidden = false;
   }
+  renderActions();
 }
 
 async function sendWebhook() {
-  if (!currentTemplate || sendBtn.disabled) return;
+  if (!currentTemplate || sending || duplicateOpen || !validationError.hidden) return;
 
   setSending(true);
 
@@ -198,30 +249,25 @@ async function sendWebhook() {
     });
 
     showSendResult(result);
-  } catch (err) {
-    showToast(err.message || t("requestFailed"), "error");
+  } catch {
+    showToast(t("requestUnconfirmed"), "error");
   } finally {
     setSending(false);
   }
 }
 
 async function init() {
+  showView("loading");
   applyI18n();
 
   const store = await loadStore();
+  applyTheme(store.theme || "system");
   renderLastResult(await readLastResult());
 
-  // Apply theme
-  applyTheme(store.theme || "system");
-
   if (!store.templates || store.templates.length === 0) {
-    noConfigEl.style.display = "block";
-    webhookPanel.style.display = "none";
+    showView("empty");
     return;
   }
-
-  noConfigEl.style.display = "none";
-  webhookPanel.style.display = "block";
 
   // Build template dropdown
   templateSelect.innerHTML = "";
@@ -244,28 +290,37 @@ async function init() {
   // Show the active template
   const activeTpl = store.templates.find((t) => t.id === activeId) || store.templates[0];
   templateSelect.value = activeTpl.id;
+  showView("ready");
   showTemplate(activeTpl);
-  sendBtn.hidden = false;
 }
 
 templateSelect.addEventListener("change", async () => {
-  const store = await loadStore();
-  const tpl = store.templates.find((t) => t.id === templateSelect.value);
-  if (tpl) {
-    await setActiveTemplateId(tpl.id);
-    showTemplate(tpl);
-  }
+  try {
+    const store = await loadStore();
+    const tpl = store.templates.find((t) => t.id === templateSelect.value);
+    if (tpl) {
+      await setActiveTemplateId(tpl.id);
+      showTemplate(tpl);
+    }
+  } catch { showLoadError(); }
 });
 
 settingsBtn.addEventListener("click", openSettings);
 goSettingsBtn.addEventListener("click", openSettings);
+editTemplateBtn.addEventListener("click", openSettings);
+document.getElementById("result-settings").addEventListener("click", openSettings);
+document.getElementById("retry-load").addEventListener("click", () => init().catch(showLoadError));
+document.getElementById("back-to-capture").addEventListener("click", () => {
+  duplicateOpen = false;
+  renderActions();
+});
 sendBtn.addEventListener("click", sendWebhook);
 sendAnywayBtn.addEventListener("click", async () => {
-  if (!duplicateToken || sendAnywayBtn.disabled || sendBtn.disabled) return;
+  if (!duplicateToken || sendAnywayBtn.disabled || sending) return;
   sendAnywayBtn.disabled = true;
   setSending(true);
   try { showSendResult(await chrome.runtime.sendMessage({ type: "SEND_ANYWAY", token: duplicateToken })); }
-  catch { showToast(t("captureExpired"), "error"); }
+  catch { showToast(t("requestUnconfirmed"), "error"); }
   finally { setSending(false); }
 });
 paramsPreview.addEventListener("input", (event) => {
@@ -276,4 +331,4 @@ chrome.storage.onChanged.addListener((changes, area) => {
   if (area === "session" && changes[LAST_RESULT_KEY]?.newValue) renderLastResult(changes[LAST_RESULT_KEY].newValue);
 });
 
-init().catch((err) => showToast(err.message || t("requestFailed"), "error"));
+init().catch(showLoadError);

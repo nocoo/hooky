@@ -415,5 +415,47 @@
   },
   "grantNotificationPermission": {
     "message": "允許通知"
+  },
+  "popupLoading": {
+    "message": "正在開啟 Hooky…"
+  },
+  "popupSetupTitle": {
+    "message": "新增第一個 Webhook"
+  },
+  "popupSetupHelp": {
+    "message": "設定接收位址，選擇要傳送的頁面資訊。"
+  },
+  "popupSetupAction": {
+    "message": "設定 Webhook"
+  },
+  "popupLoadErrorTitle": {
+    "message": "無法開啟 Hooky"
+  },
+  "popupLoadErrorHelp": {
+    "message": "面板未能完成載入。請重試；若仍有問題，請重新載入擴充功能。"
+  },
+  "popupRetry": {
+    "message": "重試"
+  },
+  "popupCheckReceiver": {
+    "message": "再次傳送前，請先檢查接收端。"
+  },
+  "popupReviewTemplate": {
+    "message": "檢查此範本"
+  },
+  "popupDuplicateTitle": {
+    "message": "這份內容已經傳送過"
+  },
+  "popupEditWebhook": {
+    "message": "編輯 Webhook"
+  },
+  "popupWaiting": {
+    "message": "正在等待接收端，尚未收到回應。"
+  },
+  "popupBackToCapture": {
+    "message": "返回編輯"
+  },
+  "popupCheckAuthorization": {
+    "message": "再次傳送前，請在設定中檢查此 Webhook 的憑證。"
   }
 }

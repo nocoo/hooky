@@ -415,5 +415,47 @@
   },
   "grantNotificationPermission": {
     "message": "Benachrichtigungen erlauben"
+  },
+  "popupLoading": {
+    "message": "Hooky wird geöffnet…"
+  },
+  "popupSetupTitle": {
+    "message": "Ersten Webhook hinzufügen"
+  },
+  "popupSetupHelp": {
+    "message": "Lege das Ziel fest und wähle die zu sendenden Seiteninformationen."
+  },
+  "popupSetupAction": {
+    "message": "Webhook einrichten"
+  },
+  "popupLoadErrorTitle": {
+    "message": "Hooky konnte nicht geöffnet werden"
+  },
+  "popupLoadErrorHelp": {
+    "message": "Das Panel konnte nicht geladen werden. Versuche es erneut oder lade die Erweiterung neu, falls das Problem bleibt."
+  },
+  "popupRetry": {
+    "message": "Erneut versuchen"
+  },
+  "popupCheckReceiver": {
+    "message": "Prüfe den Empfänger, bevor du erneut sendest."
+  },
+  "popupReviewTemplate": {
+    "message": "Vorlage prüfen"
+  },
+  "popupDuplicateTitle": {
+    "message": "Dieser Inhalt wurde bereits gesendet"
+  },
+  "popupEditWebhook": {
+    "message": "Webhook bearbeiten"
+  },
+  "popupWaiting": {
+    "message": "Warte auf den Empfänger. Noch keine Antwort."
+  },
+  "popupBackToCapture": {
+    "message": "Zurück zum Inhalt"
+  },
+  "popupCheckAuthorization": {
+    "message": "Prüfe vor dem erneuten Senden die Zugangsdaten dieses Webhooks in den Einstellungen."
   }
 }

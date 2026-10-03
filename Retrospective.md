@@ -39,3 +39,22 @@ narrow-tab assumption with native action-popup tests through the production
 `OPEN_PANEL` handler, with no viewport emulation. Cover empty configuration,
 ordinary and long captures, pending sends, completed results and expanding
 details. A tab-rendered screenshot cannot prove extension popup sizing.
+
+## 2026-10-04: Empty-state chrome survived the compact-layout pass
+
+The previous pass kept the brand header and reserved feedback space even when
+there were no templates or sending actions. Native sizing tests established that
+the popup opened, but did not establish that each visible region served the
+current task. The user correctly rejected the resulting oversized empty state.
+
+Make loading, setup, recovery and sending explicit presentation states. Remove
+decorative chrome from setup and recovery, hide empty docks, and keep one clear
+next action. Extract the shared popup typography, spacing, control and status
+tokens instead of patching individual font sizes. Test the absence of irrelevant
+regions and the setup action in real action popups, not just overall dimensions.
+
+The next review clarified that removing redundant chrome is not permission to
+remove identity: the empty task has room for a small logo and name. The approved
+implementation keeps a compact header, a scrollable content region and a footer
+for the task action and result. Never confuse an empty reserved region with a
+useful brand or action region; validate each independently.

@@ -68,6 +68,123 @@ async function setupPageContextMock(contextData) {
 }
 
 describe("popup.js", () => {
+  it("separates brand, scrollable content and footer actions in every setup state", async () => {
+    setupChromeMock({ hooky: { templates: [] } });
+    await import("../src/popup/popup.js");
+    await vi.waitFor(() => expect(document.getElementById("go-settings").hidden).toBe(false));
+    expect(document.querySelector(".container > header .brand").textContent).toBe("Hooky");
+    expect(document.querySelector(".container > main").id).toBe("popup-content");
+    expect(document.getElementById("go-settings").closest("footer")).not.toBeNull();
+    expect(document.getElementById("send-btn").hidden).toBe(true);
+    expect(document.getElementById("retry-load").hidden).toBe(true);
+    expect(document.getElementById("settings-btn").hidden).toBe(true);
+  });
+
+  it("blocks invalid templates before dispatch and offers an edit action", async () => {
+    setupChromeMock({ hooky: { templates: [{ id: "bad", name: "Invalid", url: "ftp://example.com", method: "POST", params: [] }] } });
+    await setupPageContextMock();
+    await import("../src/popup/popup.js");
+    await vi.waitFor(() => expect(document.getElementById("validation-error").hidden).toBe(false));
+    expect(document.getElementById("validation-message").textContent).toBe("invalidEndpoint");
+    expect(document.getElementById("send-btn").hidden).toBe(true);
+    expect(document.getElementById("edit-template").hidden).toBe(false);
+    document.getElementById("send-btn").dispatchEvent(new Event("click"));
+    expect(chrome.runtime.sendMessage).not.toHaveBeenCalled();
+    document.getElementById("edit-template").click();
+    expect(chrome.runtime.openOptionsPage).toHaveBeenCalledOnce();
+  });
+
+  it("makes a duplicate the only send action without discarding the edited capture", async () => {
+    setupChromeMock({ hooky: { templates: [{ id: "t1", name: "Notes", url: "https://example.com", method: "POST", params: [{ key: "note", value: "original" }] }] } });
+    await setupPageContextMock();
+    await import("../src/popup/popup.js");
+    await vi.waitFor(() => expect(document.getElementById("send-btn").hidden).toBe(false));
+    document.querySelector(".param-item textarea").value = "edited";
+    chrome.runtime.sendMessage.mockResolvedValue({ preview: "POST https://example.com" });
+    const changed = chrome.storage.onChanged.addListener.mock.calls[0][0];
+    const result = { id: "previous", name: "Notes", startedAt: 10, state: "success", ok: true, status: 201, duplicateToken: "held" };
+    changed({ hookyLastResult: { newValue: result } }, "session");
+    await vi.waitFor(() => expect(document.getElementById("send-anyway").disabled).toBe(false));
+    expect(document.getElementById("send-btn").hidden).toBe(true);
+    expect(document.getElementById("send-anyway").hidden).toBe(false);
+    expect(document.getElementById("send-anyway").closest("footer")).not.toBeNull();
+    expect(document.getElementById("duplicate-actions").closest("main")).not.toBeNull();
+    expect(document.getElementById("last-result").dataset.tone).toBe("warning");
+    document.getElementById("back-to-capture").click();
+    expect(document.getElementById("send-anyway").hidden).toBe(true);
+    expect(document.getElementById("send-btn").hidden).toBe(false);
+    expect(document.querySelector(".param-item textarea").value).toBe("edited");
+    changed({ hookyLastResult: { newValue: result } }, "session");
+    expect(document.getElementById("send-btn").hidden).toBe(false);
+    expect(chrome.runtime.sendMessage).toHaveBeenCalledTimes(1);
+  });
+
+  it.each([202, 401, 403])("preserves HTTP %s evidence with an appropriate next step", async (status) => {
+    setupChromeMock({ hooky: { templates: [] } });
+    await chrome.storage.session.set({ hookyLastResult: { id: "result", name: "Notes", startedAt: 10, state: status === 202 ? "success" : "failed", ok: status === 202, status } });
+    await import("../src/popup/popup.js");
+    await vi.waitFor(() => expect(document.getElementById("last-result").hidden).toBe(false));
+    expect(document.getElementById("last-result-http").textContent).toBe(`HTTP ${status}`);
+    expect(document.getElementById("last-result").dataset.tone).toBe(status === 202 ? "warning" : "failed");
+    if (status !== 202) {
+      expect(document.getElementById("result-help").textContent).toBe("popupCheckAuthorization");
+      document.getElementById("result-settings").click();
+      expect(chrome.runtime.openOptionsPage).toHaveBeenCalledOnce();
+    }
+  });
+
+  it("shows recovery when switching templates cannot read storage", async () => {
+    setupChromeMock({ hooky: { templates: [{ id: "t1", name: "Notes", url: "https://example.com", method: "POST", params: [] }] } });
+    await setupPageContextMock();
+    await import("../src/popup/popup.js");
+    await vi.waitFor(() => expect(document.getElementById("send-btn").hidden).toBe(false));
+    chrome.storage.local.get.mockRejectedValue(new Error("read failed"));
+    document.getElementById("template-select").dispatchEvent(new Event("change"));
+    await vi.waitFor(() => expect(document.getElementById("retry-load").hidden).toBe(false));
+    expect(document.getElementById("send-btn").hidden).toBe(true);
+  });
+
+  it("shows a task-specific load error and retries without sending or altering storage", async () => {
+    setupChromeMock({ hooky: { templates: [], theme: "dark" } });
+    chrome.storage.local.get.mockRejectedValueOnce(new Error("internal error with sensitive details"));
+    await import("../src/popup/popup.js");
+    await vi.waitFor(() => expect(document.querySelector(".container").dataset.view).toBe("error"));
+    expect(document.getElementById("startup-error").hidden).toBe(false);
+    expect(document.getElementById("no-config").style.display).toBe("none");
+    expect(document.body.textContent).not.toContain("sensitive details");
+    expect(document.getElementById("send-btn").hidden).toBe(true);
+    document.getElementById("retry-load").click();
+    expect(document.querySelector(".container").dataset.view).toBe("loading");
+    await vi.waitFor(() => expect(document.querySelector(".container").dataset.view).toBe("empty"));
+    expect(document.getElementById("startup-error").hidden).toBe(true);
+    expect(chrome.runtime.sendMessage).not.toHaveBeenCalled();
+    expect(chrome.storage.local.set).not.toHaveBeenCalled();
+  });
+
+  it("recovers a retained-result read failure into the send task on retry", async () => {
+    setupChromeMock({ hooky: { templates: [{ id: "t1", name: "Notes", url: "https://example.com", params: [] }], theme: "dark" } });
+    chrome.storage.session.get.mockRejectedValueOnce(new Error("session unavailable"));
+    await setupPageContextMock();
+    await import("../src/popup/popup.js");
+    await vi.waitFor(() => expect(document.querySelector(".container").dataset.view).toBe("error"));
+    expect(document.documentElement.dataset.theme).toBe("dark");
+    document.getElementById("retry-load").click();
+    await vi.waitFor(() => expect(document.querySelector(".container").dataset.view).toBe("ready"));
+    expect(document.getElementById("send-btn").hidden).toBe(false);
+    expect(chrome.runtime.sendMessage).not.toHaveBeenCalled();
+  });
+
+  it("adds a safe next step to HTTP failures without duplicating semantic errors", async () => {
+    setupChromeMock({ hooky: { templates: [] } });
+    const result = { id: "failure", name: "Notes", startedAt: 10, state: "failed", ok: false, status: 503 };
+    await chrome.storage.session.set({ hookyLastResult: result });
+    await import("../src/popup/popup.js");
+    await vi.waitFor(() => expect(document.getElementById("result-help").hidden).toBe(false));
+    const changed = chrome.storage.onChanged.addListener.mock.calls[0][0];
+    changed({ hookyLastResult: { newValue: { ...result, error: "businessRejected" } } }, "session");
+    expect(document.getElementById("result-help").hidden).toBe(true);
+  });
+
   it("keeps one persistent result and locks the capture throughout a send", async () => {
     setupChromeMock({ hooky: { templates: [{ id: "t1", name: "Notes", url: "https://example.com", params: [{ key: "note", value: "hello" }] }] } });
     await setupPageContextMock();
@@ -164,7 +281,7 @@ describe("popup.js", () => {
     await import("../src/popup/popup.js");
     await vi.waitFor(() => expect(document.getElementById("send-anyway").disabled).toBe(false));
     document.getElementById("send-anyway").click();
-    await vi.waitFor(() => expect(document.getElementById("toast").textContent).toBe("captureExpired"));
+    await vi.waitFor(() => expect(document.getElementById("toast").textContent).toBe("requestUnconfirmed"));
     expect(chrome.runtime.sendMessage).toHaveBeenCalledTimes(2);
   });
 
@@ -258,9 +375,9 @@ describe("popup.js", () => {
     expect(document.getElementById("last-result-name").textContent).toBe("Save");
     const changed = chrome.storage.onChanged.addListener.mock.calls[0][0];
     changed({ hookyLastResult: { newValue: { ...record, state: "unknown", ok: false } } }, "session");
-    expect(document.getElementById("last-result-status").className).toBe("error");
+    expect(document.getElementById("last-result").dataset.tone).toBe("warning");
     changed({ hookyLastResult: { newValue: { ...record, state: "success", ok: true, status: 201 } } }, "local");
-    expect(document.getElementById("last-result-status").className).toBe("error");
+    expect(document.getElementById("last-result").dataset.tone).toBe("warning");
     changed({}, "session");
     expect(chrome.runtime.sendMessage).not.toHaveBeenCalled();
   });
@@ -570,6 +687,9 @@ describe("popup.js", () => {
       const toast = document.getElementById("toast");
       expect(toast.classList.contains("visible")).toBe(true);
       expect(toast.classList.contains("error")).toBe(true);
+      expect(toast.getAttribute("role")).toBe("alert");
+      expect(toast.textContent).toBe("requestUnconfirmed");
+      expect(toast.textContent).not.toContain("Network error");
     });
   });
 

@@ -415,5 +415,47 @@
   },
   "grantNotificationPermission": {
     "message": "Autoriser les notifications"
+  },
+  "popupLoading": {
+    "message": "Ouverture de Hooky…"
+  },
+  "popupSetupTitle": {
+    "message": "Ajoutez votre premier webhook"
+  },
+  "popupSetupHelp": {
+    "message": "Définissez une destination et les informations de la page à envoyer."
+  },
+  "popupSetupAction": {
+    "message": "Configurer un webhook"
+  },
+  "popupLoadErrorTitle": {
+    "message": "Impossible d’ouvrir Hooky"
+  },
+  "popupLoadErrorHelp": {
+    "message": "Le panneau n’a pas pu être chargé. Réessayez ou rechargez l’extension si le problème persiste."
+  },
+  "popupRetry": {
+    "message": "Réessayer"
+  },
+  "popupCheckReceiver": {
+    "message": "Vérifiez le destinataire avant de renvoyer."
+  },
+  "popupReviewTemplate": {
+    "message": "Vérifiez ce modèle"
+  },
+  "popupDuplicateTitle": {
+    "message": "Ce contenu a déjà été envoyé"
+  },
+  "popupEditWebhook": {
+    "message": "Modifier le webhook"
+  },
+  "popupWaiting": {
+    "message": "En attente du destinataire. Pas encore de réponse."
+  },
+  "popupBackToCapture": {
+    "message": "Revenir au contenu"
+  },
+  "popupCheckAuthorization": {
+    "message": "Vérifiez les identifiants de ce webhook dans les paramètres avant de renvoyer."
   }
 }
