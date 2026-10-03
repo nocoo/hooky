@@ -58,3 +58,13 @@ remove identity: the empty task has room for a small logo and name. The approved
 implementation keeps a compact header, a scrollable content region and a footer
 for the task action and result. Never confuse an empty reserved region with a
 useful brand or action region; validate each independently.
+
+## 2026-10-04: Mixed icon sources produced inconsistent interface glyphs
+
+The popup work retained handwritten gear/link/lightning paths and combined
+unrelated feedback paths into shared SVGs. Stroke widths differed across
+surfaces. A partial Lucide adoption was not a coherent icon system, and the user
+rejected the visual result. Copy complete upstream SVGs, preserve their geometry
+and 2px stroke, and switch whole SVGs for state changes. Keep exact upstream
+fixtures and compare shipped markup to them so later edits cannot silently
+deform icons. Historical design archives remain unchanged.

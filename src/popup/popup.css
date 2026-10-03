@@ -86,10 +86,10 @@ pre, code { font-size: var(--font-meta); line-height: var(--line-body); }
 .btn-primary:hover:not(:disabled) { background: linear-gradient(120deg, var(--action), color-mix(in srgb, var(--action) 88%, var(--text))); box-shadow: var(--action-shadow), 0 2px 10px color-mix(in srgb, var(--action) 14%, transparent); }
 .btn-primary:active:not(:disabled) { transform: translateY(1px); box-shadow: none; }
 .btn-send { width: 100%; }
-svg.icon { width: var(--icon-size); height: var(--icon-size); stroke-width: 1.8; }
+svg.icon { width: var(--icon-size); height: var(--icon-size); }
 .send-icon, .task-action .icon { transition: transform var(--motion-fast) ease; }
 .btn-primary:hover:not(:disabled) .send-icon, .task-action:hover .icon { transform: translateX(2px); }
-.sending-icon { display: none; }
+.btn-send .sending-icon { display: none; }
 .btn-send[aria-busy="true"] { opacity: 1; cursor: progress; }
 .btn-send[aria-busy="true"] .send-icon { display: none; }
 .btn-send[aria-busy="true"] .sending-icon { display: block; animation: spin 1s linear infinite; }
@@ -113,10 +113,10 @@ svg.icon { width: var(--icon-size); height: var(--icon-size); stroke-width: 1.8;
 .last-result:not([data-state="sending"]) .result-status { animation: reveal var(--motion-enter) ease-out; }
 .result-status { display: flex; align-items: flex-start; gap: var(--space-2); color: var(--result-color); max-height: var(--detail-height); overflow: auto; }
 #result-help { margin-top: var(--space-2); }
-.result-icon { margin-top: 1px; }
-.result-icon > * { display: none; }
-[data-tone="success"] .result-success, [data-tone="failed"] .result-error, [data-tone="warning"] .result-error, [data-tone="sending"] .result-sending { display: initial; }
-[data-state="sending"] .result-icon { animation: spin 1s linear infinite; }
+.result-icons { flex: 0 0 var(--icon-size); margin-top: 1px; }
+.result-icons .result-icon { display: none; }
+[data-tone="success"] .result-success, [data-tone="failed"] .result-error, [data-tone="warning"] .result-error, [data-tone="sending"] .result-sending { display: block; }
+[data-tone="sending"] .result-sending { animation: spin 1s linear infinite; }
 .result-heading { color: var(--muted); font-size: var(--font-meta); }
 .result-heading strong { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 500; }
 .result-heading > span, .result-heading time { flex-shrink: 0; }

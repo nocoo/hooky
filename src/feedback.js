@@ -58,11 +58,11 @@ export function showPageFeedback(result, message, labels, expectedUrl) {
     section{--surface:light-dark(#fff,#211e28);--text:light-dark(#2d2637,#f1edf6);--muted:light-dark(#756b80,#b4a9bf);--accent:light-dark(#7851a5,#c8a6f0);--state:var(--accent);--line:light-dark(#e8e2ee,#39313f);position:relative;display:grid;grid-template-columns:36px minmax(0,1fr);align-items:start;gap:12px;width:368px;max-width:calc(100vw - 40px);max-height:calc(100dvh - 40px);overflow:auto;font:13px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--surface);color:var(--text);border:1px solid color-mix(in srgb,var(--state) 28%,var(--line));border-left:3px solid var(--state);border-radius:14px;padding:18px;box-shadow:0 4px 12px #21122f0a,0 16px 48px #21122f26;overflow-wrap:anywhere;animation:enter .22s ease-out}
     section[data-state="success"]{--state:light-dark(#21715b,#89d6b2)}section[data-state="failed"]{--state:light-dark(#b23d53,#f1a0ad)}section[data-state="unknown"]{--state:light-dark(#896014,#e5bd72)}
     .state-icon{display:grid;place-items:center;width:36px;height:36px;border-radius:50%;background:color-mix(in srgb,var(--state) 12%,var(--surface));color:var(--state)}
-    svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}.state-icon svg>*{display:none}
-    [data-state="success"] .check,[data-state="failed"] .cross,[data-state="unknown"] .warning,[data-state="sending"] .spinner{display:initial}.spinner{transform-origin:center;animation:spin .8s linear infinite}
+    svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}.state-icon svg{display:none}
+    [data-state="success"] .check,[data-state="failed"] .cross,[data-state="unknown"] .warning,[data-state="sending"] .spinner{display:block}.spinner{transform-origin:center;animation:spin .8s linear infinite}
     small{display:block;color:var(--muted);font-size:10px;font-weight:650;letter-spacing:.08em;line-height:16px}strong{display:block;padding-right:24px;margin:2px 0 5px;font-size:14px;font-weight:650;line-height:1.45}p{margin:0 0 14px;color:var(--muted)}
     button{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:32px;border:1px solid var(--line);border-radius:7px;padding:5px 10px;font:550 12px/20px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--surface);color:var(--accent);cursor:pointer;transition:background-color .15s}
-    button:hover{background:color-mix(in srgb,var(--accent) 8%,var(--surface))}button:focus-visible{outline:2px solid var(--accent);outline-offset:3px}.view::after{content:"→"}.close{position:absolute;right:10px;top:10px;width:28px;min-height:28px;padding:3px;border-color:transparent;color:var(--muted)}.close svg{width:16px;height:16px}
+    button:hover{background:color-mix(in srgb,var(--accent) 8%,var(--surface))}button:focus-visible{outline:2px solid var(--accent);outline-offset:3px}.view svg{width:16px;height:16px}.close{position:absolute;right:10px;top:10px;width:28px;min-height:28px;padding:3px;border-color:transparent;color:var(--muted)}.close svg{width:16px;height:16px}
     @keyframes enter{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}@keyframes spin{to{transform:rotate(360deg)}}
     @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
   </style>`;
@@ -74,7 +74,7 @@ export function showPageFeedback(result, message, labels, expectedUrl) {
   const icon = document.createElement("span");
   icon.className = "state-icon";
   icon.setAttribute("aria-hidden", "true");
-  icon.innerHTML = '<svg viewBox="0 0 24 24"><path class="check" d="m5 12 4 4L19 6"/><path class="cross" d="m7 7 10 10M17 7 7 17"/><path class="warning" d="M12 6v8m0 4h.01"/><path class="spinner" d="M20 12a8 8 0 1 1-8-8"/></svg>';
+  icon.innerHTML = '<svg class="check" data-lucide="circle-check" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><circle cx="12" cy="12" r="10" /><path d="m16 9-5.5 5.5L8 12" /></svg><svg class="cross" data-lucide="circle-x" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><circle cx="12" cy="12" r="10" /><path d="m15 9-6 6" /><path d="m9 9 6 6" /></svg><svg class="warning" data-lucide="circle-alert" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><circle cx="12" cy="12" r="10" /><line x1="12" x2="12" y1="8" y2="12" /><line x1="12" x2="12.01" y1="16" y2="16" /></svg><svg class="spinner" data-lucide="loader-circle" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M21 12a9 9 0 1 1-6.219-8.56" /></svg>';
   const copy = document.createElement("div");
   const brand = document.createElement("small");
   brand.textContent = "HOOKY";
@@ -86,6 +86,7 @@ export function showPageFeedback(result, message, labels, expectedUrl) {
   view.type = "button";
   view.className = "view";
   view.textContent = labels.view;
+  view.insertAdjacentHTML("beforeend", '<svg class="icon" data-lucide="arrow-right" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M5 12h14" /><path d="m12 5 7 7-7 7" /></svg>');
   view.addEventListener("click", () => {
     chrome.runtime.sendMessage({ type: "OPEN_PANEL" }).catch(() => {});
   });
@@ -94,7 +95,7 @@ export function showPageFeedback(result, message, labels, expectedUrl) {
   close.className = "close";
   close.setAttribute("aria-label", labels.close);
   close.title = labels.close;
-  close.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m7 7 10 10M17 7 7 17"/></svg>';
+  close.innerHTML = '<svg class="icon" data-lucide="x" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg>';
   close.addEventListener("click", () => mount.remove());
   copy.append(brand, title, text, view);
   card.append(icon, copy, close);

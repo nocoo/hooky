@@ -35,9 +35,11 @@ The following checks require a person using Chrome's toolbar, menus, permission 
 - [ ] In the popup, check the compact template/parameter editor and collapsed request preview. Send, its busy state, and the persistent result must remain visible while long captures scroll independently. Verify result/receipt disclosures, failure feedback, explicit repeats, light/dark themes, keyboard focus, and reduced motion. The browser suite exercises a 380px-wide, at-most-480px-high layout with synthetic data, including native action popups opened through `OPEN_PANEL` without viewport emulation (empty, two-parameter and long-capture cases). Actual toolbar gesture and OS placement remain manual checks.
 - [ ] Check the three-part popup: a compact logo/name/settings header, independently scrolling content, and a footer containing the active button and send result. With no templates, retain the brand and setup action without blank feedback space. Loading failures show a distinct recovery task; retry must not send requests or modify templates. Body copy, fields and controls use 12px tokens; brand/task headings use 16px and metadata uses 11px. Existing session results remain accessible. Verify the active Chrome locale, pre-send validation, amber accepted/unconfirmed results, authorization guidance and the single explicit repeat action.
 
-Popup icons inline only selected Lucide paths (send-horizontal, loader-circle,
-circle-check, circle-alert, chevron-right), sourced from lucide-icons/lucide
-revision `500620a2e8123f8d1db191538886dc0c223f69a9`. Their license is shipped in
-`src/icons/LUCIDE-LICENSE`; no icon package or animation dependency is loaded.
+Popup, options and page-feedback icons inline complete selected Lucide SVGs,
+sourced from lucide-icons/lucide revision
+`500620a2e8123f8d1db191538886dc0c223f69a9`. Geometry and the 2px stroke match the
+upstream originals in `tests/fixtures/lucide/`; status variants use separate
+SVGs. The license ships in `src/icons/LUCIDE-LICENSE`. No icon package or
+animation dependency is loaded, and fixtures are excluded from the ZIP.
 
 HTTP response headers have a 20-second deadline; opted-in receipt reading then has its own 3-second budget. HTTP 2xx is evidence of a successful HTTP response. A configured business condition means only what the receiver promises. A lost response leaves the result unconfirmed; Hooky does not retry automatically. Durable storage and end-to-end idempotency still need receiver support.

@@ -148,7 +148,7 @@ function createParamRow(key = "", value = "", kind = "param") {
   const removeBtn = document.createElement("button");
   removeBtn.type = "button";
   removeBtn.className = "btn-remove";
-  removeBtn.textContent = "\u00d7";
+  removeBtn.innerHTML = '<svg class="icon" data-lucide="x" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg>';
   removeBtn.setAttribute("aria-label", t("removeParam"));
   removeBtn.addEventListener("click", () => {
     clearStatus();
@@ -349,7 +349,7 @@ function renderTemplateList(templates, activeId) {
 
   const newIcon = document.createElement("span");
   newIcon.className = "new-icon";
-  newIcon.textContent = "+";
+  newIcon.innerHTML = '<svg class="icon" data-lucide="plus" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M5 12h14" /><path d="M12 5v14" /></svg>';
 
   const newLabel = document.createElement("span");
   newLabel.textContent = t("newWebhook");
@@ -445,7 +445,7 @@ function renderRulesList(rules) {
 
   const newIcon = document.createElement("span");
   newIcon.className = "new-icon";
-  newIcon.textContent = "+";
+  newIcon.innerHTML = '<svg class="icon" data-lucide="plus" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M5 12h14" /><path d="M12 5v14" /></svg>';
 
   const newLabel = document.createElement("span");
   newLabel.textContent = t("addRule");
