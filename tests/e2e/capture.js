@@ -6,6 +6,7 @@ async function runCaptureScenarios({ browser, extensionId, port, requests, asser
   const extension = `chrome-extension://${extensionId}/`;
   const origin = `http://127.0.0.1:${port}`;
   const options = await browser.newPage();
+  await options.setViewport({ width: 800, height: 600 });
   await options.goto(extension + "src/options/options.html");
   await options.waitForSelector("#params-list .param-value");
   const permissions = await options.evaluate(async () => {

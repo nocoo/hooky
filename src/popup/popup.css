@@ -2,10 +2,10 @@ body {
   --space: 12px;
   --radius: 10px;
   width: 380px;
-  max-width: 100vw;
   background: var(--surface);
 }
-.container { max-height: min(540px, 100dvh); display: grid; grid-template-rows: auto minmax(0, 1fr) auto; overflow: hidden; }
+/* Chrome sizes action popups from their content, starting at a 25px viewport. */
+.container { max-height: 480px; display: grid; grid-template-rows: auto minmax(0, 1fr) auto; overflow: hidden; }
 .header { display: flex; align-items: center; justify-content: space-between; padding: 6px 16px; border-bottom: 1px solid var(--line); background: linear-gradient(110deg, var(--soft), var(--surface)); }
 .brand { gap: 7px; }
 .brand h1 { font-size: 16px; }
@@ -87,4 +87,3 @@ details[open] > summary > .disclosure-icon { transform: rotate(90deg); }
 details[open] > :not(summary) { animation: reveal .18s ease-out; }
 @keyframes reveal { from { opacity: 0; transform: translateY(3px); } to { opacity: 1; transform: none; } }
 @keyframes spin { to { transform: rotate(360deg); } }
-@media (max-height: 420px) { .result-detail-content, #duplicate-actions details { max-height: 64px; } }

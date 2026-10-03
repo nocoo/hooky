@@ -134,6 +134,7 @@ async function runTests() {
     browser = await puppeteer.launch({
       executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || undefined,
       headless: true,
+      defaultViewport: null,
       pipe: true,
       enableExtensions: true,
       args: [
@@ -152,6 +153,7 @@ async function runTests() {
     // --- Test Options Page ---
     console.log("\nTesting Options page...");
     const optionsPage = await browser.newPage();
+    await optionsPage.setViewport({ width: 800, height: 600 });
     await optionsPage.goto(
       `chrome-extension://${extensionId}/src/options/options.html`,
       { waitUntil: "domcontentloaded", timeout: TIMEOUT },
@@ -226,6 +228,7 @@ async function runTests() {
     // --- Test Popup Page ---
     console.log("\nTesting Popup page...");
     const popupPage = await browser.newPage();
+    await popupPage.setViewport({ width: 800, height: 600 });
     await popupPage.goto(
       `chrome-extension://${extensionId}/src/popup/popup.html`,
       { waitUntil: "domcontentloaded", timeout: TIMEOUT },
@@ -285,6 +288,7 @@ async function runTests() {
     // --- Test Rules UI in Options Page ---
     console.log("\nTesting Quick Send Rules...");
     const rulesPage = await browser.newPage();
+    await rulesPage.setViewport({ width: 800, height: 600 });
     await rulesPage.goto(
       `chrome-extension://${extensionId}/src/options/options.html`,
       { waitUntil: "domcontentloaded", timeout: TIMEOUT },

@@ -63,7 +63,6 @@ async function runPopupLayoutScenarios({ browser, extensionId, assert }) {
       assert(await visibleFlow(), `Popup: ${locale} labels and unconfirmed feedback fit without outer scrolling`);
     }
 
-    await page.setViewport({ width: 320, height: 400, deviceScaleFactor: 2 });
     await page.evaluate(() => {
       document.documentElement.dataset.theme = "dark";
       const row = document.querySelector(".param-item");
@@ -80,15 +79,15 @@ async function runPopupLayoutScenarios({ browser, extensionId, assert }) {
       document.getElementById("response-body").textContent = "Large receipt\n".repeat(200);
       document.querySelector(".editor-scroll").scrollTop = 99999;
     });
-    assert(await visibleFlow(), "Popup: Many long parameters and expanded receipts never push Send offscreen at 320 x 400");
+    assert(await visibleFlow(), "Popup: Many long parameters and expanded receipts never push Send offscreen at 380 x 540");
     assert(await page.$eval(".editor-scroll", (el) => el.scrollHeight > el.clientHeight && el.scrollTop > 0), "Popup: Only the editor scrolls for long captures");
-    await screenshot("narrow-expanded");
+    await screenshot("expanded");
     await page.click("#send-btn");
     await page.evaluate(() => globalThis.finishPopupSend({ id: "layout-error", name: "Reading list", startedAt: Date.now(), state: "failed", ok: false, status: 503 }));
     await page.waitForFunction(() => !document.getElementById("send-btn").disabled);
     assert(await visibleFlow(), "Popup: Failed send remains visible after scrolling the editor");
     assert(await page.$eval("#last-result", (el) => el.dataset.state === "failed"), "Popup: Failure uses an explicit error state");
-    await screenshot("narrow-error");
+    await screenshot("error");
     await page.emulateMediaFeatures([{ name: "prefers-reduced-motion", value: "reduce" }]);
     await page.click("#send-btn");
     assert(await page.$eval(".sending-icon", (el) => getComputedStyle(el).animationName === "none"), "Popup: Reduced motion disables the spinner animation");
@@ -96,8 +95,52 @@ async function runPopupLayoutScenarios({ browser, extensionId, assert }) {
     await page.waitForFunction(() => !document.getElementById("send-btn").disabled);
     assert(await page.$eval("#toast", (el) => el.classList.contains("error") && getComputedStyle(el).display !== "none"), "Popup: Transport failures remain visible without a stored result");
     assert(errors.length === 0, "Popup: Layout and state scenarios have no browser errors");
+    await page.goto(`chrome-extension://${extensionId}/src/options/options.html`);
+    for (const count of [0, 2, 20]) {
+      await page.evaluate(async (count) => {
+        await chrome.storage.session.clear();
+        await chrome.storage.local.set({ hooky: {
+          theme: "dark", templates: count ? [{ id: "native", name: "Reading list", method: "POST", url: "https://example.invalid/hook", params: Array.from({ length: count }, (_, index) => ({ key: "note" + index, value: "Captured page title and content" })) }] : [],
+        } });
+        const opened = await chrome.runtime.sendMessage({ type: "OPEN_PANEL" });
+        if (!opened.ok) throw new Error("Native popup did not open");
+      }, count);
+      const target = await browser.waitForTarget((target) => target.url() === url);
+      const popup = await target.asPage();
+      try {
+        await popup.waitForFunction((count) => count ? !document.getElementById("send-btn").hidden : document.getElementById("no-config").style.display === "block", {}, count);
+        await popup.waitForFunction(() => innerWidth === 380 && innerHeight >= 200 && innerHeight <= 480);
+        const sizes = await popup.evaluate(() => ({ width: innerWidth, height: innerHeight }));
+        assert(sizes.width === 380, `Native popup: ${count} parameters open at 380px without viewport emulation`);
+        if (count) {
+          await popup.evaluate(() => {
+            chrome.runtime.sendMessage = () => new Promise((resolve) => { globalThis.finishPopupSend = resolve; });
+          });
+          const visibleNativeFlow = () => popup.evaluate(() => {
+            const button = document.getElementById("send-btn").getBoundingClientRect();
+            const status = document.querySelector(".result-status").getBoundingClientRect();
+            return button.top >= 0 && button.bottom <= innerHeight + 1 && status.bottom <= innerHeight + 1
+              && document.documentElement.scrollWidth <= innerWidth && document.documentElement.scrollHeight <= innerHeight + 1;
+          });
+          await popup.click("#send-btn");
+          assert(await visibleNativeFlow(), "Native popup: Pending Send remains on screen");
+          await popup.evaluate(() => globalThis.finishPopupSend({ id: "native-result", name: "Reading list", state: "success", ok: true, status: 201, startedAt: Date.now() }));
+          await popup.waitForFunction(() => !document.getElementById("send-btn").disabled);
+          await popup.waitForFunction(() => document.querySelector(".container").getBoundingClientRect().height <= innerHeight + 1);
+          assert(await visibleNativeFlow(), "Native popup: Send and completed result fit the actual action viewport");
+          await popup.click("#result-details > summary");
+          await popup.waitForFunction(() => document.querySelector(".container").getBoundingClientRect().height <= innerHeight + 1);
+          assert(await visibleNativeFlow(), "Native popup: Expanding result details grows the popup without clipping Send");
+          if (count === 20) assert(await popup.$eval(".editor-scroll", (el) => el.scrollHeight > el.clientHeight), "Native popup: Long captures scroll within the editor");
+          await popup.click("#result-details > summary");
+        }
+        await popup.screenshot({ path: path.resolve(`dist/verification/popup-native-${count}.png`) });
+      } finally {
+        await popup.close();
+      }
+    }
   } finally {
-    await page.close();
+    if (!page.isClosed()) await page.close();
   }
 }
 

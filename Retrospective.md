@@ -22,3 +22,20 @@ changes to the presentation contract: assert both that the result is visible and
 that a second notification is absent. Add viewport-bound checks for pending,
 success, failure, long captures and expanded details rather than relying on DOM
 presence as evidence that the primary action remains on screen.
+
+## 2026-10-04: Viewport-relative bounds collapsed the native action popup
+
+The popup polish added `max-width: 100vw` to its fixed-width body and capped the
+container at `100dvh`. Chrome starts an action popup with a 25 x 25 viewport and
+then sizes it from its content. Both bounds therefore clamped the content to the
+initial viewport, preventing the native window from growing. The user received
+an unusable sliver despite passing layout checks in ordinary tabs whose viewport
+had already been assigned. The delivered unpacked package contained this bug.
+
+Remove viewport-dependent root bounds: use a 380px width and 480px content-height
+cap, allowing Chrome to determine the initial popup size. The former 540px cap
+also exceeded the 498px available in the test browser's 600px window. Replace the artificial
+narrow-tab assumption with native action-popup tests through the production
+`OPEN_PANEL` handler, with no viewport emulation. Cover empty configuration,
+ordinary and long captures, pending sends, completed results and expanding
+details. A tab-rendered screenshot cannot prove extension popup sizing.
