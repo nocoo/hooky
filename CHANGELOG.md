@@ -5,6 +5,29 @@ All notable changes to Hooky will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.2.0] - 2026-10-04
+
+### Added
+
+- A task-focused popup with a compact brand/version header, independently scrolling content, and a footer that keeps the active action and send result visible.
+- Dedicated setup and load-recovery states, pre-send template validation with an edit action, and a focused duplicate-capture review with an explicit Send anyway action.
+- Native action-popup regression coverage, computed typography checks, and exact comparisons against the copied Lucide SVG originals.
+
+### Changed
+
+- Use only 10px, 12px and 14px typography across popup, settings and page feedback. Buttons use uppercase labels and official Lucide icons without adding a runtime dependency.
+- Keep fresh send panels free of historical results. Latest send, notifications and page feedback explicitly open the retained-result view; session history is preserved.
+- Distinguish HTTP 202 and unconfirmed outcomes with warning colors, keep response details collapsible, and provide authorization guidance without automatic retries.
+- Simplify settings branding, move its version below the hexly.ai signature, and show the runtime version beside the popup title.
+- Update jsdom to 30.1.1, Puppeteer to 25.12.0, Vitest and coverage-v8 to 5.0.3, and the brace-expansion/undici overrides to 5.0.12/8.10.2.
+
+### Fixed
+
+- Remove viewport-dependent bounds that trapped native Chrome action popups at their initial 25px size.
+- Override Chrome's injected 75% body font so form labels and input values consistently render at 12px.
+- Avoid duplicate success notifications, raw transport diagnostics, and unrelated session updates replacing a fresh popup's result.
+- Preserve SVG icons through translation updates and switch complete icons for busy and result states.
+
 ## [2.1.1] - 2026-09-22
 
 ### Fixed
@@ -124,6 +147,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Version display in sidebar header from `manifest.json`
 - Privacy policy documenting all permission usage
 
+[2.2.0]: https://github.com/nocoo/hooky/releases/tag/v2.2.0
+[2.1.1]: https://github.com/nocoo/hooky/releases/tag/v2.1.1
 [1.1.1]: https://github.com/nocoo/hooky/releases/tag/v1.1.1
 [1.1.0]: https://github.com/nocoo/hooky/releases/tag/v1.1.0
 [1.0.0]: https://github.com/nocoo/hooky/releases/tag/v1.0.0

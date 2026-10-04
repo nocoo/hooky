@@ -1,6 +1,6 @@
 # Privacy Policy — Hooky
 
-Last updated: September 16, 2026 · Version 2.1.1
+Last updated: October 4, 2026 · v2.2.0
 
 ## Purpose
 
@@ -11,6 +11,8 @@ Hooky sends user-configured webhook requests using context from the current brow
 Webhook templates, endpoint URLs, parameter values, custom request headers, rules, and theme preferences are stored in `chrome.storage.local`. They are not synced by Hooky and are removed when the extension is uninstalled. Template values may contain information you enter, including credentials; local extension storage is not a password vault. Header values are hidden until explicitly revealed in settings and are always masked in request previews. Manual edits in the send panel are used for that send without changing the saved template.
 
 `chrome.storage.session` holds the latest send summary globally and for each sending tab: a random send ID, template ID and name, tab ID, entry point, timestamps, and request outcome. By default it does not contain request bodies, page selections, credentials, or response bodies. Chrome clears this session data on browser restart or extension reload, update, or disable. Background worker restarts preserve the summary; interrupted sends become unconfirmed and are not replayed.
+
+A fresh send panel does not display earlier session results. Explicitly opening **Latest send**, a desktop notification, or page-feedback details can display the retained result. This presentation distinction does not delete history or change the storage limits.
 
 Response reading is off by default and enabled separately for each template. When enabled, Hooky reads at most 8 KiB of response bytes for up to 3 seconds and retains the resulting text with the session summary. Receipts are shown as plain text only inside the extension, never inserted into page feedback. A receiver may include sensitive data in its response, including echoed request content. Empty, invalid, unsupported, truncated, or unavailable response bodies do not change the HTTP outcome.
 
