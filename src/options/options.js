@@ -369,6 +369,7 @@ function renderTemplateList(templates, activeId) {
     nameSpan.className = "template-name";
     nameSpan.textContent = tpl.name || t("defaultTemplateName");
 
+    li.insertAdjacentHTML("beforeend", '<svg class="icon" data-lucide="link" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" /><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" /></svg>');
     li.appendChild(nameSpan);
     li.addEventListener("click", () => selectTemplate(tpl.id));
     templateListEl.appendChild(li);
@@ -481,6 +482,7 @@ function renderRulesList(rules) {
     summary.appendChild(opSpan);
     summary.appendChild(valSpan);
 
+    li.insertAdjacentHTML("beforeend", '<svg class="icon" data-lucide="zap" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M15.914 4a1.5 1.5 0 00-2.474-1.561l-9 9A1.5 1.5 0 005.5 14h4.002a.5.5 0 01.471.666L8.086 20a1.5 1.5 0 002.475 1.56l9-9A1.5 1.5 0 0018.5 10h-3.997a.5.5 0 01-.472-.667z" /></svg>');
     li.appendChild(summary);
     li.addEventListener("click", () => selectRule(rule.id));
 

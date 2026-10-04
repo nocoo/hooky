@@ -13,6 +13,9 @@
   --danger: light-dark(#b23d53, #f1a0ad);
   --shadow: 0 2px 4px #21122f03, 0 12px 36px #21122f06;
   --control-height: 36px;
+  --font-button: 14px;
+  --font-button-small: 13px;
+  --font-button-meta: 12px;
   font: 13px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   font-synthesis: none;
 }
@@ -22,7 +25,9 @@
 body { margin: 0; color: var(--text); background: var(--page); }
 button, input, select, textarea { font: inherit; }
 button, a, input, select, textarea, summary { -webkit-tap-highlight-color: transparent; }
-button { cursor: pointer; border: 0; }
+button { cursor: pointer; border: 0; font-size: var(--font-button); text-transform: uppercase; }
+button > span { min-width: 0; overflow-wrap: anywhere; }
+[role="button"] { text-transform: uppercase; }
 button, input, select, textarea { color: inherit; }
 input, select, textarea { width: 100%; min-width: 0; padding: 7px 10px; border: 1px solid var(--line); border-radius: 7px; background: var(--surface); outline: none; }
 input, select { height: var(--control-height); }

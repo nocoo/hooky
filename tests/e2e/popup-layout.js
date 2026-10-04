@@ -40,6 +40,8 @@ async function runPopupLayoutScenarios({ browser, extensionId, assert }) {
     });
     assert(await page.$eval(".container", (el) => el.getBoundingClientRect().height < 400), "Popup: Two-parameter flow fits below 400 CSS pixels");
     assert(await visibleFlow(), "Popup: No outer scrolling for the compact flow");
+    assert(await page.$$eval("button", (buttons) => buttons.every((el) => getComputedStyle(el).fontSize === "13px" && getComputedStyle(el).textTransform === "uppercase" && el.querySelector("svg[data-lucide]"))), "Popup: Every button uses 13px uppercase text and a Lucide icon");
+    assert(await page.$eval(".param-item textarea", (el) => getComputedStyle(el).fontSize === "12px"), "Popup: Button typography does not change parameter text");
     assert(await page.evaluate(() => {
       const version = document.getElementById("version");
       const title = document.querySelector(".brand").getBoundingClientRect();
@@ -147,7 +149,7 @@ async function runPopupLayoutScenarios({ browser, extensionId, assert }) {
     await page.reload();
     await page.waitForFunction(() => document.querySelector(".container").dataset.view === "error");
     assert(await page.evaluate(() => !document.getElementById("retry-load").hidden && document.getElementById("send-btn").hidden && !document.body.textContent.includes("private diagnostic")), "Popup: Loading failure keeps only the footer recovery action without technical data");
-    assert(await page.$eval("#retry-load", (el) => getComputedStyle(el).fontSize === "12px"), "Popup: Recovery action uses the shared 12px control token");
+    assert(await page.$eval("#retry-load", (el) => getComputedStyle(el).fontSize === "13px"), "Popup: Recovery action uses the shared 13px button token");
     await screenshot("startup-error");
     await page.removeScriptToEvaluateOnNewDocument(failureInjection.identifier);
     await page.reload();

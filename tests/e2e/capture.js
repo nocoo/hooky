@@ -45,6 +45,9 @@ async function runCaptureScenarios({ browser, extensionId, port, requests, asser
   const settingsPreview = await options.$eval("#request-preview", (el) => el.textContent);
   assert(settingsPreview.includes("authorization: ••••") && !settingsPreview.includes("e2e-secret"), "Native settings preview masks authentication");
   await fs.mkdir(path.resolve("dist/verification"), { recursive: true });
+  assert(await options.$$eval("button, [role=button]", (buttons) => buttons.every((el) => el.querySelector("svg[data-lucide]"))), "Settings: Every action and sidebar item has an official Lucide icon");
+  assert(await options.evaluate(() => getComputedStyle(document.getElementById("save")).fontSize === "14px" && getComputedStyle(document.getElementById("save")).textTransform === "uppercase" && getComputedStyle(document.getElementById("add-param")).fontSize === "13px"), "Settings: Action text increases by 1px and uses uppercase styling");
+  assert(await options.$$eval("[data-variable]", (buttons) => buttons.every((el) => getComputedStyle(el).fontSize === "11px" && getComputedStyle(el).textTransform === "none" && el.textContent === el.dataset.variable)), "Settings: Variable insertions remain literal lowercase code at the increased size");
   assert(await options.evaluate(() => {
     const version = document.getElementById("version");
     const link = document.querySelector(".maker-link");
@@ -65,6 +68,7 @@ async function runCaptureScenarios({ browser, extensionId, port, requests, asser
       const note = document.querySelector(".sidebar-note");
       return getComputedStyle(note).display !== "none" && note.scrollWidth <= note.clientWidth && document.getElementById("version").getBoundingClientRect().height > 0;
     }), `Settings: Signature and version remain available at ${width}px`);
+    assert(await options.$$eval("button, [role=button]", (buttons) => buttons.filter((el) => el.getBoundingClientRect().width > 0).every((el) => el.scrollWidth <= el.clientWidth + 1)), `Settings: Button icons and uppercase text fit at ${width}px`);
   }
   await options.setViewport({ width: 800, height: 600 });
   await options.screenshot({ path: path.resolve("dist/verification/options-capture.png"), fullPage: true });
@@ -119,6 +123,10 @@ async function runCaptureScenarios({ browser, extensionId, port, requests, asser
     const icons = [...document.getElementById("__hooky_send_feedback").shadowRoot.querySelectorAll(".state-icon svg")];
     return icons.filter((el) => getComputedStyle(el).display !== "none").map((el) => el.dataset.lucide).join() === "circle-check" && icons.every((el) => getComputedStyle(el).strokeWidth === "2px");
   }), "Page feedback shows one complete official Lucide status icon");
+  assert(await article.evaluate(() => {
+    const button = document.getElementById("__hooky_send_feedback").shadowRoot.querySelector(".view");
+    return getComputedStyle(button).fontSize === "13px" && getComputedStyle(button).textTransform === "uppercase" && !!button.querySelector("svg[data-lucide]");
+  }), "Page feedback action uses 13px uppercase text and its Lucide icon");
   assert(await worker.evaluate(async (tabId) => await chrome.action.getBadgeText({ tabId }) === "✓", tab.id), "Chrome retains the tab's success badge");
 
   await worker.evaluate(async ({ templateId }) => {

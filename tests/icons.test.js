@@ -2,6 +2,7 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import { showPageFeedback } from "../src/feedback.js";
+import { applyI18n } from "../src/i18n.js";
 
 function shape(element) {
   return {
@@ -25,6 +26,24 @@ function verifyIcons(markup) {
 }
 
 describe("official Lucide geometry", () => {
+  it.each(["src/popup/popup.html", "src/options/options.html"])("keeps icons on all buttons after translating %s", (file) => {
+    document.body.innerHTML = readFileSync(file, "utf8").split("<body>")[1].split("</body>")[0];
+    global.chrome = { i18n: { getMessage: (key) => key } };
+    try {
+      applyI18n();
+      for (const button of document.querySelectorAll("button, [role=button]")) {
+        expect(button.querySelector("svg[data-lucide]"), button.id || button.dataset.variable).not.toBeNull();
+        expect(button.hasAttribute("data-i18n")).toBe(false);
+      }
+      for (const button of document.querySelectorAll("[data-variable]")) {
+        expect(button.querySelector("span").textContent).toBe(button.dataset.variable);
+      }
+    } finally {
+      delete global.chrome;
+      document.body.replaceChildren();
+    }
+  });
+
   it.each(["src/popup/popup.html", "src/options/options.html", "src/options/options.js"])("copies complete official SVGs in %s", (file) => {
     const source = readFileSync(file, "utf8");
     verifyIcons([...source.matchAll(/<svg\b[^>]*>.*?<\/svg>/gs)].map(([svg]) => svg).join(""));

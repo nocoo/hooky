@@ -2,6 +2,7 @@
   --popup-width: 380px;
   --popup-max-height: 480px;
   --font-body: 12px;
+  --font-button: 13px;
   --font-meta: 11px;
   --font-title: 16px;
   --line-body: 18px;
@@ -45,7 +46,7 @@ body { width: var(--popup-width); background: var(--surface); }
 .task-state h1 { font-size: var(--font-title); line-height: 22px; letter-spacing: -.02em; }
 .task-copy { margin-top: var(--space-3); color: var(--muted); font-size: var(--font-body); line-height: var(--line-body); }
 .task-action { width: 100%; }
-.task-action .icon { margin-left: auto; }
+.task-action > .icon:last-child { margin-left: auto; }
 .task-loading { display: flex; align-items: center; gap: var(--space-2); padding: var(--space-3) 0; color: var(--muted); }
 .task-loading .icon { animation: spin 1s linear infinite; }
 .template-select label { font-size: var(--font-body); margin-bottom: var(--space-2); }
@@ -80,7 +81,7 @@ pre, code { font-size: var(--font-meta); line-height: var(--line-body); }
   border: 1px solid var(--action-border);
   background: var(--action-fill);
   box-shadow: var(--action-shadow);
-  font-size: var(--font-body);
+  font-size: var(--font-button);
   font-weight: 600;
   line-height: var(--line-body);
   transition: transform var(--motion-fast) ease, box-shadow var(--motion-fast) ease;
@@ -97,7 +98,7 @@ svg.icon { width: var(--icon-size); height: var(--icon-size); }
 .btn-send[aria-busy="true"] .sending-icon { display: block; animation: spin 1s linear infinite; }
 #pending-help { padding-top: var(--space-2); }
 .container[data-sending="true"] .feedback-slot { display: none; }
-.text-action { display: block; min-height: 28px; padding: var(--space-1) 0; color: var(--accent); font-size: var(--font-body); background: none; text-align: left; }
+.text-action { display: flex; align-items: center; gap: var(--space-2); min-height: 28px; padding: var(--space-1) 0; color: var(--accent); font-size: var(--font-button); background: none; text-align: left; }
 .text-action:hover { text-decoration: underline; text-underline-offset: 3px; }
 #back-to-capture { margin: var(--space-1) auto 0; }
 .feedback-slot { padding-top: var(--space-3); }
