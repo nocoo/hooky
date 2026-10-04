@@ -44,8 +44,7 @@ code { font-size: 11px; }
 svg.icon { display: block; width: 16px; height: 16px; flex-shrink: 0; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 .brand { display: flex; align-items: center; gap: 9px; min-width: 0; }
 .brand img { width: 28px; height: 28px; object-fit: contain; }
-.brand small { display: block; font-size: 10px; color: var(--muted); letter-spacing: .02em; }
-.version { color: var(--muted); font: 10px ui-monospace, monospace; font-weight: 400; }
+.version { color: var(--muted); font: 11px/16px ui-monospace, monospace; font-weight: 400; white-space: nowrap; }
 .eyebrow { color: var(--muted); font-size: 10px; font-weight: 600; letter-spacing: .09em; text-transform: uppercase; }
 .muted, .hint { color: var(--muted); }
 .hint { font-size: 11px; line-height: 1.65; }
@@ -57,10 +56,6 @@ svg.icon { display: block; width: 16px; height: 16px; flex-shrink: 0; fill: none
 .btn-danger { color: var(--danger); background: transparent; }
 .btn-danger:hover { background: color-mix(in srgb, var(--danger) 8%, transparent); }
 .btn-icon { width: 32px; height: 32px; min-height: 32px; padding: 0; background: transparent; color: var(--muted); }
-.brand-footer { display: flex; justify-content: space-between; align-items: center; gap: 10px; font-size: 10px; color: var(--muted); }
-.brand-footer a { color: inherit; text-decoration: none; }
-.brand-footer a:hover { color: var(--accent); }
-.dot { display: inline-block; width: 5px; height: 5px; background: var(--accent); border-radius: 50%; margin-right: 5px; vertical-align: 1px; }
 .card { border: 1px solid var(--line); border-radius: 10px; background: var(--surface); }
 .card-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
 .card-heading .step { font: 10px ui-monospace, monospace; color: var(--accent); margin-right: 9px; }

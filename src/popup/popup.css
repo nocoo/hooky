@@ -31,6 +31,8 @@ body { width: var(--popup-width); background: var(--surface); }
 /* Chrome sizes action popups from their content, starting at a 25px viewport. */
 .container { max-height: var(--popup-max-height); display: grid; grid-template-rows: auto minmax(0, 1fr) auto; overflow: hidden; background: radial-gradient(ellipse at 0 0, var(--soft), transparent 60%); }
 .popup-header { display: flex; align-items: center; justify-content: space-between; padding: var(--space-3) var(--space-4) var(--space-2); gap: var(--space-2); }
+.popup-identity { display: flex; align-items: center; gap: var(--space-2); min-width: 0; }
+.popup-identity .version { padding: 2px var(--space-1); border: 1px solid var(--line); border-radius: var(--space-1); background: var(--soft); font-size: var(--font-meta); line-height: 16px; }
 .brand { gap: var(--space-2); }
 .brand img { width: 26px; height: 26px; }
 .brand strong { font-size: var(--font-title); line-height: 22px; letter-spacing: -.03em; }

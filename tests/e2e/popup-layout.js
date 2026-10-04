@@ -40,6 +40,12 @@ async function runPopupLayoutScenarios({ browser, extensionId, assert }) {
     });
     assert(await page.$eval(".container", (el) => el.getBoundingClientRect().height < 400), "Popup: Two-parameter flow fits below 400 CSS pixels");
     assert(await visibleFlow(), "Popup: No outer scrolling for the compact flow");
+    assert(await page.evaluate(() => {
+      const version = document.getElementById("version");
+      const title = document.querySelector(".brand").getBoundingClientRect();
+      const badge = version.getBoundingClientRect();
+      return version.textContent === "v" + chrome.runtime.getManifest().version && badge.left >= title.right && badge.bottom <= title.bottom + 1;
+    }), "Popup: Manifest version sits beside the title without adding a row");
     assert(await page.$eval('#settings-btn [data-lucide="settings"]', (el) => getComputedStyle(el).strokeWidth === "2px" && el.getAttribute("viewBox") === "0 0 24 24"), "Popup: Official Lucide gear retains its viewBox and 2px stroke");
     await screenshot("dark-ready");
     await page.click("#send-btn");
@@ -174,6 +180,11 @@ async function runPopupLayoutScenarios({ browser, extensionId, assert }) {
         await popup.waitForFunction(() => innerWidth === 380 && innerHeight >= 160 && innerHeight <= 480);
         const sizes = await popup.evaluate(() => ({ width: innerWidth, height: innerHeight }));
         assert(sizes.width === 380, `Native popup: ${count} parameters open at 380px without viewport emulation`);
+        assert(await popup.evaluate(() => {
+          const version = document.getElementById("version");
+          const badge = version.getBoundingClientRect();
+          return version.textContent === "v" + chrome.runtime.getManifest().version && badge.right < innerWidth && badge.height > 0;
+        }), "Native popup: Runtime version remains visible in the header");
         assert(await popup.$eval("#last-result", (el) => el.hidden), "Native popup: Ordinary opening does not display retained results");
         if (!count) {
           assert(sizes.height <= 240, "Native popup: Branded setup and footer action fit within 240px");

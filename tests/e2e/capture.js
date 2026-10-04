@@ -45,6 +45,28 @@ async function runCaptureScenarios({ browser, extensionId, port, requests, asser
   const settingsPreview = await options.$eval("#request-preview", (el) => el.textContent);
   assert(settingsPreview.includes("authorization: ••••") && !settingsPreview.includes("e2e-secret"), "Native settings preview masks authentication");
   await fs.mkdir(path.resolve("dist/verification"), { recursive: true });
+  assert(await options.evaluate(() => {
+    const version = document.getElementById("version");
+    const link = document.querySelector(".maker-link");
+    return version.textContent === "v" + chrome.runtime.getManifest().version
+      && version.getBoundingClientRect().top >= link.getBoundingClientRect().bottom
+      && link.href === "https://hexly.ai/" && link.rel.includes("noopener")
+      && !document.querySelector('[data-i18n="localSettings"], [data-i18n="productTagline"]');
+  }), "Settings: Decorated maker link and runtime version replace redundant slogans");
+  for (const theme of ["light", "dark"]) {
+    await options.evaluate((theme) => { document.documentElement.dataset.theme = theme; }, theme);
+    await options.setViewport({ width: 1440, height: 1000 });
+    await options.$eval(".sidebar-note", (el) => el.scrollIntoView({ block: "center" }));
+    await (await options.$(".sidebar-note")).screenshot({ path: path.resolve(`dist/verification/settings-signature-${theme}.png`) });
+  }
+  for (const width of [600, 390]) {
+    await options.setViewport({ width, height: 800 });
+    assert(await options.evaluate(() => {
+      const note = document.querySelector(".sidebar-note");
+      return getComputedStyle(note).display !== "none" && note.scrollWidth <= note.clientWidth && document.getElementById("version").getBoundingClientRect().height > 0;
+    }), `Settings: Signature and version remain available at ${width}px`);
+  }
+  await options.setViewport({ width: 800, height: 600 });
   await options.screenshot({ path: path.resolve("dist/verification/options-capture.png"), fullPage: true });
   await options.close();
 

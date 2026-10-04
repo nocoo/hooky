@@ -82,7 +82,7 @@ Uses `chrome.scripting.executeScript()` to inject `extractPageContext()` from `s
 
 ### Version Source of Truth
 
-`manifest.json` → `"version"` field. Displayed in sidebar header via `chrome.runtime.getManifest().version`.
+`manifest.json` → `"version"` field. Displayed below the options sidebar signature and beside the popup title via `chrome.runtime.getManifest().version`.
 
 ### Release Checklist
 

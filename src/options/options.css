@@ -23,9 +23,15 @@ body { padding: 36px 24px; }
 .template-name, .rule-summary { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .rule-field, .rule-operator { font-size: 10px; }
 .sidebar-panel li.disabled { opacity: .5; }
-.sidebar-note { margin-top: auto; padding: 28px 10px 0; }
-.sidebar-note p { color: var(--muted); font-size: 11px; line-height: 1.7; margin-bottom: 14px; }
-.sidebar-note a { color: var(--muted); text-decoration: none; font-size: 10px; }
+.sidebar-note { margin-top: auto; padding-top: 24px; }
+.maker-link { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 12px; border: 1px solid var(--line); border-radius: 10px; background: linear-gradient(120deg, var(--surface), color-mix(in srgb, var(--accent) 6%, var(--surface))); color: var(--accent); text-decoration: none; transition: border-color .16s, box-shadow .16s; }
+.maker-copy { display: grid; gap: 2px; }
+.maker-copy small { font-size: 11px; line-height: 16px; color: var(--muted); }
+.maker-copy strong { font-size: 14px; line-height: 20px; font-weight: 650; letter-spacing: -.03em; }
+.maker-link .icon { transition: transform .16s; }
+.maker-link:hover { border-color: var(--accent); box-shadow: var(--shadow); }
+.maker-link:hover .icon { transform: translate(1px, -1px); }
+.sidebar-note .version { display: block; padding: 8px 12px 0; }
 .editor { min-width: 0; display: flex; flex-direction: column; }
 .editor-header { min-height: 81px; display: flex; align-items: center; justify-content: space-between; padding: 18px 26px; border-bottom: 1px solid var(--line); gap: 16px; }
 .editor-header .eyebrow { margin-bottom: 3px; }
@@ -85,8 +91,8 @@ input[type="checkbox"] { width: 18px; height: 18px; min-height: 18px; flex: 0 0 
 .no-items { color: var(--muted); padding-top: 20px; }
 .help-card { margin-top: 22px; padding: 16px; }
 @media (max-width: 1040px) { .editor-columns { grid-template-columns: minmax(0, 1fr); } .editor-aside { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; } .editor-aside .card + .card { margin-top: 0; } }
-@media (max-width: 680px) { body { padding: 0; } .layout { grid-template-columns: 155px minmax(0, 1fr); min-height: 100vh; border: 0; border-radius: 0; } .sidebar { padding-inline: 7px; } .sidebar-header .version { display: none; } .brand small { font-size: 9px; } .sidebar-nav-btn { padding-inline: 7px; gap: 6px; } .template-list, .sidebar-list { margin-left: 14px; padding-left: 7px; } .editor-header, .editor-body, .editor-actions { padding: 16px; } .editor-aside, .field-grid, .setting-row { grid-template-columns: 1fr; } .setting-row { gap: 8px; } .editor-header .badge { display: none; } }
-@media (max-width: 420px) { .layout { grid-template-columns: minmax(0, 1fr); } .sidebar { border-right: 0; border-bottom: 1px solid var(--line); } .sidebar-note { display: none; } .sidebar-header { min-height: 62px; } .sidebar-panel li { min-height: 32px; } .sidebar-panel-content > ul { max-height: 160px; overflow-y: auto; } }
+@media (max-width: 680px) { body { padding: 0; } .layout { grid-template-columns: 155px minmax(0, 1fr); min-height: 100vh; border: 0; border-radius: 0; } .sidebar { padding-inline: 7px; } .sidebar-nav-btn { padding-inline: 7px; gap: 6px; } .template-list, .sidebar-list { margin-left: 14px; padding-left: 7px; } .editor-header, .editor-body, .editor-actions { padding: 16px; } .editor-aside, .field-grid, .setting-row { grid-template-columns: 1fr; } .setting-row { gap: 8px; } .editor-header .badge { display: none; } }
+@media (max-width: 420px) { .layout { grid-template-columns: minmax(0, 1fr); } .sidebar { border-right: 0; border-bottom: 1px solid var(--line); } .sidebar-note { padding-top: 12px; } .sidebar-header { min-height: 62px; } .sidebar-panel li { min-height: 32px; } .sidebar-panel-content > ul { max-height: 160px; overflow-y: auto; } }
 .advanced-settings { border-top: 1px solid var(--line); padding-top: 16px; }
 .advanced-settings > summary { display: flex; align-items: center; gap: 10px; min-height: var(--control-height); padding: 8px 12px; border: 1px solid var(--line); border-radius: 8px; background: var(--soft); cursor: pointer; font-size: 12px; font-weight: 600; list-style: none; }
 .advanced-settings > summary::-webkit-details-marker { display: none; }

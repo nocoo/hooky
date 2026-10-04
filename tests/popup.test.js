@@ -17,6 +17,7 @@ function setupPopupDOM() {
 function setupChromeMock(storeData = {}) {
   global.chrome = {
     runtime: {
+      getManifest: vi.fn(() => ({ version: "1.0.0" })),
       openOptionsPage: vi.fn(),
       sendMessage: vi.fn().mockResolvedValue({ ok: true, status: 200 }),
     },
@@ -68,6 +69,17 @@ async function setupPageContextMock(contextData) {
 }
 
 describe("popup.js", () => {
+  it("displays the runtime version beside the popup title, including the empty state", async () => {
+    setupChromeMock({ hooky: { templates: [] } });
+    chrome.runtime.getManifest.mockReturnValue({ version: "7.8.9" });
+    await import("../src/popup/popup.js");
+    await vi.waitFor(() => expect(document.getElementById("version").textContent).toBe("v7.8.9"));
+    expect(document.getElementById("version").previousElementSibling.className).toBe("brand");
+    expect(document.getElementById("version").closest("header")).not.toBeNull();
+    expect(document.querySelector('[data-i18n="productTagline"]')).toBeNull();
+    expect(document.querySelector('[data-i18n="localSettings"]')).toBeNull();
+  });
+
   it("starts a fresh capture without reading or showing historical session results", async () => {
     setupChromeMock({ hooky: { templates: [{ id: "t1", name: "Notes", url: "https://example.com", method: "POST", params: [] }] } });
     const previous = { id: "old", name: "Old", startedAt: 10, ok: true, status: 201, state: "success", duplicateToken: "old-capture" };

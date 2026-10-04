@@ -260,6 +260,7 @@ async function sendWebhook() {
 async function init() {
   showView("loading");
   applyI18n();
+  document.getElementById("version").textContent = "v" + chrome.runtime.getManifest().version;
 
   const store = await loadStore();
   applyTheme(store.theme || "system");

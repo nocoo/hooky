@@ -97,6 +97,15 @@ describe("options.js", () => {
     await vi.waitFor(() => {
       expect(document.getElementById("version").textContent).toBe("v1.0.0");
     });
+    expect(document.getElementById("version").closest(".sidebar-note")).not.toBeNull();
+    expect(document.getElementById("version").previousElementSibling.className).toBe("maker-link");
+    expect(document.querySelector(".sidebar-header .version")).toBeNull();
+    expect(document.querySelector('[data-i18n="productTagline"]')).toBeNull();
+    expect(document.querySelector('[data-i18n="localSettings"]')).toBeNull();
+    const signature = document.querySelector(".maker-link");
+    expect(signature.getAttribute("href")).toBe("https://hexly.ai");
+    expect(signature.getAttribute("rel")).toBe("noopener noreferrer");
+    expect(signature.querySelector("strong").textContent).toBe("hexly.ai");
   });
 
   it("should render template list with new-webhook action item", async () => {
