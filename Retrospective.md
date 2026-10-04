@@ -78,3 +78,19 @@ subscribe to historical result display; its own send response populates the
 footer. The `?view=last` route keeps the existing session result and update flow
 for view-result menu items, notifications and page feedback. Keep session data
 intact and test both routes; hiding history is not permission to delete it.
+
+## 2026-10-04: Root font tokens did not override Chrome's body style
+
+Typography changes were checked on buttons and selected explicit labels, but
+not on inherited form values. The user reported mismatched labels and inputs.
+The real extension showed 12px labels beside 9.75px inputs: Chrome injects
+`body { font-size: 75% }`, shrinking the previous 13px root size. Setting the
+root to 12px alone still produced a 9px body, disproving the initial suspicion
+that the font shorthand itself caused the mismatch. CDP matched-style evidence
+identified the injected rule, and an explicit body declaration restored 12px.
+
+Use shared 10/12/14px tokens and explicitly size the extension body. Apply the
+same scale inside isolated page-feedback styles. Inspect computed typography
+across all text and form controls, including hidden panels, themes and native
+popup windows. Checking a few button sizes or CSS declarations cannot establish
+a consistent typography system.

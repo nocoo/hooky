@@ -1,5 +1,6 @@
 const fs = require("node:fs/promises");
 const path = require("node:path");
+const { typographyViolations } = require("./typography.js");
 
 /** Real Chrome boundary checks: extension messaging, service worker fetch, storage and page injection. */
 async function runCaptureScenarios({ browser, extensionId, port, requests, assert }) {
@@ -46,8 +47,13 @@ async function runCaptureScenarios({ browser, extensionId, port, requests, asser
   assert(settingsPreview.includes("authorization: ••••") && !settingsPreview.includes("e2e-secret"), "Native settings preview masks authentication");
   await fs.mkdir(path.resolve("dist/verification"), { recursive: true });
   assert(await options.$$eval("button, [role=button]", (buttons) => buttons.every((el) => el.querySelector("svg[data-lucide]"))), "Settings: Every action and sidebar item has an official Lucide icon");
-  assert(await options.evaluate(() => getComputedStyle(document.getElementById("save")).fontSize === "14px" && getComputedStyle(document.getElementById("save")).textTransform === "uppercase" && getComputedStyle(document.getElementById("add-param")).fontSize === "13px"), "Settings: Action text increases by 1px and uses uppercase styling");
-  assert(await options.$$eval("[data-variable]", (buttons) => buttons.every((el) => getComputedStyle(el).fontSize === "11px" && getComputedStyle(el).textTransform === "none" && el.textContent === el.dataset.variable)), "Settings: Variable insertions remain literal lowercase code at the increased size");
+  assert(await options.evaluate(() => getComputedStyle(document.getElementById("save")).fontSize === "14px" && getComputedStyle(document.getElementById("save")).textTransform === "uppercase" && getComputedStyle(document.getElementById("add-param")).fontSize === "12px"), "Settings: Primary actions use 14px and small actions use 12px uppercase text");
+  assert(await options.$$eval("[data-variable]", (buttons) => buttons.every((el) => getComputedStyle(el).fontSize === "10px" && getComputedStyle(el).textTransform === "none" && el.textContent === el.dataset.variable)), "Settings: Variable insertions retain literal case at the 10px technical size");
+  assert(await options.evaluate(() => ["template-name", "webhook-url", "http-method"].every((id) => {
+    const field = getComputedStyle(document.getElementById(id));
+    const label = getComputedStyle(document.querySelector(`label[for="${id}"]`));
+    return field.fontSize === "12px" && label.fontSize === "12px" && field.fontFamily === label.fontFamily && field.lineHeight === label.lineHeight;
+  })), "Settings: Name, URL and method labels match their input values at 12px, overriding Chrome's 75% body style");
   assert(await options.evaluate(() => {
     const version = document.getElementById("version");
     const link = document.querySelector(".maker-link");
@@ -59,6 +65,10 @@ async function runCaptureScenarios({ browser, extensionId, port, requests, asser
   for (const theme of ["light", "dark"]) {
     await options.evaluate((theme) => { document.documentElement.dataset.theme = theme; }, theme);
     await options.setViewport({ width: 1440, height: 1000 });
+    const violations = await options.evaluate(typographyViolations);
+    assert(violations.length === 0, `Settings: Only 10/12/14px computed text in ${theme} (${JSON.stringify(violations)})`);
+    await options.$eval(".editor-main", (el) => el.scrollIntoView({ block: "start" }));
+    await options.screenshot({ path: path.resolve(`dist/verification/settings-typography-${theme}.png`) });
     await options.$eval(".sidebar-note", (el) => el.scrollIntoView({ block: "center" }));
     await (await options.$(".sidebar-note")).screenshot({ path: path.resolve(`dist/verification/settings-signature-${theme}.png`) });
   }
@@ -69,6 +79,8 @@ async function runCaptureScenarios({ browser, extensionId, port, requests, asser
       return getComputedStyle(note).display !== "none" && note.scrollWidth <= note.clientWidth && document.getElementById("version").getBoundingClientRect().height > 0;
     }), `Settings: Signature and version remain available at ${width}px`);
     assert(await options.$$eval("button, [role=button]", (buttons) => buttons.filter((el) => el.getBoundingClientRect().width > 0).every((el) => el.scrollWidth <= el.clientWidth + 1)), `Settings: Button icons and uppercase text fit at ${width}px`);
+    const violations = await options.evaluate(typographyViolations);
+    assert(violations.length === 0, `Settings: Responsive typography uses only 10/12/14px at ${width}px (${JSON.stringify(violations)})`);
   }
   await options.setViewport({ width: 800, height: 600 });
   await options.screenshot({ path: path.resolve("dist/verification/options-capture.png"), fullPage: true });
@@ -125,8 +137,10 @@ async function runCaptureScenarios({ browser, extensionId, port, requests, asser
   }), "Page feedback shows one complete official Lucide status icon");
   assert(await article.evaluate(() => {
     const button = document.getElementById("__hooky_send_feedback").shadowRoot.querySelector(".view");
-    return getComputedStyle(button).fontSize === "13px" && getComputedStyle(button).textTransform === "uppercase" && !!button.querySelector("svg[data-lucide]");
-  }), "Page feedback action uses 13px uppercase text and its Lucide icon");
+    return getComputedStyle(button).fontSize === "12px" && getComputedStyle(button).textTransform === "uppercase" && !!button.querySelector("svg[data-lucide]");
+  }), "Page feedback action uses 12px uppercase text and its Lucide icon");
+  const feedbackTypography = await article.evaluate(typographyViolations, "#__hooky_send_feedback");
+  assert(feedbackTypography.length === 0, `Page feedback: Only 10/12/14px inside the isolated shadow root (${JSON.stringify(feedbackTypography)})`);
   assert(await worker.evaluate(async (tabId) => await chrome.action.getBadgeText({ tabId }) === "✓", tab.id), "Chrome retains the tab's success badge");
 
   await worker.evaluate(async ({ templateId }) => {

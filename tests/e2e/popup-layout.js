@@ -1,5 +1,6 @@
 const fs = require("node:fs/promises");
 const path = require("node:path");
+const { typographyViolations } = require("./typography.js");
 
 async function runPopupLayoutScenarios({ browser, extensionId, assert }) {
   const page = await browser.newPage();
@@ -40,7 +41,7 @@ async function runPopupLayoutScenarios({ browser, extensionId, assert }) {
     });
     assert(await page.$eval(".container", (el) => el.getBoundingClientRect().height < 400), "Popup: Two-parameter flow fits below 400 CSS pixels");
     assert(await visibleFlow(), "Popup: No outer scrolling for the compact flow");
-    assert(await page.$$eval("button", (buttons) => buttons.every((el) => getComputedStyle(el).fontSize === "13px" && getComputedStyle(el).textTransform === "uppercase" && el.querySelector("svg[data-lucide]"))), "Popup: Every button uses 13px uppercase text and a Lucide icon");
+    assert(await page.$$eval("button", (buttons) => buttons.every((el) => getComputedStyle(el).fontSize === (el.classList.contains("btn-primary") ? "14px" : "12px") && getComputedStyle(el).textTransform === "uppercase" && el.querySelector("svg[data-lucide]"))), "Popup: Primary and small actions use 14px/12px uppercase text with Lucide icons");
     assert(await page.$eval(".param-item textarea", (el) => getComputedStyle(el).fontSize === "12px"), "Popup: Button typography does not change parameter text");
     assert(await page.evaluate(() => {
       const version = document.getElementById("version");
@@ -62,6 +63,8 @@ async function runPopupLayoutScenarios({ browser, extensionId, assert }) {
     await screenshot("dark-success");
     await page.evaluate(() => { document.documentElement.dataset.theme = "light"; });
     await screenshot("light-success");
+    const violations = await page.evaluate(typographyViolations);
+    assert(violations.length === 0, `Popup: All text and controls use only 10/12/14px (${JSON.stringify(violations)})`);
 
     for (const locale of await fs.readdir(path.resolve("_locales"))) {
       const messages = JSON.parse(await fs.readFile(path.resolve("_locales", locale, "messages.json"), "utf8"));
@@ -149,7 +152,7 @@ async function runPopupLayoutScenarios({ browser, extensionId, assert }) {
     await page.reload();
     await page.waitForFunction(() => document.querySelector(".container").dataset.view === "error");
     assert(await page.evaluate(() => !document.getElementById("retry-load").hidden && document.getElementById("send-btn").hidden && !document.body.textContent.includes("private diagnostic")), "Popup: Loading failure keeps only the footer recovery action without technical data");
-    assert(await page.$eval("#retry-load", (el) => getComputedStyle(el).fontSize === "13px"), "Popup: Recovery action uses the shared 13px button token");
+    assert(await page.$eval("#retry-load", (el) => getComputedStyle(el).fontSize === "14px"), "Popup: Recovery action uses the shared 14px primary token");
     await screenshot("startup-error");
     await page.removeScriptToEvaluateOnNewDocument(failureInjection.identifier);
     await page.reload();
@@ -182,6 +185,8 @@ async function runPopupLayoutScenarios({ browser, extensionId, assert }) {
         await popup.waitForFunction(() => innerWidth === 380 && innerHeight >= 160 && innerHeight <= 480);
         const sizes = await popup.evaluate(() => ({ width: innerWidth, height: innerHeight }));
         assert(sizes.width === 380, `Native popup: ${count} parameters open at 380px without viewport emulation`);
+        const violations = await popup.evaluate(typographyViolations);
+        assert(violations.length === 0, `Native popup: Only 10/12/14px computed text for ${count} parameters (${JSON.stringify(violations)})`);
         assert(await popup.evaluate(() => {
           const version = document.getElementById("version");
           const badge = version.getBoundingClientRect();
