@@ -1,6 +1,6 @@
 # Privacy Policy — Hooky
 
-Last updated: October 4, 2026 · v2.2.0
+Last updated: October 15, 2026 · v2.2.1
 
 ## Purpose
 
