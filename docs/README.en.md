@@ -138,7 +138,7 @@ bunx puppeteer browsers install chrome
 
 - [Privacy policy](../PRIVACY.md)
 - [Changelog](../CHANGELOG.md)
-- [v2.2.1 testing and manual acceptance](../TESTING.md)
+- [v2.2.2 testing and manual acceptance](../TESTING.md)
 - [Request parameter handling](../src/params.js)
 - [Rule matching](../src/rules.js)
 
