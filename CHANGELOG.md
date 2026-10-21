@@ -5,6 +5,13 @@ All notable changes to Hooky will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.2.2] - 2026-10-21
+
+### Changed
+
+- Bump Vitest and `@vitest/coverage-v8` to 5.0.5, jsdom to 30.1.3, ESLint to 10.13.0, and Puppeteer to 25.15.0.
+- Override transitive `vite` to 7.3.7 for security fixes.
+
 ## [2.2.1] - 2026-10-15
 
 ### Changed
@@ -153,6 +160,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Version display in sidebar header from `manifest.json`
 - Privacy policy documenting all permission usage
 
+[2.2.2]: https://github.com/nocoo/hooky/releases/tag/v2.2.2
 [2.2.1]: https://github.com/nocoo/hooky/releases/tag/v2.2.1
 [2.2.0]: https://github.com/nocoo/hooky/releases/tag/v2.2.0
 [2.1.1]: https://github.com/nocoo/hooky/releases/tag/v2.1.1

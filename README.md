@@ -138,7 +138,7 @@ bunx puppeteer browsers install chrome
 
 - [隐私说明](PRIVACY.md)
 - [版本记录](CHANGELOG.md)
-- [v2.2.1 测试与人工验收](TESTING.md)
+- [v2.2.2 测试与人工验收](TESTING.md)
 - [请求参数处理](src/params.js)
 - [规则匹配](src/rules.js)
 
