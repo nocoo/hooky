@@ -12,7 +12,8 @@
     "test:e2e": "node tests/e2e/extension.e2e.js",
     "prepare": "husky",
     "materials": "python3 scripts/materials/build.py",
-    "materials:check": "node scripts/materials/check.cjs"
+    "materials:check": "node scripts/materials/check.cjs",
+    "test:l1-gate": "node scripts/verify-l1-gate.mjs"
   },
   "repository": {
     "type": "git",
