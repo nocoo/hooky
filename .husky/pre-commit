@@ -55,5 +55,31 @@ export XDG_STATE_HOME="$snapshot/.cache"
 PATH="$snapshot/node_modules/.bin:$PATH"
 cd "$snapshot"
 
-bun run test:coverage
-bun run lint
+if ! grep -Fq -- '--coverage' package.json; then
+	echo "pre-commit: test:coverage must run vitest with --coverage" >&2
+	exit 1
+fi
+
+run_l1() {
+	bun run test:coverage
+	if [ ! -d coverage ]; then
+		echo "pre-commit: coverage output directory missing" >&2
+		exit 1
+	fi
+	bun run lint
+}
+
+if [ -n "${HOOKY_L1_TIMEOUT_SEC:-}" ]; then
+	if command -v timeout >/dev/null 2>&1; then
+		timeout --preserve-status --signal=TERM "$HOOKY_L1_TIMEOUT_SEC" sh -ec '
+			bun run test:coverage
+			test -d coverage
+			bun run lint
+		'
+	else
+		echo "pre-commit: HOOKY_L1_TIMEOUT_SEC requires coreutils timeout" >&2
+		exit 1
+	fi
+else
+	run_l1
+fi
