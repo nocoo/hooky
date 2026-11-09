@@ -8,6 +8,19 @@ on:
   workflow_dispatch:
 
 jobs:
+  l1-gate-probe:
+    name: "L1: pre-commit rejection probes"
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+      - name: Verify pre-commit gate scenarios
+        run: bun run test:l1-gate
+
   quality:
     uses: nocoo/base-ci/.github/workflows/quality.yml@ac635753a869cb85fad1f52aae4ccbd6119f3cae # main 2026-10-22
     with:
