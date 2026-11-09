@@ -45,6 +45,7 @@ Run from root. Dev means load this repository unpacked at `chrome://extensions/`
 bun install --frozen-lockfile
 bun run lint
 bun run test:coverage
+bun run test:l1-gate
 bun run build
 bunx puppeteer browsers install chrome
 bun run test:e2e
@@ -59,7 +60,7 @@ Set `PUPPETEER_EXECUTABLE_PATH` only when selecting an installed Chrome. `bun ru
 
 | Piece | Requirement and current reality | Status | Evidence |
 | --- | --- | --- | --- |
-| L1 (incl. former G1 static) | Core, UI and extension source at four-metric 95%; ESLint with zero errors/warnings | planned | Installed pre-commit and CI already check the Git index snapshot with coverage and lint at the 95% floors (Vitest config; ESLint via `lint`). Full unified L1 stays planned: <30s timing measurement and isolated rejection proof remain unverified |
+| L1 (incl. former G1 static) | Core, UI and extension source at four-metric 95%; ESLint with zero errors/warnings; index-snapshot pre-commit; rejection probes in CI | enforced | Husky→`git checkout-index` snapshot→`bun run test:coverage` (Vitest v8, 95%×4)→`bun run lint` (`eslint --max-warnings=0`). Snapshot must keep `test:coverage` with `--coverage` and emit `coverage/`. Optional `HOOKY_L1_TIMEOUT_SEC` bounds the gate (GNU `timeout`). Isolation: `bun run test:l1-gate` (`scripts/verify-l1-gate.mjs`). Typecheck: **N/A** — pure JS, no tsconfig; exploratory `tsc --checkJs --strict` on `src/` surfaced hundreds of DOM/`chrome` errors without dedicated typings, so cost outweighs value vs existing lint + UT. Last full snapshot gate on main worktree: **99.46 / 97.81 / 99.12 / 99.84** coverage, **~9.3s** wall (warm `node_modules`) |
 | L2 | Real extension-to-HTTP protocol/method combinations | planned | Puppeteer local receiver covers flows; full method/error matrix is not a gate |
 | L3 | Popup/options/context-menu/Quick Send journeys | manual | `test:e2e`, [acceptance checklist](TESTING.md); absent from hooks/CI |
 | G2 | Required dependency and secret scanning | enforced | Shared quality CI runs OSV + gitleaks; local hooks omit security |
@@ -68,6 +69,14 @@ Set `PUPPETEER_EXECUTABLE_PATH` only when selecting an installed Chrome. `bun ru
 | Materials | Versioned outputs and actual manual acceptance | manual | `materials:check`, TESTING.md |
 
 Current pre-commit checks the Git index snapshot with coverage and lint. Pre-push builds and checks tests and lint on the working tree. Native coverage floors remain 95% for statements, branches, functions, and lines. Target: check-only index-snapshot unified L1 (types where applicable, check-only lint, coverage) <30s and stdin-ref L2/G2 <3min; missing scanners must fail. Never bypass commit/branch-push hooks.
+
+**L1 pre-commit (index snapshot)** — sequential, check-only, non-zero exit blocks commit:
+
+1. Materialise staged tree (`git checkout-index --all`), symlink worktree `node_modules` (runner caches under snapshot `.cache/`).
+2. Refuse when `bun`/`git`/`node_modules` missing; staged `package.json`/`bun.lock` must match worktree copies.
+3. `bun run test:coverage` then `bun run lint`; staged `package.json` must define `--coverage`; `coverage/` must exist after tests.
+
+**L1 gate self-test** (`bun run test:l1-gate`, CI job `l1-gate-probe`) proves rejection for: healthy pass; UT failure; coverage below floor (total and single-metric); ESLint error; **ESLint warning only** (`--max-warnings=0`); `.only`/`.skip`/empty suite; staged bad with unstaged fix; `HOOKY_L1_TIMEOUT_SEC` overrun; SIGINT; missing `bun`; `test:coverage` without `--coverage` (no coverage report path). Probes use disposable repos and leave the real index untouched.
 
 ## Resources / Isolation
 
