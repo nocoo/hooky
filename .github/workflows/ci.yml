@@ -46,7 +46,7 @@ jobs:
       l3-browser: ""
       l3-prepare-command: |
         bun run build
-        bunx puppeteer browsers install chrome --install-deps
+        bunx puppeteer browsers install chrome
       l3-command: bun run test:e2e
       env-json: '{"CI": "true"}'
       l3-artifact-name: browser-evidence
