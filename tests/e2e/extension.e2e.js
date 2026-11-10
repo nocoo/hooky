@@ -142,6 +142,9 @@ async function runTests() {
         "--lang=en-US",
         "--no-first-run",
         "--disable-default-apps",
+        ...(process.env.CI
+          ? ["--no-sandbox", "--disable-setuid-sandbox", "--disable-dev-shm-usage"]
+          : []),
       ],
     });
 
