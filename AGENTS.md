@@ -56,19 +56,24 @@ Set `PUPPETEER_EXECUTABLE_PATH` only when selecting an installed Chrome. `bun ru
 
 ## Verification
 
-6DQ = L1/L2/L3 + G2 + D1; the former G1 dimension was merged into L1 on 2026-09-21. Status: `enforced`, `planned`, `manual`, `N/A`. L1 statements/branches/functions/lines each ≥95% plus check-only lint with zero errors/warnings; the JavaScript-only source keeps the TypeScript lane N/A. Vitest rejects focused tests, skipped or todo tests, and empty runs.
+Quality follows `system1-quality` (v1.3.0) with 12 canonical slots (`impl`, `todo`, `na`) and `nocoo/base-ci` v2026.15 (`777bbe4f9bacab8a91d8c01974480a6ee23d28e0`) in native mode (`quality-slots.yml`).
 
-| Piece | Requirement and current reality | Status | Evidence |
+| Slot | Requirement and current reality | Status | Evidence |
 | --- | --- | --- | --- |
-| L1 (incl. former G1 static) | Core, UI and extension source at four-metric 95%; ESLint with zero errors/warnings; index-snapshot pre-commit; rejection probes in CI | enforced | Husky→`git checkout-index` snapshot→`bun run test:coverage` (Vitest v8, 95%×4)→`bun run lint` (`eslint --max-warnings=0`). Snapshot must keep `test:coverage` with `--coverage` and emit `coverage/`. Optional `HOOKY_L1_TIMEOUT_SEC` bounds the gate (GNU `timeout`). Isolation: `bun run test:l1-gate` (`scripts/verify-l1-gate.mjs`). Typecheck: **N/A** — pure JS, no tsconfig; exploratory `tsc --checkJs --strict` on `src/` surfaced hundreds of DOM/`chrome` errors without dedicated typings, so cost outweighs value vs existing lint + UT. Last full snapshot gate on main worktree: **99.46 / 97.81 / 99.12 / 99.84** coverage, **~9.3s** wall (warm `node_modules`) |
-| L2 | Real extension-to-HTTP protocol/method combinations | planned | Puppeteer local receiver covers flows; full method/error matrix is not a gate |
-| L3 | Popup/options/context-menu/Quick Send journeys | manual | `test:e2e`, [acceptance checklist](TESTING.md); absent from hooks/CI |
-| G2 | Required dependency and secret scanning | enforced | Shared quality CI runs OSV + gitleaks; local hooks omit security |
-| D1 | Temporary browser profile, copied extension and loopback receiver | manual | Puppeteer runner; confirm each run targets its own fixtures |
-| Package | Valid extension ZIP without test hooks | enforced | `scripts/build.sh`; pre-push and CI preparation |
-| Materials | Versioned outputs and actual manual acceptance | manual | `materials:check`, TESTING.md |
+| S1: Types | Strict TypeScript check | N/A (`na`) | Pure JS without tsconfig; exploratory `tsc --checkJs --strict` surfaced hundreds of DOM/`chrome` errors without dedicated typings |
+| S2: Lint | ESLint with zero errors/warnings (`eslint --max-warnings=0`) | enforced (`impl`) | Pre-commit index snapshot & CI `s2-lint` |
+| S3: Workflow | `actionlint` + 40-char SHA pinning | enforced (`impl`) | CI `s3-workflow` |
+| G1: Secrets | Secret scanning with Gitleaks | enforced (`impl`) | CI `g1-secrets` |
+| G2: Dependencies | Dependency vulnerability scanning (`osv-scanner.toml`, `bun.lock`) | enforced (`impl`) | CI `g2-dependencies` |
+| B1: Build | Extension ZIP packaging (`scripts/build.sh`) | enforced (`impl`) | Pre-push & CI `b1-build` |
+| L1: Unit | Vitest v8 (`>=95%` statements/branches/functions/lines), no `.only`/`.skip`; self-test `bun run test:l1-gate` | enforced (`impl`) | Pre-commit index snapshot & CI `l1-unit` + blocking `precommit-probes` (`Pre-commit rejection probes`) |
+| L2: Runtime | Cloudflare Worker / platform runtime bindings | N/A (`na`) | Chrome MV3 extension |
+| L3: Integration | Standalone HTTP service integration | N/A (`na`) | No standalone HTTP service; extension E2E runs via Puppeteer local receiver in `L4` |
+| L4: E2E | Popup/options/context-menu/Quick Send journeys via Puppeteer | enforced (`impl`) | `bun run test:e2e` & CI `l4-e2e`; Chrome Web Store & user acceptance remain manual |
+| P1: Package | npm package publishing | N/A (`na`) | Deliverable is Chrome extension ZIP |
+| Z1: Gate | Aggregate all `impl` slots + `precommit-probes` & SHA consistency | enforced (`impl`) | CI `z1-gate` (`quality / Z1: Gate`) |
 
-Current pre-commit checks the Git index snapshot with coverage and lint. Pre-push builds and checks tests and lint on the working tree. Native coverage floors remain 95% for statements, branches, functions, and lines. Target: check-only index-snapshot unified L1 (types where applicable, check-only lint, coverage) <30s and stdin-ref L2/G2 <3min; missing scanners must fail. Never bypass commit/branch-push hooks.
+Current pre-commit checks the Git index snapshot with coverage and lint. Pre-push builds and checks tests and lint on the working tree. Native coverage floors remain 95% for statements, branches, functions, and lines. Target: check-only index-snapshot L1 (types where applicable, check-only lint, coverage) <30s and stdin-ref G2 <3min; missing scanners must fail. Never bypass commit/branch-push hooks. CI runs `.github/workflows/ci.yml` -> `./.github/workflows/quality-slots.yml`, gated on `quality / Z1: Gate`.
 
 **L1 pre-commit (index snapshot)** — sequential, check-only, non-zero exit blocks commit:
 

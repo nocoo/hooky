@@ -1,5 +1,4 @@
-# CI slot standard v1 (nocoo/base-ci docs/slots.md): impl S2, S3, G1, G2, B1, L1, L3, Z1 via quality.yml;
-# na S1, L1.5, L2, P1 in slot-status. nocoo/base-ci v2026.12: top-level slot jobs, L3 Puppeteer via l3-prepare-command.
+# System1 quality slots, native mode (system1-quality v1.3.0, base-ci v2026.15).
 name: CI
 
 on:
@@ -13,55 +12,5 @@ permissions:
   contents: read
 
 jobs:
-  l1-gate-probe:
-    name: "L1: pre-commit rejection probes"
-    runs-on: ubuntu-24.04
-    steps:
-      - uses: actions/checkout@v4
-      - uses: oven-sh/setup-bun@v2
-        with:
-          bun-version: latest
-      - name: Install dependencies
-        run: bun install --frozen-lockfile
-      - name: Verify pre-commit gate scenarios
-        run: bun run test:l1-gate
-
   quality:
-    uses: nocoo/base-ci/.github/workflows/quality.yml@1ea10ecab22b72512399485391603fe03a161016 # v2026.12
-    with:
-      runtime-version: "1.4.2"
-      node-version: "26.12.1"
-      install-policy: blocked
-      coverage-path: coverage
-      test-command: bun run test:coverage
-      typecheck: false
-      disabled-check-reasons: '{"typecheck": "纯 JavaScript 仓库，无 tsconfig；槽位 S1 声明为 na"}'
-      osv-config: osv-scanner.toml
-      build: true
-      build-command: bun run build
-      artifact-name: hooky-extension-zip
-      artifact-paths: dist/*.zip
-      workflow-lint: true
-      l3: true
-      l3-browser: ""
-      l3-prepare-command: |
-        bun run build
-        bunx puppeteer browsers install chrome
-      l3-command: bun run test:e2e
-      env-json: '{"CI": "true"}'
-      l3-artifact-name: browser-evidence
-      l3-artifact-path: dist/verification/
-      l3-artifact-retention-days: 14
-      slot-status: >-
-        {"S1": {"status": "na", "reason": "纯 JavaScript 仓库，无 tsconfig，未接入 TypeScript 类型检查"},
-        "S2": {"status": "impl"},
-        "S3": {"status": "impl"},
-        "G1": {"status": "impl"},
-        "G2": {"status": "impl"},
-        "B1": {"status": "impl"},
-        "L1": {"status": "impl"},
-        "L1.5": {"status": "na", "reason": "Chrome MV3 扩展，非 Cloudflare Worker 运行时项目"},
-        "L2": {"status": "na", "reason": "无独立 HTTP 服务；扩展 E2E 在 Puppeteer 本地接收器上运行，归属 L3"},
-        "L3": {"status": "impl"},
-        "P1": {"status": "na", "reason": "产物为 Chrome 扩展 ZIP，不发布 npm 包"},
-        "Z1": {"status": "impl"}}
+    uses: ./.github/workflows/quality-slots.yml
