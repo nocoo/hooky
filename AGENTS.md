@@ -1,99 +1,57 @@
 # Hooky
 
-Chrome Manifest V3 extension for configuring and sending webhook templates from popup, context menu and Quick Send.
-Profile: ts-worker-web (browser extension with JavaScript; no application server).
-Human overview: [README.md](README.md). Direction: [extension contract](docs/01-extension-contract.md), [TESTING.md](TESTING.md). Maintain this root `AGENTS.md` as the only project handbook; do not create a `CLAUDE.md` alias, copy or import.
-
-## Sources of Truth
-
-This handbook is the contract; hooks, CI and config enforce it. Raise weaker enforcement to the contract, never lower requirements. Frameworks must not replace this file.
-
-| Fact | Where |
-| --- | --- |
-| Human docs | [README.md](README.md), [PRIVACY.md](PRIVACY.md), [TESTING.md](TESTING.md) |
-| Version | `manifest.json`; synchronize `package.json`, display runtime manifest version |
-| Enforcement | `.husky/`, `.github/workflows/ci.yml`, `vitest.config.js` |
-| Detailed behavior/release | [extension contract](docs/01-extension-contract.md) |
-| Accidents | [Retrospective.md](Retrospective.md) |
-
-## Project Invariants
-
-- Persist templates under `chrome.storage.local` key `hooky`; optional advanced fields preserve old HTTP behavior. The [storage/response contract](docs/01-extension-contract.md) defines exact fields, caps and lifetimes.
-- Resolve each logical send once; header/body bindings share one UUID. Edited/pasted captured variable syntax stays literal. Never claim automatic retry or server-side idempotency.
-- GET/DELETE use query parameters; POST/PUT/PATCH use JSON. Custom-header requests reject redirects; headers remain masked. Keep 20-second header timeout and opt-in receipt limits of 8 KiB / 3 seconds.
-- Session storage contains summaries/fingerprints, never raw bodies or credentials. Explicit repeat captures live in worker memory for at most 60 seconds and disappear on restart.
-- Extract context only on demand via `chrome.scripting.executeScript`/`activeTab`; retain restricted-page fallbacks. Only the extension's own popup can send or inspect captures.
-- Preserve Chrome i18n's ten locales and placeholders, wisteria theme/native CSS variables, compact controls and Quick Send icon behavior (`default_popup` controls `onClicked`).
-- Each product owns its versioned materials. Keep originals, source prompts and historical designs; do not label manual acceptance or live CDN behavior verified without evidence.
-
-## Stack / Layout
-
-| Component | Choice |
-| --- | --- |
-| Runtime | Chrome 127+ MV3; vanilla JavaScript/HTML/CSS |
-| Tooling | Bun; Node 24 for checks; ESLint 10 flat config, Vitest/jsdom |
-| Browser tests | Puppeteer and a local webhook receiver; development install API needs Chrome 137+ |
-| Layout | `src/` services, `src/popup/`, `src/options/`, `_locales/`, `materials/` |
-
-Package metadata is CommonJS; application `src/**/*.js` uses ESM exports. The extension has no transpiler or backend. Build packages the source ZIP.
+Chrome Manifest V3 extension (Chrome 127+, vanilla JS/HTML/CSS, no transpiler or backend) for configuring and sending webhook templates from popup, context menu, and Quick Send.
+Docs: [README.md](README.md) · [Extension contract](docs/01-extension-contract.md) · [TESTING.md](TESTING.md) · [PRIVACY.md](PRIVACY.md) · [Materials](materials/README.md) · [Retrospective](Retrospective.md)
 
 ## Commands
 
-Run from root. Dev means load this repository unpacked at `chrome://extensions/` and reload after edits.
+Run from root with Bun/Node (versions in `.github/workflows/quality-slots.yml`; ESLint 10 flat config, Vitest/jsdom, Puppeteer). Layout: `src/` services, `src/popup/`, `src/options/`, `_locales/`, `materials/`. For dev, load unpacked at `chrome://extensions/` and reload after edits.
 
 ```sh
 bun install --frozen-lockfile
-bun run lint
-bun run test:coverage
-bun run test:l1-gate
-bun run build
+bun run lint               # S2: check-only, 0 warnings
+bun run test:coverage      # L1: Vitest v8 >= 95% all metrics, no .only/.skip
+bun run test:l1-gate       # Pre-commit index-snapshot probes (disposable repos)
+bun run build              # B1: dist/hooky-<version>.zip (no store publish)
 bunx puppeteer browsers install chrome
-bun run test:e2e
-bun run materials:check
+bun run test:e2e           # L4: Puppeteer + local receiver (Chrome 137+ for dev install API)
+bun run materials:check    # Validate generated submission materials
 ```
 
-Set `PUPPETEER_EXECUTABLE_PATH` only when selecting an installed Chrome. `bun run materials` uses Python to produce versioned campaign artifacts; run it for material changes, not normal tests. Build writes `dist/hooky-<version>.zip` and does not publish to the store.
+Set `PUPPETEER_EXECUTABLE_PATH` only to select an installed Chrome. `bun run materials` (Python) generates versioned campaign artifacts; run it for material changes, not normal tests.
 
-## Verification
+## Invariants
 
-Quality follows `system1-quality` (v1.3.0) with 12 canonical slots (`impl`, `todo`, `na`) and `nocoo/base-ci` v2026.15 (`777bbe4f9bacab8a91d8c01974480a6ee23d28e0`) in native mode (`quality-slots.yml`).
+- `manifest.json` (`version`) is authoritative; keep `package.json` synchronized and display runtime `chrome.runtime.getManifest().version`.
+- Package metadata is CommonJS while `src/**/*.js` and `tests/**/*.js` use ESM exports; `scripts/build.sh` packages only runtime files into `dist/hooky-<version>.zip` without publishing.
+- Persist templates under `chrome.storage.local` key `hooky`; optional fields preserve legacy HTTP behavior. Exact fields, caps, and lifetimes live in [extension contract](docs/01-extension-contract.md).
+- Resolve each logical send once; header and body bindings share one UUID. Edited or pasted captured variable syntax stays literal. Never claim automatic retry or server-side idempotency.
+- GET/DELETE use query parameters; POST/PUT/PATCH use JSON. Custom-header requests reject redirects and stay masked. Keep the 20s header timeout and opt-in receipt limits of 8 KiB / 3s.
+- Session storage holds summaries and fingerprints only, never raw bodies or credentials. Explicit repeat captures live in worker memory for at most 60s and disappear on restart.
+- Extract page context only on demand via `chrome.scripting.executeScript` / `activeTab`; keep restricted-page fallbacks. Only the extension's own popup can send or inspect captures.
+- Preserve Chrome i18n's ten locales and placeholders, wisteria theme/native CSS variables, compact controls, and Quick Send icon behavior (`default_popup` controls `onClicked`).
+- Hooky owns its versioned [materials](materials/README.md); keep originals, source prompts, and historical designs. Never label manual acceptance or live CDN behavior verified without evidence.
+- Authorized releases sync manifest/package versions and `CHANGELOG.md`, verify, build ZIP, tag/GitHub Release, and upload manually to Chrome Web Store ([release](docs/01-extension-contract.md)).
+- Install DOM fixtures before importing top-level popup/options modules (`vi.resetModules()`); keep `editorMode` as `"rule"` after rule deletion; E2E receiver must answer CORS `OPTIONS`.
 
-| Slot | Requirement and current reality | Status | Evidence |
-| --- | --- | --- | --- |
-| S1: Types | Strict TypeScript check | N/A (`na`) | Pure JS without tsconfig; exploratory `tsc --checkJs --strict` surfaced hundreds of DOM/`chrome` errors without dedicated typings |
-| S2: Lint | ESLint with zero errors/warnings (`eslint --max-warnings=0`) | enforced (`impl`) | Pre-commit index snapshot & CI `s2-lint` |
-| S3: Workflow | `actionlint` + 40-char SHA pinning | enforced (`impl`) | CI `s3-workflow` |
-| G1: Secrets | Secret scanning with Gitleaks | enforced (`impl`) | CI `g1-secrets` |
-| G2: Dependencies | Dependency vulnerability scanning (`osv-scanner.toml`, `bun.lock`) | enforced (`impl`) | CI `g2-dependencies` |
-| B1: Build | Extension ZIP packaging (`scripts/build.sh`) | enforced (`impl`) | Pre-push & CI `b1-build` |
-| L1: Unit | Vitest v8 (`>=95%` statements/branches/functions/lines), no `.only`/`.skip`; self-test `bun run test:l1-gate` | enforced (`impl`) | Pre-commit index snapshot & CI `l1-unit` + blocking `precommit-probes` (`Pre-commit rejection probes`) |
-| L2: Runtime | Cloudflare Worker / platform runtime bindings | N/A (`na`) | Chrome MV3 extension |
-| L3: Integration | Standalone HTTP service integration | N/A (`na`) | No standalone HTTP service; extension E2E runs via Puppeteer local receiver in `L4` |
-| L4: E2E | Popup/options/context-menu/Quick Send journeys via Puppeteer | enforced (`impl`) | `bun run test:e2e` & CI `l4-e2e`; Chrome Web Store & user acceptance remain manual |
-| P1: Package | npm package publishing | N/A (`na`) | Deliverable is Chrome extension ZIP |
-| Z1: Gate | Aggregate all `impl` slots + `precommit-probes` & SHA consistency | enforced (`impl`) | CI `z1-gate` (`quality / Z1: Gate`) |
+## Quality & Local Gates
 
-Current pre-commit checks the Git index snapshot with coverage and lint. Pre-push builds and checks tests and lint on the working tree. Native coverage floors remain 95% for statements, branches, functions, and lines. Target: check-only index-snapshot L1 (types where applicable, check-only lint, coverage) <30s and stdin-ref G2 <3min; missing scanners must fail. Never bypass commit/branch-push hooks. CI runs `.github/workflows/ci.yml` -> `./.github/workflows/quality-slots.yml`, gated on `quality / Z1: Gate`.
+Follows `system1-quality`; CI runs `.github/workflows/ci.yml` -> `.github/workflows/quality-slots.yml` with pinned `base-ci` actions (`quality / Z1: Gate` required on `main`, checking all `enforced` slots, `precommit-probes`, and tested-SHA match). Status vocabulary: `enforced`, `planned`, `manual`, `N/A`.
 
-**L1 pre-commit (index snapshot)** — sequential, check-only, non-zero exit blocks commit:
+- **Floors**: Vitest v8 (`vitest.config.js`) enforces `>= 95%` statements/branches/functions/lines and rejects `.only`/`.skip`/empty suites; ESLint runs `--max-warnings=0`.
+- **N/A slots**: `S1 Types` (pure JS, no `tsconfig`; exploratory `tsc --checkJs --strict` hit hundreds of DOM/`chrome` errors); `P1 Package` (extension ZIP, not npm).
+- **N/A runtime/service**: `L2 Runtime` (Chrome MV3 extension); `L3 Integration` (no standalone HTTP service; E2E runs in `L4` via Puppeteer local receiver).
+- **Manual checks**: Chrome Web Store submission/approval, live CDN/R2 behavior, and real-toolbar/OS acceptance remain `manual` ([TESTING.md](TESTING.md)).
+- **Local `pre-commit`** (`.husky/`, via `bun run prepare`; never bypass): snapshots staged index (`git checkout-index --all`), symlinks `node_modules` (`.cache/`), honors `HOOKY_L1_TIMEOUT_SEC`.
+- **Pre-commit guards**: fails on missing `git`/`bun`/`node_modules`, staged/worktree `package.json`/`bun.lock` mismatch, missing `--coverage`/`coverage/`, or `test:coverage` / `lint` failure.
+- **Gate probes**: `bun run test:l1-gate` (CI `precommit-probes`) verifies pass/reject in disposable repos (UT, coverage, lint warnings, focus/skip/empty, staged isolation, timeout/SIGINT, missing `bun`).
+- **Pre-push & gaps**: `.husky/pre-push` runs `bun run build && bun run test && bun run lint` on the working tree; stdin-ref `pre-push` + `G2` (<3min, missing scanners fail) and <30s `pre-commit` are `planned`.
 
-1. Materialise staged tree (`git checkout-index --all`), symlink worktree `node_modules` (runner caches under snapshot `.cache/`).
-2. Refuse when `bun`/`git`/`node_modules` missing; staged `package.json`/`bun.lock` must match worktree copies.
-3. `bun run test:coverage` then `bun run lint`; staged `package.json` must define `--coverage`; `coverage/` must exist after tests.
+## Resources & Isolation
 
-**L1 gate self-test** (`bun run test:l1-gate`, CI job `l1-gate-probe`) proves rejection for: healthy pass; UT failure; coverage below floor (total and single-metric); ESLint error; **ESLint warning only** (`--max-warnings=0`); `.only`/`.skip`/empty suite; staged bad with unstaged fix; `HOOKY_L1_TIMEOUT_SEC` overrun; SIGINT; missing `bun`; `test:coverage` without `--coverage` (no coverage report path). Probes use disposable repos and leave the real index untouched.
-
-## Resources / Isolation
-
-Puppeteer creates a temporary extension copy/profile and local webhook receiver. Keep its statically imported worker driver out of production packages; MV3 service workers cannot use dynamic imports. Use synthetic templates/credentials and isolated browser storage; never send test captures to a user's configured live webhook. No Cloudflare resources or production database apply.
-
-## Operations / Release
-
-Authorized release: synchronize manifest/package versions and CHANGELOG, verify, `bun run build`, then immutable version tag/GitHub Release and manual Chrome Web Store ZIP upload. Follow [release process](docs/01-extension-contract.md). Public-store and user acceptance remain manual observations; [materials](materials/README.md) owns generated deliverables.
+- Puppeteer E2E uses a temporary extension copy/profile and local webhook receiver; use synthetic templates/credentials and isolated storage, and never send test captures to a live user webhook.
+- Keep the statically imported E2E worker driver out of production packages (MV3 service workers cannot use dynamic imports). No backend server, Cloudflare resources, or production database apply.
 
 ## Retrospective
 
-Keep full narratives in [Retrospective.md](Retrospective.md). Cross-project lessons belong in nmem/global rules; deterministic checks belong in hooks/tests.
-
-- Install DOM fixtures before importing top-level popup/options modules; use `vi.resetModules()`.
-- E2E receiver must answer CORS OPTIONS; keep `editorMode` in rule context after rule deletion.
+Record incident narratives in [Retrospective.md](Retrospective.md); promote recurring project constraints to `Invariants` above and enforceable safeguards to tests or hooks.
