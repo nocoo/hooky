@@ -1,32 +1,65 @@
 import { prepareWebhook, executeRequest } from "./webhook.js";
 import { publishResult } from "./feedback.js";
 import { t } from "./i18n.js";
-import { requestFingerprint, findRecent, rememberSend, holdDuplicate, takeDuplicateCapture } from "./duplicates.js";
+import {
+  requestFingerprint,
+  findRecent,
+  rememberSend,
+  holdDuplicate,
+  takeDuplicateCapture,
+} from "./duplicates.js";
 
 const inFlight = new Map();
 let lastStartedAt = 0;
 
 /** All three entry points share request identity, the pending guard and feedback. */
-export function sendWebhook(config, context, { tab = null, source = "popup", resolved = false, force = false } = {}) {
+export function sendWebhook(
+  config,
+  context,
+  { tab = null, source = "popup", resolved = false, force = false } = {},
+) {
+  const startedAt = Math.max(Date.now(), lastStartedAt + 1);
+  lastStartedAt = startedAt;
   const record = {
-    id: crypto.randomUUID(), templateId: config.id || "", name: (config.name || t("defaultTemplateName")).slice(0, 100),
-    tabId: tab?.id ?? null, source, startedAt: lastStartedAt = Math.max(Date.now(), lastStartedAt + 1), state: "sending",
+    id: crypto.randomUUID(),
+    templateId: config.id || "",
+    name: (config.name || t("defaultTemplateName")).slice(0, 100),
+    tabId: tab?.id ?? null,
+    source,
+    startedAt,
+    state: "sending",
   };
   const surface = { tab, source };
   let request;
   let key;
   try {
     request = prepareWebhook(config, { ...context, send: { id: record.id } }, resolved);
-    const comparison = prepareWebhook(config, { ...context, send: { id: "<Hooky:send.id>" } }, resolved);
+    const comparison = prepareWebhook(
+      config,
+      { ...context, send: { id: "<Hooky:send.id>" } },
+      resolved,
+    );
     // Distinguish an actual binding from pasted literal variable syntax.
     const bindings = [
-      ...config.params.filter((param) => param.key && (!resolved || param.resolve) && /\{\{\s*send\.id\s*\}\}/.test(param.value)).map((param) => ["param", param.key]),
-      ...(config.headers || []).filter((header) => /\{\{\s*send\.id\s*\}\}/.test(header.value)).map((header) => ["header", header.key.trim().toLowerCase()]),
+      ...config.params
+        .filter(
+          (param) =>
+            param.key && (!resolved || param.resolve) && /\{\{\s*send\.id\s*\}\}/.test(param.value),
+        )
+        .map((param) => ["param", param.key]),
+      ...(config.headers || [])
+        .filter((header) => /\{\{\s*send\.id\s*\}\}/.test(header.value))
+        .map((header) => ["header", header.key.trim().toLowerCase()]),
     ];
     key = JSON.stringify([record.templateId, comparison, bindings]);
-  }
-  catch (error) {
-    const result = { ...record, ok: false, state: "failed", error: error.message, finishedAt: Date.now() };
+  } catch (error) {
+    const result = {
+      ...record,
+      ok: false,
+      state: "failed",
+      error: error.message,
+      finishedAt: Date.now(),
+    };
     return publishResult(result, { ...surface, start: true }).then(() => result);
   }
   if (inFlight.has(key)) {
@@ -43,7 +76,10 @@ export function sendWebhook(config, context, { tab = null, source = "popup", res
   }
 
   const task = (async () => {
-    const duplicateWindow = Number.isInteger(config.duplicateWindow) && config.duplicateWindow > 0 ? Math.min(config.duplicateWindow, 300) : 0;
+    const duplicateWindow =
+      Number.isInteger(config.duplicateWindow) && config.duplicateWindow > 0
+        ? Math.min(config.duplicateWindow, 300)
+        : 0;
     let fingerprint;
     if (duplicateWindow) {
       try {
@@ -51,19 +87,35 @@ export function sendWebhook(config, context, { tab = null, source = "popup", res
         const previous = await findRecent(fingerprint, duplicateWindow);
         if (previous && !force) {
           const duplicateToken = holdDuplicate(config, context, { tab, source, resolved });
-          const result = { ...previous, tabId: record.tabId, source, lastActionAt: record.startedAt, duplicateToken };
+          const result = {
+            ...previous,
+            tabId: record.tabId,
+            source,
+            lastActionAt: record.startedAt,
+            duplicateToken,
+          };
           await publishResult(result, { ...surface, start: true });
           return result;
         }
         await rememberSend(fingerprint, record, duplicateWindow);
       } catch {
-        const result = { ...record, ok: false, state: "failed", error: "duplicateCheckFailed", finishedAt: Date.now() };
+        const result = {
+          ...record,
+          ok: false,
+          state: "failed",
+          error: "duplicateCheckFailed",
+          finishedAt: Date.now(),
+        };
         await publishResult(result, { ...surface, start: true });
         return result;
       }
     }
     const feedback = publishResult(record, { ...surface, start: true });
-    const result = { ...record, ...await executeRequest(request, config.response), finishedAt: Date.now() };
+    const result = {
+      ...record,
+      ...(await executeRequest(request, config.response)),
+      finishedAt: Date.now(),
+    };
     if (fingerprint) await rememberSend(fingerprint, result, duplicateWindow).catch(() => {});
     await feedback;
     await publishResult(result, surface);
@@ -76,5 +128,9 @@ export function sendWebhook(config, context, { tab = null, source = "popup", res
 export function sendAnyway(token) {
   const capture = takeDuplicateCapture(token);
   if (!capture) return Promise.resolve({ ok: false, state: "failed", error: "captureExpired" });
-  return sendWebhook(capture.config, capture.context, { ...capture.options, source: "popup", force: true });
+  return sendWebhook(capture.config, capture.context, {
+    ...capture.options,
+    source: "popup",
+    force: true,
+  });
 }

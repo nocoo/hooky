@@ -97,10 +97,15 @@ function renderLastResult(result) {
   resultEl.hidden = false;
   resultEl.dataset.state = result.state;
   document.getElementById("last-result-name").textContent = result.name;
-  document.getElementById("last-result-time").textContent = new Date(result.startedAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+  document.getElementById("last-result-time").textContent = new Date(
+    result.startedAt,
+  ).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
   const status = document.getElementById("last-result-status");
   status.textContent = resultMessage(result);
-  const warning = result.state === "unknown" || !!result.duplicateToken || (result.state === "success" && result.status === 202);
+  const warning =
+    result.state === "unknown" ||
+    !!result.duplicateToken ||
+    (result.state === "success" && result.status === 202);
   status.className = result.state === "failed" && !warning ? "error" : "";
   resultEl.dataset.tone = warning ? "warning" : result.state;
   const help = document.getElementById("result-help");
@@ -110,11 +115,17 @@ function renderLastResult(result) {
   document.getElementById("result-settings").hidden = !authorizationFailed;
   document.getElementById("last-result-id").textContent = result.id;
   document.getElementById("last-response").hidden = !result.receipt;
-  document.getElementById("response-note").textContent = result.receipt?.note ? t(result.receipt.note) : "";
+  document.getElementById("response-note").textContent = result.receipt?.note
+    ? t(result.receipt.note)
+    : "";
   document.getElementById("response-body").textContent = result.receipt?.text || "";
   document.getElementById("last-result-http").hidden = !result.status;
-  document.getElementById("last-result-http").textContent = result.status ? `HTTP ${result.status}` : "";
-  document.getElementById("response-field-note").textContent = result.receipt?.fieldNote ? t(result.receipt.fieldNote) : "";
+  document.getElementById("last-result-http").textContent = result.status
+    ? `HTTP ${result.status}`
+    : "";
+  document.getElementById("response-field-note").textContent = result.receipt?.fieldNote
+    ? t(result.receipt.fieldNote)
+    : "";
   const fields = document.getElementById("response-fields-summary");
   fields.replaceChildren();
   for (const key of ["receiptId", "message"]) {
@@ -126,18 +137,25 @@ function renderLastResult(result) {
     fields.append(label, value);
   }
   const token = result.duplicateToken || null;
-  if (duplicateToken === token) { renderActions(); return; }
+  if (duplicateToken === token) {
+    renderActions();
+    return;
+  }
   duplicateToken = token;
   duplicateOpen = !!token;
   renderActions();
   sendAnywayBtn.disabled = true;
   document.getElementById("duplicate-preview").textContent = "";
   if (!token) return;
-  chrome.runtime.sendMessage({ type: "GET_DUPLICATE_CAPTURE", token }).catch(() => null).then((capture) => {
-    if (duplicateToken !== token) return;
-    document.getElementById("duplicate-preview").textContent = capture?.preview || t("captureExpired");
-    sendAnywayBtn.disabled = !capture?.preview;
-  });
+  chrome.runtime
+    .sendMessage({ type: "GET_DUPLICATE_CAPTURE", token })
+    .catch(() => null)
+    .then((capture) => {
+      if (duplicateToken !== token) return;
+      document.getElementById("duplicate-preview").textContent =
+        capture?.preview || t("captureExpired");
+      sendAnywayBtn.disabled = !capture?.preview;
+    });
 }
 
 function showSendResult(result) {
@@ -149,7 +167,9 @@ function showSendResult(result) {
   }
   if (result?.ok) showToast(resultMessage(result), "success");
   else {
-    const msg = result?.state ? resultMessage(result) : result?.error || t("failedStatus", [String(result?.status || "unknown")]);
+    const msg = result?.state
+      ? resultMessage(result)
+      : result?.error || t("failedStatus", [String(result?.status || "unknown")]);
     showToast(msg, "error");
   }
 }
@@ -222,7 +242,9 @@ function updateRequestPreview() {
   validationError.hidden = true;
   try {
     document.getElementById("popup-request-preview").textContent = previewRequest(
-      { ...currentTemplate, params: getResolvedParams() }, { ...pageContext, send: { id: "{{send.id}}" } }, true,
+      { ...currentTemplate, params: getResolvedParams() },
+      { ...pageContext, send: { id: "{{send.id}}" } },
+      true,
     );
   } catch (error) {
     document.getElementById("popup-request-preview").textContent = t(error.message);
@@ -260,7 +282,7 @@ async function sendWebhook() {
 async function init() {
   showView("loading");
   applyI18n();
-  document.getElementById("version").textContent = "v" + chrome.runtime.getManifest().version;
+  document.getElementById("version").textContent = `v${chrome.runtime.getManifest().version}`;
 
   const store = await loadStore();
   applyTheme(store.theme || "system");
@@ -304,7 +326,9 @@ templateSelect.addEventListener("change", async () => {
       await setActiveTemplateId(tpl.id);
       showTemplate(tpl);
     }
-  } catch { showLoadError(); }
+  } catch {
+    showLoadError();
+  }
 });
 
 settingsBtn.addEventListener("click", openSettings);
@@ -321,16 +345,23 @@ sendAnywayBtn.addEventListener("click", async () => {
   if (!duplicateToken || sendAnywayBtn.disabled || sending) return;
   sendAnywayBtn.disabled = true;
   setSending(true);
-  try { showSendResult(await chrome.runtime.sendMessage({ type: "SEND_ANYWAY", token: duplicateToken })); }
-  catch { showToast(t("requestUnconfirmed"), "error"); }
-  finally { setSending(false); }
+  try {
+    showSendResult(
+      await chrome.runtime.sendMessage({ type: "SEND_ANYWAY", token: duplicateToken }),
+    );
+  } catch {
+    showToast(t("requestUnconfirmed"), "error");
+  } finally {
+    setSending(false);
+  }
 });
 paramsPreview.addEventListener("input", (event) => {
   event.target.dataset.literal = "true";
   updateRequestPreview();
 });
 chrome.storage.onChanged.addListener((changes, area) => {
-  if (showResult && area === "session" && changes[LAST_RESULT_KEY]?.newValue) renderLastResult(changes[LAST_RESULT_KEY].newValue);
+  if (showResult && area === "session" && changes[LAST_RESULT_KEY]?.newValue)
+    renderLastResult(changes[LAST_RESULT_KEY].newValue);
 });
 
 init().catch(showLoadError);

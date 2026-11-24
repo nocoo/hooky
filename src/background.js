@@ -21,30 +21,47 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     return false;
   }
   if (message.type === "SEND_ANYWAY") {
-    ready.then(() => sendAnyway(message.token)).then(sendResponse).catch(() => sendResponse({ ok: false, state: "failed", error: "requestFailed" }));
+    ready
+      .then(() => sendAnyway(message.token))
+      .then(sendResponse)
+      .catch(() => sendResponse({ ok: false, state: "failed", error: "requestFailed" }));
     return true;
   }
   if (message.type === "EXECUTE_WEBHOOK") {
     const { config, context } = message;
 
-    ready.then(() => sendWebhook(config, context, { tab: message.tab, source: "popup", resolved: message.resolved === true })).then((result) => {
-      sendResponse(result);
-    }).catch(() => sendResponse({ ok: false, state: "failed", error: "requestFailed" }));
+    ready
+      .then(() =>
+        sendWebhook(config, context, {
+          tab: message.tab,
+          source: "popup",
+          resolved: message.resolved === true,
+        }),
+      )
+      .then((result) => {
+        sendResponse(result);
+      })
+      .catch(() => sendResponse({ ok: false, state: "failed", error: "requestFailed" }));
 
     // Return true to indicate async response
     return true;
   }
   if (message.type === "OPEN_PANEL") {
-    openPanel({ showResult: message.showResult === true }).then(() => sendResponse({ ok: true })).catch(() => sendResponse({ ok: false }));
+    openPanel({ showResult: message.showResult === true })
+      .then(() => sendResponse({ ok: true }))
+      .catch(() => sendResponse({ ok: false }));
     return true;
   }
 });
 
 // Build context menus on startup
-chrome.storage.local.get(STORE_KEY).then((data) => {
-  const store = data[STORE_KEY];
-  return buildContextMenus(store?.templates || []);
-}).catch(() => {});
+chrome.storage.local
+  .get(STORE_KEY)
+  .then((data) => {
+    const store = data[STORE_KEY];
+    return buildContextMenus(store?.templates || []);
+  })
+  .catch(() => {});
 
 // React to config changes (e.g. user adds/removes templates)
 chrome.storage.onChanged.addListener((changes, area) => {

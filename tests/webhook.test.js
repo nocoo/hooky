@@ -3,7 +3,10 @@ import { executeWebhook, buildHeaders, previewRequest } from "../src/webhook.js"
 
 describe("executeWebhook", () => {
   it("rejects unsupported methods before making a request", async () => {
-    const result = await executeWebhook({ url: "https://example.com", method: "TRACE", params: [] }, {});
+    const result = await executeWebhook(
+      { url: "https://example.com", method: "TRACE", params: [] },
+      {},
+    );
     expect(result).toEqual({ ok: false, state: "failed", error: "invalidMethod" });
     expect(fetchMock).not.toHaveBeenCalled();
   });
@@ -118,14 +121,11 @@ describe("executeWebhook", () => {
 
     const result = await executeWebhook(config, context);
 
-    expect(fetchMock).toHaveBeenCalledWith(
-      "https://api.example.com/hook?id=123",
-      {
-        method: "DELETE",
-        headers: { "Content-Type": "application/json" },
-        signal: expect.any(AbortSignal),
-      },
-    );
+    expect(fetchMock).toHaveBeenCalledWith("https://api.example.com/hook?id=123", {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      signal: expect.any(AbortSignal),
+    });
     expect(result.status).toBe(204);
   });
 
@@ -192,24 +192,47 @@ describe("template request headers", () => {
       { key: "Idempotency-Key", value: "{{ send.id }}" },
       { key: "", value: "" },
     ];
-    await executeWebhook({ ...config, headers }, { page: { selection: "literal {{send.id}}" }, send: { id: "capture-1" } });
-    expect(fetchMock.mock.calls[0][1]).toMatchObject({ redirect: "error", headers: {
-      "Content-Type": "application/json", authorization: "Bearer secret", "x-api-key": "literal {{send.id}}", "idempotency-key": "capture-1",
-    } });
-    const preview = previewRequest({ ...config, headers }, { page: { selection: "secret" }, send: { id: "capture-1" } });
+    await executeWebhook(
+      { ...config, headers },
+      { page: { selection: "literal {{send.id}}" }, send: { id: "capture-1" } },
+    );
+    expect(fetchMock.mock.calls[0][1]).toMatchObject({
+      redirect: "error",
+      headers: {
+        "Content-Type": "application/json",
+        authorization: "Bearer secret",
+        "x-api-key": "literal {{send.id}}",
+        "idempotency-key": "capture-1",
+      },
+    });
+    const preview = previewRequest(
+      { ...config, headers },
+      { page: { selection: "secret" }, send: { id: "capture-1" } },
+    );
     expect(preview).toContain("authorization: ••••");
     expect(preview).toContain("x-api-key: ••••");
     expect(preview).not.toMatch(/secret|capture-1/);
   });
 
-  it.each(["Content-Type", "Cookie", "Host", "Origin", "Sec-Fetch-Site", "Proxy-Authorization", "Content-Length"])("rejects browser-managed header %s", (key) => {
+  it.each([
+    "Content-Type",
+    "Cookie",
+    "Host",
+    "Origin",
+    "Sec-Fetch-Site",
+    "Proxy-Authorization",
+    "Content-Length",
+  ])("rejects browser-managed header %s", (key) => {
     expect(() => buildHeaders([{ key, value: "override" }])).toThrow("managedHeader");
   });
 
-  it.each(["X-HTTP-Method", "X-HTTP-Method-Override", "X-Method-Override"])("validates method-override values for %s", (key) => {
-    expect(() => buildHeaders([{ key, value: "GET, TRACE" }])).toThrow("managedHeader");
-    expect(buildHeaders([{ key, value: "PUT" }])[key.toLowerCase()]).toBe("PUT");
-  });
+  it.each(["X-HTTP-Method", "X-HTTP-Method-Override", "X-Method-Override"])(
+    "validates method-override values for %s",
+    (key) => {
+      expect(() => buildHeaders([{ key, value: "GET, TRACE" }])).toThrow("managedHeader");
+      expect(buildHeaders([{ key, value: "PUT" }])[key.toLowerCase()]).toBe("PUT");
+    },
+  );
 
   it.each([
     [{ key: "", value: "secret" }],
@@ -222,7 +245,12 @@ describe("template request headers", () => {
   });
 
   it("rejects duplicate names case-insensitively and safely keeps unusual valid names", () => {
-    expect(() => buildHeaders([{ key: "X-Key", value: "one" }, { key: "x-KEY", value: "two" }])).toThrow("duplicateHeader");
+    expect(() =>
+      buildHeaders([
+        { key: "X-Key", value: "one" },
+        { key: "x-KEY", value: "two" },
+      ]),
+    ).toThrow("duplicateHeader");
     const headers = buildHeaders([{ key: "__proto__", value: "safe" }]);
     expect(Object.hasOwn(headers, "__proto__")).toBe(true);
     expect(Object.getPrototypeOf(headers)).toBe(Object.prototype);
@@ -230,7 +258,10 @@ describe("template request headers", () => {
 
   it("previews query requests without a body and keeps old templates unchanged", () => {
     expect(buildHeaders()).toEqual({ "Content-Type": "application/json" });
-    const preview = previewRequest({ ...config, method: "GET", params: [{ key: "q", value: "{{page.title}}" }] }, { page: { title: "A B" } });
+    const preview = previewRequest(
+      { ...config, method: "GET", params: [{ key: "q", value: "{{page.title}}" }] },
+      { page: { title: "A B" } },
+    );
     expect(preview).toBe("GET https://example.com/hook?q=A%20B\nContent-Type: application/json");
   });
 });

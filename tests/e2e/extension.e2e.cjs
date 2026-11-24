@@ -8,12 +8,12 @@
  */
 
 const puppeteer = require("puppeteer");
-const path = require("path");
-const http = require("http");
+const path = require("node:path");
+const http = require("node:http");
 const fs = require("node:fs/promises");
 const os = require("node:os");
-const { runCaptureScenarios } = require("./capture.js");
-const { runPopupLayoutScenarios } = require("./popup-layout.js");
+const { runCaptureScenarios } = require("./capture.cjs");
+const { runPopupLayoutScenarios } = require("./popup-layout.cjs");
 
 const EXTENSION_PATH = process.env.EXTENSION_PATH || path.resolve(__dirname, "../..");
 const TIMEOUT = 15000;
@@ -29,7 +29,10 @@ function startWebhookServer() {
       // Handle CORS preflight
       res.setHeader("Access-Control-Allow-Origin", "*");
       res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS");
-      res.setHeader("Access-Control-Allow-Headers", req.headers["access-control-request-headers"] || "Content-Type");
+      res.setHeader(
+        "Access-Control-Allow-Headers",
+        req.headers["access-control-request-headers"] || "Content-Type",
+      );
       if (req.method === "OPTIONS") {
         res.writeHead(204);
         res.end();
@@ -37,7 +40,9 @@ function startWebhookServer() {
       }
       if (req.url === "/article") {
         res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
-        res.end('<!doctype html><html><head><title>Hooky capture test</title><meta name="description" content="Capture test page"></head><body><h1>Capture test</h1><p id="selection">quick capture {{page.title}}</p></body></html>');
+        res.end(
+          '<!doctype html><html><head><title>Hooky capture test</title><meta name="description" content="Capture test page"></head><body><h1>Capture test</h1><p id="selection">quick capture {{page.title}}</p></body></html>',
+        );
         return;
       }
 
@@ -45,7 +50,20 @@ function startWebhookServer() {
       let body = "";
       req.on("data", (chunk) => (body += chunk));
       req.on("end", () => {
-        if (["/hook", "/capture", "/business-failure", "/accepted", "/empty", "/large", "/slow", "/late-receipt", "/redirect", "/redirect-target"].includes(pathname)) {
+        if (
+          [
+            "/hook",
+            "/capture",
+            "/business-failure",
+            "/accepted",
+            "/empty",
+            "/large",
+            "/slow",
+            "/late-receipt",
+            "/redirect",
+            "/redirect-target",
+          ].includes(pathname)
+        ) {
           const received = {
             method: req.method,
             url: req.url,
@@ -55,8 +73,16 @@ function startWebhookServer() {
           webhookRequests.push(received);
           if (pathname === "/hook") webhookReceived = received;
         }
-        if (pathname === "/redirect") { res.writeHead(302, { Location: "/redirect-target" }); res.end(); return; }
-        if (pathname === "/empty") { res.writeHead(204); res.end(); return; }
+        if (pathname === "/redirect") {
+          res.writeHead(302, { Location: "/redirect-target" });
+          res.end();
+          return;
+        }
+        if (pathname === "/empty") {
+          res.writeHead(204);
+          res.end();
+          return;
+        }
         if (pathname === "/slow") {
           res.writeHead(200, { "Content-Type": "text/plain" });
           res.write("partial receipt");
@@ -71,16 +97,37 @@ function startWebhookServer() {
             res.flushHeaders();
             bodyTimer = setTimeout(() => res.end('{"saved":true}'), 2500);
           }, 18500);
-          res.on("close", () => { clearTimeout(headerTimer); clearTimeout(bodyTimer); });
+          res.on("close", () => {
+            clearTimeout(headerTimer);
+            clearTimeout(bodyTimer);
+          });
           return;
         }
-        if (pathname === "/large") { res.writeHead(200, { "Content-Type": "application/json" }); res.end(JSON.stringify({ data: "x".repeat(10000) })); return; }
+        if (pathname === "/large") {
+          res.writeHead(200, { "Content-Type": "application/json" });
+          res.end(JSON.stringify({ data: "x".repeat(10000) }));
+          return;
+        }
         if (pathname === "/capture" || pathname === "/business-failure") {
-          res.writeHead(pathname === "/capture" ? 201 : 200, { "Content-Type": "application/json" });
-          res.end(JSON.stringify({ saved: pathname === "/capture", data: { id: "receipt-" + webhookRequests.length, message: "<b>server-only receipt</b>" } }));
+          res.writeHead(pathname === "/capture" ? 201 : 200, {
+            "Content-Type": "application/json",
+          });
+          res.end(
+            JSON.stringify({
+              saved: pathname === "/capture",
+              data: {
+                id: `receipt-${webhookRequests.length}`,
+                message: "<b>server-only receipt</b>",
+              },
+            }),
+          );
           return;
         }
-        if (pathname === "/accepted") { res.writeHead(202, { "Content-Type": "application/json" }); res.end('{"accepted":true}'); return; }
+        if (pathname === "/accepted") {
+          res.writeHead(202, { "Content-Type": "application/json" });
+          res.end('{"accepted":true}');
+          return;
+        }
         res.writeHead(200, { "Content-Type": "application/json" });
         res.end(JSON.stringify({ status: "ok" }));
       });
@@ -120,16 +167,24 @@ async function runTests() {
   try {
     // Static imports are required in MV3 workers. The driver exists only in this temporary copy.
     testExtensionPath = await fs.mkdtemp(path.join(os.tmpdir(), "hooky-e2e-"));
-    for (const item of ["src", "_locales", "manifest.json"]) await fs.cp(path.join(EXTENSION_PATH, item), path.join(testExtensionPath, item), { recursive: true });
-    const manifest = JSON.parse(await fs.readFile(path.join(testExtensionPath, "manifest.json"), "utf8"));
+    for (const item of ["src", "_locales", "manifest.json"])
+      await fs.cp(path.join(EXTENSION_PATH, item), path.join(testExtensionPath, item), {
+        recursive: true,
+      });
+    const manifest = JSON.parse(
+      await fs.readFile(path.join(testExtensionPath, "manifest.json"), "utf8"),
+    );
     manifest.background.service_worker = "e2e-background.js";
     await fs.writeFile(path.join(testExtensionPath, "manifest.json"), JSON.stringify(manifest));
-    await fs.writeFile(path.join(testExtensionPath, "e2e-background.js"), [
-      'import "./src/background.js";',
-      'import { handleQuickSend } from "./src/quicksend.js";',
-      'import { handleContextMenuClick } from "./src/contextmenu.js";',
-      'globalThis.hookyE2E = { handleQuickSend, handleContextMenuClick };',
-    ].join("\n"));
+    await fs.writeFile(
+      path.join(testExtensionPath, "e2e-background.js"),
+      [
+        'import "./src/background.js";',
+        'import { handleQuickSend } from "./src/quicksend.js";',
+        'import { handleContextMenuClick } from "./src/contextmenu.js";',
+        "globalThis.hookyE2E = { handleQuickSend, handleContextMenuClick };",
+      ].join("\n"),
+    );
     console.log("\nLaunching browser with extension...");
     browser = await puppeteer.launch({
       executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || undefined,
@@ -157,10 +212,10 @@ async function runTests() {
     console.log("\nTesting Options page...");
     const optionsPage = await browser.newPage();
     await optionsPage.setViewport({ width: 800, height: 600 });
-    await optionsPage.goto(
-      `chrome-extension://${extensionId}/src/options/options.html`,
-      { waitUntil: "domcontentloaded", timeout: TIMEOUT },
-    );
+    await optionsPage.goto(`chrome-extension://${extensionId}/src/options/options.html`, {
+      waitUntil: "domcontentloaded",
+      timeout: TIMEOUT,
+    });
     await new Promise((r) => setTimeout(r, 500)); // Wait for migration + render
 
     // Initially: empty state (no templates)
@@ -184,7 +239,12 @@ async function runTests() {
       (el) => el.style.display !== "none",
     );
     assert(formVisible, "Options page: Editor form visible after creating template");
-    assert(await optionsPage.$$eval(".sidebar-nav-btn > svg", (icons) => icons.every((el) => getComputedStyle(el).strokeWidth === "2px" && el.dataset.lucide)), "Options: Navigation uses complete official Lucide icons");
+    assert(
+      await optionsPage.$$eval(".sidebar-nav-btn > svg", (icons) =>
+        icons.every((el) => getComputedStyle(el).strokeWidth === "2px" && el.dataset.lucide),
+      ),
+      "Options: Navigation uses complete official Lucide icons",
+    );
 
     // Template list should have one item (plus the "+ New Webhook" action item)
     const listItems = await optionsPage.$$("#template-list li:not(.new-item)");
@@ -233,44 +293,31 @@ async function runTests() {
     console.log("\nTesting Popup page...");
     const popupPage = await browser.newPage();
     await popupPage.setViewport({ width: 800, height: 600 });
-    await popupPage.goto(
-      `chrome-extension://${extensionId}/src/popup/popup.html`,
-      { waitUntil: "domcontentloaded", timeout: TIMEOUT },
-    );
+    await popupPage.goto(`chrome-extension://${extensionId}/src/popup/popup.html`, {
+      waitUntil: "domcontentloaded",
+      timeout: TIMEOUT,
+    });
 
     await new Promise((r) => setTimeout(r, 500)); // Wait for config load
 
     // Webhook panel should be visible (templates exist now)
-    const panelDisplay = await popupPage.$eval(
-      "#webhook-panel",
-      (el) => el.style.display,
-    );
+    const panelDisplay = await popupPage.$eval("#webhook-panel", (el) => el.style.display);
     assert(panelDisplay === "block", "Popup: Webhook panel is visible");
 
     // Template dropdown should exist and have one option
-    const selectOptions = await popupPage.$$eval(
-      "#template-select option",
-      (opts) => opts.map((o) => o.textContent),
+    const selectOptions = await popupPage.$$eval("#template-select option", (opts) =>
+      opts.map((o) => o.textContent),
     );
     assert(selectOptions.length === 1, "Popup: Template select has one option");
     assert(selectOptions[0] === "E2E Test Hook", "Popup: Template select shows correct name");
 
     // Method badge
-    const methodText = await popupPage.$eval(
-      "#method-badge",
-      (el) => el.textContent,
-    );
+    const methodText = await popupPage.$eval("#method-badge", (el) => el.textContent);
     assert(methodText === "POST", "Popup: Method badge shows POST");
 
     // URL display
-    const urlText = await popupPage.$eval(
-      "#url-display",
-      (el) => el.textContent,
-    );
-    assert(
-      urlText.includes(`127.0.0.1:${port}`),
-      "Popup: URL display shows webhook URL",
-    );
+    const urlText = await popupPage.$eval("#url-display", (el) => el.textContent);
+    assert(urlText.includes(`127.0.0.1:${port}`), "Popup: URL display shows webhook URL");
 
     // Click send
     await popupPage.click("#send-btn");
@@ -279,13 +326,16 @@ async function runTests() {
     // Verify webhook was received
     assert(webhookReceived !== null, "Webhook: Request received by server");
     assert(webhookReceived?.method === "POST", "Webhook: Method is POST");
-    assert(
-      webhookReceived?.body?.source === "hooky-e2e",
-      "Webhook: Body contains correct param",
-    );
+    assert(webhookReceived?.body?.source === "hooky-e2e", "Webhook: Body contains correct param");
 
-    assert(await popupPage.$eval("#last-result", (el) => !el.hidden && el.dataset.state === "success"), "Popup: Persistent success result displayed");
-    assert(await popupPage.$eval("#toast", (el) => !el.classList.contains("visible")), "Popup: Result is not duplicated in a toast");
+    assert(
+      await popupPage.$eval("#last-result", (el) => !el.hidden && el.dataset.state === "success"),
+      "Popup: Persistent success result displayed",
+    );
+    assert(
+      await popupPage.$eval("#toast", (el) => !el.classList.contains("visible")),
+      "Popup: Result is not duplicated in a toast",
+    );
 
     await popupPage.close();
 
@@ -293,10 +343,10 @@ async function runTests() {
     console.log("\nTesting Quick Send Rules...");
     const rulesPage = await browser.newPage();
     await rulesPage.setViewport({ width: 800, height: 600 });
-    await rulesPage.goto(
-      `chrome-extension://${extensionId}/src/options/options.html`,
-      { waitUntil: "domcontentloaded", timeout: TIMEOUT },
-    );
+    await rulesPage.goto(`chrome-extension://${extensionId}/src/options/options.html`, {
+      waitUntil: "domcontentloaded",
+      timeout: TIMEOUT,
+    });
     await new Promise((r) => setTimeout(r, 500));
 
     // Verify sidebar panels exist
@@ -304,9 +354,8 @@ async function runTests() {
     assert(panels.length === 3, "Rules: Three sidebar panels exist");
 
     // Webhooks panel should be active by default
-    const webhooksActive = await rulesPage.$eval(
-      "#panel-webhooks",
-      (el) => el.classList.contains("active"),
+    const webhooksActive = await rulesPage.$eval("#panel-webhooks", (el) =>
+      el.classList.contains("active"),
     );
     assert(webhooksActive, "Rules: Webhooks panel is active by default");
 
@@ -314,9 +363,8 @@ async function runTests() {
     await rulesPage.click('[data-panel="panel-rules"]');
     await new Promise((r) => setTimeout(r, 300));
 
-    const rulesActive = await rulesPage.$eval(
-      "#panel-rules",
-      (el) => el.classList.contains("active"),
+    const rulesActive = await rulesPage.$eval("#panel-rules", (el) =>
+      el.classList.contains("active"),
     );
     assert(rulesActive, "Rules: Rules panel is active after click");
 
@@ -362,9 +410,8 @@ async function runTests() {
     await rulesPage.type("#rule-value", "github.com");
 
     // Template dropdown should have the template we created earlier
-    const ruleTemplateOptions = await rulesPage.$$eval(
-      "#rule-template option",
-      (opts) => opts.map((o) => o.textContent),
+    const ruleTemplateOptions = await rulesPage.$$eval("#rule-template option", (opts) =>
+      opts.map((o) => o.textContent),
     );
     assert(
       ruleTemplateOptions.includes("E2E Test Hook"),
@@ -380,9 +427,8 @@ async function runTests() {
     assert(ruleStatusText === "Saved!", "Rules: Rule saved successfully");
 
     // No-rules message should be hidden now
-    const noRulesHidden = await rulesPage.$eval(
-      "#no-rules",
-      (el) => el.classList.contains("hidden"),
+    const noRulesHidden = await rulesPage.$eval("#no-rules", (el) =>
+      el.classList.contains("hidden"),
     );
     assert(noRulesHidden, "Rules: 'No rules' message hidden after adding rule");
 
@@ -412,9 +458,8 @@ async function runTests() {
     await rulesPage.click('[data-panel="panel-webhooks"]');
     await new Promise((r) => setTimeout(r, 300));
 
-    const webhooksActiveAgain = await rulesPage.$eval(
-      "#panel-webhooks",
-      (el) => el.classList.contains("active"),
+    const webhooksActiveAgain = await rulesPage.$eval("#panel-webhooks", (el) =>
+      el.classList.contains("active"),
     );
     assert(webhooksActiveAgain, "Rules: Can switch back to Webhooks panel");
 

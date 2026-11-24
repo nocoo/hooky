@@ -19,7 +19,7 @@ export async function handleQuickSend(tab) {
   const data = await chrome.storage.local.get(storeKey);
   const store = data[storeKey];
 
-  if (!store || !store.templates || store.templates.length === 0) {
+  if (!store?.templates || store.templates.length === 0) {
     await openPanel();
     return;
   }
@@ -31,7 +31,7 @@ export async function handleQuickSend(tab) {
   const matchedRule = findMatchingRule(rules, page);
   if (matchedRule) {
     const config = store.templates.find((t) => t.id === matchedRule.templateId);
-    if (config && config.url) {
+    if (config?.url) {
       await sendWebhook(config, context, { tab, source: "quick" });
       return;
     }

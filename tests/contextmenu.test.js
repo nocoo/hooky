@@ -78,9 +78,7 @@ describe("buildContextMenus", () => {
   });
 
   it("should use default name when template name is empty", async () => {
-    const templates = [
-      { id: "t1", name: "", url: "https://hook.com", method: "POST", params: [] },
-    ];
+    const templates = [{ id: "t1", name: "", url: "https://hook.com", method: "POST", params: [] }];
 
     await buildContextMenus(templates);
 
@@ -98,19 +96,43 @@ describe("handleContextMenuClick", () => {
   let storageMock;
 
   it("uses the selection captured by the context-menu event", async () => {
-    storageMock.local.get.mockResolvedValue({ hooky: { templates: [{ id: "t1", name: "Save", url: "https://example.com/capture", method: "POST", params: [{ key: "text", value: "{{page.selection}}" }] }] } });
-    getPageContext.mockResolvedValue({ page: { selection: "selection already changed", meta: {} } });
-    await handleContextMenuClick({ menuItemId: "hooky-t1", selectionText: "original iframe selection" }, { id: 1, url: "https://example.com" });
-    expect(JSON.parse(fetchMock.mock.calls[0][1].body)).toEqual({ text: "original iframe selection" });
+    storageMock.local.get.mockResolvedValue({
+      hooky: {
+        templates: [
+          {
+            id: "t1",
+            name: "Save",
+            url: "https://example.com/capture",
+            method: "POST",
+            params: [{ key: "text", value: "{{page.selection}}" }],
+          },
+        ],
+      },
+    });
+    getPageContext.mockResolvedValue({
+      page: { selection: "selection already changed", meta: {} },
+    });
+    await handleContextMenuClick(
+      { menuItemId: "hooky-t1", selectionText: "original iframe selection" },
+      { id: 1, url: "https://example.com" },
+    );
+    expect(JSON.parse(fetchMock.mock.calls[0][1].body)).toEqual({
+      text: "original iframe selection",
+    });
   });
 
-  it.each(["hooky-open-panel", "hooky-view-result", "hooky-menu-panel", "hooky-menu-result"])("opens %s without sending or evaluating rules", async (menuItemId) => {
-    await handleContextMenuClick({ menuItemId }, { id: 1 });
-    expect(chrome.action.openPopup).toHaveBeenCalledTimes(1);
-    expect(chrome.action.setPopup).toHaveBeenCalledWith({ popup: "src/popup/popup.html" + (menuItemId.endsWith("result") ? "?view=last" : "") });
-    expect(storageMock.local.get).not.toHaveBeenCalled();
-    expect(fetchMock).not.toHaveBeenCalled();
-  });
+  it.each(["hooky-open-panel", "hooky-view-result", "hooky-menu-panel", "hooky-menu-result"])(
+    "opens %s without sending or evaluating rules",
+    async (menuItemId) => {
+      await handleContextMenuClick({ menuItemId }, { id: 1 });
+      expect(chrome.action.openPopup).toHaveBeenCalledTimes(1);
+      expect(chrome.action.setPopup).toHaveBeenCalledWith({
+        popup: `src/popup/popup.html${menuItemId.endsWith("result") ? "?view=last" : ""}`,
+      });
+      expect(storageMock.local.get).not.toHaveBeenCalled();
+      expect(fetchMock).not.toHaveBeenCalled();
+    },
+  );
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -164,7 +186,13 @@ describe("handleContextMenuClick", () => {
 
   it("should execute webhook for matching template on click", async () => {
     const templates = [
-      { id: "t1", name: "Slack", url: "https://slack.com/hook", method: "POST", params: [{ key: "url", value: "{{page.url}}" }] },
+      {
+        id: "t1",
+        name: "Slack",
+        url: "https://slack.com/hook",
+        method: "POST",
+        params: [{ key: "url", value: "{{page.url}}" }],
+      },
     ];
     storageMock.local.get.mockResolvedValue({
       hooky: { templates, activeTemplateId: "t1", theme: "system" },
@@ -238,9 +266,7 @@ describe("handleContextMenuClick", () => {
   });
 
   it("should do nothing when template has no url", async () => {
-    const templates = [
-      { id: "t1", name: "Empty", url: "", method: "POST", params: [] },
-    ];
+    const templates = [{ id: "t1", name: "Empty", url: "", method: "POST", params: [] }];
     storageMock.local.get.mockResolvedValue({
       hooky: { templates, activeTemplateId: "t1", theme: "system" },
     });
@@ -256,8 +282,14 @@ describe("handleContextMenuClick", () => {
   it("should resolve template variables from page context", async () => {
     const templates = [
       {
-        id: "t1", name: "Slack", url: "https://slack.com/hook", method: "POST",
-        params: [{ key: "title", value: "{{page.title}}" }, { key: "selected", value: "{{page.selection}}" }],
+        id: "t1",
+        name: "Slack",
+        url: "https://slack.com/hook",
+        method: "POST",
+        params: [
+          { key: "title", value: "{{page.title}}" },
+          { key: "selected", value: "{{page.selection}}" },
+        ],
       },
     ];
     storageMock.local.get.mockResolvedValue({
@@ -265,7 +297,12 @@ describe("handleContextMenuClick", () => {
     });
 
     getPageContext.mockResolvedValue({
-      page: { url: "https://example.com", title: "My Page", selection: "highlighted text", meta: {} },
+      page: {
+        url: "https://example.com",
+        title: "My Page",
+        selection: "highlighted text",
+        meta: {},
+      },
     });
 
     const info = { menuItemId: "hooky-t1" };
@@ -283,7 +320,13 @@ describe("handleContextMenuClick", () => {
 
   it("should use GET query params for GET method", async () => {
     const templates = [
-      { id: "t1", name: "API", url: "https://api.com/hook", method: "GET", params: [{ key: "q", value: "{{page.url}}" }] },
+      {
+        id: "t1",
+        name: "API",
+        url: "https://api.com/hook",
+        method: "GET",
+        params: [{ key: "q", value: "{{page.url}}" }],
+      },
     ];
     storageMock.local.get.mockResolvedValue({
       hooky: { templates, activeTemplateId: "t1", theme: "system" },
@@ -298,19 +341,22 @@ describe("handleContextMenuClick", () => {
 
     await handleContextMenuClick(info, tab);
 
-    expect(fetchMock).toHaveBeenCalledWith(
-      "https://api.com/hook?q=https%3A%2F%2Fexample.com",
-      {
-        method: "GET",
-        headers: { "Content-Type": "application/json" },
-        signal: expect.any(AbortSignal),
-      },
-    );
+    expect(fetchMock).toHaveBeenCalledWith("https://api.com/hook?q=https%3A%2F%2Fexample.com", {
+      method: "GET",
+      headers: { "Content-Type": "application/json" },
+      signal: expect.any(AbortSignal),
+    });
   });
 
   it("should handle tab without id in getPageContext", async () => {
     const templates = [
-      { id: "t1", name: "Test", url: "https://hook.com", method: "POST", params: [{ key: "url", value: "{{page.url}}" }] },
+      {
+        id: "t1",
+        name: "Test",
+        url: "https://hook.com",
+        method: "POST",
+        params: [{ key: "url", value: "{{page.url}}" }],
+      },
     ];
     storageMock.local.get.mockResolvedValue({
       hooky: { templates, activeTemplateId: "t1", theme: "system" },
@@ -335,7 +381,13 @@ describe("handleContextMenuClick", () => {
 
   it("should handle fallback context from pagecontext module", async () => {
     const templates = [
-      { id: "t1", name: "Test", url: "https://hook.com", method: "POST", params: [{ key: "title", value: "{{page.title}}" }] },
+      {
+        id: "t1",
+        name: "Test",
+        url: "https://hook.com",
+        method: "POST",
+        params: [{ key: "title", value: "{{page.title}}" }],
+      },
     ];
     storageMock.local.get.mockResolvedValue({
       hooky: { templates, activeTemplateId: "t1", theme: "system" },
@@ -373,7 +425,13 @@ describe("handleContextMenuClick", () => {
 
   it("should handle tab with missing url and title", async () => {
     const templates = [
-      { id: "t1", name: "Test", url: "https://hook.com", method: "POST", params: [{ key: "url", value: "{{page.url}}" }] },
+      {
+        id: "t1",
+        name: "Test",
+        url: "https://hook.com",
+        method: "POST",
+        params: [{ key: "url", value: "{{page.url}}" }],
+      },
     ];
     storageMock.local.get.mockResolvedValue({
       hooky: { templates, activeTemplateId: "t1", theme: "system" },

@@ -54,42 +54,75 @@ async function loadBackground() {
   await import("../src/background.js");
 }
 
-const popupSender = () => ({ id: chrome.runtime.id, url: chrome.runtime.getURL("src/popup/popup.html") });
+const popupSender = () => ({
+  id: chrome.runtime.id,
+  url: chrome.runtime.getURL("src/popup/popup.html"),
+});
 
 describe("background.js", () => {
-  it.each(["EXECUTE_WEBHOOK", "GET_DUPLICATE_CAPTURE", "SEND_ANYWAY"])("accepts %s only from the extension's send panel", async (type) => {
-    await loadBackground();
-    const respond = vi.fn();
-    for (const sender of [
-      { id: "another-extension", url: popupSender().url },
-      { id: chrome.runtime.id, url: "https://example.com" },
-      { id: chrome.runtime.id },
-    ]) {
-      expect(onMessageListeners[0]({ type }, sender, respond)).toBe(false);
-      expect(respond).toHaveBeenLastCalledWith({ ok: false, state: "failed", error: "requestFailed" });
-    }
-  });
+  it.each(["EXECUTE_WEBHOOK", "GET_DUPLICATE_CAPTURE", "SEND_ANYWAY"])(
+    "accepts %s only from the extension's send panel",
+    async (type) => {
+      await loadBackground();
+      const respond = vi.fn();
+      for (const sender of [
+        { id: "another-extension", url: popupSender().url },
+        { id: chrome.runtime.id, url: "https://example.com" },
+        { id: chrome.runtime.id },
+      ]) {
+        expect(onMessageListeners[0]({ type }, sender, respond)).toBe(false);
+        expect(respond).toHaveBeenLastCalledWith({
+          ok: false,
+          state: "failed",
+          error: "requestFailed",
+        });
+      }
+    },
+  );
 
   it("serves a masked transient preview and reports expired captures without sending", async () => {
     await loadBackground();
     const respond = vi.fn();
     const { holdDuplicate } = await import("../src/duplicates.js");
-    const token = holdDuplicate({ url: "https://example.com", method: "POST", params: [], headers: [{ key: "X-Key", value: "secret" }] }, {}, { resolved: false });
-    onMessageListeners[0]({ type: "GET_DUPLICATE_CAPTURE", token }, { ...popupSender(), url: popupSender().url + "?view=last" }, respond);
+    const token = holdDuplicate(
+      {
+        url: "https://example.com",
+        method: "POST",
+        params: [],
+        headers: [{ key: "X-Key", value: "secret" }],
+      },
+      {},
+      { resolved: false },
+    );
+    onMessageListeners[0](
+      { type: "GET_DUPLICATE_CAPTURE", token },
+      { ...popupSender(), url: `${popupSender().url}?view=last` },
+      respond,
+    );
     expect(respond.mock.calls[0][0].preview).toContain("x-key: ••••");
     expect(respond.mock.calls[0][0].preview).not.toContain("secret");
     onMessageListeners[0]({ type: "SEND_ANYWAY", token: "expired" }, popupSender(), respond);
-    await vi.waitFor(() => expect(respond).toHaveBeenLastCalledWith({ ok: false, state: "failed", error: "captureExpired" }));
+    await vi.waitFor(() =>
+      expect(respond).toHaveBeenLastCalledWith({
+        ok: false,
+        state: "failed",
+        error: "captureExpired",
+      }),
+    );
   });
 
   it("responds if an explicit repeat cannot be started", async () => {
     await loadBackground();
     const { holdDuplicate } = await import("../src/duplicates.js");
     const token = holdDuplicate({ url: "https://example.com", method: "POST", params: [] }, {}, {});
-    const random = vi.spyOn(crypto, "randomUUID").mockImplementationOnce(() => { throw new Error("unavailable"); });
+    const random = vi.spyOn(crypto, "randomUUID").mockImplementationOnce(() => {
+      throw new Error("unavailable");
+    });
     const respond = vi.fn();
     onMessageListeners[0]({ type: "SEND_ANYWAY", token }, popupSender(), respond);
-    await vi.waitFor(() => expect(respond).toHaveBeenCalledWith({ ok: false, state: "failed", error: "requestFailed" }));
+    await vi.waitFor(() =>
+      expect(respond).toHaveBeenCalledWith({ ok: false, state: "failed", error: "requestFailed" }),
+    );
     random.mockRestore();
   });
 
@@ -100,7 +133,9 @@ describe("background.js", () => {
     expect(chrome.action.openPopup).not.toHaveBeenCalled();
     click("hooky:receipt");
     await vi.waitFor(() => expect(chrome.action.openPopup).toHaveBeenCalledOnce());
-    expect(chrome.action.setPopup).toHaveBeenCalledWith({ popup: "src/popup/popup.html?view=last" });
+    expect(chrome.action.setPopup).toHaveBeenCalledWith({
+      popup: "src/popup/popup.html?view=last",
+    });
     chrome.action.openPopup.mockRejectedValue(new Error("window gone"));
     chrome.tabs.create.mockRejectedValue(new Error("window gone"));
     await Promise.resolve();
@@ -119,7 +154,9 @@ describe("background.js", () => {
     await loadBackground();
     const respond = vi.fn();
     onMessageListeners[0]({ type: "EXECUTE_WEBHOOK" }, popupSender(), respond);
-    await vi.waitFor(() => expect(respond).toHaveBeenCalledWith({ ok: false, state: "failed", error: "requestFailed" }));
+    await vi.waitFor(() =>
+      expect(respond).toHaveBeenCalledWith({ ok: false, state: "failed", error: "requestFailed" }),
+    );
   });
 
   it("reports when neither result-panel surface can be opened", async () => {
@@ -131,16 +168,19 @@ describe("background.js", () => {
     await vi.waitFor(() => expect(respond).toHaveBeenCalledWith({ ok: false }));
   });
 
-  it.each(["toolbar", "context"])("handles unavailable storage and UI during a %s action", async (entry) => {
-    chrome.storage.session.get.mockRejectedValue(new Error("session unavailable"));
-    chrome.storage.local.get.mockRejectedValue(new Error("local unavailable"));
-    chrome.action.openPopup.mockRejectedValue(new Error("window closed"));
-    chrome.tabs.create.mockRejectedValue(new Error("browser closing"));
-    await loadBackground();
-    if (entry === "toolbar") onClickedListeners[0]({ id: 1 });
-    else onMenuClickedListeners[0]({ menuItemId: "hooky-t1" }, { id: 1 });
-    await vi.waitFor(() => expect(chrome.tabs.create).toHaveBeenCalled());
-  });
+  it.each(["toolbar", "context"])(
+    "handles unavailable storage and UI during a %s action",
+    async (entry) => {
+      chrome.storage.session.get.mockRejectedValue(new Error("session unavailable"));
+      chrome.storage.local.get.mockRejectedValue(new Error("local unavailable"));
+      chrome.action.openPopup.mockRejectedValue(new Error("window closed"));
+      chrome.tabs.create.mockRejectedValue(new Error("browser closing"));
+      await loadBackground();
+      if (entry === "toolbar") onClickedListeners[0]({ id: 1 });
+      else onMenuClickedListeners[0]({ menuItemId: "hooky-t1" }, { id: 1 });
+      await vi.waitFor(() => expect(chrome.tabs.create).toHaveBeenCalled());
+    },
+  );
 
   it("handles a failed menu refresh after a settings change", async () => {
     await loadBackground();
@@ -156,7 +196,9 @@ describe("background.js", () => {
     const respond = vi.fn();
     expect(onMessageListeners[0]({ type: "OPEN_PANEL", showResult: true }, {}, respond)).toBe(true);
     await vi.waitFor(() => expect(respond).toHaveBeenCalledWith({ ok: true }));
-    expect(chrome.action.setPopup).toHaveBeenCalledWith({ popup: "src/popup/popup.html?view=last" });
+    expect(chrome.action.setPopup).toHaveBeenCalledWith({
+      popup: "src/popup/popup.html?view=last",
+    });
   });
 
   it("does not rebuild menus for session result writes", async () => {
@@ -269,13 +311,16 @@ describe("background.js", () => {
     chrome.contextMenus.removeAll.mockClear();
 
     const listener = onChangedListeners[0];
-    listener({
-      hooky: {
-        newValue: {
-          templates: [{ id: "a", name: "A", url: "https://a.com" }],
+    listener(
+      {
+        hooky: {
+          newValue: {
+            templates: [{ id: "a", name: "A", url: "https://a.com" }],
+          },
         },
       },
-    }, "local");
+      "local",
+    );
 
     expect(chrome.contextMenus.removeAll).toHaveBeenCalled();
   });
@@ -287,13 +332,16 @@ describe("background.js", () => {
     chrome.action.setPopup.mockClear();
 
     const listener = onChangedListeners[0];
-    listener({
-      hooky: {
-        newValue: {
-          templates: [{ id: "a", name: "A", url: "https://a.com" }],
+    listener(
+      {
+        hooky: {
+          newValue: {
+            templates: [{ id: "a", name: "A", url: "https://a.com" }],
+          },
         },
       },
-    }, "local");
+      "local",
+    );
 
     expect(chrome.action.setPopup).not.toHaveBeenCalled();
   });
@@ -337,9 +385,11 @@ describe("background.js", () => {
 
     // Add scripting mock for getPageContext
     chrome.scripting = {
-      executeScript: vi.fn().mockResolvedValue([{
-        result: { url: "https://example.com", title: "Test", selection: "", meta: {} },
-      }]),
+      executeScript: vi.fn().mockResolvedValue([
+        {
+          result: { url: "https://example.com", title: "Test", selection: "", meta: {} },
+        },
+      ]),
     };
 
     await loadBackground();

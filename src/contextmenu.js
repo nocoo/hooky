@@ -19,8 +19,16 @@ const CONTEXTS = ["page", "selection", "link", "image"];
 export async function buildContextMenus(templates) {
   await chrome.contextMenus.removeAll();
 
-  chrome.contextMenus.create({ id: "hooky-open-panel", title: t("openSendPanel"), contexts: ["action"] });
-  chrome.contextMenus.create({ id: "hooky-view-result", title: t("viewLastResult"), contexts: ["action"] });
+  chrome.contextMenus.create({
+    id: "hooky-open-panel",
+    title: t("openSendPanel"),
+    contexts: ["action"],
+  });
+  chrome.contextMenus.create({
+    id: "hooky-view-result",
+    title: t("viewLastResult"),
+    contexts: ["action"],
+  });
   if (!templates || templates.length === 0) return;
 
   chrome.contextMenus.create({
@@ -37,9 +45,24 @@ export async function buildContextMenus(templates) {
       contexts: CONTEXTS,
     });
   }
-  chrome.contextMenus.create({ id: "hooky-menu-divider", parentId: PARENT_ID, type: "separator", contexts: CONTEXTS });
-  chrome.contextMenus.create({ id: "hooky-menu-panel", parentId: PARENT_ID, title: t("openSendPanel"), contexts: CONTEXTS });
-  chrome.contextMenus.create({ id: "hooky-menu-result", parentId: PARENT_ID, title: t("viewLastResult"), contexts: CONTEXTS });
+  chrome.contextMenus.create({
+    id: "hooky-menu-divider",
+    parentId: PARENT_ID,
+    type: "separator",
+    contexts: CONTEXTS,
+  });
+  chrome.contextMenus.create({
+    id: "hooky-menu-panel",
+    parentId: PARENT_ID,
+    title: t("openSendPanel"),
+    contexts: CONTEXTS,
+  });
+  chrome.contextMenus.create({
+    id: "hooky-menu-result",
+    parentId: PARENT_ID,
+    title: t("viewLastResult"),
+    contexts: CONTEXTS,
+  });
 }
 
 /**
@@ -56,7 +79,11 @@ export async function buildContextMenus(templates) {
 export async function handleContextMenuClick(info, tab) {
   const menuId = String(info.menuItemId);
 
-  if (["hooky-open-panel", "hooky-view-result", "hooky-menu-panel", "hooky-menu-result"].includes(menuId)) {
+  if (
+    ["hooky-open-panel", "hooky-view-result", "hooky-menu-panel", "hooky-menu-result"].includes(
+      menuId,
+    )
+  ) {
     await openPanel({ showResult: ["hooky-view-result", "hooky-menu-result"].includes(menuId) });
     return;
   }
@@ -72,7 +99,7 @@ export async function handleContextMenuClick(info, tab) {
   if (!store?.templates) return;
 
   const config = store.templates.find((t) => t.id === templateId);
-  if (!config || !config.url) return;
+  if (!config?.url) return;
 
   const context = await getPageContext(tab);
   if (typeof info.selectionText === "string") context.page.selection = info.selectionText;

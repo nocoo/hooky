@@ -4,13 +4,25 @@ export const RESPONSE_TIMEOUT = 3000;
 export function validateResponseConfig(config = {}) {
   if (config.enabled !== true) return;
   for (const path of [config.messagePath, config.receiptPath, config.successPath]) {
-    if (path && (typeof path !== "string" || path.length > 200 || path.split(".").some((key) => !key || key !== key.trim()))) throw new Error("invalidResponsePath");
+    if (
+      path &&
+      (typeof path !== "string" ||
+        path.length > 200 ||
+        path.split(".").some((key) => !key || key !== key.trim()))
+    )
+      throw new Error("invalidResponsePath");
   }
   if (config.successPath) {
     try {
       const value = JSON.parse(config.successValue);
-      if (value !== null && typeof value === "object" || typeof value === "number" && !Number.isFinite(value)) throw new Error();
-    } catch { throw new Error("invalidSuccessValue"); }
+      if (
+        (value !== null && typeof value === "object") ||
+        (typeof value === "number" && !Number.isFinite(value))
+      )
+        throw new Error();
+    } catch {
+      throw new Error("invalidSuccessValue");
+    }
   }
 }
 
@@ -29,19 +41,31 @@ export function applyResponseFields(result, config) {
   const receipt = result.receipt;
   let data;
   if (!receipt.note) {
-    try { data = JSON.parse(receipt.text); }
-    catch { receipt.fieldNote = "responseFieldMissing"; }
+    try {
+      data = JSON.parse(receipt.text);
+    } catch {
+      receipt.fieldNote = "responseFieldMissing";
+    }
   }
-  for (const [field, path] of [["message", config.messagePath], ["receiptId", config.receiptPath]]) {
+  for (const [field, path] of [
+    ["message", config.messagePath],
+    ["receiptId", config.receiptPath],
+  ]) {
     if (!path) continue;
     const value = fieldAt(data, path);
-    if (value === undefined || value !== null && typeof value === "object") receipt.fieldNote = "responseFieldMissing";
+    if (value === undefined || (value !== null && typeof value === "object"))
+      receipt.fieldNote = "responseFieldMissing";
     else receipt[field] = String(value).slice(0, 1000);
   }
   if (!config.successPath) return;
   result.httpOk = result.ok;
   const actual = fieldAt(data, config.successPath);
-  result.business = actual === undefined ? "unknown" : actual === JSON.parse(config.successValue) ? "matched" : "rejected";
+  result.business =
+    actual === undefined
+      ? "unknown"
+      : actual === JSON.parse(config.successValue)
+        ? "matched"
+        : "rejected";
   if (!result.httpOk || result.business === "matched") return;
   result.ok = false;
   result.state = result.business === "rejected" ? "failed" : "unknown";
@@ -90,8 +114,11 @@ export async function readReceipt(response) {
   const text = new TextDecoder().decode(buffer.subarray(0, size));
   if (!note && !text) note = "responseEmpty";
   if (!note && json) {
-    try { JSON.parse(text); }
-    catch { note = "responseInvalidJson"; }
+    try {
+      JSON.parse(text);
+    } catch {
+      note = "responseInvalidJson";
+    }
   }
   return { text, format: json ? "json" : "text", ...(note ? { note } : {}) };
 }

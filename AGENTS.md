@@ -5,7 +5,7 @@ Docs: [README.md](README.md) · [Extension contract](docs/01-extension-contract.
 
 ## Commands
 
-Run from root with Bun/Node (versions in `.github/workflows/quality-slots.yml`; ESLint 10 flat config, Vitest/jsdom, Puppeteer). Layout: `src/` services, `src/popup/`, `src/options/`, `_locales/`, `materials/`. For dev, load unpacked at `chrome://extensions/` and reload after edits.
+Run from root with Bun/Node (versions in `.github/workflows/quality-slots.yml`; Biome, Vitest/jsdom, Puppeteer). Layout: `src/` services, `src/popup/`, `src/options/`, `_locales/`, `materials/`. For dev, load unpacked at `chrome://extensions/` and reload after edits.
 
 ```sh
 bun install --frozen-lockfile
@@ -23,7 +23,7 @@ Set `PUPPETEER_EXECUTABLE_PATH` only to select an installed Chrome. `bun run mat
 ## Invariants
 
 - `manifest.json` (`version`) is authoritative; keep `package.json` synchronized and display runtime `chrome.runtime.getManifest().version`.
-- Package metadata is CommonJS while `src/**/*.js` and `tests/**/*.js` use ESM exports; `scripts/build.sh` packages only runtime files into `dist/hooky-<version>.zip` without publishing.
+- Package uses ESM (`"type": "module"`) across `src/**/*.js` and `tests/**/*.test.js`, with CommonJS Puppeteer E2E runners in `tests/e2e/*.cjs`; `scripts/build.sh` packages only runtime files into `dist/hooky-<version>.zip` without publishing.
 - Persist templates under `chrome.storage.local` key `hooky`; optional fields preserve legacy HTTP behavior. Exact fields, caps, and lifetimes live in [extension contract](docs/01-extension-contract.md).
 - Resolve each logical send once; header and body bindings share one UUID. Edited or pasted captured variable syntax stays literal. Never claim automatic retry or server-side idempotency.
 - GET/DELETE use query parameters; POST/PUT/PATCH use JSON. Custom-header requests reject redirects and stay masked. Keep the 20s header timeout and opt-in receipt limits of 8 KiB / 3s.
@@ -38,7 +38,7 @@ Set `PUPPETEER_EXECUTABLE_PATH` only to select an installed Chrome. `bun run mat
 
 Follows `system1-quality`; CI runs `.github/workflows/ci.yml` -> `.github/workflows/quality-slots.yml` with pinned `base-ci` actions (`quality / Z1: Gate` required on `main`, checking all `enforced` slots, `precommit-probes`, and tested-SHA match). Status vocabulary: `enforced`, `planned`, `manual`, `N/A`.
 
-- **Floors**: Vitest v8 (`vitest.config.js`) enforces `>= 95%` statements/branches/functions/lines and rejects `.only`/`.skip`/empty suites; ESLint runs `--max-warnings=0`.
+- **Floors**: Vitest v8 (`vitest.config.js`) enforces `>= 95%` statements/branches/functions/lines and rejects `.only`/`.skip`/empty suites; Biome runs `biome check --error-on-warnings`.
 - **N/A slots**: `S1 Types` (pure JS, no `tsconfig`; exploratory `tsc --checkJs --strict` hit hundreds of DOM/`chrome` errors); `P1 Package` (extension ZIP, not npm).
 - **N/A runtime/service**: `L2 Runtime` (Chrome MV3 extension); `L3 Integration` (no standalone HTTP service; E2E runs in `L4` via Puppeteer local receiver).
 - **Manual checks**: Chrome Web Store submission/approval, live CDN/R2 behavior, and real-toolbar/OS acceptance remain `manual` ([TESTING.md](TESTING.md)).

@@ -32,7 +32,9 @@ export function openPanel({ showResult = false } = {}) {
     } finally {
       await chrome.action.setPopup({ popup: "" });
     }
-  })().finally(() => { opening = null; });
+  })().finally(() => {
+    opening = null;
+  });
   return opening;
 }
 
@@ -42,7 +44,12 @@ export function showPageFeedback(result, message, labels, expectedUrl) {
   const mountId = "__hooky_send_feedback";
   let mount = document.getElementById(mountId);
   if (mount && Number(mount.dataset.startedAt) > result.startedAt) return true;
-  if (mount?.dataset.sendId === result.id && mount.dataset.state !== "sending" && result.state === "sending") return true;
+  if (
+    mount?.dataset.sendId === result.id &&
+    mount.dataset.state !== "sending" &&
+    result.state === "sending"
+  )
+    return true;
   if (!mount) {
     mount = document.createElement("div");
     mount.id = mountId;
@@ -52,7 +59,8 @@ export function showPageFeedback(result, message, labels, expectedUrl) {
   mount.dataset.sendId = result.id;
   mount.dataset.startedAt = String(result.startedAt);
   mount.dataset.state = result.state;
-  mount.style.cssText = "position:fixed!important;right:20px!important;bottom:20px!important;z-index:2147483647!important;max-width:calc(100vw - 40px)!important;";
+  mount.style.cssText =
+    "position:fixed!important;right:20px!important;bottom:20px!important;z-index:2147483647!important;max-width:calc(100vw - 40px)!important;";
   const root = mount.shadowRoot;
   root.innerHTML = `<style>
     :host{all:initial;color-scheme:light dark;--font-meta:10px;--font-body:12px;--font-title:14px}*{box-sizing:border-box}
@@ -69,13 +77,17 @@ export function showPageFeedback(result, message, labels, expectedUrl) {
   </style>`;
   const card = document.createElement("section");
   card.dataset.state = result.state;
-  card.setAttribute("role", result.state === "failed" || result.state === "unknown" ? "alert" : "status");
+  card.setAttribute(
+    "role",
+    result.state === "failed" || result.state === "unknown" ? "alert" : "status",
+  );
   card.setAttribute("aria-live", card.getAttribute("role") === "alert" ? "assertive" : "polite");
   card.setAttribute("aria-atomic", "true");
   const icon = document.createElement("span");
   icon.className = "state-icon";
   icon.setAttribute("aria-hidden", "true");
-  icon.innerHTML = '<svg class="check" data-lucide="circle-check" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><circle cx="12" cy="12" r="10" /><path d="m16 9-5.5 5.5L8 12" /></svg><svg class="cross" data-lucide="circle-x" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><circle cx="12" cy="12" r="10" /><path d="m15 9-6 6" /><path d="m9 9 6 6" /></svg><svg class="warning" data-lucide="circle-alert" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><circle cx="12" cy="12" r="10" /><line x1="12" x2="12" y1="8" y2="12" /><line x1="12" x2="12.01" y1="16" y2="16" /></svg><svg class="spinner" data-lucide="loader-circle" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M21 12a9 9 0 1 1-6.219-8.56" /></svg>';
+  icon.innerHTML =
+    '<svg class="check" data-lucide="circle-check" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><circle cx="12" cy="12" r="10" /><path d="m16 9-5.5 5.5L8 12" /></svg><svg class="cross" data-lucide="circle-x" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><circle cx="12" cy="12" r="10" /><path d="m15 9-6 6" /><path d="m9 9 6 6" /></svg><svg class="warning" data-lucide="circle-alert" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><circle cx="12" cy="12" r="10" /><line x1="12" x2="12" y1="8" y2="12" /><line x1="12" x2="12.01" y1="16" y2="16" /></svg><svg class="spinner" data-lucide="loader-circle" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M21 12a9 9 0 1 1-6.219-8.56" /></svg>';
   const copy = document.createElement("div");
   const brand = document.createElement("small");
   brand.textContent = "HOOKY";
@@ -87,7 +99,10 @@ export function showPageFeedback(result, message, labels, expectedUrl) {
   view.type = "button";
   view.className = "view";
   view.textContent = labels.view;
-  view.insertAdjacentHTML("beforeend", '<svg class="icon" data-lucide="arrow-right" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M5 12h14" /><path d="m12 5 7 7-7 7" /></svg>');
+  view.insertAdjacentHTML(
+    "beforeend",
+    '<svg class="icon" data-lucide="arrow-right" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M5 12h14" /><path d="m12 5 7 7-7 7" /></svg>',
+  );
   view.addEventListener("click", () => {
     chrome.runtime.sendMessage({ type: "OPEN_PANEL", showResult: true }).catch(() => {});
   });
@@ -96,7 +111,8 @@ export function showPageFeedback(result, message, labels, expectedUrl) {
   close.className = "close";
   close.setAttribute("aria-label", labels.close);
   close.title = labels.close;
-  close.innerHTML = '<svg class="icon" data-lucide="x" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg>';
+  close.innerHTML =
+    '<svg class="icon" data-lucide="x" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg>';
   close.addEventListener("click", () => mount.remove());
   copy.append(brand, title, text, view);
   card.append(icon, copy, close);
@@ -104,9 +120,18 @@ export function showPageFeedback(result, message, labels, expectedUrl) {
   if (result.state === "success") {
     let expired = false;
     const dismissIfInactive = () => {
-      if (expired && mount.dataset.sendId === result.id && mount.dataset.startedAt === String(result.startedAt) && !card.matches(":hover, :focus-within")) mount.remove();
+      if (
+        expired &&
+        mount.dataset.sendId === result.id &&
+        mount.dataset.startedAt === String(result.startedAt) &&
+        !card.matches(":hover, :focus-within")
+      )
+        mount.remove();
     };
-    setTimeout(() => { expired = true; dismissIfInactive(); }, 8000);
+    setTimeout(() => {
+      expired = true;
+      dismissIfInactive();
+    }, 8000);
     card.addEventListener("pointerleave", dismissIfInactive);
     card.addEventListener("focusout", () => setTimeout(dismissIfInactive, 0));
   }
@@ -116,11 +141,16 @@ export function showPageFeedback(result, message, labels, expectedUrl) {
 async function showBadge(result) {
   const target = result.tabId === null ? {} : { tabId: result.tabId };
   const text = { sending: "…", success: "✓", failed: "✗", unknown: "?" }[result.state];
-  const color = { sending: "#7851a5", success: "#4a9", failed: "#c44", unknown: "#946200" }[result.state];
+  const color = { sending: "#7851a5", success: "#4a9", failed: "#c44", unknown: "#946200" }[
+    result.state
+  ];
   await Promise.allSettled([
     chrome.action.setBadgeText({ ...target, text }),
     chrome.action.setBadgeBackgroundColor({ ...target, color }),
-    chrome.action.setTitle({ ...target, title: `Hooky · ${result.name} · ${resultMessage(result)}` }),
+    chrome.action.setTitle({
+      ...target,
+      title: `Hooky · ${result.name} · ${resultMessage(result)}`,
+    }),
   ]);
 }
 
@@ -129,10 +159,12 @@ export async function showDesktopNotification(result) {
   if (result.state === "sending") return;
   const mode = (await loadStore()).notificationMode;
   if (mode !== "all" && !(mode === "errors" && result.state !== "success")) return;
-  if (!await chrome.permissions.contains({ permissions: ["notifications"] })) return;
-  await chrome.notifications.create("hooky:" + result.id, {
-    type: "basic", iconUrl: chrome.runtime.getURL("src/icons/icon128.png"),
-    title: `Hooky · ${result.name}`, message: resultMessage(result),
+  if (!(await chrome.permissions.contains({ permissions: ["notifications"] }))) return;
+  await chrome.notifications.create(`hooky:${result.id}`, {
+    type: "basic",
+    iconUrl: chrome.runtime.getURL("src/icons/icon128.png"),
+    title: `Hooky · ${result.name}`,
+    message: resultMessage(result),
     requireInteraction: result.state !== "success",
   });
 }
@@ -142,10 +174,16 @@ export function publishResult(result, { tab, source, start = false } = {}) {
   const publish = writes.then(async () => {
     const tabKey = TAB_RESULT_PREFIX + result.tabId;
     let current = {};
-    try { current = await chrome.storage.session.get([LAST_RESULT_KEY, tabKey]); }
-    catch { /* Live feedback remains available if session storage is unavailable. */ }
+    try {
+      current = await chrome.storage.session.get([LAST_RESULT_KEY, tabKey]);
+    } catch {
+      /* Live feedback remains available if session storage is unavailable. */
+    }
     const updates = {};
-    const canReplace = (previous) => !previous || ((start || previous.id === result.id) && (previous.lastActionAt || previous.startedAt) <= (result.lastActionAt || result.startedAt));
+    const canReplace = (previous) =>
+      !previous ||
+      ((start || previous.id === result.id) &&
+        (previous.lastActionAt || previous.startedAt) <= (result.lastActionAt || result.startedAt));
     if (canReplace(current[LAST_RESULT_KEY])) updates[LAST_RESULT_KEY] = result;
     if (!canReplace(current[tabKey])) return;
     updates[tabKey] = result;
@@ -155,17 +193,32 @@ export function publishResult(result, { tab, source, start = false } = {}) {
     if (source === "popup" || result.tabId === null) return;
     let timer;
     try {
-      const injected = await Promise.race([chrome.scripting.executeScript({
-        target: { tabId: result.tabId },
-        func: showPageFeedback,
-        args: [
-          { id: result.id, name: result.name, state: result.state, startedAt: result.lastActionAt || result.startedAt },
-          resultMessage(result), { view: t("viewLastResult"), close: t("dismiss") }, tab.url,
-        ],
-      }), new Promise((resolve) => { timer = setTimeout(() => resolve([]), PAGE_FEEDBACK_TIMEOUT); })]);
+      const injected = await Promise.race([
+        chrome.scripting.executeScript({
+          target: { tabId: result.tabId },
+          func: showPageFeedback,
+          args: [
+            {
+              id: result.id,
+              name: result.name,
+              state: result.state,
+              startedAt: result.lastActionAt || result.startedAt,
+            },
+            resultMessage(result),
+            { view: t("viewLastResult"), close: t("dismiss") },
+            tab.url,
+          ],
+        }),
+        new Promise((resolve) => {
+          timer = setTimeout(() => resolve([]), PAGE_FEEDBACK_TIMEOUT);
+        }),
+      ]);
       if (injected[0]?.result === true) return;
-    } catch { /* Internal pages and navigation can prevent injection. */ }
-    finally { clearTimeout(timer); }
+    } catch {
+      /* Internal pages and navigation can prevent injection. */
+    } finally {
+      clearTimeout(timer);
+    }
     if (result.state !== "sending") await openPanel({ showResult: true }).catch(() => {});
   });
   writes = publish.catch(() => {});
@@ -182,8 +235,17 @@ export async function recoverPendingResults() {
   const data = await chrome.storage.session.get(null);
   const updates = {};
   for (const [key, result] of Object.entries(data)) {
-    if ((key === LAST_RESULT_KEY || key.startsWith(TAB_RESULT_PREFIX)) && result.state === "sending") {
-      updates[key] = { ...result, ok: false, state: "unknown", error: "requestUnconfirmed", finishedAt: Date.now() };
+    if (
+      (key === LAST_RESULT_KEY || key.startsWith(TAB_RESULT_PREFIX)) &&
+      result.state === "sending"
+    ) {
+      updates[key] = {
+        ...result,
+        ok: false,
+        state: "unknown",
+        error: "requestUnconfirmed",
+        finishedAt: Date.now(),
+      };
       if (key !== LAST_RESULT_KEY) await showBadge(updates[key]);
     }
   }

@@ -24,7 +24,12 @@ function generateId() {
  */
 export async function loadStore() {
   const data = await chrome.storage.local.get(STORE_KEY);
-  const store = data[STORE_KEY] || { templates: [], activeTemplateId: null, quickSendRules: [], theme: "system" };
+  const store = data[STORE_KEY] || {
+    templates: [],
+    activeTemplateId: null,
+    quickSendRules: [],
+    theme: "system",
+  };
   if (!store.quickSendRules) store.quickSendRules = [];
   return store;
 }

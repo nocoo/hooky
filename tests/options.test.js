@@ -3,7 +3,9 @@ import { readFileSync } from "node:fs";
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 
 function setupOptionsDOM() {
-  document.body.innerHTML = readFileSync("src/options/options.html", "utf8").split("<body>")[1].split("</body>")[0];
+  document.body.innerHTML = readFileSync("src/options/options.html", "utf8")
+    .split("<body>")[1]
+    .split("</body>")[0];
 }
 
 function setupChromeMock(storeData = {}) {
@@ -109,12 +111,14 @@ describe("options.js", () => {
   });
 
   it("should render template list with new-webhook action item", async () => {
-    setupChromeMock(makeStore({
-      templates: [
-        { id: "t1", name: "Hook A", url: "https://a.com", method: "POST", params: [] },
-        { id: "t2", name: "Hook B", url: "https://b.com", method: "GET", params: [] },
-      ],
-    }));
+    setupChromeMock(
+      makeStore({
+        templates: [
+          { id: "t1", name: "Hook A", url: "https://a.com", method: "POST", params: [] },
+          { id: "t2", name: "Hook B", url: "https://b.com", method: "GET", params: [] },
+        ],
+      }),
+    );
 
     await import("../src/options/options.js");
 
@@ -182,12 +186,14 @@ describe("options.js", () => {
         return Promise.resolve(store);
       }
       // After create, return updated store
-      return Promise.resolve(makeStore({
-        templates: [
-          ...store.hooky.templates,
-          { id: "t-new", name: "Untitled", url: "", method: "POST", params: [] },
-        ],
-      }));
+      return Promise.resolve(
+        makeStore({
+          templates: [
+            ...store.hooky.templates,
+            { id: "t-new", name: "Untitled", url: "", method: "POST", params: [] },
+          ],
+        }),
+      );
     });
 
     await import("../src/options/options.js");
@@ -230,7 +236,11 @@ describe("options.js", () => {
   });
 
   it("should add a param row when add-param button is clicked", async () => {
-    setupChromeMock(makeStore({ templates: [{ id: "t1", name: "A", url: "https://a.com", method: "POST", params: [] }] }));
+    setupChromeMock(
+      makeStore({
+        templates: [{ id: "t1", name: "A", url: "https://a.com", method: "POST", params: [] }],
+      }),
+    );
     await import("../src/options/options.js");
 
     await vi.waitFor(() => {
@@ -357,12 +367,20 @@ describe("options.js", () => {
   });
 
   it("should switch template when clicking another template item", async () => {
-    setupChromeMock(makeStore({
-      templates: [
-        { id: "t1", name: "Hook A", url: "https://a.com", method: "POST", params: [] },
-        { id: "t2", name: "Hook B", url: "https://b.com", method: "GET", params: [{ key: "x", value: "1" }] },
-      ],
-    }));
+    setupChromeMock(
+      makeStore({
+        templates: [
+          { id: "t1", name: "Hook A", url: "https://a.com", method: "POST", params: [] },
+          {
+            id: "t2",
+            name: "Hook B",
+            url: "https://b.com",
+            method: "GET",
+            params: [{ key: "x", value: "1" }],
+          },
+        ],
+      }),
+    );
 
     await import("../src/options/options.js");
 
@@ -416,9 +434,11 @@ describe("options.js", () => {
   });
 
   it("should use default name when template name is empty", async () => {
-    setupChromeMock(makeStore({
-      templates: [{ id: "t1", name: "", url: "https://a.com", method: "POST", params: [] }],
-    }));
+    setupChromeMock(
+      makeStore({
+        templates: [{ id: "t1", name: "", url: "https://a.com", method: "POST", params: [] }],
+      }),
+    );
     await import("../src/options/options.js");
 
     await vi.waitFor(() => {
@@ -428,12 +448,14 @@ describe("options.js", () => {
   });
 
   it("should keep currentTemplateId across renderAll when template still exists", async () => {
-    setupChromeMock(makeStore({
-      templates: [
-        { id: "t1", name: "Hook A", url: "https://a.com", method: "POST", params: [] },
-        { id: "t2", name: "Hook B", url: "https://b.com", method: "GET", params: [] },
-      ],
-    }));
+    setupChromeMock(
+      makeStore({
+        templates: [
+          { id: "t1", name: "Hook A", url: "https://a.com", method: "POST", params: [] },
+          { id: "t2", name: "Hook B", url: "https://b.com", method: "GET", params: [] },
+        ],
+      }),
+    );
     await import("../src/options/options.js");
 
     // Wait for first template to load
@@ -451,9 +473,11 @@ describe("options.js", () => {
   });
 
   it("should fallback to defaults for template with missing url and method", async () => {
-    setupChromeMock(makeStore({
-      templates: [{ id: "t1", name: "No URL", url: undefined, method: undefined, params: [] }],
-    }));
+    setupChromeMock(
+      makeStore({
+        templates: [{ id: "t1", name: "No URL", url: undefined, method: undefined, params: [] }],
+      }),
+    );
     await import("../src/options/options.js");
 
     await vi.waitFor(() => {
@@ -465,9 +489,13 @@ describe("options.js", () => {
   });
 
   it("should handle template with null params in editor", async () => {
-    setupChromeMock(makeStore({
-      templates: [{ id: "t1", name: "No Params", url: "https://x.com", method: "GET", params: null }],
-    }));
+    setupChromeMock(
+      makeStore({
+        templates: [
+          { id: "t1", name: "No Params", url: "https://x.com", method: "GET", params: null },
+        ],
+      }),
+    );
     await import("../src/options/options.js");
 
     await vi.waitFor(() => {
@@ -491,9 +519,7 @@ describe("options.js", () => {
 
     await vi.waitFor(() => {
       const setCalls = chrome.storage.local.set.mock.calls;
-      const saved = setCalls.find(
-        (call) => call[0].hooky?.templates?.[0]?.name === "Untitled",
-      );
+      const saved = setCalls.find((call) => call[0].hooky?.templates?.[0]?.name === "Untitled");
       expect(saved).toBeTruthy();
     });
   });
@@ -518,9 +544,11 @@ describe("options.js", () => {
   });
 
   it("should handle delete template name fallback", async () => {
-    setupChromeMock(makeStore({
-      templates: [{ id: "t1", name: "", url: "https://a.com", method: "POST", params: [] }],
-    }));
+    setupChromeMock(
+      makeStore({
+        templates: [{ id: "t1", name: "", url: "https://a.com", method: "POST", params: [] }],
+      }),
+    );
     global.confirm = vi.fn(() => true);
 
     await import("../src/options/options.js");
@@ -561,7 +589,9 @@ describe("options.js", () => {
     await vi.waitFor(() => {
       expect(document.getElementById("panel-webhooks").classList.contains("active")).toBe(true);
     });
-    expect(document.querySelector('[data-panel="panel-webhooks"]').getAttribute("aria-expanded")).toBe("true");
+    expect(
+      document.querySelector('[data-panel="panel-webhooks"]').getAttribute("aria-expanded"),
+    ).toBe("true");
     expect(document.getElementById("rules-items").inert).toBe(true);
 
     // Click settings trigger
@@ -574,8 +604,12 @@ describe("options.js", () => {
     expect(document.getElementById("panel-webhooks").classList.contains("active")).toBe(false);
     expect(document.getElementById("panel-rules").classList.contains("active")).toBe(false);
     expect(settingsTrigger.getAttribute("aria-expanded")).toBe("true");
-    expect(document.getElementById(settingsTrigger.getAttribute("aria-controls")).inert).toBe(false);
-    expect(document.querySelector('[data-panel="panel-webhooks"]').getAttribute("aria-expanded")).toBe("false");
+    expect(document.getElementById(settingsTrigger.getAttribute("aria-controls")).inert).toBe(
+      false,
+    );
+    expect(
+      document.querySelector('[data-panel="panel-webhooks"]').getAttribute("aria-expanded"),
+    ).toBe("false");
     expect(document.getElementById("webhooks-items").inert).toBe(true);
   });
 
@@ -597,11 +631,20 @@ describe("options.js", () => {
   // ─── Rules manager tests ───
 
   it("should show rules manager when rules panel is clicked", async () => {
-    setupChromeMock(makeStore({
-      quickSendRules: [
-        { id: "r1", field: "url", operator: "contains", value: "github.com", templateId: "t1", enabled: true },
-      ],
-    }));
+    setupChromeMock(
+      makeStore({
+        quickSendRules: [
+          {
+            id: "r1",
+            field: "url",
+            operator: "contains",
+            value: "github.com",
+            templateId: "t1",
+            enabled: true,
+          },
+        ],
+      }),
+    );
     await import("../src/options/options.js");
 
     await vi.waitFor(() => {
@@ -640,12 +683,28 @@ describe("options.js", () => {
   });
 
   it("should render rules list in sidebar", async () => {
-    setupChromeMock(makeStore({
-      quickSendRules: [
-        { id: "r1", field: "url", operator: "contains", value: "github.com", templateId: "t1", enabled: true },
-        { id: "r2", field: "title", operator: "equals", value: "Home", templateId: "t1", enabled: false },
-      ],
-    }));
+    setupChromeMock(
+      makeStore({
+        quickSendRules: [
+          {
+            id: "r1",
+            field: "url",
+            operator: "contains",
+            value: "github.com",
+            templateId: "t1",
+            enabled: true,
+          },
+          {
+            id: "r2",
+            field: "title",
+            operator: "equals",
+            value: "Home",
+            templateId: "t1",
+            enabled: false,
+          },
+        ],
+      }),
+    );
     await import("../src/options/options.js");
 
     await vi.waitFor(() => {
@@ -668,11 +727,20 @@ describe("options.js", () => {
   });
 
   it("should hide no-rules message when rules exist", async () => {
-    setupChromeMock(makeStore({
-      quickSendRules: [
-        { id: "r1", field: "url", operator: "contains", value: "test", templateId: "t1", enabled: true },
-      ],
-    }));
+    setupChromeMock(
+      makeStore({
+        quickSendRules: [
+          {
+            id: "r1",
+            field: "url",
+            operator: "contains",
+            value: "test",
+            templateId: "t1",
+            enabled: true,
+          },
+        ],
+      }),
+    );
     await import("../src/options/options.js");
 
     await vi.waitFor(() => {
@@ -689,11 +757,20 @@ describe("options.js", () => {
   });
 
   it("should select a rule and show rule editor", async () => {
-    setupChromeMock(makeStore({
-      quickSendRules: [
-        { id: "r1", field: "url", operator: "contains", value: "github.com", templateId: "t1", enabled: true },
-      ],
-    }));
+    setupChromeMock(
+      makeStore({
+        quickSendRules: [
+          {
+            id: "r1",
+            field: "url",
+            operator: "contains",
+            value: "github.com",
+            templateId: "t1",
+            enabled: true,
+          },
+        ],
+      }),
+    );
     await import("../src/options/options.js");
 
     await vi.waitFor(() => {
@@ -729,11 +806,20 @@ describe("options.js", () => {
     chrome.storage.local.get.mockImplementation(() => {
       callCount++;
       if (callCount <= 2) return Promise.resolve(store);
-      return Promise.resolve(makeStore({
-        quickSendRules: [
-          { id: "r-new", field: "url", operator: "contains", value: "", templateId: "t1", enabled: true },
-        ],
-      }));
+      return Promise.resolve(
+        makeStore({
+          quickSendRules: [
+            {
+              id: "r-new",
+              field: "url",
+              operator: "contains",
+              value: "",
+              templateId: "t1",
+              enabled: true,
+            },
+          ],
+        }),
+      );
     });
 
     await import("../src/options/options.js");
@@ -759,7 +845,14 @@ describe("options.js", () => {
   it("should save rule changes", async () => {
     const storeWithRule = makeStore({
       quickSendRules: [
-        { id: "r1", field: "url", operator: "contains", value: "github.com", templateId: "t1", enabled: true },
+        {
+          id: "r1",
+          field: "url",
+          operator: "contains",
+          value: "github.com",
+          templateId: "t1",
+          enabled: true,
+        },
       ],
     });
     setupChromeMock(storeWithRule);
@@ -791,9 +884,7 @@ describe("options.js", () => {
 
     await vi.waitFor(() => {
       const setCalls = chrome.storage.local.set.mock.calls;
-      const saved = setCalls.find(
-        (call) => call[0].hooky?.quickSendRules?.[0]?.field === "title",
-      );
+      const saved = setCalls.find((call) => call[0].hooky?.quickSendRules?.[0]?.field === "title");
       expect(saved).toBeTruthy();
     });
   });
@@ -801,7 +892,14 @@ describe("options.js", () => {
   it("should delete a rule and return to rules manager", async () => {
     const storeWithRule = makeStore({
       quickSendRules: [
-        { id: "r1", field: "url", operator: "contains", value: "test", templateId: "t1", enabled: true },
+        {
+          id: "r1",
+          field: "url",
+          operator: "contains",
+          value: "test",
+          templateId: "t1",
+          enabled: true,
+        },
       ],
     });
     setupChromeMock(storeWithRule);
@@ -836,15 +934,24 @@ describe("options.js", () => {
   });
 
   it("should populate template dropdown in rule editor", async () => {
-    setupChromeMock(makeStore({
-      templates: [
-        { id: "t1", name: "Hook A", url: "https://a.com", method: "POST", params: [] },
-        { id: "t2", name: "Hook B", url: "https://b.com", method: "GET", params: [] },
-      ],
-      quickSendRules: [
-        { id: "r1", field: "url", operator: "contains", value: "test", templateId: "t2", enabled: true },
-      ],
-    }));
+    setupChromeMock(
+      makeStore({
+        templates: [
+          { id: "t1", name: "Hook A", url: "https://a.com", method: "POST", params: [] },
+          { id: "t2", name: "Hook B", url: "https://b.com", method: "GET", params: [] },
+        ],
+        quickSendRules: [
+          {
+            id: "r1",
+            field: "url",
+            operator: "contains",
+            value: "test",
+            templateId: "t2",
+            enabled: true,
+          },
+        ],
+      }),
+    );
     await import("../src/options/options.js");
 
     await vi.waitFor(() => {
@@ -872,11 +979,20 @@ describe("options.js", () => {
   });
 
   it("should clear template list highlights when selecting a rule", async () => {
-    setupChromeMock(makeStore({
-      quickSendRules: [
-        { id: "r1", field: "url", operator: "contains", value: "test", templateId: "t1", enabled: true },
-      ],
-    }));
+    setupChromeMock(
+      makeStore({
+        quickSendRules: [
+          {
+            id: "r1",
+            field: "url",
+            operator: "contains",
+            value: "test",
+            templateId: "t1",
+            enabled: true,
+          },
+        ],
+      }),
+    );
     await import("../src/options/options.js");
 
     await vi.waitFor(() => {
@@ -982,11 +1098,20 @@ describe("options.js", () => {
   });
 
   it("should show + New Rule as first item in rules list", async () => {
-    setupChromeMock(makeStore({
-      quickSendRules: [
-        { id: "r1", field: "url", operator: "contains", value: "test", templateId: "t1", enabled: true },
-      ],
-    }));
+    setupChromeMock(
+      makeStore({
+        quickSendRules: [
+          {
+            id: "r1",
+            field: "url",
+            operator: "contains",
+            value: "test",
+            templateId: "t1",
+            enabled: true,
+          },
+        ],
+      }),
+    );
     await import("../src/options/options.js");
 
     await vi.waitFor(() => {
@@ -1041,7 +1166,9 @@ describe("options.js", () => {
     });
 
     // After delete, no templates remain — renderAll in template mode → showEditorEmpty
-    chrome.storage.local.get.mockResolvedValue(makeStore({ templates: [], activeTemplateId: null }));
+    chrome.storage.local.get.mockResolvedValue(
+      makeStore({ templates: [], activeTemplateId: null }),
+    );
     document.getElementById("delete-template").click();
 
     await vi.waitFor(() => {
@@ -1054,8 +1181,22 @@ describe("options.js", () => {
   it("should select current rule when renderAll is called in rule mode", async () => {
     const storeWithRule = makeStore({
       quickSendRules: [
-        { id: "r1", field: "url", operator: "contains", value: "github.com", templateId: "t1", enabled: true },
-        { id: "r2", field: "title", operator: "equals", value: "Home", templateId: "t1", enabled: true },
+        {
+          id: "r1",
+          field: "url",
+          operator: "contains",
+          value: "github.com",
+          templateId: "t1",
+          enabled: true,
+        },
+        {
+          id: "r2",
+          field: "title",
+          operator: "equals",
+          value: "Home",
+          templateId: "t1",
+          enabled: true,
+        },
       ],
     });
     setupChromeMock(storeWithRule);
@@ -1096,8 +1237,22 @@ describe("options.js", () => {
   it("should fall back to first rule when current rule is deleted and others remain", async () => {
     const storeWithRules = makeStore({
       quickSendRules: [
-        { id: "r1", field: "url", operator: "contains", value: "github.com", templateId: "t1", enabled: true },
-        { id: "r2", field: "title", operator: "equals", value: "Home", templateId: "t1", enabled: true },
+        {
+          id: "r1",
+          field: "url",
+          operator: "contains",
+          value: "github.com",
+          templateId: "t1",
+          enabled: true,
+        },
+        {
+          id: "r2",
+          field: "title",
+          operator: "equals",
+          value: "Home",
+          templateId: "t1",
+          enabled: true,
+        },
       ],
     });
     setupChromeMock(storeWithRules);
@@ -1121,11 +1276,20 @@ describe("options.js", () => {
     });
 
     // Delete second rule — r1 remains, should fall back to r1
-    chrome.storage.local.get.mockResolvedValue(makeStore({
-      quickSendRules: [
-        { id: "r1", field: "url", operator: "contains", value: "github.com", templateId: "t1", enabled: true },
-      ],
-    }));
+    chrome.storage.local.get.mockResolvedValue(
+      makeStore({
+        quickSendRules: [
+          {
+            id: "r1",
+            field: "url",
+            operator: "contains",
+            value: "github.com",
+            templateId: "t1",
+            enabled: true,
+          },
+        ],
+      }),
+    );
 
     document.getElementById("delete-template").click();
 
@@ -1138,7 +1302,14 @@ describe("options.js", () => {
   it("should show rules manager when last rule is deleted in rule mode", async () => {
     const storeWithRule = makeStore({
       quickSendRules: [
-        { id: "r1", field: "url", operator: "contains", value: "test", templateId: "t1", enabled: true },
+        {
+          id: "r1",
+          field: "url",
+          operator: "contains",
+          value: "test",
+          templateId: "t1",
+          enabled: true,
+        },
       ],
     });
     setupChromeMock(storeWithRule);
@@ -1195,11 +1366,20 @@ describe("options.js", () => {
   });
 
   it("should handle getOperatorLabel for unknown operator", async () => {
-    setupChromeMock(makeStore({
-      quickSendRules: [
-        { id: "r1", field: "url", operator: "unknownOp", value: "test", templateId: "t1", enabled: true },
-      ],
-    }));
+    setupChromeMock(
+      makeStore({
+        quickSendRules: [
+          {
+            id: "r1",
+            field: "url",
+            operator: "unknownOp",
+            value: "test",
+            templateId: "t1",
+            enabled: true,
+          },
+        ],
+      }),
+    );
     await import("../src/options/options.js");
 
     await vi.waitFor(() => {
@@ -1218,11 +1398,20 @@ describe("options.js", () => {
   });
 
   it("should handle rule with empty value in sidebar", async () => {
-    setupChromeMock(makeStore({
-      quickSendRules: [
-        { id: "r1", field: "url", operator: "contains", value: "", templateId: "t1", enabled: true },
-      ],
-    }));
+    setupChromeMock(
+      makeStore({
+        quickSendRules: [
+          {
+            id: "r1",
+            field: "url",
+            operator: "contains",
+            value: "",
+            templateId: "t1",
+            enabled: true,
+          },
+        ],
+      }),
+    );
     await import("../src/options/options.js");
 
     await vi.waitFor(() => {
@@ -1254,14 +1443,21 @@ describe("options.js", () => {
   });
 
   it("should use default template name in rule template dropdown for unnamed template", async () => {
-    setupChromeMock(makeStore({
-      templates: [
-        { id: "t1", name: "", url: "https://a.com", method: "POST", params: [] },
-      ],
-      quickSendRules: [
-        { id: "r1", field: "url", operator: "contains", value: "test", templateId: "t1", enabled: true },
-      ],
-    }));
+    setupChromeMock(
+      makeStore({
+        templates: [{ id: "t1", name: "", url: "https://a.com", method: "POST", params: [] }],
+        quickSendRules: [
+          {
+            id: "r1",
+            field: "url",
+            operator: "contains",
+            value: "test",
+            templateId: "t1",
+            enabled: true,
+          },
+        ],
+      }),
+    );
     await import("../src/options/options.js");
 
     await vi.waitFor(() => {
@@ -1354,11 +1550,11 @@ describe("options.js", () => {
     // The easiest way: use navigateToWebhooks which sets editorMode implicitly via selectTemplate
 
     // After deleting t2, the store only has t1
-    chrome.storage.local.get.mockResolvedValue(makeStore({
-      templates: [
-        { id: "t1", name: "Hook A", url: "https://a.com", method: "POST", params: [] },
-      ],
-    }));
+    chrome.storage.local.get.mockResolvedValue(
+      makeStore({
+        templates: [{ id: "t1", name: "Hook A", url: "https://a.com", method: "POST", params: [] }],
+      }),
+    );
 
     // Delete t2 — this calls deleteCurrentTemplate → editorMode = null → renderAll
     document.getElementById("delete-template").click();
@@ -1449,11 +1645,11 @@ describe("options.js", () => {
 
     // Now return templates and navigate back to webhooks
     // currentTemplateId is null, templates exist → should select first
-    chrome.storage.local.get.mockResolvedValue(makeStore({
-      templates: [
-        { id: "t1", name: "Hook A", url: "https://a.com", method: "POST", params: [] },
-      ],
-    }));
+    chrome.storage.local.get.mockResolvedValue(
+      makeStore({
+        templates: [{ id: "t1", name: "Hook A", url: "https://a.com", method: "POST", params: [] }],
+      }),
+    );
 
     document.querySelector('[data-panel="panel-webhooks"]').click();
 
@@ -1490,7 +1686,14 @@ describe("options.js", () => {
   it("should handle selectRule when rule is not found in store", async () => {
     const storeWithRule = makeStore({
       quickSendRules: [
-        { id: "r1", field: "url", operator: "contains", value: "test", templateId: "t1", enabled: true },
+        {
+          id: "r1",
+          field: "url",
+          operator: "contains",
+          value: "test",
+          templateId: "t1",
+          enabled: true,
+        },
       ],
     });
     setupChromeMock(storeWithRule);
@@ -1526,7 +1729,14 @@ describe("options.js", () => {
   it("should show no-rules message after saving when rules list becomes empty", async () => {
     const storeWithRule = makeStore({
       quickSendRules: [
-        { id: "r1", field: "url", operator: "contains", value: "github.com", templateId: "t1", enabled: true },
+        {
+          id: "r1",
+          field: "url",
+          operator: "contains",
+          value: "github.com",
+          templateId: "t1",
+          enabled: true,
+        },
       ],
     });
     setupChromeMock(storeWithRule);
@@ -1620,11 +1830,20 @@ describe("options.js", () => {
       if (getCalls <= 2) return Promise.resolve(store); // initial load
       // After addQuickSendRule creates rule, return store with that rule
       if (createdRuleId) {
-        return Promise.resolve(makeStore({
-          quickSendRules: [
-            { id: createdRuleId, field: "url", operator: "contains", value: "", templateId: "t1", enabled: true },
-          ],
-        }));
+        return Promise.resolve(
+          makeStore({
+            quickSendRules: [
+              {
+                id: createdRuleId,
+                field: "url",
+                operator: "contains",
+                value: "",
+                templateId: "t1",
+                enabled: true,
+              },
+            ],
+          }),
+        );
       }
       return Promise.resolve(store);
     });
@@ -1767,11 +1986,11 @@ describe("options.js", () => {
     });
 
     // Now mock store without t2
-    chrome.storage.local.get.mockResolvedValue(makeStore({
-      templates: [
-        { id: "t1", name: "Hook A", url: "https://a.com", method: "POST", params: [] },
-      ],
-    }));
+    chrome.storage.local.get.mockResolvedValue(
+      makeStore({
+        templates: [{ id: "t1", name: "Hook A", url: "https://a.com", method: "POST", params: [] }],
+      }),
+    );
 
     // Navigate back to webhooks — currentTemplateId=t2 but not found → select first
     document.querySelector('[data-panel="panel-webhooks"]').click();
@@ -1809,9 +2028,7 @@ describe("options.js", () => {
 
   it("should selectTemplate in renderAll when editorMode=template and currentTemplateId found", async () => {
     const store = makeStore({
-      templates: [
-        { id: "t1", name: "Hook A", url: "https://a.com", method: "POST", params: [] },
-      ],
+      templates: [{ id: "t1", name: "Hook A", url: "https://a.com", method: "POST", params: [] }],
     });
     setupChromeMock(store);
 
@@ -1823,12 +2040,14 @@ describe("options.js", () => {
       getCalls++;
       if (getCalls <= 2) return Promise.resolve(store);
       if (createdId) {
-        return Promise.resolve(makeStore({
-          templates: [
-            ...store.hooky.templates,
-            { id: createdId, name: "Untitled", url: "", method: "POST", params: [] },
-          ],
-        }));
+        return Promise.resolve(
+          makeStore({
+            templates: [
+              ...store.hooky.templates,
+              { id: createdId, name: "Untitled", url: "", method: "POST", params: [] },
+            ],
+          }),
+        );
       }
       return Promise.resolve(store);
     });
@@ -1885,7 +2104,14 @@ describe("options.js", () => {
   it("should handle saveCurrentRule when store quickSendRules becomes undefined", async () => {
     const storeWithRule = makeStore({
       quickSendRules: [
-        { id: "r1", field: "url", operator: "contains", value: "test", templateId: "t1", enabled: true },
+        {
+          id: "r1",
+          field: "url",
+          operator: "contains",
+          value: "test",
+          templateId: "t1",
+          enabled: true,
+        },
       ],
     });
     setupChromeMock(storeWithRule);
@@ -2064,11 +2290,20 @@ describe("options.js", () => {
     chrome.storage.local.get.mockImplementation(() => {
       getCalls++;
       if (getCalls <= 2) return Promise.resolve(store);
-      return Promise.resolve(makeStore({
-        quickSendRules: [
-          { id: "r-test", field: "url", operator: "contains", value: "", templateId: "t1", enabled: true },
-        ],
-      }));
+      return Promise.resolve(
+        makeStore({
+          quickSendRules: [
+            {
+              id: "r-test",
+              field: "url",
+              operator: "contains",
+              value: "",
+              templateId: "t1",
+              enabled: true,
+            },
+          ],
+        }),
+      );
     });
 
     await import("../src/options/options.js");

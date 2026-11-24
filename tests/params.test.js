@@ -36,9 +36,7 @@ describe("buildRequestBody", () => {
   });
 
   it("should resolve multiple template variables in one value", () => {
-    const params = [
-      { key: "info", value: "{{page.title}} - {{page.url}}" },
-    ];
+    const params = [{ key: "info", value: "{{page.title}} - {{page.url}}" }];
     expect(buildRequestBody(params, context)).toEqual({
       info: "Example - https://example.com",
     });
@@ -51,10 +49,27 @@ describe("buildRequestBody", () => {
 });
 
 describe("buildRequestUrl", () => {
-  it.each(["GET", "DELETE"])("appends %s parameters before fragments, including a question mark inside the fragment", (method) => {
-    expect(buildRequestUrl("https://example.com/hook#view?raw", [{ key: "text", value: "a b" }], {}, method)).toBe("https://example.com/hook?text=a%20b#view?raw");
-    expect(buildRequestUrl("https://example.com/hook?existing=1#view", [{ key: "text", value: "a b" }], {}, method)).toBe("https://example.com/hook?existing=1&text=a%20b#view");
-  });
+  it.each(["GET", "DELETE"])(
+    "appends %s parameters before fragments, including a question mark inside the fragment",
+    (method) => {
+      expect(
+        buildRequestUrl(
+          "https://example.com/hook#view?raw",
+          [{ key: "text", value: "a b" }],
+          {},
+          method,
+        ),
+      ).toBe("https://example.com/hook?text=a%20b#view?raw");
+      expect(
+        buildRequestUrl(
+          "https://example.com/hook?existing=1#view",
+          [{ key: "text", value: "a b" }],
+          {},
+          method,
+        ),
+      ).toBe("https://example.com/hook?existing=1&text=a%20b#view");
+    },
+  );
 
   const context = {
     page: {
@@ -66,12 +81,7 @@ describe("buildRequestUrl", () => {
   };
 
   it("should return base URL for non-GET methods", () => {
-    const url = buildRequestUrl(
-      "https://api.example.com/hook",
-      [],
-      context,
-      "POST",
-    );
+    const url = buildRequestUrl("https://api.example.com/hook", [], context, "POST");
     expect(url).toBe("https://api.example.com/hook");
   });
 
@@ -80,38 +90,19 @@ describe("buildRequestUrl", () => {
       { key: "url", value: "{{page.url}}" },
       { key: "tag", value: "test" },
     ];
-    const url = buildRequestUrl(
-      "https://api.example.com/hook",
-      params,
-      context,
-      "GET",
-    );
-    expect(url).toBe(
-      "https://api.example.com/hook?url=https%3A%2F%2Fexample.com&tag=test",
-    );
+    const url = buildRequestUrl("https://api.example.com/hook", params, context, "GET");
+    expect(url).toBe("https://api.example.com/hook?url=https%3A%2F%2Fexample.com&tag=test");
   });
 
   it("should handle GET with no params", () => {
-    const url = buildRequestUrl(
-      "https://api.example.com/hook",
-      [],
-      context,
-      "GET",
-    );
+    const url = buildRequestUrl("https://api.example.com/hook", [], context, "GET");
     expect(url).toBe("https://api.example.com/hook");
   });
 
   it("should append to existing query string", () => {
     const params = [{ key: "extra", value: "val" }];
-    const url = buildRequestUrl(
-      "https://api.example.com/hook?existing=1",
-      params,
-      context,
-      "GET",
-    );
-    expect(url).toBe(
-      "https://api.example.com/hook?existing=1&extra=val",
-    );
+    const url = buildRequestUrl("https://api.example.com/hook?existing=1", params, context, "GET");
+    expect(url).toBe("https://api.example.com/hook?existing=1&extra=val");
   });
 
   it("should skip params with empty key for GET", () => {
@@ -119,23 +110,13 @@ describe("buildRequestUrl", () => {
       { key: "", value: "skip" },
       { key: "keep", value: "yes" },
     ];
-    const url = buildRequestUrl(
-      "https://api.example.com/hook",
-      params,
-      context,
-      "GET",
-    );
+    const url = buildRequestUrl("https://api.example.com/hook", params, context, "GET");
     expect(url).toBe("https://api.example.com/hook?keep=yes");
   });
 
   it("should handle DELETE like GET (no body, params as query)", () => {
     const params = [{ key: "id", value: "123" }];
-    const url = buildRequestUrl(
-      "https://api.example.com/hook",
-      params,
-      context,
-      "DELETE",
-    );
+    const url = buildRequestUrl("https://api.example.com/hook", params, context, "DELETE");
     expect(url).toBe("https://api.example.com/hook?id=123");
   });
 });

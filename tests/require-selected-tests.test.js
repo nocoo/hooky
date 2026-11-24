@@ -1,5 +1,13 @@
 import { spawnSync } from "node:child_process";
-import { existsSync, mkdtempSync, readdirSync, rmSync, statSync, symlinkSync, writeFileSync } from "node:fs";
+import {
+  existsSync,
+  mkdtempSync,
+  readdirSync,
+  rmSync,
+  statSync,
+  symlinkSync,
+  writeFileSync,
+} from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -29,7 +37,9 @@ function runFixture(source) {
   roots.push(dir);
   symlinkSync(path.join(root, "node_modules"), path.join(dir, "node_modules"));
   const cacheDir = path.join(dir, "cache");
-  writeFileSync(path.join(dir, "vitest.config.js"), `import { defineConfig } from "vitest/config";
+  writeFileSync(
+    path.join(dir, "vitest.config.js"),
+    `import { defineConfig } from "vitest/config";
 import RequireSelectedTests from ${JSON.stringify(reporterPath)};
 export default defineConfig({
   cacheDir: ${JSON.stringify(cacheDir)},
@@ -42,7 +52,8 @@ export default defineConfig({
     watch: false,
   },
 });
-`);
+`,
+  );
   if (source) writeFileSync(path.join(dir, "probe.test.js"), source);
   const run = spawnSync("bun", [vitestBin, "run", "--config", path.join(dir, "vitest.config.js")], {
     cwd: dir,
@@ -57,7 +68,9 @@ export default defineConfig({
   return { ...run, cacheDir, output: `${run.stdout ?? ""}${run.stderr ?? ""}` };
 }
 
-it("rejects skip, focus, and empty runs after a real healthy fixture passes", { timeout: 90_000 }, () => {
+it("rejects skip, focus, and empty runs after a real healthy fixture passes", {
+  timeout: 90_000,
+}, () => {
   const sharedBefore = newestMtime(sharedViteCache);
   const healthy = runFixture(`import { expect, it } from "vitest";
 it("runs", () => { expect(1).toBe(1); });

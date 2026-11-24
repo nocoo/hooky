@@ -85,7 +85,7 @@ function fixture(name, extra = {}) {
   writeFileSync(join(dir, "package.json"), readFileSync(join(repo, "package.json"), "utf8"));
   writeFileSync(join(dir, "bun.lock"), readFileSync(join(repo, "bun.lock"), "utf8"));
   writeFileSync(join(dir, "vitest.config.js"), extra.vitest ?? minimalVitest);
-  writeFileSync(join(dir, "eslint.config.mjs"), extra.eslint ?? readFileSync(join(repo, "eslint.config.mjs"), "utf8"));
+  writeFileSync(join(dir, "biome.json"), extra.biome ?? readFileSync(join(repo, "biome.json"), "utf8"));
   writeFileSync(join(dir, "tests/require-selected-tests.js"), readFileSync(join(repo, "tests/require-selected-tests.js"), "utf8"));
   writeFileSync(join(dir, ".husky/pre-commit"), readFileSync(join(repo, ".husky/pre-commit"), "utf8"));
   chmodSync(join(dir, ".husky/pre-commit"), 0o755);
@@ -105,7 +105,7 @@ function fixture(name, extra = {}) {
     "package.json",
     "bun.lock",
     "vitest.config.js",
-    "eslint.config.mjs",
+    "biome.json",
     "tests/require-selected-tests.js",
     "tests/gate-fixture.test.js",
     "src/gate-fixture.js",
@@ -180,25 +180,22 @@ function runHookInterrupt(dir) {
   });
 }
 
-// Static eslint fragment for warning-only fixture (no dynamic import in fixture setup).
-const warningEslint = `import js from "@eslint/js";
-import globals from "globals";
-
-export default [
-  js.configs.recommended,
+// Static Biome config fragment for warning-only fixture (suspicious/noConsole -> warn).
+const warningBiome = JSON.stringify(
   {
-    files: ["src/**/*.js", "tests/**/*.js"],
-    languageOptions: {
-      ecmaVersion: 2022,
-      sourceType: "module",
-      globals: { ...globals.node, ...globals.browser, chrome: "readonly" },
-    },
-    rules: {
-      "no-console": "warn",
+    $schema: "https://biomejs.dev/schemas/2.6.8/schema.json",
+    formatter: { enabled: false },
+    linter: {
+      enabled: true,
+      rules: {
+        recommended: true,
+        suspicious: { noConsole: "warn" },
+      },
     },
   },
-];
-`;
+  null,
+  2,
+);
 
 const branchGapSource = `export function branchy(n) {
   if (n === 1) return "a";
@@ -274,13 +271,13 @@ try {
   });
   const lint = runHook(lintDir);
   check(
-    "eslint error rejects",
-    lint.status !== 0 && /no-debugger|error/i.test(lint.output),
+    "biome error rejects",
+    lint.status !== 0 && /noDebugger|error/i.test(lint.output),
     lint.output,
   );
 
   const warningDir = fixture("lint-warning", {
-    eslint: warningEslint,
+    biome: warningBiome,
     warnLint: `export function gateWarn() {
   console.log("probe");
 }
@@ -288,9 +285,9 @@ try {
   });
   const warning = runHook(warningDir);
   check(
-    "eslint warning alone rejects (--max-warnings=0)",
+    "biome warning alone rejects (--error-on-warnings)",
     warning.status !== 0 &&
-      (/warning/i.test(warning.output) || /max-warnings/i.test(warning.output) || warning.status === 1),
+      (/warning/i.test(warning.output) || /noConsole/i.test(warning.output) || warning.status === 1),
     warning.output,
   );
 

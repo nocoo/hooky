@@ -25,9 +25,7 @@ describe("resolveTemplate", () => {
   });
 
   it("should resolve {{page.url}}", () => {
-    expect(resolveTemplate("{{page.url}}", context)).toBe(
-      "https://example.com/path?q=1",
-    );
+    expect(resolveTemplate("{{page.url}}", context)).toBe("https://example.com/path?q=1");
   });
 
   it("should resolve {{page.title}}", () => {
@@ -35,21 +33,15 @@ describe("resolveTemplate", () => {
   });
 
   it("should resolve {{page.selection}}", () => {
-    expect(resolveTemplate("{{page.selection}}", context)).toBe(
-      "selected text here",
-    );
+    expect(resolveTemplate("{{page.selection}}", context)).toBe("selected text here");
   });
 
   it("should resolve {{page.meta.description}}", () => {
-    expect(resolveTemplate("{{page.meta.description}}", context)).toBe(
-      "A sample page",
-    );
+    expect(resolveTemplate("{{page.meta.description}}", context)).toBe("A sample page");
   });
 
   it("should resolve {{page.meta.og:title}}", () => {
-    expect(resolveTemplate("{{page.meta.og:title}}", context)).toBe(
-      "OG Title",
-    );
+    expect(resolveTemplate("{{page.meta.og:title}}", context)).toBe("OG Title");
   });
 
   it("should resolve {{page.meta.og:image}}", () => {
@@ -59,15 +51,15 @@ describe("resolveTemplate", () => {
   });
 
   it("should resolve multiple variables in one string", () => {
-    expect(
-      resolveTemplate("{{page.title}} - {{page.url}}", context),
-    ).toBe("Example Page - https://example.com/path?q=1");
+    expect(resolveTemplate("{{page.title}} - {{page.url}}", context)).toBe(
+      "Example Page - https://example.com/path?q=1",
+    );
   });
 
   it("should mix static text with variables", () => {
-    expect(
-      resolveTemplate("Visit {{page.url}} now!", context),
-    ).toBe("Visit https://example.com/path?q=1 now!");
+    expect(resolveTemplate("Visit {{page.url}} now!", context)).toBe(
+      "Visit https://example.com/path?q=1 now!",
+    );
   });
 
   it("should resolve unknown variable to empty string", () => {
@@ -79,9 +71,7 @@ describe("resolveTemplate", () => {
   });
 
   it("should handle whitespace inside braces", () => {
-    expect(resolveTemplate("{{ page.url }}", context)).toBe(
-      "https://example.com/path?q=1",
-    );
+    expect(resolveTemplate("{{ page.url }}", context)).toBe("https://example.com/path?q=1");
   });
 
   it("should leave malformed templates as-is", () => {

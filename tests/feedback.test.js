@@ -11,7 +11,11 @@ beforeEach(() => {
   mount()?.remove();
   global.chrome = { runtime: { sendMessage: vi.fn().mockResolvedValue({ ok: true }) } };
 });
-afterEach(() => { vi.useRealTimers(); vi.unstubAllGlobals(); mount()?.remove(); });
+afterEach(() => {
+  vi.useRealTimers();
+  vi.unstubAllGlobals();
+  mount()?.remove();
+});
 
 it("shows accessible feedback at the capture location and provides a view-only action", async () => {
   expect(showPageFeedback(result, "Sending…", labels, location.href)).toBe(true);
@@ -26,10 +30,17 @@ it("shows accessible feedback at the capture location and provides a view-only a
 });
 
 it("keeps errors visible and treats all supplied text as text", async () => {
-  showPageFeedback({ ...result, state: "failed", name: '<img src=x onerror="alert(1)">' }, "<b>Failed</b>", labels, location.href);
+  showPageFeedback(
+    { ...result, state: "failed", name: '<img src=x onerror="alert(1)">' },
+    "<b>Failed</b>",
+    labels,
+    location.href,
+  );
   expect(mount().shadowRoot.querySelector("img")).toBeNull();
   expect(mount().shadowRoot.querySelector('[role="alert"]').textContent).toContain("<b>Failed</b>");
-  expect(mount().shadowRoot.querySelector('[role="alert"]').getAttribute("aria-live")).toBe("assertive");
+  expect(mount().shadowRoot.querySelector('[role="alert"]').getAttribute("aria-live")).toBe(
+    "assertive",
+  );
   expect(mount().shadowRoot.querySelector(".close").getAttribute("aria-label")).toBe("Dismiss");
   await vi.advanceTimersByTimeAsync(60000);
   expect(mount()).not.toBeNull();
@@ -59,7 +70,12 @@ it("expires success after eight seconds without dismissing a subsequent send", a
   showPageFeedback(result, "Older completion", labels, location.href);
   await vi.advanceTimersByTimeAsync(4000);
   expect(mount().shadowRoot.textContent).toContain("Sending again");
-  showPageFeedback({ ...result, id: "b", startedAt: 2, state: "success" }, "Done", labels, location.href);
+  showPageFeedback(
+    { ...result, id: "b", startedAt: 2, state: "success" },
+    "Done",
+    labels,
+    location.href,
+  );
   await vi.advanceTimersByTimeAsync(8000);
   expect(mount()).toBeNull();
 });
@@ -79,7 +95,12 @@ it("ignores a delayed sending toast after its final outcome has already appeared
 it("keeps a repeated-result toast for its own full lifetime", async () => {
   showPageFeedback({ ...result, state: "success" }, "Done", labels, location.href);
   await vi.advanceTimersByTimeAsync(4000);
-  showPageFeedback({ ...result, state: "success", startedAt: 2 }, "Repeated request skipped", labels, location.href);
+  showPageFeedback(
+    { ...result, state: "success", startedAt: 2 },
+    "Repeated request skipped",
+    labels,
+    location.href,
+  );
   await vi.advanceTimersByTimeAsync(4000);
   expect(mount().shadowRoot.textContent).toContain("Repeated request skipped");
   await vi.advanceTimersByTimeAsync(4000);

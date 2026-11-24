@@ -5,25 +5,79 @@ import { executeWebhook } from "../src/webhook.js";
 
 const messages = JSON.parse(readFileSync("_locales/en/messages.json", "utf8"));
 const get = (id) => document.getElementById(id);
-const input = (id, value) => { get(id).value = value; get(id).dispatchEvent(new Event("input", { bubbles: true })); };
+const input = (id, value) => {
+  get(id).value = value;
+  get(id).dispatchEvent(new Event("input", { bubbles: true }));
+};
 let data;
 let windowListeners;
-const rule = (id, value) => ({ id, field: "url", operator: "contains", value, templateId: "t1", enabled: true });
+const rule = (id, value) => ({
+  id,
+  field: "url",
+  operator: "contains",
+  value,
+  templateId: "t1",
+  enabled: true,
+});
 
 async function setup(overrides = {}, loadError) {
-  data = { hooky: { templates: [{ id: "t1", name: "Reading list", url: "https://example.com/hook", method: "POST", params: [{ key: "title", value: "{{page.title}}" }] }], activeTemplateId: "t1", quickSendRules: [rule("r1", "github.com"), rule("r2", "example.com")], theme: "light", ...overrides } };
-  document.body.innerHTML = readFileSync("src/options/options.html", "utf8").split("<body>")[1].split("<script")[0];
-  vi.stubGlobal("chrome", { runtime: { getManifest: () => ({ version: "2.0.0" }) }, permissions: { contains: vi.fn().mockResolvedValue(true), request: vi.fn().mockResolvedValue(false), onRemoved: { addListener: vi.fn() }, onAdded: { addListener: vi.fn() } }, i18n: { getMessage: (key) => messages[key]?.message || key }, storage: { local: { get: vi.fn(async () => { if (loadError) throw loadError; return structuredClone(data); }), set: vi.fn(async (values) => Object.assign(data, structuredClone(values))) } } });
+  data = {
+    hooky: {
+      templates: [
+        {
+          id: "t1",
+          name: "Reading list",
+          url: "https://example.com/hook",
+          method: "POST",
+          params: [{ key: "title", value: "{{page.title}}" }],
+        },
+      ],
+      activeTemplateId: "t1",
+      quickSendRules: [rule("r1", "github.com"), rule("r2", "example.com")],
+      theme: "light",
+      ...overrides,
+    },
+  };
+  document.body.innerHTML = readFileSync("src/options/options.html", "utf8")
+    .split("<body>")[1]
+    .split("<script")[0];
+  vi.stubGlobal("chrome", {
+    runtime: { getManifest: () => ({ version: "2.0.0" }) },
+    permissions: {
+      contains: vi.fn().mockResolvedValue(true),
+      request: vi.fn().mockResolvedValue(false),
+      onRemoved: { addListener: vi.fn() },
+      onAdded: { addListener: vi.fn() },
+    },
+    i18n: { getMessage: (key) => messages[key]?.message || key },
+    storage: {
+      local: {
+        get: vi.fn(async () => {
+          if (loadError) throw loadError;
+          return structuredClone(data);
+        }),
+        set: vi.fn(async (values) => Object.assign(data, structuredClone(values))),
+      },
+    },
+  });
   await import("../src/options/options.js");
-  if (loadError) { await vi.waitFor(() => expect(get("status").textContent).toBe(loadError.message)); return; }
+  if (loadError) {
+    await vi.waitFor(() => expect(get("status").textContent).toBe(loadError.message));
+    return;
+  }
   await vi.waitFor(() => expect(get("new-template")).not.toBeNull());
-  if (data.hooky.templates.length) await vi.waitFor(() => expect(get("template-name").value).toBe(data.hooky.templates[0].name));
+  if (data.hooky.templates.length)
+    await vi.waitFor(() => expect(get("template-name").value).toBe(data.hooky.templates[0].name));
   else await vi.waitFor(() => expect(get("editor-empty").style.display).toBe("flex"));
 }
 
-beforeEach(() => { vi.resetModules(); windowListeners = vi.spyOn(window, "addEventListener"); });
+beforeEach(() => {
+  vi.resetModules();
+  windowListeners = vi.spyOn(window, "addEventListener");
+});
 afterEach(() => {
-  for (const [type, listener, options] of windowListeners.mock.calls) window.removeEventListener(type, listener, options);
+  for (const [type, listener, options] of windowListeners.mock.calls)
+    window.removeEventListener(type, listener, options);
   windowListeners.mockRestore();
   vi.useRealTimers();
   vi.unstubAllGlobals();
@@ -31,13 +85,31 @@ afterEach(() => {
 
 describe("Hooky 2.0 workspace", () => {
   it("preserves collapsed advanced settings and never carries credentials into a new template", async () => {
-    const original = { id: "t1", name: "Private", url: "https://example.com", method: "POST", params: [], headers: [{ key: "Authorization", value: "Bearer private-key" }], response: { enabled: true, receiptPath: "data.id", successPath: "saved", successValue: "true" }, duplicateWindow: 30 };
+    const original = {
+      id: "t1",
+      name: "Private",
+      url: "https://example.com",
+      method: "POST",
+      params: [],
+      headers: [{ key: "Authorization", value: "Bearer private-key" }],
+      response: {
+        enabled: true,
+        receiptPath: "data.id",
+        successPath: "saved",
+        successValue: "true",
+      },
+      duplicateWindow: 30,
+    };
     await setup({ templates: [original] });
     expect(get("template-advanced").open).toBe(false);
     input("template-name", "Renamed");
     get("save").click();
     await vi.waitFor(() => expect(data.hooky.templates[0].name).toBe("Renamed"));
-    expect(data.hooky.templates[0]).toMatchObject({ headers: original.headers, response: original.response, duplicateWindow: 30 });
+    expect(data.hooky.templates[0]).toMatchObject({
+      headers: original.headers,
+      response: original.response,
+      duplicateWindow: 30,
+    });
     get("new-template").click();
     await vi.waitFor(() => expect(data.hooky.templates).toHaveLength(2));
     await vi.waitFor(() => expect(get("webhook-url").value).toBe(""));
@@ -48,7 +120,11 @@ describe("Hooky 2.0 workspace", () => {
     input("webhook-url", "https://public.example");
     get("save").click();
     await vi.waitFor(() => expect(data.hooky.templates[1].url).toBe("https://public.example"));
-    expect(data.hooky.templates[1]).toMatchObject({ headers: [], response: { enabled: false }, duplicateWindow: 0 });
+    expect(data.hooky.templates[1]).toMatchObject({
+      headers: [],
+      response: { enabled: false },
+      duplicateWindow: 0,
+    });
   });
 
   it("keeps completed duplicate protection off by default and validates its window", async () => {
@@ -85,10 +161,20 @@ describe("Hooky 2.0 workspace", () => {
     input("response-success-value", "ok");
     expect(get("request-preview").textContent).toBe(messages.invalidSuccessValue.message);
     get("save").click();
-    await vi.waitFor(() => expect(get("status").textContent).toBe(messages.invalidSuccessValue.message));
+    await vi.waitFor(() =>
+      expect(get("status").textContent).toBe(messages.invalidSuccessValue.message),
+    );
     input("response-success-value", '"ok"');
     get("save").click();
-    await vi.waitFor(() => expect(data.hooky.templates[0].response).toEqual({ enabled: true, messagePath: "data.message", receiptPath: "data.id", successPath: "saved", successValue: '"ok"' }));
+    await vi.waitFor(() =>
+      expect(data.hooky.templates[0].response).toEqual({
+        enabled: true,
+        messagePath: "data.message",
+        receiptPath: "data.id",
+        successPath: "saved",
+        successValue: '"ok"',
+      }),
+    );
     get("read-response").checked = false;
     get("read-response").dispatchEvent(new Event("change"));
     expect(get("response-fields").disabled).toBe(true);
@@ -130,15 +216,18 @@ describe("Hooky 2.0 workspace", () => {
     expect(values[1].type).toBe("text");
     keys[1].value = "Idempotency-Key";
     values[1].focus();
-    document.querySelector('[data-variable="{{send.id}}"]') .click();
+    document.querySelector('[data-variable="{{send.id}}"]').click();
     expect(values[1].value).toBe("{{send.id}}");
     get("show-header-values").checked = false;
     get("show-header-values").dispatchEvent(new Event("change"));
     expect(value.type).toBe("password");
     get("save").click();
-    await vi.waitFor(() => expect(data.hooky.templates[0].headers).toEqual([
-      { key: "Authorization", value: "Bearer secret-token" }, { key: "Idempotency-Key", value: "{{send.id}}" },
-    ]));
+    await vi.waitFor(() =>
+      expect(data.hooky.templates[0].headers).toEqual([
+        { key: "Authorization", value: "Bearer secret-token" },
+        { key: "Idempotency-Key", value: "{{send.id}}" },
+      ]),
+    );
     document.querySelector('#template-list [data-id="t1"]').click();
     await vi.waitFor(() => expect(document.querySelector(".header-value")).not.toBe(value));
     expect(document.querySelector(".header-value").type).toBe("password");
@@ -165,25 +254,29 @@ describe("Hooky 2.0 workspace", () => {
     value.value = "  first line\nsecond line  ";
     value.dispatchEvent(new Event("input", { bubbles: true }));
     get("save").click();
-    await vi.waitFor(() => expect(data.hooky.templates[0].params[0].value).toBe("  first line\nsecond line  "));
+    await vi.waitFor(() =>
+      expect(data.hooky.templates[0].params[0].value).toBe("  first line\nsecond line  "),
+    );
     input("http-method", "GET");
-    expect(get("request-preview").textContent).toContain("?title=%20%20first%20line%0Asecond%20line%20%20");
+    expect(get("request-preview").textContent).toContain(
+      "?title=%20%20first%20line%0Asecond%20line%20%20",
+    );
     input("http-method", "DELETE");
     expect(get("request-preview").textContent.startsWith("DELETE ")).toBe(true);
   });
   it("inserts a variable at the cursor and creates a value field if none is selected", async () => {
     await setup({ templates: [{ id: "t1", name: "Empty", url: "", method: "POST", params: [] }] });
-    document.querySelector('[data-variable="{{page.url}}"]') .click();
+    document.querySelector('[data-variable="{{page.url}}"]').click();
     const value = document.querySelector(".param-value");
     expect(value.value).toBe("{{page.url}}");
     value.value = "Before after";
     value.focus();
     value.setSelectionRange(7, 7);
-    document.querySelector('[data-variable="{{page.title}}"]') .click();
+    document.querySelector('[data-variable="{{page.title}}"]').click();
     expect(value.value).toBe("Before {{page.title}}after");
     document.querySelector(".btn-remove").click();
     expect(get("request-preview").textContent).toContain("{}");
-    document.querySelector('[data-variable="{{page.selection}}"]') .click();
+    document.querySelector('[data-variable="{{page.selection}}"]').click();
     expect(document.querySelector(".param-value").value).toBe("{{page.selection}}");
   });
   it("supports keyboard navigation and the empty-state create action", async () => {
@@ -211,21 +304,30 @@ describe("Hooky 2.0 workspace", () => {
     expect(get("rule-test-result").textContent).toBe(messages.ruleNoMatch.message);
     input("rule-value", "unsaved.example");
     get("rule-down").click();
-    await vi.waitFor(() => expect(data.hooky.quickSendRules.map((item) => item.id)).toEqual(["r2", "r1"]));
+    await vi.waitFor(() =>
+      expect(data.hooky.quickSendRules.map((item) => item.id)).toEqual(["r2", "r1"]),
+    );
     expect(get("rule-value").value).toBe("unsaved.example");
     get("rule-up").click();
-    await vi.waitFor(() => expect(data.hooky.quickSendRules.map((item) => item.id)).toEqual(["r1", "r2"]));
+    await vi.waitFor(() =>
+      expect(data.hooky.quickSendRules.map((item) => item.id)).toEqual(["r1", "r2"]),
+    );
   });
   it("validates regex and saves enabled state", async () => {
     await setup();
     document.querySelector('[data-panel="panel-rules"]').click();
-    await vi.waitFor(() => expect(document.querySelector('#rules-list [data-id="r1"]')).not.toBeNull());
+    await vi.waitFor(() =>
+      expect(document.querySelector('#rules-list [data-id="r1"]')).not.toBeNull(),
+    );
     document.querySelector('#rules-list [data-id="r1"]').click();
     await vi.waitFor(() => expect(get("rule-editor-form").style.display).toBe("block"));
     input("rule-operator", "matches");
     input("rule-value", "[");
     get("save").click();
-    await vi.waitFor(() => { expect(get("status").textContent).toBe(messages.invalidRegex.message); expect(get("save").disabled).toBe(false); });
+    await vi.waitFor(() => {
+      expect(get("status").textContent).toBe(messages.invalidRegex.message);
+      expect(get("save").disabled).toBe(false);
+    });
     expect(data.hooky.quickSendRules[0].operator).toBe("contains");
     input("rule-value", "^https://github\\.com");
     get("rule-enabled").checked = false;
@@ -237,7 +339,9 @@ describe("Hooky 2.0 workspace", () => {
     document.querySelector('[data-panel="panel-rules"]').click();
     await vi.waitFor(() => expect(get("rules-manager").style.display).toBe("block"));
     get("empty-add-rule").click();
-    await vi.waitFor(() => expect(get("no-rules").textContent).toBe(messages.createTemplateFirst.message));
+    await vi.waitFor(() =>
+      expect(get("no-rules").textContent).toBe(messages.createTemplateFirst.message),
+    );
   });
   it("rejects invalid endpoint input and reports failed saves", async () => {
     await setup();
@@ -254,17 +358,24 @@ describe("Hooky 2.0 workspace", () => {
 });
 
 describe("edited popup payloads", () => {
-  it.each(["POST", "PUT", "PATCH", "GET", "DELETE"])("preserves literal variables and multiline values for %s", async (method) => {
-    const value = "  copied {{page.title}}\nsecond line  ";
-    const send = vi.fn().mockResolvedValue({ ok: true, status: 200 });
-    vi.stubGlobal("fetch", send);
-    await executeWebhook({ url: "https://example.com/webhook", method, params: [{ key: "note", value }] }, { page: {} }, true);
-    const [url, options] = send.mock.calls[0];
-    if (method === "GET" || method === "DELETE") expect(new URL(url).searchParams.get("note")).toBe(value);
-    else expect(JSON.parse(options.body).note).toBe(value);
-  });
+  it.each(["POST", "PUT", "PATCH", "GET", "DELETE"])(
+    "preserves literal variables and multiline values for %s",
+    async (method) => {
+      const value = "  copied {{page.title}}\nsecond line  ";
+      const send = vi.fn().mockResolvedValue({ ok: true, status: 200 });
+      vi.stubGlobal("fetch", send);
+      await executeWebhook(
+        { url: "https://example.com/webhook", method, params: [{ key: "note", value }] },
+        { page: {} },
+        true,
+      );
+      const [url, options] = send.mock.calls[0];
+      if (method === "GET" || method === "DELETE")
+        expect(new URL(url).searchParams.get("note")).toBe(value);
+      else expect(JSON.parse(options.body).note).toBe(value);
+    },
+  );
 });
-
 
 describe("workspace feedback and failures", () => {
   it("defers success dismissal during interaction, then closes on focus or pointer leave", async () => {
@@ -321,23 +432,26 @@ describe("workspace feedback and failures", () => {
     expect(data.hooky.templates[0].name).toBe("Reading list");
   });
 
-  it.each(["light", "system"])("reports a failed theme save and restores the %s preference", async (theme) => {
-    await setup({ theme });
-    document.querySelector('[data-panel="panel-settings"]').click();
-    await vi.waitFor(() => expect(get("settings-form").style.display).toBe("block"));
-    chrome.storage.local.set.mockRejectedValueOnce(new Error("Theme not saved"));
-    get("theme-select").value = "dark";
-    get("theme-select").dispatchEvent(new Event("change"));
-    await vi.waitFor(() => expect(get("status").textContent).toBe("Theme not saved"));
-    expect(get("theme-select").value).toBe(theme);
-    expect(get("theme-select").disabled).toBe(false);
-    expect(data.hooky.theme).toBe(theme);
-    expect(get("settings-feedback").hidden).toBe(false);
-    get("theme-select").value = "dark";
-    get("theme-select").dispatchEvent(new Event("change"));
-    await vi.waitFor(() => expect(data.hooky.theme).toBe("dark"));
-    expect(get("status").textContent).toBe(messages.saved.message);
-  });
+  it.each(["light", "system"])(
+    "reports a failed theme save and restores the %s preference",
+    async (theme) => {
+      await setup({ theme });
+      document.querySelector('[data-panel="panel-settings"]').click();
+      await vi.waitFor(() => expect(get("settings-form").style.display).toBe("block"));
+      chrome.storage.local.set.mockRejectedValueOnce(new Error("Theme not saved"));
+      get("theme-select").value = "dark";
+      get("theme-select").dispatchEvent(new Event("change"));
+      await vi.waitFor(() => expect(get("status").textContent).toBe("Theme not saved"));
+      expect(get("theme-select").value).toBe(theme);
+      expect(get("theme-select").disabled).toBe(false);
+      expect(data.hooky.theme).toBe(theme);
+      expect(get("settings-feedback").hidden).toBe(false);
+      get("theme-select").value = "dark";
+      get("theme-select").dispatchEvent(new Event("change"));
+      await vi.waitFor(() => expect(data.hooky.theme).toBe("dark"));
+      expect(get("status").textContent).toBe(messages.saved.message);
+    },
+  );
 
   it("shows revoked notification permission without losing the preference and restores it on a gesture", async () => {
     await setup({ notificationMode: "all" });
@@ -346,7 +460,10 @@ describe("workspace feedback and failures", () => {
     await vi.waitFor(() => expect(get("notification-permission").hidden).toBe(false));
     expect(get("notification-mode").value).toBe("all");
     expect(chrome.permissions.request).not.toHaveBeenCalled();
-    chrome.permissions.request.mockImplementation(async () => { chrome.permissions.contains.mockResolvedValue(true); return true; });
+    chrome.permissions.request.mockImplementation(async () => {
+      chrome.permissions.contains.mockResolvedValue(true);
+      return true;
+    });
     get("grant-notification-permission").click();
     expect(chrome.permissions.request).toHaveBeenCalledOnce();
     await vi.waitFor(() => expect(get("notification-permission").hidden).toBe(true));
@@ -364,7 +481,12 @@ describe("workspace feedback and failures", () => {
     document.querySelector('[data-panel="panel-settings"]').click();
     await vi.waitFor(() => expect(get("notification-mode").value).toBe("errors"));
     let finish;
-    chrome.permissions.contains.mockImplementationOnce(() => new Promise((resolve) => { finish = resolve; }));
+    chrome.permissions.contains.mockImplementationOnce(
+      () =>
+        new Promise((resolve) => {
+          finish = resolve;
+        }),
+    );
     window.dispatchEvent(new Event("focus"));
     get("notification-mode").value = "off";
     get("notification-mode").dispatchEvent(new Event("change"));
@@ -389,7 +511,9 @@ describe("workspace feedback and failures", () => {
     get("notification-mode").value = "all";
     get("notification-mode").dispatchEvent(new Event("change"));
     expect(chrome.permissions.request).toHaveBeenCalledWith({ permissions: ["notifications"] });
-    await vi.waitFor(() => expect(get("status").textContent).toBe(messages.notificationDenied.message));
+    await vi.waitFor(() =>
+      expect(get("status").textContent).toBe(messages.notificationDenied.message),
+    );
     expect(get("notification-mode").value).toBe("off");
     expect(data.hooky.notificationMode).toBeUndefined();
     chrome.permissions.request.mockResolvedValue(true);
@@ -438,7 +562,9 @@ describe("workspace feedback and failures", () => {
   it.each(["rule-up", "rule-down"])("reports a failed priority change from %s", async (id) => {
     await setup();
     document.querySelector('[data-panel="panel-rules"]').click();
-    await vi.waitFor(() => expect(document.querySelector('#rules-list [data-id="r1"]')).not.toBeNull());
+    await vi.waitFor(() =>
+      expect(document.querySelector('#rules-list [data-id="r1"]')).not.toBeNull(),
+    );
     document.querySelector(`#rules-list [data-id="${id === "rule-up" ? "r2" : "r1"}"]`).click();
     await vi.waitFor(() => expect(get(id).disabled).toBe(false));
     chrome.storage.local.set.mockRejectedValueOnce(new Error("Priority not saved"));

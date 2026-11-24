@@ -10,7 +10,9 @@ vi.mock("../src/pagecontext.js", () => ({
 
 // Set up DOM structure that popup.js expects at import time
 function setupPopupDOM() {
-  document.body.innerHTML = readFileSync("src/popup/popup.html", "utf8").split("<body>")[1].split("</body>")[0];
+  document.body.innerHTML = readFileSync("src/popup/popup.html", "utf8")
+    .split("<body>")[1]
+    .split("</body>")[0];
 }
 
 // Set up chrome mock
@@ -22,9 +24,7 @@ function setupChromeMock(storeData = {}) {
       sendMessage: vi.fn().mockResolvedValue({ ok: true, status: 200 }),
     },
     tabs: {
-      query: vi.fn().mockResolvedValue([
-        { id: 1, url: "https://example.com", title: "Example" },
-      ]),
+      query: vi.fn().mockResolvedValue([{ id: 1, url: "https://example.com", title: "Example" }]),
     },
     storage: {
       local: {
@@ -81,8 +81,22 @@ describe("popup.js", () => {
   });
 
   it("starts a fresh capture without reading or showing historical session results", async () => {
-    setupChromeMock({ hooky: { templates: [{ id: "t1", name: "Notes", url: "https://example.com", method: "POST", params: [] }] } });
-    const previous = { id: "old", name: "Old", startedAt: 10, ok: true, status: 201, state: "success", duplicateToken: "old-capture" };
+    setupChromeMock({
+      hooky: {
+        templates: [
+          { id: "t1", name: "Notes", url: "https://example.com", method: "POST", params: [] },
+        ],
+      },
+    });
+    const previous = {
+      id: "old",
+      name: "Old",
+      startedAt: 10,
+      ok: true,
+      status: 201,
+      state: "success",
+      duplicateToken: "old-capture",
+    };
     await chrome.storage.session.set({ hookyLastResult: previous });
     await setupPageContextMock();
     await import("../src/popup/popup.js");
@@ -94,10 +108,22 @@ describe("popup.js", () => {
     const changed = chrome.storage.onChanged.addListener.mock.calls[0][0];
     changed({ hookyLastResult: { newValue: previous } }, "session");
     expect(document.getElementById("last-result").hidden).toBe(true);
-    chrome.runtime.sendMessage.mockResolvedValue({ id: "new", name: "Notes", startedAt: 20, ok: true, state: "success", status: 201 });
+    chrome.runtime.sendMessage.mockResolvedValue({
+      id: "new",
+      name: "Notes",
+      startedAt: 20,
+      ok: true,
+      state: "success",
+      status: 201,
+    });
     document.getElementById("send-btn").click();
-    await vi.waitFor(() => expect(document.getElementById("last-result-id").textContent).toBe("new"));
-    changed({ hookyLastResult: { newValue: { ...previous, id: "another-tab", startedAt: 30 } } }, "session");
+    await vi.waitFor(() =>
+      expect(document.getElementById("last-result-id").textContent).toBe("new"),
+    );
+    changed(
+      { hookyLastResult: { newValue: { ...previous, id: "another-tab", startedAt: 30 } } },
+      "session",
+    );
     expect(document.getElementById("last-result-id").textContent).toBe("new");
     expect((await chrome.storage.session.get("hookyLastResult")).hookyLastResult).toEqual(previous);
   });
@@ -123,7 +149,13 @@ describe("popup.js", () => {
   });
 
   it("blocks invalid templates before dispatch and offers an edit action", async () => {
-    setupChromeMock({ hooky: { templates: [{ id: "bad", name: "Invalid", url: "ftp://example.com", method: "POST", params: [] }] } });
+    setupChromeMock({
+      hooky: {
+        templates: [
+          { id: "bad", name: "Invalid", url: "ftp://example.com", method: "POST", params: [] },
+        ],
+      },
+    });
     await setupPageContextMock();
     await import("../src/popup/popup.js");
     await vi.waitFor(() => expect(document.getElementById("validation-error").hidden).toBe(false));
@@ -138,14 +170,34 @@ describe("popup.js", () => {
 
   it("makes a duplicate the only send action without discarding the edited capture", async () => {
     vi.stubGlobal("location", { search: "?view=last" });
-    setupChromeMock({ hooky: { templates: [{ id: "t1", name: "Notes", url: "https://example.com", method: "POST", params: [{ key: "note", value: "original" }] }] } });
+    setupChromeMock({
+      hooky: {
+        templates: [
+          {
+            id: "t1",
+            name: "Notes",
+            url: "https://example.com",
+            method: "POST",
+            params: [{ key: "note", value: "original" }],
+          },
+        ],
+      },
+    });
     await setupPageContextMock();
     await import("../src/popup/popup.js");
     await vi.waitFor(() => expect(document.getElementById("send-btn").hidden).toBe(false));
     document.querySelector(".param-item textarea").value = "edited";
     chrome.runtime.sendMessage.mockResolvedValue({ preview: "POST https://example.com" });
     const changed = chrome.storage.onChanged.addListener.mock.calls[0][0];
-    const result = { id: "previous", name: "Notes", startedAt: 10, state: "success", ok: true, status: 201, duplicateToken: "held" };
+    const result = {
+      id: "previous",
+      name: "Notes",
+      startedAt: 10,
+      state: "success",
+      ok: true,
+      status: 201,
+      duplicateToken: "held",
+    };
     changed({ hookyLastResult: { newValue: result } }, "session");
     await vi.waitFor(() => expect(document.getElementById("send-anyway").disabled).toBe(false));
     expect(document.getElementById("send-btn").hidden).toBe(true);
@@ -162,23 +214,43 @@ describe("popup.js", () => {
     expect(chrome.runtime.sendMessage).toHaveBeenCalledTimes(1);
   });
 
-  it.each([202, 401, 403])("preserves HTTP %s evidence with an appropriate next step", async (status) => {
-    setupChromeMock({ hooky: { templates: [] } });
-    vi.stubGlobal("location", { search: "?view=last" });
-    await chrome.storage.session.set({ hookyLastResult: { id: "result", name: "Notes", startedAt: 10, state: status === 202 ? "success" : "failed", ok: status === 202, status } });
-    await import("../src/popup/popup.js");
-    await vi.waitFor(() => expect(document.getElementById("last-result").hidden).toBe(false));
-    expect(document.getElementById("last-result-http").textContent).toBe(`HTTP ${status}`);
-    expect(document.getElementById("last-result").dataset.tone).toBe(status === 202 ? "warning" : "failed");
-    if (status !== 202) {
-      expect(document.getElementById("result-help").textContent).toBe("popupCheckAuthorization");
-      document.getElementById("result-settings").click();
-      expect(chrome.runtime.openOptionsPage).toHaveBeenCalledOnce();
-    }
-  });
+  it.each([202, 401, 403])(
+    "preserves HTTP %s evidence with an appropriate next step",
+    async (status) => {
+      setupChromeMock({ hooky: { templates: [] } });
+      vi.stubGlobal("location", { search: "?view=last" });
+      await chrome.storage.session.set({
+        hookyLastResult: {
+          id: "result",
+          name: "Notes",
+          startedAt: 10,
+          state: status === 202 ? "success" : "failed",
+          ok: status === 202,
+          status,
+        },
+      });
+      await import("../src/popup/popup.js");
+      await vi.waitFor(() => expect(document.getElementById("last-result").hidden).toBe(false));
+      expect(document.getElementById("last-result-http").textContent).toBe(`HTTP ${status}`);
+      expect(document.getElementById("last-result").dataset.tone).toBe(
+        status === 202 ? "warning" : "failed",
+      );
+      if (status !== 202) {
+        expect(document.getElementById("result-help").textContent).toBe("popupCheckAuthorization");
+        document.getElementById("result-settings").click();
+        expect(chrome.runtime.openOptionsPage).toHaveBeenCalledOnce();
+      }
+    },
+  );
 
   it("shows recovery when switching templates cannot read storage", async () => {
-    setupChromeMock({ hooky: { templates: [{ id: "t1", name: "Notes", url: "https://example.com", method: "POST", params: [] }] } });
+    setupChromeMock({
+      hooky: {
+        templates: [
+          { id: "t1", name: "Notes", url: "https://example.com", method: "POST", params: [] },
+        ],
+      },
+    });
     await setupPageContextMock();
     await import("../src/popup/popup.js");
     await vi.waitFor(() => expect(document.getElementById("send-btn").hidden).toBe(false));
@@ -190,7 +262,9 @@ describe("popup.js", () => {
 
   it("shows a task-specific load error and retries without sending or altering storage", async () => {
     setupChromeMock({ hooky: { templates: [], theme: "dark" } });
-    chrome.storage.local.get.mockRejectedValueOnce(new Error("internal error with sensitive details"));
+    chrome.storage.local.get.mockRejectedValueOnce(
+      new Error("internal error with sensitive details"),
+    );
     await import("../src/popup/popup.js");
     await vi.waitFor(() => expect(document.querySelector(".container").dataset.view).toBe("error"));
     expect(document.getElementById("startup-error").hidden).toBe(false);
@@ -207,7 +281,12 @@ describe("popup.js", () => {
 
   it("recovers a retained-result read failure into the send task on retry", async () => {
     vi.stubGlobal("location", { search: "?view=last" });
-    setupChromeMock({ hooky: { templates: [{ id: "t1", name: "Notes", url: "https://example.com", params: [] }], theme: "dark" } });
+    setupChromeMock({
+      hooky: {
+        templates: [{ id: "t1", name: "Notes", url: "https://example.com", params: [] }],
+        theme: "dark",
+      },
+    });
     chrome.storage.session.get.mockRejectedValueOnce(new Error("session unavailable"));
     await setupPageContextMock();
     await import("../src/popup/popup.js");
@@ -221,7 +300,14 @@ describe("popup.js", () => {
 
   it("adds a safe next step to HTTP failures without duplicating semantic errors", async () => {
     setupChromeMock({ hooky: { templates: [] } });
-    const result = { id: "failure", name: "Notes", startedAt: 10, state: "failed", ok: false, status: 503 };
+    const result = {
+      id: "failure",
+      name: "Notes",
+      startedAt: 10,
+      state: "failed",
+      ok: false,
+      status: 503,
+    };
     vi.stubGlobal("location", { search: "?view=last" });
     await chrome.storage.session.set({ hookyLastResult: result });
     await import("../src/popup/popup.js");
@@ -232,10 +318,26 @@ describe("popup.js", () => {
   });
 
   it("keeps one persistent result and locks the capture throughout a send", async () => {
-    setupChromeMock({ hooky: { templates: [{ id: "t1", name: "Notes", url: "https://example.com", params: [{ key: "note", value: "hello" }] }] } });
+    setupChromeMock({
+      hooky: {
+        templates: [
+          {
+            id: "t1",
+            name: "Notes",
+            url: "https://example.com",
+            params: [{ key: "note", value: "hello" }],
+          },
+        ],
+      },
+    });
     await setupPageContextMock();
     let finish;
-    chrome.runtime.sendMessage.mockImplementation(() => new Promise((resolve) => { finish = resolve; }));
+    chrome.runtime.sendMessage.mockImplementation(
+      () =>
+        new Promise((resolve) => {
+          finish = resolve;
+        }),
+    );
     await import("../src/popup/popup.js");
     const button = document.getElementById("send-btn");
     await vi.waitFor(() => expect(button.hidden).toBe(false));
@@ -264,7 +366,18 @@ describe("popup.js", () => {
   });
 
   it("hides empty parameters and keeps secondary content collapsed", async () => {
-    setupChromeMock({ hooky: { templates: [{ id: "t1", name: "Notes", url: "https://example.com", params: [{ key: "", value: "ignored" }] }] } });
+    setupChromeMock({
+      hooky: {
+        templates: [
+          {
+            id: "t1",
+            name: "Notes",
+            url: "https://example.com",
+            params: [{ key: "", value: "ignored" }],
+          },
+        ],
+      },
+    });
     await setupPageContextMock();
     await import("../src/popup/popup.js");
     await vi.waitFor(() => expect(document.getElementById("send-btn").hidden).toBe(false));
@@ -276,46 +389,105 @@ describe("popup.js", () => {
 
   it("previews a blocked capture and repeats it only through the explicit action", async () => {
     setupChromeMock({ hooky: { templates: [] } });
-    const result = { id: "previous", name: "Save", startedAt: 10, lastActionAt: 20, state: "success", ok: true, status: 201, duplicateToken: "token" };
+    const result = {
+      id: "previous",
+      name: "Save",
+      startedAt: 10,
+      lastActionAt: 20,
+      state: "success",
+      ok: true,
+      status: 201,
+      duplicateToken: "token",
+    };
     vi.stubGlobal("location", { search: "?view=last" });
     await chrome.storage.session.set({ hookyLastResult: result });
-    chrome.runtime.sendMessage.mockResolvedValueOnce({ preview: "POST https://example.com\nx-key: ••••" }).mockResolvedValueOnce({ id: "new", name: "Save", startedAt: 30, state: "success", ok: true, status: 201 });
+    chrome.runtime.sendMessage
+      .mockResolvedValueOnce({ preview: "POST https://example.com\nx-key: ••••" })
+      .mockResolvedValueOnce({
+        id: "new",
+        name: "Save",
+        startedAt: 30,
+        state: "success",
+        ok: true,
+        status: 201,
+      });
     await import("../src/popup/popup.js");
     const button = document.getElementById("send-anyway");
     await vi.waitFor(() => expect(button.disabled).toBe(false));
     expect(chrome.runtime.sendMessage).toHaveBeenCalledTimes(1);
-    expect(chrome.runtime.sendMessage).toHaveBeenCalledWith({ type: "GET_DUPLICATE_CAPTURE", token: "token" });
+    expect(chrome.runtime.sendMessage).toHaveBeenCalledWith({
+      type: "GET_DUPLICATE_CAPTURE",
+      token: "token",
+    });
     expect(document.getElementById("duplicate-preview").textContent).toContain("••••");
     button.click();
     button.dispatchEvent(new Event("click"));
-    await vi.waitFor(() => expect(chrome.runtime.sendMessage).toHaveBeenCalledWith({ type: "SEND_ANYWAY", token: "token" }));
+    await vi.waitFor(() =>
+      expect(chrome.runtime.sendMessage).toHaveBeenCalledWith({
+        type: "SEND_ANYWAY",
+        token: "token",
+      }),
+    );
     expect(chrome.runtime.sendMessage).toHaveBeenCalledTimes(2);
     await vi.waitFor(() => expect(document.getElementById("duplicate-actions").hidden).toBe(true));
     const changed = chrome.storage.onChanged.addListener.mock.calls[0][0];
-    changed({ hookyLastResult: { newValue: { ...result, duplicateToken: undefined, lastActionAt: 15 } } }, "session");
+    changed(
+      { hookyLastResult: { newValue: { ...result, duplicateToken: undefined, lastActionAt: 15 } } },
+      "session",
+    );
     expect(document.getElementById("last-result-id").textContent).toBe("new");
   });
 
   it("disables the repeat action for expired captures and failed preview reads", async () => {
     setupChromeMock({ hooky: { templates: [] } });
     vi.stubGlobal("location", { search: "?view=last" });
-    await chrome.storage.session.set({ hookyLastResult: { id: "old", name: "Save", startedAt: 10, state: "success", ok: true, duplicateToken: "expired" } });
+    await chrome.storage.session.set({
+      hookyLastResult: {
+        id: "old",
+        name: "Save",
+        startedAt: 10,
+        state: "success",
+        ok: true,
+        duplicateToken: "expired",
+      },
+    });
     chrome.runtime.sendMessage.mockRejectedValue(new Error("worker stopped"));
     await import("../src/popup/popup.js");
-    await vi.waitFor(() => expect(document.getElementById("duplicate-preview").textContent).toBe("captureExpired"));
+    await vi.waitFor(() =>
+      expect(document.getElementById("duplicate-preview").textContent).toBe("captureExpired"),
+    );
     expect(document.getElementById("send-anyway").disabled).toBe(true);
   });
 
   it("does not apply a stale preview after another send becomes the latest result", async () => {
     setupChromeMock({ hooky: { templates: [] } });
     let finish;
-    chrome.runtime.sendMessage.mockImplementation(() => new Promise((resolve) => { finish = resolve; }));
+    chrome.runtime.sendMessage.mockImplementation(
+      () =>
+        new Promise((resolve) => {
+          finish = resolve;
+        }),
+    );
     vi.stubGlobal("location", { search: "?view=last" });
-    await chrome.storage.session.set({ hookyLastResult: { id: "old", name: "Save", startedAt: 10, state: "success", ok: true, duplicateToken: "old-token" } });
+    await chrome.storage.session.set({
+      hookyLastResult: {
+        id: "old",
+        name: "Save",
+        startedAt: 10,
+        state: "success",
+        ok: true,
+        duplicateToken: "old-token",
+      },
+    });
     await import("../src/popup/popup.js");
     await vi.waitFor(() => expect(chrome.runtime.sendMessage).toHaveBeenCalled());
     const changed = chrome.storage.onChanged.addListener.mock.calls[0][0];
-    changed({ hookyLastResult: { newValue: { id: "new", name: "New", startedAt: 20, state: "sending" } } }, "session");
+    changed(
+      {
+        hookyLastResult: { newValue: { id: "new", name: "New", startedAt: 20, state: "sending" } },
+      },
+      "session",
+    );
     finish({ preview: "stale capture" });
     await Promise.resolve();
     await Promise.resolve();
@@ -326,21 +498,52 @@ describe("popup.js", () => {
   it("reports a repeat that cannot reach the background without retrying", async () => {
     setupChromeMock({ hooky: { templates: [] } });
     vi.stubGlobal("location", { search: "?view=last" });
-    await chrome.storage.session.set({ hookyLastResult: { id: "old", name: "Save", startedAt: 10, state: "success", ok: true, duplicateToken: "token" } });
-    chrome.runtime.sendMessage.mockResolvedValueOnce({ preview: "POST https://example.com" }).mockRejectedValueOnce(new Error("worker unavailable"));
+    await chrome.storage.session.set({
+      hookyLastResult: {
+        id: "old",
+        name: "Save",
+        startedAt: 10,
+        state: "success",
+        ok: true,
+        duplicateToken: "token",
+      },
+    });
+    chrome.runtime.sendMessage
+      .mockResolvedValueOnce({ preview: "POST https://example.com" })
+      .mockRejectedValueOnce(new Error("worker unavailable"));
     await import("../src/popup/popup.js");
     await vi.waitFor(() => expect(document.getElementById("send-anyway").disabled).toBe(false));
     document.getElementById("send-anyway").click();
-    await vi.waitFor(() => expect(document.getElementById("toast").textContent).toBe("requestUnconfirmed"));
+    await vi.waitFor(() =>
+      expect(document.getElementById("toast").textContent).toBe("requestUnconfirmed"),
+    );
     expect(chrome.runtime.sendMessage).toHaveBeenCalledTimes(2);
   });
 
   it("shows mapped receipt fields safely and retains HTTP evidence for a business failure", async () => {
     setupChromeMock({ hooky: { templates: [] } });
     vi.stubGlobal("location", { search: "?view=last" });
-    await chrome.storage.session.set({ hookyLastResult: { id: "business", name: "Save", startedAt: Date.now(), status: 200, business: "rejected", ok: false, state: "failed", error: "businessRejected", receipt: { receiptId: "r1", message: "<script>attack()</script>", fieldNote: "responseFieldMissing" } } });
+    await chrome.storage.session.set({
+      hookyLastResult: {
+        id: "business",
+        name: "Save",
+        startedAt: Date.now(),
+        status: 200,
+        business: "rejected",
+        ok: false,
+        state: "failed",
+        error: "businessRejected",
+        receipt: {
+          receiptId: "r1",
+          message: "<script>attack()</script>",
+          fieldNote: "responseFieldMissing",
+        },
+      },
+    });
     await import("../src/popup/popup.js");
-    await vi.waitFor(() => expect(document.getElementById("response-fields-summary").textContent).toContain("r1"));
+    await vi.waitFor(() =>
+      expect(document.getElementById("response-fields-summary").textContent).toContain("r1"),
+    );
     expect(document.getElementById("response-fields-summary").querySelector("script")).toBeNull();
     expect(document.getElementById("response-field-note").textContent).toBe("responseFieldMissing");
     expect(document.getElementById("last-result-http").hidden).toBe(false);
@@ -349,7 +552,15 @@ describe("popup.js", () => {
 
   it("renders opted-in receipts as text and clears them on the next result", async () => {
     setupChromeMock({ hooky: { templates: [] } });
-    const record = { id: "receipt", name: "Save", state: "success", status: 201, ok: true, startedAt: Date.now(), receipt: { text: '<img src="x" onerror="danger()">', note: "responseInvalidJson" } };
+    const record = {
+      id: "receipt",
+      name: "Save",
+      state: "success",
+      status: 201,
+      ok: true,
+      startedAt: Date.now(),
+      receipt: { text: '<img src="x" onerror="danger()">', note: "responseInvalidJson" },
+    };
     vi.stubGlobal("location", { search: "?view=last" });
     await chrome.storage.session.set({ hookyLastResult: record });
     await import("../src/popup/popup.js");
@@ -364,13 +575,26 @@ describe("popup.js", () => {
   });
 
   it("previews masked headers, preserves untouched bindings, and allows manual multiline input", async () => {
-    const template = { id: "t1", name: "Notes", url: "https://example.com/hook", method: "POST", headers: [{ key: "X-API-Key", value: "private-token" }], params: [
-      { key: "id", value: "{{send.id}}" }, { key: "text", value: "" }, { key: "selected", value: "{{page.selection}}" },
-    ] };
+    const template = {
+      id: "t1",
+      name: "Notes",
+      url: "https://example.com/hook",
+      method: "POST",
+      headers: [{ key: "X-API-Key", value: "private-token" }],
+      params: [
+        { key: "id", value: "{{send.id}}" },
+        { key: "text", value: "" },
+        { key: "selected", value: "{{page.selection}}" },
+      ],
+    };
     setupChromeMock({ hooky: { templates: [template], activeTemplateId: "t1" } });
-    await setupPageContextMock({ page: { url: "https://example.com", title: "Example", selection: "{{send.id}}", meta: {} } });
+    await setupPageContextMock({
+      page: { url: "https://example.com", title: "Example", selection: "{{send.id}}", meta: {} },
+    });
     await import("../src/popup/popup.js");
-    await vi.waitFor(() => expect(document.querySelectorAll(".param-item textarea")).toHaveLength(3));
+    await vi.waitFor(() =>
+      expect(document.querySelectorAll(".param-item textarea")).toHaveLength(3),
+    );
     const values = document.querySelectorAll(".param-item textarea");
     expect(values[0].value).toBe("{{send.id}}");
     values[1].value = "  manual {{page.title}}\nsecond line  ";
@@ -394,27 +618,58 @@ describe("popup.js", () => {
   });
 
   it("keeps manually pasted text literal when it matches the original variable preview", async () => {
-    setupChromeMock({ hooky: { templates: [{ id: "t1", name: "Notes", url: "https://example.com", method: "POST", params: [{ key: "id", value: "{{send.id}}" }] }] } });
+    setupChromeMock({
+      hooky: {
+        templates: [
+          {
+            id: "t1",
+            name: "Notes",
+            url: "https://example.com",
+            method: "POST",
+            params: [{ key: "id", value: "{{send.id}}" }],
+          },
+        ],
+      },
+    });
     await setupPageContextMock();
     await import("../src/popup/popup.js");
     await vi.waitFor(() => expect(document.querySelector(".param-item textarea")).not.toBeNull());
     const field = document.querySelector(".param-item textarea");
     field.focus();
     field.value = "{{send.id}}";
-    field.dispatchEvent(new InputEvent("input", { bubbles: true, inputType: "insertFromPaste", data: field.value }));
+    field.dispatchEvent(
+      new InputEvent("input", { bubbles: true, inputType: "insertFromPaste", data: field.value }),
+    );
     expect(chrome.runtime.sendMessage).not.toHaveBeenCalled();
     document.getElementById("send-btn").click();
     await vi.waitFor(() => expect(chrome.runtime.sendMessage).toHaveBeenCalled());
-    expect(chrome.runtime.sendMessage.mock.calls[0][0].config.params).toEqual([{ key: "id", value: "{{send.id}}" }]);
+    expect(chrome.runtime.sendMessage.mock.calls[0][0].config.params).toEqual([
+      { key: "id", value: "{{send.id}}" },
+    ]);
     expect(chrome.permissions.request).not.toHaveBeenCalled();
     expect(chrome.storage.local.set).not.toHaveBeenCalled();
   });
 
   it("shows request validation errors without exposing header values", async () => {
-    setupChromeMock({ hooky: { templates: [{ id: "t1", name: "Notes", url: "https://example.com", method: "POST", params: [], headers: [{ key: "Cookie", value: "secret" }] }] } });
+    setupChromeMock({
+      hooky: {
+        templates: [
+          {
+            id: "t1",
+            name: "Notes",
+            url: "https://example.com",
+            method: "POST",
+            params: [],
+            headers: [{ key: "Cookie", value: "secret" }],
+          },
+        ],
+      },
+    });
     await setupPageContextMock();
     await import("../src/popup/popup.js");
-    await vi.waitFor(() => expect(document.getElementById("popup-request-preview").textContent).toBe("managedHeader"));
+    await vi.waitFor(() =>
+      expect(document.getElementById("popup-request-preview").textContent).toBe("managedHeader"),
+    );
   });
 
   it("shows a retained result without sending and updates it from session changes", async () => {
@@ -427,9 +682,15 @@ describe("popup.js", () => {
     await vi.waitFor(() => expect(document.getElementById("last-result").hidden).toBe(false));
     expect(document.getElementById("last-result-name").textContent).toBe("Save");
     const changed = chrome.storage.onChanged.addListener.mock.calls[0][0];
-    changed({ hookyLastResult: { newValue: { ...record, state: "unknown", ok: false } } }, "session");
+    changed(
+      { hookyLastResult: { newValue: { ...record, state: "unknown", ok: false } } },
+      "session",
+    );
     expect(document.getElementById("last-result").dataset.tone).toBe("warning");
-    changed({ hookyLastResult: { newValue: { ...record, state: "success", ok: true, status: 201 } } }, "local");
+    changed(
+      { hookyLastResult: { newValue: { ...record, state: "success", ok: true, status: 201 } } },
+      "local",
+    );
     expect(document.getElementById("last-result").dataset.tone).toBe("warning");
     changed({}, "session");
     expect(chrome.runtime.sendMessage).not.toHaveBeenCalled();
@@ -447,22 +708,45 @@ describe("popup.js", () => {
   });
 
   it("preserves multiline selection and literal variable text when editing before send", async () => {
-    setupChromeMock({ hooky: {
-      templates: [{ id: "t1", name: "Notes", url: "https://example.com/hook", method: "POST", params: [{ key: "note", value: "{{page.selection}}" }] }],
-      activeTemplateId: "t1",
-      theme: "light",
-    } });
-    await setupPageContextMock({ page: { url: "https://example.com", title: "Example", selection: "First line\nSecond line", meta: {} } });
+    setupChromeMock({
+      hooky: {
+        templates: [
+          {
+            id: "t1",
+            name: "Notes",
+            url: "https://example.com/hook",
+            method: "POST",
+            params: [{ key: "note", value: "{{page.selection}}" }],
+          },
+        ],
+        activeTemplateId: "t1",
+        theme: "light",
+      },
+    });
+    await setupPageContextMock({
+      page: {
+        url: "https://example.com",
+        title: "Example",
+        selection: "First line\nSecond line",
+        meta: {},
+      },
+    });
     await import("../src/popup/popup.js");
     await vi.waitFor(() => expect(document.querySelector(".param-item textarea")).not.toBeNull());
     const field = document.querySelector(".param-item textarea");
     expect(field.value).toBe("First line\nSecond line");
     field.value = "  edited {{page.title}}\nSecond line  ";
     document.getElementById("send-btn").click();
-    await vi.waitFor(() => expect(chrome.runtime.sendMessage).toHaveBeenCalledWith(expect.objectContaining({
-      resolved: true,
-      config: expect.objectContaining({ params: [{ key: "note", value: "  edited {{page.title}}\nSecond line  " }] }),
-    })));
+    await vi.waitFor(() =>
+      expect(chrome.runtime.sendMessage).toHaveBeenCalledWith(
+        expect.objectContaining({
+          resolved: true,
+          config: expect.objectContaining({
+            params: [{ key: "note", value: "  edited {{page.title}}\nSecond line  " }],
+          }),
+        }),
+      ),
+    );
     await vi.advanceTimersByTimeAsync(8100);
     expect(document.getElementById("toast").classList.contains("visible")).toBe(false);
   });
@@ -525,7 +809,13 @@ describe("popup.js", () => {
     setupChromeMock({
       hooky: {
         templates: [
-          { id: "t1", name: "Test", url: "https://hook.example.com/endpoint", method: "PUT", params: [] },
+          {
+            id: "t1",
+            name: "Test",
+            url: "https://hook.example.com/endpoint",
+            method: "PUT",
+            params: [],
+          },
         ],
         activeTemplateId: "t1",
         theme: "system",
@@ -537,7 +827,9 @@ describe("popup.js", () => {
     await vi.waitFor(() => {
       expect(document.getElementById("method-badge").textContent).toBe("PUT");
     });
-    expect(document.getElementById("url-display").textContent).toBe("https://hook.example.com/endpoint");
+    expect(document.getElementById("url-display").textContent).toBe(
+      "https://hook.example.com/endpoint",
+    );
   });
 
   it("should render params with resolved template values", async () => {
@@ -545,7 +837,10 @@ describe("popup.js", () => {
       hooky: {
         templates: [
           {
-            id: "t1", name: "Test", url: "https://h.com", method: "POST",
+            id: "t1",
+            name: "Test",
+            url: "https://h.com",
+            method: "POST",
             params: [
               { key: "url", value: "{{page.url}}" },
               { key: "note", value: "static value" },
@@ -599,9 +894,7 @@ describe("popup.js", () => {
   it("should send webhook and show success toast", async () => {
     setupChromeMock({
       hooky: {
-        templates: [
-          { id: "t1", name: "Test", url: "https://h.com", method: "POST", params: [] },
-        ],
+        templates: [{ id: "t1", name: "Test", url: "https://h.com", method: "POST", params: [] }],
         activeTemplateId: "t1",
         theme: "system",
       },
@@ -629,9 +922,7 @@ describe("popup.js", () => {
   it("should show error toast when webhook fails", async () => {
     setupChromeMock({
       hooky: {
-        templates: [
-          { id: "t1", name: "Test", url: "https://h.com", method: "POST", params: [] },
-        ],
+        templates: [{ id: "t1", name: "Test", url: "https://h.com", method: "POST", params: [] }],
         activeTemplateId: "t1",
         theme: "system",
       },
@@ -690,7 +981,10 @@ describe("popup.js", () => {
       hooky: {
         templates: [
           {
-            id: "t1", name: "Test", url: "https://h.com", method: "POST",
+            id: "t1",
+            name: "Test",
+            url: "https://h.com",
+            method: "POST",
             params: [{ key: "url", value: "{{page.url}}" }],
           },
         ],
@@ -718,9 +1012,7 @@ describe("popup.js", () => {
   it("should handle sendMessage error gracefully", async () => {
     setupChromeMock({
       hooky: {
-        templates: [
-          { id: "t1", name: "Test", url: "https://h.com", method: "POST", params: [] },
-        ],
+        templates: [{ id: "t1", name: "Test", url: "https://h.com", method: "POST", params: [] }],
         activeTemplateId: "t1",
         theme: "system",
       },
@@ -768,7 +1060,10 @@ describe("popup.js", () => {
       hooky: {
         templates: [
           {
-            id: "t1", name: "Test", url: "https://h.com", method: "POST",
+            id: "t1",
+            name: "Test",
+            url: "https://h.com",
+            method: "POST",
             params: [
               { key: "", value: "should be skipped" },
               { key: "msg", value: "hello" },
@@ -797,7 +1092,10 @@ describe("popup.js", () => {
       hooky: {
         templates: [
           {
-            id: "t1", name: "Test", url: "https://h.com", method: "POST",
+            id: "t1",
+            name: "Test",
+            url: "https://h.com",
+            method: "POST",
             params: [
               { key: "url", value: "{{page.url}}" },
               { key: "msg", value: "hi" },
@@ -838,9 +1136,7 @@ describe("popup.js", () => {
   it("should show error message from result.error", async () => {
     setupChromeMock({
       hooky: {
-        templates: [
-          { id: "t1", name: "Test", url: "https://h.com", method: "POST", params: [] },
-        ],
+        templates: [{ id: "t1", name: "Test", url: "https://h.com", method: "POST", params: [] }],
         activeTemplateId: "t1",
         theme: "system",
       },
@@ -871,7 +1167,10 @@ describe("popup.js", () => {
       hooky: {
         templates: [
           {
-            id: "t1", name: "Test", url: "https://h.com", method: "POST",
+            id: "t1",
+            name: "Test",
+            url: "https://h.com",
+            method: "POST",
             params: [{ key: "url", value: "{{page.url}}" }],
           },
         ],
@@ -918,7 +1217,10 @@ describe("popup.js", () => {
       hooky: {
         templates: [
           {
-            id: "t1", name: "Test", url: "https://h.com", method: "POST",
+            id: "t1",
+            name: "Test",
+            url: "https://h.com",
+            method: "POST",
             params: [{ key: "title", value: "{{page.title}}" }],
           },
         ],
@@ -926,7 +1228,9 @@ describe("popup.js", () => {
         theme: "system",
       },
     });
-    chrome.tabs.query.mockResolvedValue([{ id: 1, url: "https://example.com", title: "Example Tab" }]);
+    chrome.tabs.query.mockResolvedValue([
+      { id: 1, url: "https://example.com", title: "Example Tab" },
+    ]);
 
     // getPageContext returns fallback with tab title
     await setupPageContextMock({
@@ -948,9 +1252,7 @@ describe("popup.js", () => {
   it("should handle template with no method (defaults to POST)", async () => {
     setupChromeMock({
       hooky: {
-        templates: [
-          { id: "t1", name: "Test", url: "https://h.com", params: [] },
-        ],
+        templates: [{ id: "t1", name: "Test", url: "https://h.com", params: [] }],
         activeTemplateId: "t1",
         theme: "system",
       },
@@ -967,9 +1269,7 @@ describe("popup.js", () => {
   it("should handle template with no name (uses default)", async () => {
     setupChromeMock({
       hooky: {
-        templates: [
-          { id: "t1", name: "", url: "https://h.com", method: "GET", params: [] },
-        ],
+        templates: [{ id: "t1", name: "", url: "https://h.com", method: "GET", params: [] }],
         activeTemplateId: "t1",
         theme: "system",
       },
@@ -987,9 +1287,7 @@ describe("popup.js", () => {
   it("should handle store with no theme (defaults to system)", async () => {
     setupChromeMock({
       hooky: {
-        templates: [
-          { id: "t1", name: "Test", url: "https://h.com", method: "POST", params: [] },
-        ],
+        templates: [{ id: "t1", name: "Test", url: "https://h.com", method: "POST", params: [] }],
         activeTemplateId: "t1",
       },
     });
@@ -1020,9 +1318,7 @@ describe("popup.js", () => {
   it("should handle failed webhook with no status", async () => {
     setupChromeMock({
       hooky: {
-        templates: [
-          { id: "t1", name: "Test", url: "https://h.com", method: "POST", params: [] },
-        ],
+        templates: [{ id: "t1", name: "Test", url: "https://h.com", method: "POST", params: [] }],
         activeTemplateId: "t1",
         theme: "system",
       },
@@ -1047,9 +1343,7 @@ describe("popup.js", () => {
   it("should handle catch branch with error without message", async () => {
     setupChromeMock({
       hooky: {
-        templates: [
-          { id: "t1", name: "Test", url: "https://h.com", method: "POST", params: [] },
-        ],
+        templates: [{ id: "t1", name: "Test", url: "https://h.com", method: "POST", params: [] }],
         activeTemplateId: "t1",
         theme: "system",
       },
@@ -1074,9 +1368,7 @@ describe("popup.js", () => {
   it("should handle template with null params", async () => {
     setupChromeMock({
       hooky: {
-        templates: [
-          { id: "t1", name: "Test", url: "https://h.com", method: "POST", params: null },
-        ],
+        templates: [{ id: "t1", name: "Test", url: "https://h.com", method: "POST", params: null }],
         activeTemplateId: "t1",
         theme: "system",
       },
@@ -1116,9 +1408,7 @@ describe("popup.js", () => {
   it("should handle template select change to non-existent template", async () => {
     setupChromeMock({
       hooky: {
-        templates: [
-          { id: "t1", name: "Hook A", url: "https://a.com", method: "GET", params: [] },
-        ],
+        templates: [{ id: "t1", name: "Hook A", url: "https://a.com", method: "GET", params: [] }],
         activeTemplateId: "t1",
         theme: "system",
       },

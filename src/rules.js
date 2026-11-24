@@ -48,4 +48,3 @@ export function findMatchingRule(rules, page) {
   }
   return null;
 }
-

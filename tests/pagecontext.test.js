@@ -96,9 +96,7 @@ describe("getPageContext", () => {
   });
 
   it("should return fallback when executeScript throws", async () => {
-    chrome.scripting.executeScript.mockRejectedValue(
-      new Error("Cannot access chrome:// URLs"),
-    );
+    chrome.scripting.executeScript.mockRejectedValue(new Error("Cannot access chrome:// URLs"));
 
     const tab = { id: 1, url: "chrome://settings", title: "Settings" };
     const ctx = await getPageContext(tab);
@@ -109,9 +107,11 @@ describe("getPageContext", () => {
   });
 
   it("should pass extractPageContext as the func parameter", async () => {
-    chrome.scripting.executeScript.mockResolvedValue([{
-      result: { page: { url: "https://x.com", title: "X", selection: "", meta: {} } },
-    }]);
+    chrome.scripting.executeScript.mockResolvedValue([
+      {
+        result: { page: { url: "https://x.com", title: "X", selection: "", meta: {} } },
+      },
+    ]);
 
     const tab = { id: 5, url: "https://x.com", title: "X" };
     await getPageContext(tab);

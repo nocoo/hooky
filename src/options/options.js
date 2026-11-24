@@ -143,12 +143,15 @@ function createParamRow(key = "", value = "", kind = "param") {
   valueInput.value = value;
   valueInput.className = `${kind}-value`;
   valueInput.setAttribute("aria-label", t("paramValuePlaceholder"));
-  valueInput.addEventListener("focus", () => { lastValueInput = valueInput; });
+  valueInput.addEventListener("focus", () => {
+    lastValueInput = valueInput;
+  });
 
   const removeBtn = document.createElement("button");
   removeBtn.type = "button";
   removeBtn.className = "btn-remove";
-  removeBtn.innerHTML = '<svg class="icon" data-lucide="x" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg>';
+  removeBtn.innerHTML =
+    '<svg class="icon" data-lucide="x" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg>';
   removeBtn.setAttribute("aria-label", t("removeParam"));
   removeBtn.addEventListener("click", () => {
     clearStatus();
@@ -196,31 +199,57 @@ function showStatus(message, error = false) {
   statusEl.textContent = message;
   statusEl.classList.toggle("error", error);
   statusEl.classList.add("visible");
-  if (!error) statusTimer = setTimeout(() => {
-    statusExpired = true;
-    dismissExpiredStatus();
-  }, 8000);
+  if (!error)
+    statusTimer = setTimeout(() => {
+      statusExpired = true;
+      dismissExpiredStatus();
+    }, 8000);
 }
 
 function getResponseConfig() {
   const response = { enabled: document.getElementById("read-response").checked };
-  for (const [key, id] of [["messagePath", "response-message-path"], ["receiptPath", "response-id-path"], ["successPath", "response-success-path"]]) {
+  for (const [key, id] of [
+    ["messagePath", "response-message-path"],
+    ["receiptPath", "response-id-path"],
+    ["successPath", "response-success-path"],
+  ]) {
     const value = document.getElementById(id).value.trim();
     if (value) response[key] = value;
   }
-  if (response.successPath) response.successValue = document.getElementById("response-success-value").value;
+  if (response.successPath)
+    response.successValue = document.getElementById("response-success-value").value;
   return response;
 }
 
 function updatePreview() {
   const params = getParams();
-  const context = { page: { url: "{{page.url}}", title: "{{page.title}}", selection: "{{page.selection}}", meta: {
-    description: "{{page.meta.description}}", "og:title": "{{page.meta.og:title}}", "og:description": "{{page.meta.og:description}}", "og:image": "{{page.meta.og:image}}",
-  } }, send: { id: "{{send.id}}" } };
+  const context = {
+    page: {
+      url: "{{page.url}}",
+      title: "{{page.title}}",
+      selection: "{{page.selection}}",
+      meta: {
+        description: "{{page.meta.description}}",
+        "og:title": "{{page.meta.og:title}}",
+        "og:description": "{{page.meta.og:description}}",
+        "og:image": "{{page.meta.og:image}}",
+      },
+    },
+    send: { id: "{{send.id}}" },
+  };
   const method = methodSelect.value;
   const url = urlInput.value || "https://example.com/webhook";
   try {
-    document.getElementById("request-preview").textContent = previewRequest({ method, url, params, headers: getParams(headersList, "header"), response: getResponseConfig() }, context);
+    document.getElementById("request-preview").textContent = previewRequest(
+      {
+        method,
+        url,
+        params,
+        headers: getParams(headersList, "header"),
+        response: getResponseConfig(),
+      },
+      context,
+    );
   } catch (error) {
     document.getElementById("request-preview").textContent = t(error.message);
   }
@@ -320,10 +349,16 @@ function showSettings(store) {
 async function refreshNotificationPermission() {
   const check = ++notificationCheck;
   const panel = document.getElementById("notification-permission");
-  if (notificationMode === "off") { panel.hidden = true; return; }
+  if (notificationMode === "off") {
+    panel.hidden = true;
+    return;
+  }
   let granted = false;
-  try { granted = await chrome.permissions.contains({ permissions: ["notifications"] }); }
-  catch { /* Keep the saved preference and offer an explicit permission request. */ }
+  try {
+    granted = await chrome.permissions.contains({ permissions: ["notifications"] });
+  } catch {
+    /* Keep the saved preference and offer an explicit permission request. */
+  }
   if (check === notificationCheck) panel.hidden = granted;
 }
 
@@ -349,7 +384,8 @@ function renderTemplateList(templates, activeId) {
 
   const newIcon = document.createElement("span");
   newIcon.className = "new-icon";
-  newIcon.innerHTML = '<svg class="icon" data-lucide="plus" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M5 12h14" /><path d="M12 5v14" /></svg>';
+  newIcon.innerHTML =
+    '<svg class="icon" data-lucide="plus" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M5 12h14" /><path d="M12 5v14" /></svg>';
 
   const newLabel = document.createElement("span");
   newLabel.textContent = t("newWebhook");
@@ -369,7 +405,10 @@ function renderTemplateList(templates, activeId) {
     nameSpan.className = "template-name";
     nameSpan.textContent = tpl.name || t("defaultTemplateName");
 
-    li.insertAdjacentHTML("beforeend", '<svg class="icon" data-lucide="link" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" /><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" /></svg>');
+    li.insertAdjacentHTML(
+      "beforeend",
+      '<svg class="icon" data-lucide="link" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" /><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" /></svg>',
+    );
     li.appendChild(nameSpan);
     li.addEventListener("click", () => selectTemplate(tpl.id));
     templateListEl.appendChild(li);
@@ -418,17 +457,20 @@ async function selectTemplate(id) {
   }
   showHeaderValues.checked = false;
   headersList.replaceChildren();
-  for (const { key, value } of tpl.headers || []) headersList.appendChild(createParamRow(key, value, "header"));
+  for (const { key, value } of tpl.headers || [])
+    headersList.appendChild(createParamRow(key, value, "header"));
   document.getElementById("template-advanced").open = false;
   document.getElementById("read-response").checked = tpl.response?.enabled === true;
-  document.getElementById("response-fields").disabled = !document.getElementById("read-response").checked;
+  document.getElementById("response-fields").disabled =
+    !document.getElementById("read-response").checked;
   document.getElementById("response-message-path").value = tpl.response?.messagePath || "";
   document.getElementById("response-id-path").value = tpl.response?.receiptPath || "";
   document.getElementById("response-success-path").value = tpl.response?.successPath || "";
   document.getElementById("response-success-value").value = tpl.response?.successValue ?? "true";
   document.getElementById("duplicate-protection").checked = tpl.duplicateWindow > 0;
   document.getElementById("duplicate-window").value = tpl.duplicateWindow || 10;
-  document.getElementById("duplicate-window").disabled = !document.getElementById("duplicate-protection").checked;
+  document.getElementById("duplicate-window").disabled =
+    !document.getElementById("duplicate-protection").checked;
   lastValueInput = null;
   updatePreview();
 }
@@ -446,7 +488,8 @@ function renderRulesList(rules) {
 
   const newIcon = document.createElement("span");
   newIcon.className = "new-icon";
-  newIcon.innerHTML = '<svg class="icon" data-lucide="plus" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M5 12h14" /><path d="M12 5v14" /></svg>';
+  newIcon.innerHTML =
+    '<svg class="icon" data-lucide="plus" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M5 12h14" /><path d="M12 5v14" /></svg>';
 
   const newLabel = document.createElement("span");
   newLabel.textContent = t("addRule");
@@ -472,7 +515,7 @@ function renderRulesList(rules) {
 
     const opSpan = document.createElement("span");
     opSpan.className = "rule-operator";
-    opSpan.textContent = " " + getOperatorLabel(rule.operator) + " ";
+    opSpan.textContent = ` ${getOperatorLabel(rule.operator)} `;
 
     const valSpan = document.createElement("span");
     valSpan.className = "rule-value";
@@ -482,7 +525,10 @@ function renderRulesList(rules) {
     summary.appendChild(opSpan);
     summary.appendChild(valSpan);
 
-    li.insertAdjacentHTML("beforeend", '<svg class="icon" data-lucide="zap" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M15.914 4a1.5 1.5 0 00-2.474-1.561l-9 9A1.5 1.5 0 005.5 14h4.002a.5.5 0 01.471.666L8.086 20a1.5 1.5 0 002.475 1.56l9-9A1.5 1.5 0 0018.5 10h-3.997a.5.5 0 01-.472-.667z" /></svg>');
+    li.insertAdjacentHTML(
+      "beforeend",
+      '<svg class="icon" data-lucide="zap" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M15.914 4a1.5 1.5 0 00-2.474-1.561l-9 9A1.5 1.5 0 005.5 14h4.002a.5.5 0 01.471.666L8.086 20a1.5 1.5 0 002.475 1.56l9-9A1.5 1.5 0 0018.5 10h-3.997a.5.5 0 01-.472-.667z" /></svg>',
+    );
     li.appendChild(summary);
     li.addEventListener("click", () => selectRule(rule.id));
 
@@ -567,7 +613,11 @@ function populateRuleTemplateSelect(templates, selectedId) {
 async function saveCurrentTemplate() {
   if (!currentTemplateId) return;
   if (!urlInput.reportValidity()) return;
-  if (document.getElementById("duplicate-protection").checked && !document.getElementById("duplicate-window").reportValidity()) return;
+  if (
+    document.getElementById("duplicate-protection").checked &&
+    !document.getElementById("duplicate-window").reportValidity()
+  )
+    return;
 
   const changes = {
     name: nameInput.value.trim() || t("defaultTemplateName"),
@@ -576,7 +626,9 @@ async function saveCurrentTemplate() {
     params: getParams(),
     headers: getParams(headersList, "header"),
     response: getResponseConfig(),
-    duplicateWindow: document.getElementById("duplicate-protection").checked ? Number(document.getElementById("duplicate-window").value) : 0,
+    duplicateWindow: document.getElementById("duplicate-protection").checked
+      ? Number(document.getElementById("duplicate-window").value)
+      : 0,
   };
 
   buildHeaders(changes.headers, { send: { id: "{{send.id}}" } });
@@ -597,8 +649,12 @@ async function saveCurrentTemplate() {
 async function saveCurrentRule() {
   if (!currentRuleId) return;
   if (ruleOperatorSelect.value === "matches") {
-    try { new RegExp(ruleValueInput.value, "i"); }
-    catch { showStatus(t("invalidRegex"), true); return; }
+    try {
+      new RegExp(ruleValueInput.value, "i");
+    } catch {
+      showStatus(t("invalidRegex"), true);
+      return;
+    }
   }
 
   const changes = {
@@ -743,7 +799,8 @@ document.getElementById("add-header").addEventListener("click", () => {
   updatePreview();
 });
 showHeaderValues.addEventListener("change", () => {
-  for (const input of headersList.querySelectorAll(".header-value")) input.type = showHeaderValues.checked ? "text" : "password";
+  for (const input of headersList.querySelectorAll(".header-value"))
+    input.type = showHeaderValues.checked ? "text" : "password";
 });
 document.getElementById("read-response").addEventListener("change", (event) => {
   document.getElementById("response-fields").disabled = !event.target.checked;
@@ -754,7 +811,8 @@ document.getElementById("duplicate-protection").addEventListener("change", (even
 });
 
 editorForm.addEventListener("input", updatePreview);
-for (const form of [editorForm, ruleEditorForm, settingsFormEl]) form.addEventListener("input", clearStatus);
+for (const form of [editorForm, ruleEditorForm, settingsFormEl])
+  form.addEventListener("input", clearStatus);
 document.getElementById("dismiss-status").addEventListener("click", clearStatus);
 statusNotice.addEventListener("pointerleave", dismissExpiredStatus);
 statusNotice.addEventListener("focusout", () => setTimeout(dismissExpiredStatus, 0));
@@ -771,18 +829,30 @@ for (const list of [templateListEl, rulesListEl, settingsListEl]) {
 for (const button of document.querySelectorAll("[data-variable]")) {
   button.addEventListener("click", () => {
     clearStatus();
-    if (!lastValueInput || !lastValueInput.isConnected) {
+    if (!lastValueInput?.isConnected) {
       const row = createParamRow();
       paramsList.appendChild(row);
       lastValueInput = row.querySelector(".param-value");
     }
-    lastValueInput.setRangeText(button.dataset.variable, lastValueInput.selectionStart, lastValueInput.selectionEnd, "end");
+    lastValueInput.setRangeText(
+      button.dataset.variable,
+      lastValueInput.selectionStart,
+      lastValueInput.selectionEnd,
+      "end",
+    );
     lastValueInput.focus();
     updatePreview();
   });
 }
 document.getElementById("test-rule").addEventListener("click", () => {
-  const matches = matchRule({ field: ruleFieldSelect.value, operator: ruleOperatorSelect.value, value: ruleValueInput.value }, { [ruleFieldSelect.value]: document.getElementById("rule-sample").value });
+  const matches = matchRule(
+    {
+      field: ruleFieldSelect.value,
+      operator: ruleOperatorSelect.value,
+      value: ruleValueInput.value,
+    },
+    { [ruleFieldSelect.value]: document.getElementById("rule-sample").value },
+  );
   const result = document.getElementById("rule-test-result");
   result.textContent = t(matches ? "ruleMatches" : "ruleNoMatch");
   result.classList.toggle("error", !matches);
@@ -800,8 +870,12 @@ async function moveRule(direction) {
   document.getElementById("rule-down").disabled = to === ids.length - 1;
   showStatus(t("saved"));
 }
-document.getElementById("rule-up").addEventListener("click", () => moveRule(-1).catch((error) => showStatus(error.message, true)));
-document.getElementById("rule-down").addEventListener("click", () => moveRule(1).catch((error) => showStatus(error.message, true)));
+document
+  .getElementById("rule-up")
+  .addEventListener("click", () => moveRule(-1).catch((error) => showStatus(error.message, true)));
+document
+  .getElementById("rule-down")
+  .addEventListener("click", () => moveRule(1).catch((error) => showStatus(error.message, true)));
 
 saveBtn.addEventListener("click", handleSave);
 deleteBtn.addEventListener("click", handleDelete);
@@ -828,7 +902,8 @@ async function saveNotifications() {
   document.getElementById("grant-notification-permission").disabled = true;
   try {
     // Call from the change gesture before any other await.
-    if (mode !== "off" && !await chrome.permissions.request({ permissions: ["notifications"] })) throw new Error("notificationDenied");
+    if (mode !== "off" && !(await chrome.permissions.request({ permissions: ["notifications"] })))
+      throw new Error("notificationDenied");
     await setNotificationMode(mode);
     notificationMode = mode;
     showStatus(t("saved"));
@@ -842,16 +917,19 @@ async function saveNotifications() {
   }
 }
 notificationSelect.addEventListener("change", saveNotifications);
-document.getElementById("grant-notification-permission").addEventListener("click", saveNotifications);
+document
+  .getElementById("grant-notification-permission")
+  .addEventListener("click", saveNotifications);
 chrome.permissions?.onRemoved?.addListener(refreshNotificationPermission);
 chrome.permissions?.onAdded?.addListener(refreshNotificationPermission);
 window.addEventListener("focus", refreshNotificationPermission);
 
 // ─── Start ───
 
-document.getElementById("version").textContent =
-  "v" + chrome.runtime.getManifest().version;
+document.getElementById("version").textContent = `v${chrome.runtime.getManifest().version}`;
 
 initSidebar();
 applyI18n();
-migrateFromLegacy().then(renderAll).catch((error) => showStatus(error.message, true));
+migrateFromLegacy()
+  .then(renderAll)
+  .catch((error) => showStatus(error.message, true));

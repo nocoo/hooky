@@ -72,11 +72,16 @@ describe("handleQuickSend", () => {
 
   it("should open popup when no rules match", async () => {
     const store = {
-      templates: [
-        { id: "t1", name: "A", url: "https://a.com/hook", method: "POST", params: [] },
-      ],
+      templates: [{ id: "t1", name: "A", url: "https://a.com/hook", method: "POST", params: [] }],
       quickSendRules: [
-        { id: "r1", field: "url", operator: "contains", value: "github.com", templateId: "t1", enabled: true },
+        {
+          id: "r1",
+          field: "url",
+          operator: "contains",
+          value: "github.com",
+          templateId: "t1",
+          enabled: true,
+        },
       ],
     };
     storageMock.local.get.mockResolvedValue({ hooky: store });
@@ -95,9 +100,7 @@ describe("handleQuickSend", () => {
 
   it("should open popup when no rules exist", async () => {
     const store = {
-      templates: [
-        { id: "t1", name: "A", url: "https://a.com/hook", method: "POST", params: [] },
-      ],
+      templates: [{ id: "t1", name: "A", url: "https://a.com/hook", method: "POST", params: [] }],
       quickSendRules: [],
     };
     storageMock.local.get.mockResolvedValue({ hooky: store });
@@ -111,9 +114,7 @@ describe("handleQuickSend", () => {
 
   it("should open popup when quickSendRules field is missing", async () => {
     const store = {
-      templates: [
-        { id: "t1", name: "A", url: "https://a.com/hook", method: "POST", params: [] },
-      ],
+      templates: [{ id: "t1", name: "A", url: "https://a.com/hook", method: "POST", params: [] }],
     };
     storageMock.local.get.mockResolvedValue({ hooky: store });
 
@@ -130,7 +131,14 @@ describe("handleQuickSend", () => {
         { id: "t1", name: "Discord", url: "https://discord.com/hook", method: "POST", params: [] },
       ],
       quickSendRules: [
-        { id: "r1", field: "url", operator: "contains", value: "github.com", templateId: "t1", enabled: true },
+        {
+          id: "r1",
+          field: "url",
+          operator: "contains",
+          value: "github.com",
+          templateId: "t1",
+          enabled: true,
+        },
       ],
     };
     storageMock.local.get.mockResolvedValue({ hooky: store });
@@ -152,11 +160,16 @@ describe("handleQuickSend", () => {
 
   it("should show success badge on successful request", async () => {
     const store = {
-      templates: [
-        { id: "t1", name: "A", url: "https://a.com/hook", method: "POST", params: [] },
-      ],
+      templates: [{ id: "t1", name: "A", url: "https://a.com/hook", method: "POST", params: [] }],
       quickSendRules: [
-        { id: "r1", field: "url", operator: "contains", value: "example.com", templateId: "t1", enabled: true },
+        {
+          id: "r1",
+          field: "url",
+          operator: "contains",
+          value: "example.com",
+          templateId: "t1",
+          enabled: true,
+        },
       ],
     };
     storageMock.local.get.mockResolvedValue({ hooky: store });
@@ -178,11 +191,16 @@ describe("handleQuickSend", () => {
 
   it("should show error badge on failed request", async () => {
     const store = {
-      templates: [
-        { id: "t1", name: "A", url: "https://a.com/hook", method: "POST", params: [] },
-      ],
+      templates: [{ id: "t1", name: "A", url: "https://a.com/hook", method: "POST", params: [] }],
       quickSendRules: [
-        { id: "r1", field: "url", operator: "contains", value: "example.com", templateId: "t1", enabled: true },
+        {
+          id: "r1",
+          field: "url",
+          operator: "contains",
+          value: "example.com",
+          templateId: "t1",
+          enabled: true,
+        },
       ],
     };
     storageMock.local.get.mockResolvedValue({ hooky: store });
@@ -204,11 +222,16 @@ describe("handleQuickSend", () => {
 
   it("should show unconfirmed badge on network failure", async () => {
     const store = {
-      templates: [
-        { id: "t1", name: "A", url: "https://a.com/hook", method: "POST", params: [] },
-      ],
+      templates: [{ id: "t1", name: "A", url: "https://a.com/hook", method: "POST", params: [] }],
       quickSendRules: [
-        { id: "r1", field: "url", operator: "contains", value: "example.com", templateId: "t1", enabled: true },
+        {
+          id: "r1",
+          field: "url",
+          operator: "contains",
+          value: "example.com",
+          templateId: "t1",
+          enabled: true,
+        },
       ],
     };
     storageMock.local.get.mockResolvedValue({ hooky: store });
@@ -230,13 +253,25 @@ describe("handleQuickSend", () => {
         { id: "t1", name: "Discord", url: "https://discord.com/hook", method: "POST", params: [] },
       ],
       quickSendRules: [
-        { id: "r1", field: "title", operator: "contains", value: "Pull Request", templateId: "t1", enabled: true },
+        {
+          id: "r1",
+          field: "title",
+          operator: "contains",
+          value: "Pull Request",
+          templateId: "t1",
+          enabled: true,
+        },
       ],
     };
     storageMock.local.get.mockResolvedValue({ hooky: store });
 
     getPageContext.mockResolvedValue({
-      page: { url: "https://github.com/x/y/pull/1", title: "My Pull Request #1", selection: "", meta: {} },
+      page: {
+        url: "https://github.com/x/y/pull/1",
+        title: "My Pull Request #1",
+        selection: "",
+        meta: {},
+      },
     });
 
     const tab = { id: 1, url: "https://github.com/x/y/pull/1", title: "My Pull Request #1" };
@@ -257,8 +292,22 @@ describe("handleQuickSend", () => {
         { id: "t2", name: "Slack", url: "https://slack.com/hook", method: "POST", params: [] },
       ],
       quickSendRules: [
-        { id: "r1", field: "url", operator: "contains", value: "github.com", templateId: "t1", enabled: true },
-        { id: "r2", field: "url", operator: "contains", value: "github", templateId: "t2", enabled: true },
+        {
+          id: "r1",
+          field: "url",
+          operator: "contains",
+          value: "github.com",
+          templateId: "t1",
+          enabled: true,
+        },
+        {
+          id: "r2",
+          field: "url",
+          operator: "contains",
+          value: "github",
+          templateId: "t2",
+          enabled: true,
+        },
       ],
     };
     storageMock.local.get.mockResolvedValue({ hooky: store });
@@ -284,7 +333,14 @@ describe("handleQuickSend", () => {
         { id: "t1", name: "Discord", url: "https://discord.com/hook", method: "POST", params: [] },
       ],
       quickSendRules: [
-        { id: "r1", field: "url", operator: "contains", value: "github.com", templateId: "t1", enabled: false },
+        {
+          id: "r1",
+          field: "url",
+          operator: "contains",
+          value: "github.com",
+          templateId: "t1",
+          enabled: false,
+        },
       ],
     };
     storageMock.local.get.mockResolvedValue({ hooky: store });
@@ -307,7 +363,14 @@ describe("handleQuickSend", () => {
         { id: "t2", name: "Slack", url: "https://slack.com/hook", method: "POST", params: [] },
       ],
       quickSendRules: [
-        { id: "r1", field: "url", operator: "contains", value: "github.com", templateId: "deleted-id", enabled: true },
+        {
+          id: "r1",
+          field: "url",
+          operator: "contains",
+          value: "github.com",
+          templateId: "deleted-id",
+          enabled: true,
+        },
       ],
     };
     storageMock.local.get.mockResolvedValue({ hooky: store });
@@ -326,11 +389,16 @@ describe("handleQuickSend", () => {
 
   it("should open popup when matched template has no URL", async () => {
     const store = {
-      templates: [
-        { id: "t1", name: "Empty", url: "", method: "POST", params: [] },
-      ],
+      templates: [{ id: "t1", name: "Empty", url: "", method: "POST", params: [] }],
       quickSendRules: [
-        { id: "r1", field: "url", operator: "contains", value: "github.com", templateId: "t1", enabled: true },
+        {
+          id: "r1",
+          field: "url",
+          operator: "contains",
+          value: "github.com",
+          templateId: "t1",
+          enabled: true,
+        },
       ],
     };
     storageMock.local.get.mockResolvedValue({ hooky: store });
@@ -350,12 +418,22 @@ describe("handleQuickSend", () => {
     const store = {
       templates: [
         {
-          id: "t1", name: "A", url: "https://api.example.com/hook", method: "POST",
+          id: "t1",
+          name: "A",
+          url: "https://api.example.com/hook",
+          method: "POST",
           params: [{ key: "url", value: "{{page.url}}" }],
         },
       ],
       quickSendRules: [
-        { id: "r1", field: "url", operator: "contains", value: "example.com", templateId: "t1", enabled: true },
+        {
+          id: "r1",
+          field: "url",
+          operator: "contains",
+          value: "example.com",
+          templateId: "t1",
+          enabled: true,
+        },
       ],
     };
     storageMock.local.get.mockResolvedValue({ hooky: store });
@@ -386,12 +464,22 @@ describe("handleQuickSend", () => {
     const store = {
       templates: [
         {
-          id: "t1", name: "A", url: "https://api.example.com/hook", method: "GET",
+          id: "t1",
+          name: "A",
+          url: "https://api.example.com/hook",
+          method: "GET",
           params: [{ key: "page", value: "{{page.url}}" }],
         },
       ],
       quickSendRules: [
-        { id: "r1", field: "url", operator: "contains", value: "example.com", templateId: "t1", enabled: true },
+        {
+          id: "r1",
+          field: "url",
+          operator: "contains",
+          value: "example.com",
+          templateId: "t1",
+          enabled: true,
+        },
       ],
     };
     storageMock.local.get.mockResolvedValue({ hooky: store });
@@ -415,11 +503,16 @@ describe("handleQuickSend", () => {
 
   it("should handle context with missing page property", async () => {
     const store = {
-      templates: [
-        { id: "t1", name: "A", url: "https://a.com/hook", method: "POST", params: [] },
-      ],
+      templates: [{ id: "t1", name: "A", url: "https://a.com/hook", method: "POST", params: [] }],
       quickSendRules: [
-        { id: "r1", field: "url", operator: "contains", value: "example.com", templateId: "t1", enabled: true },
+        {
+          id: "r1",
+          field: "url",
+          operator: "contains",
+          value: "example.com",
+          templateId: "t1",
+          enabled: true,
+        },
       ],
     };
     storageMock.local.get.mockResolvedValue({ hooky: store });
@@ -437,11 +530,16 @@ describe("handleQuickSend", () => {
 
   it("should handle null tab gracefully", async () => {
     const store = {
-      templates: [
-        { id: "t1", name: "A", url: "https://a.com/hook", method: "POST", params: [] },
-      ],
+      templates: [{ id: "t1", name: "A", url: "https://a.com/hook", method: "POST", params: [] }],
       quickSendRules: [
-        { id: "r1", field: "url", operator: "contains", value: "", templateId: "t1", enabled: true },
+        {
+          id: "r1",
+          field: "url",
+          operator: "contains",
+          value: "",
+          templateId: "t1",
+          enabled: true,
+        },
       ],
     };
     storageMock.local.get.mockResolvedValue({ hooky: store });

@@ -1,7 +1,21 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { addFeedbackChrome } from "./chrome-mock.js";
 
-const config = { id: "capture", name: "Capture", url: "https://example.com/save", method: "POST", duplicateWindow: 10, params: [{ key: "text", value: "{{page.selection}}" }, { key: "id", value: "{{send.id}}" }], headers: [{ key: "X-API-Key", value: "private-key" }, { key: "Idempotency-Key", value: "{{send.id}}" }] };
+const config = {
+  id: "capture",
+  name: "Capture",
+  url: "https://example.com/save",
+  method: "POST",
+  duplicateWindow: 10,
+  params: [
+    { key: "text", value: "{{page.selection}}" },
+    { key: "id", value: "{{send.id}}" },
+  ],
+  headers: [
+    { key: "X-API-Key", value: "private-key" },
+    { key: "Idempotency-Key", value: "{{send.id}}" },
+  ],
+};
 const context = { page: { selection: "private capture {{page.title}}" } };
 const tab = { id: 1, url: "https://example.com/article" };
 let session, send, duplicates;
@@ -14,21 +28,35 @@ beforeEach(async () => {
   send = await import("../src/send.js");
   duplicates = await import("../src/duplicates.js");
 });
-afterEach(() => { vi.useRealTimers(); vi.restoreAllMocks(); });
+afterEach(() => {
+  vi.useRealTimers();
+  vi.restoreAllMocks();
+});
 
 describe("per-template completed duplicate protection", () => {
-  it.each([undefined, 0, -1, "10"])("does not enable completed duplicate protection for %s", async (duplicateWindow) => {
-    const first = await send.sendWebhook({ ...config, duplicateWindow }, context, { tab });
-    const second = await send.sendWebhook({ ...config, duplicateWindow }, context, { tab });
-    expect(second.id).not.toBe(first.id);
-    expect(fetch).toHaveBeenCalledTimes(2);
-    expect(session[duplicates.RECENT_SENDS_KEY]).toBeUndefined();
-  });
+  it.each([undefined, 0, -1, "10"])(
+    "does not enable completed duplicate protection for %s",
+    async (duplicateWindow) => {
+      const first = await send.sendWebhook({ ...config, duplicateWindow }, context, { tab });
+      const second = await send.sendWebhook({ ...config, duplicateWindow }, context, { tab });
+      expect(second.id).not.toBe(first.id);
+      expect(fetch).toHaveBeenCalledTimes(2);
+      expect(session[duplicates.RECENT_SENDS_KEY]).toBeUndefined();
+    },
+  );
 
   it("shows the previous result across tabs and entry points without persisting payloads or keys", async () => {
     const first = await send.sendWebhook(config, context, { tab, source: "context" });
-    const second = await send.sendWebhook(config, context, { tab: { ...tab, id: 2 }, source: "quick" });
-    expect(second).toMatchObject({ id: first.id, tabId: 2, state: "success", duplicateToken: expect.any(String) });
+    const second = await send.sendWebhook(config, context, {
+      tab: { ...tab, id: 2 },
+      source: "quick",
+    });
+    expect(second).toMatchObject({
+      id: first.id,
+      tabId: 2,
+      state: "success",
+      duplicateToken: expect.any(String),
+    });
     expect(fetch).toHaveBeenCalledOnce();
     expect(session.hookyLastResult.duplicateToken).toBe(second.duplicateToken);
     const stored = JSON.stringify(session);
@@ -55,9 +83,14 @@ describe("per-template completed duplicate protection", () => {
     expect(fetch).toHaveBeenCalledTimes(2);
     const [url, options] = fetch.mock.calls[1];
     expect(url).toBe("https://example.com/save");
-    expect(JSON.parse(options.body)).toEqual({ text: "private capture {{page.title}}", id: repeated.id });
+    expect(JSON.parse(options.body)).toEqual({
+      text: "private capture {{page.title}}",
+      id: repeated.id,
+    });
     expect(options.headers["idempotency-key"]).toBe(repeated.id);
-    expect(await send.sendAnyway(duplicate.duplicateToken)).toMatchObject({ error: "captureExpired" });
+    expect(await send.sendAnyway(duplicate.duplicateToken)).toMatchObject({
+      error: "captureExpired",
+    });
     expect(fetch).toHaveBeenCalledTimes(2);
   });
 
@@ -66,7 +99,12 @@ describe("per-template completed duplicate protection", () => {
     const a = await send.sendWebhook(config, context, { tab });
     const b = await send.sendWebhook(config, context, { tab });
     let finish;
-    fetch.mockImplementation(() => new Promise((resolve) => { finish = resolve; }));
+    fetch.mockImplementation(
+      () =>
+        new Promise((resolve) => {
+          finish = resolve;
+        }),
+    );
     const first = send.sendAnyway(a.duplicateToken);
     const second = send.sendAnyway(b.duplicateToken);
     expect(second).toBe(first);
@@ -77,7 +115,12 @@ describe("per-template completed duplicate protection", () => {
 
   it("shares a pending request between tabs and gives each tab feedback", async () => {
     let finish;
-    fetch.mockImplementation(() => new Promise((resolve) => { finish = resolve; }));
+    fetch.mockImplementation(
+      () =>
+        new Promise((resolve) => {
+          finish = resolve;
+        }),
+    );
     const first = send.sendWebhook(config, context, { tab, source: "context" });
     const second = send.sendWebhook(config, context, { tab: { ...tab, id: 2 }, source: "quick" });
     await vi.waitFor(() => expect(fetch).toHaveBeenCalledOnce());
@@ -93,7 +136,10 @@ describe("per-template completed duplicate protection", () => {
     await send.sendWebhook(config, context);
     await send.sendWebhook(config, { page: { selection: "other" } });
     await send.sendWebhook({ ...config, url: "https://other.example" }, context);
-    await send.sendWebhook({ ...config, headers: [{ key: "X-API-Key", value: "different" }] }, context);
+    await send.sendWebhook(
+      { ...config, headers: [{ key: "X-API-Key", value: "different" }] },
+      context,
+    );
     await send.sendWebhook({ ...config, id: "different-template" }, context);
     expect(fetch).toHaveBeenCalledTimes(5);
   });
@@ -115,9 +161,13 @@ describe("per-template completed duplicate protection", () => {
     const now = Date.now();
     await send.sendWebhook({ ...config, duplicateWindow: 1000 }, context);
     vi.setSystemTime(now + 290000);
-    expect((await send.sendWebhook({ ...config, duplicateWindow: 1000 }, context)).duplicateToken).toBeTruthy();
+    expect(
+      (await send.sendWebhook({ ...config, duplicateWindow: 1000 }, context)).duplicateToken,
+    ).toBeTruthy();
     vi.setSystemTime(now + 300001);
-    expect((await send.sendWebhook({ ...config, duplicateWindow: 1000 }, context)).duplicateToken).toBeUndefined();
+    expect(
+      (await send.sendWebhook({ ...config, duplicateWindow: 1000 }, context)).duplicateToken,
+    ).toBeUndefined();
     expect(fetch).toHaveBeenCalledTimes(2);
   });
 
@@ -125,7 +175,11 @@ describe("per-template completed duplicate protection", () => {
     fetch.mockRejectedValue(new Error("response lost"));
     const first = await send.sendWebhook(config, context);
     const duplicate = await send.sendWebhook(config, context);
-    expect(duplicate).toMatchObject({ id: first.id, state: "unknown", duplicateToken: expect.any(String) });
+    expect(duplicate).toMatchObject({
+      id: first.id,
+      state: "unknown",
+      duplicateToken: expect.any(String),
+    });
     expect(fetch).toHaveBeenCalledOnce();
   });
 
@@ -136,7 +190,9 @@ describe("per-template completed duplicate protection", () => {
     send = await import("../src/send.js");
     duplicates = await import("../src/duplicates.js");
     expect(duplicates.getDuplicateCapture(duplicate.duplicateToken)).toBeNull();
-    expect(await send.sendAnyway(duplicate.duplicateToken)).toMatchObject({ error: "captureExpired" });
+    expect(await send.sendAnyway(duplicate.duplicateToken)).toMatchObject({
+      error: "captureExpired",
+    });
     expect((await send.sendWebhook(config, context)).duplicateToken).toBeTruthy();
     expect(fetch).toHaveBeenCalledOnce();
   });
@@ -144,41 +200,65 @@ describe("per-template completed duplicate protection", () => {
   it("recovers a persisted pending identity as unconfirmed without sending again", async () => {
     await send.sendWebhook(config, context);
     const entry = session[duplicates.RECENT_SENDS_KEY][0];
-    entry.result = { id: "interrupted", name: "Capture", templateId: config.id, startedAt: Date.now(), state: "sending", tabId: null, source: "popup" };
+    entry.result = {
+      id: "interrupted",
+      name: "Capture",
+      templateId: config.id,
+      startedAt: Date.now(),
+      state: "sending",
+      tabId: null,
+      source: "popup",
+    };
     vi.resetModules();
     send = await import("../src/send.js");
     const result = await send.sendWebhook(config, context);
-    expect(result).toMatchObject({ id: "interrupted", state: "unknown", error: "requestUnconfirmed", duplicateToken: expect.any(String) });
+    expect(result).toMatchObject({
+      id: "interrupted",
+      state: "unknown",
+      error: "requestUnconfirmed",
+      duplicateToken: expect.any(String),
+    });
     expect(fetch).toHaveBeenCalledOnce();
   });
 
   it("refuses an opted-in request if its identity cannot be checked, then recovers", async () => {
     chrome.storage.session.get.mockRejectedValueOnce(new Error("unavailable"));
-    expect(await send.sendWebhook(config, context)).toMatchObject({ error: "duplicateCheckFailed", state: "failed" });
+    expect(await send.sendWebhook(config, context)).toMatchObject({
+      error: "duplicateCheckFailed",
+      state: "failed",
+    });
     expect(fetch).not.toHaveBeenCalled();
     expect((await send.sendWebhook(config, context)).ok).toBe(true);
   });
 
-  it.each([false, true])("rolls back unsent identities if their initial write fails (previous=%s)", async (hasPrevious) => {
-    let token;
-    if (hasPrevious) {
-      await send.sendWebhook(config, context);
-      token = (await send.sendWebhook(config, context)).duplicateToken;
-    }
-    const count = fetch.mock.calls.length;
-    chrome.storage.session.set.mockImplementationOnce(async () => { throw new Error("storage full"); });
-    const result = await (hasPrevious ? send.sendAnyway(token) : send.sendWebhook(config, context));
-    expect(result.error).toBe("duplicateCheckFailed");
-    expect(fetch).toHaveBeenCalledTimes(count);
-    const next = await send.sendWebhook(config, context);
-    expect(next.ok).toBe(true);
-    expect(Boolean(next.duplicateToken)).toBe(hasPrevious);
-  });
+  it.each([false, true])(
+    "rolls back unsent identities if their initial write fails (previous=%s)",
+    async (hasPrevious) => {
+      let token;
+      if (hasPrevious) {
+        await send.sendWebhook(config, context);
+        token = (await send.sendWebhook(config, context)).duplicateToken;
+      }
+      const count = fetch.mock.calls.length;
+      chrome.storage.session.set.mockImplementationOnce(async () => {
+        throw new Error("storage full");
+      });
+      const result = await (hasPrevious
+        ? send.sendAnyway(token)
+        : send.sendWebhook(config, context));
+      expect(result.error).toBe("duplicateCheckFailed");
+      expect(fetch).toHaveBeenCalledTimes(count);
+      const next = await send.sendWebhook(config, context);
+      expect(next.ok).toBe(true);
+      expect(Boolean(next.duplicateToken)).toBe(hasPrevious);
+    },
+  );
 
   it("preserves HTTP success if the final history update fails", async () => {
     const set = chrome.storage.session.set.getMockImplementation();
     chrome.storage.session.set.mockImplementation(async (values) => {
-      if (values[duplicates.RECENT_SENDS_KEY]?.[0].result.state === "success") throw new Error("storage unavailable");
+      if (values[duplicates.RECENT_SENDS_KEY]?.[0].result.state === "success")
+        throw new Error("storage unavailable");
       return set(values);
     });
     const result = await send.sendWebhook(config, context);
@@ -189,7 +269,14 @@ describe("per-template completed duplicate protection", () => {
 
   it("keeps a delayed older start from replacing a newer result", async () => {
     let finishDigest;
-    vi.spyOn(crypto.subtle, "digest").mockImplementationOnce(() => new Promise((resolve) => { finishDigest = resolve; })).mockResolvedValueOnce(new Uint8Array(32).fill(2).buffer);
+    vi.spyOn(crypto.subtle, "digest")
+      .mockImplementationOnce(
+        () =>
+          new Promise((resolve) => {
+            finishDigest = resolve;
+          }),
+      )
+      .mockResolvedValueOnce(new Uint8Array(32).fill(2).buffer);
     const older = send.sendWebhook(config, context);
     const newer = await send.sendWebhook(config, { page: { selection: "newer" } });
     finishDigest(new Uint8Array(32).fill(1).buffer);
@@ -200,7 +287,12 @@ describe("per-template completed duplicate protection", () => {
   it("bounds both session metadata and transient captures, and expires held captures", async () => {
     vi.useFakeTimers();
     const now = Date.now();
-    for (let i = 0; i < 51; i++) await duplicates.rememberSend(String(i), { id: String(i), state: "success", startedAt: now, finishedAt: now }, 10);
+    for (let i = 0; i < 51; i++)
+      await duplicates.rememberSend(
+        String(i),
+        { id: String(i), state: "success", startedAt: now, finishedAt: now },
+        10,
+      );
     expect(session[duplicates.RECENT_SENDS_KEY]).toHaveLength(50);
     expect(await duplicates.findRecent("0", 10)).toBeNull();
     const first = duplicates.holdDuplicate(config, context, { resolved: false });

@@ -11,9 +11,14 @@ const QUERY_METHODS = new Set(["GET", "DELETE"]);
  * @returns {object} The resolved JSON body
  */
 export function buildRequestBody(params, context, alreadyResolved = false) {
-  return Object.fromEntries(params.filter(({ key }) => key).map(({ key, value, resolve }) => [
-    key, alreadyResolved && !resolve ? value : resolveTemplate(value, context),
-  ]));
+  return Object.fromEntries(
+    params
+      .filter(({ key }) => key)
+      .map(({ key, value, resolve }) => [
+        key,
+        alreadyResolved && !resolve ? value : resolveTemplate(value, context),
+      ]),
+  );
 }
 
 /**

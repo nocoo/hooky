@@ -13,13 +13,26 @@ function prune(entries, limit) {
 }
 
 async function loadRecent() {
-  if (!loaded) loaded = chrome.storage.session.get(RECENT_SENDS_KEY).then((data) => {
-    for (const entry of data[RECENT_SENDS_KEY] || []) {
-      if (entry.result.state === "sending") entry.result = { ...entry.result, ok: false, state: "unknown", error: "requestUnconfirmed" };
-      recent.set(entry.fingerprint, entry);
-    }
-    prune(recent, 50);
-  }).catch((error) => { loaded = null; throw error; });
+  if (!loaded)
+    loaded = chrome.storage.session
+      .get(RECENT_SENDS_KEY)
+      .then((data) => {
+        for (const entry of data[RECENT_SENDS_KEY] || []) {
+          if (entry.result.state === "sending")
+            entry.result = {
+              ...entry.result,
+              ok: false,
+              state: "unknown",
+              error: "requestUnconfirmed",
+            };
+          recent.set(entry.fingerprint, entry);
+        }
+        prune(recent, 50);
+      })
+      .catch((error) => {
+        loaded = null;
+        throw error;
+      });
   await loaded;
 }
 
@@ -33,7 +46,9 @@ export async function findRecent(fingerprint, windowSeconds) {
   await writes;
   prune(recent, 50);
   const result = recent.get(fingerprint)?.result;
-  return result && Date.now() - (result.finishedAt || result.startedAt) < windowSeconds * 1000 ? result : null;
+  return result && Date.now() - (result.finishedAt || result.startedAt) < windowSeconds * 1000
+    ? result
+    : null;
 }
 
 /** Persist pending identity before opted-in sends, so worker restarts cannot silently replay them. */
@@ -44,8 +59,9 @@ export async function rememberSend(fingerprint, result, windowSeconds) {
     recent.delete(fingerprint);
     recent.set(fingerprint, { fingerprint, result, expiresAt: Date.now() + windowSeconds * 1000 });
     prune(recent, 50);
-    try { await chrome.storage.session.set({ [RECENT_SENDS_KEY]: Array.from(recent.values()) }); }
-    catch (error) {
+    try {
+      await chrome.storage.session.set({ [RECENT_SENDS_KEY]: Array.from(recent.values()) });
+    } catch (error) {
       if (result.state === "sending") {
         if (previous) recent.set(fingerprint, previous);
         else recent.delete(fingerprint);
@@ -60,7 +76,12 @@ export async function rememberSend(fingerprint, result, windowSeconds) {
 /** Only explicit duplicate protection retains a short-lived in-memory capture for Send anyway. */
 export function holdDuplicate(config, context, options) {
   const token = crypto.randomUUID();
-  captures.set(token, { config: structuredClone(config), context: structuredClone(context), options: structuredClone(options), expiresAt: Date.now() + CAPTURE_LIFETIME });
+  captures.set(token, {
+    config: structuredClone(config),
+    context: structuredClone(context),
+    options: structuredClone(options),
+    expiresAt: Date.now() + CAPTURE_LIFETIME,
+  });
   setTimeout(() => captures.delete(token), CAPTURE_LIFETIME);
   prune(captures, 20);
   return token;
@@ -70,7 +91,13 @@ export function getDuplicateCapture(token) {
   prune(captures, 20);
   const capture = captures.get(token);
   if (!capture) return null;
-  return { preview: previewRequest(capture.config, { ...capture.context, send: { id: "{{send.id}}" } }, capture.options.resolved) };
+  return {
+    preview: previewRequest(
+      capture.config,
+      { ...capture.context, send: { id: "{{send.id}}" } },
+      capture.options.resolved,
+    ),
+  };
 }
 
 export function takeDuplicateCapture(token) {
