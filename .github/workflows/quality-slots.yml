@@ -1,5 +1,5 @@
 # System1 quality slots, native mode (system1-quality v1.3.0, base-ci v2026.16).
-# S1 Types, L2 Runtime, L3 Integration, and P1 Package are declared `na` and stay skipped.
+# L2 Runtime, L3 Integration, and P1 Package are declared `na` and stay skipped.
 name: Quality slots
 
 on:
@@ -40,10 +40,26 @@ jobs:
 
   s1-types:
     name: "S1: Types"
-    if: ${{ vars.ENABLE_S1_TYPES == 'true' }}
     runs-on: ubuntu-latest
+    timeout-minutes: 10
+    outputs:
+      tested-sha: ${{ steps.record-sha.outputs.sha }}
     steps:
-      - run: echo "N/A — pure JavaScript repository without tsconfig"
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: nocoo/base-ci/.github/actions/setup-js@6424d395d36a815d931f10e557762eb635d511c0 # v2026.16
+        with:
+          package-manager: bun
+          runtime-version: ${{ env.BUN_VERSION }}
+          node-version: ${{ env.NODE_VERSION }}
+          install-policy: blocked
+      - name: Typecheck JS sources with TypeScript
+        run: bun run typecheck
+      - name: Record tested SHA
+        id: record-sha
+        if: always()
+        run: echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
 
   s2-lint:
     name: "S2: Lint"
@@ -287,8 +303,8 @@ jobs:
           node --input-type=module - <<'EOF'
           const needs = JSON.parse(process.env.NEEDS_JSON);
           const expectedSha = process.env.EXPECTED_SHA;
-          const implSlots = ["precommit-probes", "s2-lint", "s3-workflow", "g1-secrets", "g2-dependencies", "b1-build", "l1-unit", "l4-e2e"];
-          const naSlots = ["s1-types", "l2-runtime", "l3-integration", "p1-package"];
+          const implSlots = ["precommit-probes", "s1-types", "s2-lint", "s3-workflow", "g1-secrets", "g2-dependencies", "b1-build", "l1-unit", "l4-e2e"];
+          const naSlots = ["l2-runtime", "l3-integration", "p1-package"];
           const errors = [];
 
           for (const slot of implSlots) {

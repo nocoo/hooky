@@ -12,6 +12,15 @@
  * }
  */
 
+/**
+ * @typedef {{key: string, value: string, resolve?: boolean}} TemplateParam
+ * @typedef {{key: string, value: string}} TemplateHeader
+ * @typedef {{enabled: boolean, messagePath?: string, receiptPath?: string, successPath?: string, successValue?: string}} ResponseConfig
+ * @typedef {{id: string, name: string, url: string, method: string, params: TemplateParam[], headers?: TemplateHeader[], response?: ResponseConfig, duplicateWindow?: number}} TemplateConfig
+ * @typedef {{id: string, field: string, operator: string, value: string, templateId: string, enabled: boolean}} QuickSendRule
+ * @typedef {{templates: TemplateConfig[], activeTemplateId: string|null, quickSendRules: QuickSendRule[], theme: string, notificationMode?: string}} HookyStore
+ */
+
 const STORE_KEY = "hooky";
 
 function generateId() {
@@ -20,11 +29,11 @@ function generateId() {
 
 /**
  * Load the full store from chrome.storage.local.
- * @returns {Promise<{templates: Array, activeTemplateId: string|null, quickSendRules: Array, theme: string}>}
+ * @returns {Promise<HookyStore>}
  */
 export async function loadStore() {
   const data = await chrome.storage.local.get(STORE_KEY);
-  const store = data[STORE_KEY] || {
+  const store = /** @type {HookyStore | undefined} */ (data[STORE_KEY]) || {
     templates: [],
     activeTemplateId: null,
     quickSendRules: [],
@@ -47,7 +56,7 @@ export async function saveStore(store) {
  * Sets it as active if it's the first template.
  *
  * @param {string} name
- * @returns {Promise<object>} The created template
+ * @returns {Promise<TemplateConfig>} The created template
  */
 export async function createTemplate(name) {
   const store = await loadStore();
@@ -102,7 +111,7 @@ export async function deleteTemplate(id) {
  * Get a single template by id.
  *
  * @param {string} id
- * @returns {Promise<object|null>}
+ * @returns {Promise<TemplateConfig|null>}
  */
 export async function getTemplate(id) {
   const store = await loadStore();
@@ -112,7 +121,7 @@ export async function getTemplate(id) {
 /**
  * Get the currently active template.
  *
- * @returns {Promise<object|null>}
+ * @returns {Promise<TemplateConfig|null>}
  */
 export async function getActiveTemplate() {
   const store = await loadStore();
@@ -134,7 +143,7 @@ export async function setActiveTemplateId(id) {
 /**
  * Get all quick send rules.
  *
- * @returns {Promise<Array>}
+ * @returns {Promise<QuickSendRule[]>}
  */
 export async function getQuickSendRules() {
   const store = await loadStore();
@@ -144,8 +153,8 @@ export async function getQuickSendRules() {
 /**
  * Add a new quick send rule.
  *
- * @param {object} rule - { field, operator, value, templateId }
- * @returns {Promise<object>} The created rule (with id and enabled)
+ * @param {{field: string, operator: string, value: string, templateId: string}} rule - { field, operator, value, templateId }
+ * @returns {Promise<QuickSendRule>} The created rule (with id and enabled)
  */
 export async function addQuickSendRule(rule) {
   const store = await loadStore();
@@ -236,7 +245,10 @@ export async function migrateFromLegacy() {
   if (store.templates.length > 0) return;
 
   const data = await chrome.storage.local.get("webhook");
-  const legacy = data.webhook;
+  const legacy =
+    /** @type {{url?: string, method?: string, params?: TemplateParam[]} | undefined} */ (
+      data.webhook
+    );
   if (!legacy) return;
 
   const tpl = {

@@ -13,13 +13,17 @@ export function applyI18n() {
     if (msg) el.textContent = msg;
   }
 
-  for (const el of document.querySelectorAll("[data-i18n-placeholder]")) {
+  for (const el of /** @type {NodeListOf<HTMLInputElement>} */ (
+    document.querySelectorAll("[data-i18n-placeholder]")
+  )) {
     const key = el.getAttribute("data-i18n-placeholder");
     const msg = chrome.i18n.getMessage(key);
     if (msg) el.placeholder = msg;
   }
 
-  for (const el of document.querySelectorAll("[data-i18n-title]")) {
+  for (const el of /** @type {NodeListOf<HTMLElement>} */ (
+    document.querySelectorAll("[data-i18n-title]")
+  )) {
     const key = el.getAttribute("data-i18n-title");
     const msg = chrome.i18n.getMessage(key);
     if (msg) el.title = msg;

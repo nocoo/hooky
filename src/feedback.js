@@ -169,7 +169,11 @@ export async function showDesktopNotification(result) {
   });
 }
 
-/** Serialize metadata updates so an older completion cannot replace a newer send. */
+/**
+ * Serialize metadata updates so an older completion cannot replace a newer send.
+ * @param {any} result
+ * @param {{tab?: chrome.tabs.Tab | null, source?: string, start?: boolean}} [options]
+ */
 export function publishResult(result, { tab, source, start = false } = {}) {
   const publish = writes.then(async () => {
     const tabKey = TAB_RESULT_PREFIX + result.tabId;
@@ -234,7 +238,9 @@ export async function readLastResult() {
 export async function recoverPendingResults() {
   const data = await chrome.storage.session.get(null);
   const updates = {};
-  for (const [key, result] of Object.entries(data)) {
+  for (const [key, result] of /** @type {Array<[string, Record<string, any>]>} */ (
+    Object.entries(data)
+  )) {
     if (
       (key === LAST_RESULT_KEY || key.startsWith(TAB_RESULT_PREFIX)) &&
       result.state === "sending"

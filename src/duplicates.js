@@ -17,7 +17,9 @@ async function loadRecent() {
     loaded = chrome.storage.session
       .get(RECENT_SENDS_KEY)
       .then((data) => {
-        for (const entry of data[RECENT_SENDS_KEY] || []) {
+        for (const entry of /** @type {Array<{fingerprint: string, result: Record<string, any>, expiresAt: number}>} */ (
+          data[RECENT_SENDS_KEY] || []
+        )) {
           if (entry.result.state === "sending")
             entry.result = {
               ...entry.result,

@@ -6,8 +6,9 @@ const QUERY_METHODS = new Set(["GET", "DELETE"]);
 /**
  * Build a JSON request body from key-value params with template resolution.
  *
- * @param {Array<{key: string, value: string}>} params
+ * @param {Array<{key: string, value: string, resolve?: boolean}>} params
  * @param {object} context - Template variable context
+ * @param {boolean} [alreadyResolved]
  * @returns {object} The resolved JSON body
  */
 export function buildRequestBody(params, context, alreadyResolved = false) {
@@ -26,9 +27,10 @@ export function buildRequestBody(params, context, alreadyResolved = false) {
  * string. For other methods, the URL is returned as-is.
  *
  * @param {string} baseUrl - The webhook URL
- * @param {Array<{key: string, value: string}>} params
+ * @param {Array<{key: string, value: string, resolve?: boolean}>} params
  * @param {object} context - Template variable context
  * @param {string} method - HTTP method
+ * @param {boolean} [alreadyResolved]
  * @returns {string} The final URL
  */
 export function buildRequestUrl(baseUrl, params, context, method, alreadyResolved = false) {

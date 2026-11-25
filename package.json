@@ -9,6 +9,7 @@
     "test:coverage": "vitest run --coverage",
     "lint": "biome check --error-on-warnings src/ tests/",
     "lint:fix": "biome check --write src/ tests/",
+    "typecheck": "tsc --noEmit",
     "build": "bash scripts/build.sh",
     "test:e2e": "node tests/e2e/extension.e2e.cjs",
     "prepare": "husky",
@@ -43,10 +44,12 @@
   },
   "devDependencies": {
     "@biomejs/biome": "2.6.8",
+    "@types/chrome": "0.3.7",
     "@vitest/coverage-v8": "5.1.0",
     "husky": "^9.1.7",
     "jsdom": "31.0.0",
     "puppeteer": "25.16.0",
+    "typescript": "7.0.2",
     "vitest": "5.1.0"
   },
   "dependencies": {

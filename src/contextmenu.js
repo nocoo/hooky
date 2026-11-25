@@ -6,6 +6,7 @@ import { getPageContext } from "./pagecontext.js";
 const PARENT_ID = "hooky-parent";
 const PREFIX = "hooky-";
 const STORE_KEY = "hooky";
+/** @type {["page", "selection", "link", "image"]} */
 const CONTEXTS = ["page", "selection", "link", "image"];
 
 /**
@@ -95,7 +96,7 @@ export async function handleContextMenuClick(info, tab) {
 
   // Load store and find template
   const data = await chrome.storage.local.get(STORE_KEY);
-  const store = data[STORE_KEY];
+  const store = /** @type {import("./store.js").HookyStore | undefined} */ (data[STORE_KEY]);
   if (!store?.templates) return;
 
   const config = store.templates.find((t) => t.id === templateId);

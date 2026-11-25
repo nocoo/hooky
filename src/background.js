@@ -58,7 +58,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 chrome.storage.local
   .get(STORE_KEY)
   .then((data) => {
-    const store = data[STORE_KEY];
+    const store = /** @type {import("./store.js").HookyStore | undefined} */ (data[STORE_KEY]);
     return buildContextMenus(store?.templates || []);
   })
   .catch(() => {});
@@ -66,7 +66,7 @@ chrome.storage.local
 // React to config changes (e.g. user adds/removes templates)
 chrome.storage.onChanged.addListener((changes, area) => {
   if (area === "local" && changes[STORE_KEY]?.newValue) {
-    const store = changes[STORE_KEY].newValue;
+    const store = /** @type {import("./store.js").HookyStore} */ (changes[STORE_KEY].newValue);
     buildContextMenus(store.templates || []).catch(() => {});
   }
 });

@@ -9,6 +9,7 @@ Run from root with Bun/Node (versions in `.github/workflows/quality-slots.yml`; 
 
 ```sh
 bun install --frozen-lockfile
+bun run typecheck          # S1: tsc --noEmit (checkJs across src/**/*.js)
 bun run lint               # S2: check-only, 0 warnings
 bun run test:coverage      # L1: Vitest v8 >= 95% all metrics, no .only/.skip
 bun run test:l1-gate       # Pre-commit index-snapshot probes (disposable repos)
@@ -38,12 +39,12 @@ Set `PUPPETEER_EXECUTABLE_PATH` only to select an installed Chrome. `bun run mat
 
 Follows `system1-quality`; CI runs `.github/workflows/ci.yml` -> `.github/workflows/quality-slots.yml` with pinned `base-ci` actions (`quality / Z1: Gate` required on `main`, checking all `enforced` slots, `precommit-probes`, and tested-SHA match). Status vocabulary: `enforced`, `planned`, `manual`, `N/A`.
 
-- **Floors**: Vitest v8 (`vitest.config.js`) enforces `>= 95%` statements/branches/functions/lines and rejects `.only`/`.skip`/empty suites; Biome runs `biome check --error-on-warnings`.
-- **N/A slots**: `S1 Types` (pure JS, no `tsconfig`; exploratory `tsc --checkJs --strict` hit hundreds of DOM/`chrome` errors); `P1 Package` (extension ZIP, not npm).
+- **Floors**: Vitest v8 (`vitest.config.js`) enforces `>= 95%` statements/branches/functions/lines and rejects `.only`/`.skip`/empty suites; Biome runs `biome check --error-on-warnings`; TypeScript runs `tsc --noEmit` (`allowJs: true`, `checkJs: true`, `strict: false`, `@types/chrome`).
+- **N/A slots**: `P1 Package` (extension ZIP, not npm).
 - **N/A runtime/service**: `L2 Runtime` (Chrome MV3 extension); `L3 Integration` (no standalone HTTP service; E2E runs in `L4` via Puppeteer local receiver).
 - **Manual checks**: Chrome Web Store submission/approval, live CDN/R2 behavior, and real-toolbar/OS acceptance remain `manual` ([TESTING.md](TESTING.md)).
 - **Local `pre-commit`** (`.husky/`, via `bun run prepare`; never bypass): snapshots staged index (`git checkout-index --all`), symlinks `node_modules` (`.cache/`), honors `HOOKY_L1_TIMEOUT_SEC`.
-- **Pre-commit guards**: fails on missing `git`/`bun`/`node_modules`, staged/worktree `package.json`/`bun.lock` mismatch, missing `--coverage`/`coverage/`, or `test:coverage` / `lint` failure.
+- **Pre-commit guards**: fails on missing `git`/`bun`/`node_modules`, staged/worktree `package.json`/`bun.lock` mismatch, missing `--coverage`/`coverage/`, or `typecheck` (when `tsconfig.json` is present) / `test:coverage` / `lint` failure.
 - **Gate probes**: `bun run test:l1-gate` (CI `precommit-probes`) verifies pass/reject in disposable repos (UT, coverage, lint warnings, focus/skip/empty, staged isolation, timeout/SIGINT, missing `bun`).
 - **Pre-push & gaps**: `.husky/pre-push` runs `bun run build && bun run test && bun run lint` on the working tree; stdin-ref `pre-push` + `G2` (<3min, missing scanners fail) and <30s `pre-commit` are `planned`.
 

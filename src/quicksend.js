@@ -17,7 +17,7 @@ import { findMatchingRule } from "./rules.js";
 export async function handleQuickSend(tab) {
   const storeKey = "hooky";
   const data = await chrome.storage.local.get(storeKey);
-  const store = data[storeKey];
+  const store = /** @type {import("./store.js").HookyStore | undefined} */ (data[storeKey]);
 
   if (!store?.templates || store.templates.length === 0) {
     await openPanel();

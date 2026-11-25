@@ -8,17 +8,19 @@ import { previewRequest } from "../webhook.js";
 
 const noConfigEl = document.getElementById("no-config");
 const webhookPanel = document.getElementById("webhook-panel");
-const templateSelect = document.getElementById("template-select");
+const templateSelect = /** @type {HTMLSelectElement} */ (
+  document.getElementById("template-select")
+);
 const methodBadge = document.getElementById("method-badge");
 const urlDisplay = document.getElementById("url-display");
 const paramsPreview = document.getElementById("params-preview");
-const sendBtn = document.getElementById("send-btn");
+const sendBtn = /** @type {HTMLButtonElement} */ (document.getElementById("send-btn"));
 const sendLabel = document.getElementById("send-label");
 const settingsBtn = document.getElementById("settings-btn");
 const goSettingsBtn = document.getElementById("go-settings");
 const toastEl = document.getElementById("toast");
-const sendAnywayBtn = document.getElementById("send-anyway");
-const container = document.querySelector(".container");
+const sendAnywayBtn = /** @type {HTMLButtonElement} */ (document.getElementById("send-anyway"));
+const container = /** @type {HTMLElement} */ (document.querySelector(".container"));
 const validationError = document.getElementById("validation-error");
 const editTemplateBtn = document.getElementById("edit-template");
 const showResult = new URLSearchParams(location.search).get("view") === "last";
@@ -74,7 +76,7 @@ function setSending(value) {
     clearTimeout(toastTimer);
     toastEl.classList.remove("visible");
     document.getElementById("last-result").hidden = true;
-    document.getElementById("result-details").open = false;
+    /** @type {HTMLDetailsElement} */ (document.getElementById("result-details")).open = false;
   }
   renderActions();
 }
@@ -356,7 +358,7 @@ sendAnywayBtn.addEventListener("click", async () => {
   }
 });
 paramsPreview.addEventListener("input", (event) => {
-  event.target.dataset.literal = "true";
+  /** @type {HTMLElement} */ (event.target).dataset.literal = "true";
   updateRequestPreview();
 });
 chrome.storage.onChanged.addListener((changes, area) => {

@@ -20,8 +20,10 @@ import { validateResponseConfig } from "../response.js";
 // ─── DOM refs ───
 
 const templateListEl = document.getElementById("template-list");
-const themeSelect = document.getElementById("theme-select");
-const notificationSelect = document.getElementById("notification-mode");
+const themeSelect = /** @type {HTMLSelectElement} */ (document.getElementById("theme-select"));
+const notificationSelect = /** @type {HTMLSelectElement} */ (
+  document.getElementById("notification-mode")
+);
 
 const editorTitle = document.getElementById("editor-title");
 const editorEmpty = document.getElementById("editor-empty");
@@ -30,14 +32,16 @@ const ruleEditorForm = document.getElementById("rule-editor-form");
 const rulesManager = document.getElementById("rules-manager");
 const settingsFormEl = document.getElementById("settings-form");
 const editorActions = document.getElementById("editor-actions");
-const nameInput = document.getElementById("template-name");
-const urlInput = document.getElementById("webhook-url");
-const methodSelect = document.getElementById("http-method");
+const nameInput = /** @type {HTMLInputElement} */ (document.getElementById("template-name"));
+const urlInput = /** @type {HTMLInputElement} */ (document.getElementById("webhook-url"));
+const methodSelect = /** @type {HTMLSelectElement} */ (document.getElementById("http-method"));
 const paramsList = document.getElementById("params-list");
 const addParamBtn = document.getElementById("add-param");
 const headersList = document.getElementById("headers-list");
-const showHeaderValues = document.getElementById("show-header-values");
-const saveBtn = document.getElementById("save");
+const showHeaderValues = /** @type {HTMLInputElement} */ (
+  document.getElementById("show-header-values")
+);
+const saveBtn = /** @type {HTMLButtonElement} */ (document.getElementById("save"));
 const statusEl = document.getElementById("status");
 const statusNotice = document.getElementById("settings-feedback");
 const deleteBtn = document.getElementById("delete-template");
@@ -48,16 +52,21 @@ const settingsListEl = document.getElementById("settings-list");
 const noRulesEl = document.getElementById("no-rules");
 
 // Rule editor fields
-const ruleFieldSelect = document.getElementById("rule-field");
-const ruleOperatorSelect = document.getElementById("rule-operator");
-const ruleValueInput = document.getElementById("rule-value");
-const ruleTemplateSelect = document.getElementById("rule-template");
-const ruleEnabledToggle = document.getElementById("rule-enabled");
+const ruleFieldSelect = /** @type {HTMLSelectElement} */ (document.getElementById("rule-field"));
+const ruleOperatorSelect = /** @type {HTMLSelectElement} */ (
+  document.getElementById("rule-operator")
+);
+const ruleValueInput = /** @type {HTMLInputElement} */ (document.getElementById("rule-value"));
+const ruleTemplateSelect = /** @type {HTMLSelectElement} */ (
+  document.getElementById("rule-template")
+);
+const ruleEnabledToggle = /** @type {HTMLInputElement} */ (document.getElementById("rule-enabled"));
 
 let currentTemplateId = null;
 let currentRuleId = null;
 let currentSettingsItem = null;
 let editorMode = null; // "template" | "rule" | "rules-list" | "settings" | null
+/** @type {HTMLInputElement | HTMLTextAreaElement | null} */
 let lastValueInput = null;
 let statusTimer;
 let statusExpired = false;
@@ -67,7 +76,9 @@ let notificationCheck = 0;
 // ─── Sidebar navigation ───
 
 function initSidebar() {
-  const navBtns = document.querySelectorAll(".sidebar-nav-btn");
+  const navBtns = /** @type {NodeListOf<HTMLElement>} */ (
+    document.querySelectorAll(".sidebar-nav-btn")
+  );
   for (const btn of navBtns) {
     btn.addEventListener("click", () => {
       const panelId = btn.dataset.panel;
@@ -90,7 +101,7 @@ function initSidebar() {
   }
 
   // Settings list items (static in HTML)
-  for (const li of settingsListEl.children) {
+  for (const li of /** @type {HTMLCollectionOf<HTMLElement>} */ (settingsListEl.children)) {
     li.addEventListener("click", () => {
       selectSettingsItem(li.dataset.settings);
     });
@@ -136,9 +147,13 @@ function createParamRow(key = "", value = "", kind = "param") {
 
   const valueInput = document.createElement(kind === "header" ? "input" : "textarea");
   if (kind === "header") {
-    valueInput.type = showHeaderValues.checked ? "text" : "password";
-    valueInput.autocomplete = "off";
-  } else valueInput.rows = 1;
+    /** @type {HTMLInputElement} */ (valueInput).type = showHeaderValues.checked
+      ? "text"
+      : "password";
+    /** @type {HTMLInputElement} */ (valueInput).autocomplete = "off";
+  } else {
+    /** @type {HTMLTextAreaElement} */ (valueInput).rows = 1;
+  }
   valueInput.placeholder = t("paramValuePlaceholder");
   valueInput.value = value;
   valueInput.className = `${kind}-value`;
@@ -170,8 +185,10 @@ function getParams(list = paramsList, kind = "param") {
   const rows = list.querySelectorAll(".param-row");
   const params = [];
   for (const row of rows) {
-    const key = row.querySelector(`.${kind}-key`).value.trim();
-    const value = row.querySelector(`.${kind}-value`).value;
+    const key = /** @type {HTMLInputElement} */ (row.querySelector(`.${kind}-key`)).value.trim();
+    const value = /** @type {HTMLInputElement | HTMLTextAreaElement} */ (
+      row.querySelector(`.${kind}-value`)
+    ).value;
     params.push({ key, value });
   }
   return params;
@@ -207,17 +224,21 @@ function showStatus(message, error = false) {
 }
 
 function getResponseConfig() {
-  const response = { enabled: document.getElementById("read-response").checked };
+  const response = {
+    enabled: /** @type {HTMLInputElement} */ (document.getElementById("read-response")).checked,
+  };
   for (const [key, id] of [
     ["messagePath", "response-message-path"],
     ["receiptPath", "response-id-path"],
     ["successPath", "response-success-path"],
   ]) {
-    const value = document.getElementById(id).value.trim();
+    const value = /** @type {HTMLInputElement} */ (document.getElementById(id)).value.trim();
     if (value) response[key] = value;
   }
   if (response.successPath)
-    response.successValue = document.getElementById("response-success-value").value;
+    response.successValue = /** @type {HTMLInputElement} */ (
+      document.getElementById("response-success-value")
+    ).value;
   return response;
 }
 
@@ -366,7 +387,7 @@ async function refreshNotificationPermission() {
 
 function selectSettingsItem(itemKey) {
   currentSettingsItem = itemKey;
-  for (const li of settingsListEl.children) {
+  for (const li of /** @type {HTMLCollectionOf<HTMLElement>} */ (settingsListEl.children)) {
     li.classList.toggle("active", li.dataset.settings === itemKey);
   }
 }
@@ -435,7 +456,7 @@ async function selectTemplate(id) {
   showTemplateEditor();
 
   // Highlight in template list
-  for (const li of templateListEl.children) {
+  for (const li of /** @type {HTMLCollectionOf<HTMLElement>} */ (templateListEl.children)) {
     li.classList.toggle("active", li.dataset.id === id);
   }
 
@@ -459,18 +480,28 @@ async function selectTemplate(id) {
   headersList.replaceChildren();
   for (const { key, value } of tpl.headers || [])
     headersList.appendChild(createParamRow(key, value, "header"));
-  document.getElementById("template-advanced").open = false;
-  document.getElementById("read-response").checked = tpl.response?.enabled === true;
-  document.getElementById("response-fields").disabled =
-    !document.getElementById("read-response").checked;
-  document.getElementById("response-message-path").value = tpl.response?.messagePath || "";
-  document.getElementById("response-id-path").value = tpl.response?.receiptPath || "";
-  document.getElementById("response-success-path").value = tpl.response?.successPath || "";
-  document.getElementById("response-success-value").value = tpl.response?.successValue ?? "true";
-  document.getElementById("duplicate-protection").checked = tpl.duplicateWindow > 0;
-  document.getElementById("duplicate-window").value = tpl.duplicateWindow || 10;
-  document.getElementById("duplicate-window").disabled =
-    !document.getElementById("duplicate-protection").checked;
+  /** @type {HTMLDetailsElement} */ (document.getElementById("template-advanced")).open = false;
+  const readResponseEl = /** @type {HTMLInputElement} */ (document.getElementById("read-response"));
+  readResponseEl.checked = tpl.response?.enabled === true;
+  /** @type {HTMLFieldSetElement} */ (document.getElementById("response-fields")).disabled =
+    !readResponseEl.checked;
+  /** @type {HTMLInputElement} */ (document.getElementById("response-message-path")).value =
+    tpl.response?.messagePath || "";
+  /** @type {HTMLInputElement} */ (document.getElementById("response-id-path")).value =
+    tpl.response?.receiptPath || "";
+  /** @type {HTMLInputElement} */ (document.getElementById("response-success-path")).value =
+    tpl.response?.successPath || "";
+  /** @type {HTMLInputElement} */ (document.getElementById("response-success-value")).value =
+    tpl.response?.successValue ?? "true";
+  const duplicateProtectionEl = /** @type {HTMLInputElement} */ (
+    document.getElementById("duplicate-protection")
+  );
+  duplicateProtectionEl.checked = tpl.duplicateWindow > 0;
+  const duplicateWindowEl = /** @type {HTMLInputElement} */ (
+    document.getElementById("duplicate-window")
+  );
+  duplicateWindowEl.value = String(tpl.duplicateWindow || 10);
+  duplicateWindowEl.disabled = !duplicateProtectionEl.checked;
   lastValueInput = null;
   updatePreview();
 }
@@ -575,7 +606,7 @@ async function selectRule(id) {
   showRuleEditor();
 
   // Highlight in rules list
-  for (const li of rulesListEl.children) {
+  for (const li of /** @type {HTMLCollectionOf<HTMLElement>} */ (rulesListEl.children)) {
     li.classList.toggle("active", li.dataset.id === id);
   }
 
@@ -592,8 +623,10 @@ async function selectRule(id) {
 
   // Populate template dropdown
   populateRuleTemplateSelect(store.templates, rule.templateId);
-  document.getElementById("rule-up").disabled = store.quickSendRules[0].id === id;
-  document.getElementById("rule-down").disabled = store.quickSendRules.at(-1).id === id;
+  /** @type {HTMLButtonElement} */ (document.getElementById("rule-up")).disabled =
+    store.quickSendRules[0].id === id;
+  /** @type {HTMLButtonElement} */ (document.getElementById("rule-down")).disabled =
+    store.quickSendRules.at(-1).id === id;
   document.getElementById("rule-test-result").textContent = "";
 }
 
@@ -613,11 +646,13 @@ function populateRuleTemplateSelect(templates, selectedId) {
 async function saveCurrentTemplate() {
   if (!currentTemplateId) return;
   if (!urlInput.reportValidity()) return;
-  if (
-    document.getElementById("duplicate-protection").checked &&
-    !document.getElementById("duplicate-window").reportValidity()
-  )
-    return;
+  const duplicateProtectionEl = /** @type {HTMLInputElement} */ (
+    document.getElementById("duplicate-protection")
+  );
+  const duplicateWindowEl = /** @type {HTMLInputElement} */ (
+    document.getElementById("duplicate-window")
+  );
+  if (duplicateProtectionEl.checked && !duplicateWindowEl.reportValidity()) return;
 
   const changes = {
     name: nameInput.value.trim() || t("defaultTemplateName"),
@@ -626,9 +661,7 @@ async function saveCurrentTemplate() {
     params: getParams(),
     headers: getParams(headersList, "header"),
     response: getResponseConfig(),
-    duplicateWindow: document.getElementById("duplicate-protection").checked
-      ? Number(document.getElementById("duplicate-window").value)
-      : 0,
+    duplicateWindow: duplicateProtectionEl.checked ? Number(duplicateWindowEl.value) : 0,
   };
 
   buildHeaders(changes.headers, { send: { id: "{{send.id}}" } });
@@ -739,7 +772,7 @@ function openPanel(panelId) {
     const active = p.id === panelId;
     p.classList.toggle("active", active);
     p.querySelector(".sidebar-nav-btn").setAttribute("aria-expanded", String(active));
-    p.querySelector(".sidebar-panel-content").inert = !active;
+    /** @type {HTMLElement} */ (p.querySelector(".sidebar-panel-content")).inert = !active;
   }
 }
 
@@ -788,26 +821,32 @@ addParamBtn.addEventListener("click", () => {
   clearStatus();
   const row = createParamRow();
   paramsList.appendChild(row);
-  row.querySelector(".param-value").focus();
+  /** @type {HTMLElement} */ (row.querySelector(".param-value")).focus();
   updatePreview();
 });
 document.getElementById("add-header").addEventListener("click", () => {
   clearStatus();
   const row = createParamRow("", "", "header");
   headersList.appendChild(row);
-  row.querySelector(".header-key").focus();
+  /** @type {HTMLElement} */ (row.querySelector(".header-key")).focus();
   updatePreview();
 });
 showHeaderValues.addEventListener("change", () => {
-  for (const input of headersList.querySelectorAll(".header-value"))
+  for (const input of /** @type {NodeListOf<HTMLInputElement>} */ (
+    headersList.querySelectorAll(".header-value")
+  ))
     input.type = showHeaderValues.checked ? "text" : "password";
 });
 document.getElementById("read-response").addEventListener("change", (event) => {
-  document.getElementById("response-fields").disabled = !event.target.checked;
+  /** @type {HTMLFieldSetElement} */ (document.getElementById("response-fields")).disabled = !(
+    /** @type {HTMLInputElement} */ (event.target).checked
+  );
   updatePreview();
 });
 document.getElementById("duplicate-protection").addEventListener("change", (event) => {
-  document.getElementById("duplicate-window").disabled = !event.target.checked;
+  /** @type {HTMLInputElement} */ (document.getElementById("duplicate-window")).disabled = !(
+    /** @type {HTMLInputElement} */ (event.target).checked
+  );
 });
 
 editorForm.addEventListener("input", updatePreview);
@@ -822,11 +861,13 @@ for (const list of [templateListEl, rulesListEl, settingsListEl]) {
   list.addEventListener("keydown", (event) => {
     if (event.key === "Enter" || event.key === " ") {
       event.preventDefault();
-      event.target.closest("li").click();
+      /** @type {HTMLElement} */ (event.target).closest("li").click();
     }
   });
 }
-for (const button of document.querySelectorAll("[data-variable]")) {
+for (const button of /** @type {NodeListOf<HTMLElement>} */ (
+  document.querySelectorAll("[data-variable]")
+)) {
   button.addEventListener("click", () => {
     clearStatus();
     if (!lastValueInput?.isConnected) {
@@ -851,7 +892,11 @@ document.getElementById("test-rule").addEventListener("click", () => {
       operator: ruleOperatorSelect.value,
       value: ruleValueInput.value,
     },
-    { [ruleFieldSelect.value]: document.getElementById("rule-sample").value },
+    {
+      [ruleFieldSelect.value]: /** @type {HTMLInputElement} */ (
+        document.getElementById("rule-sample")
+      ).value,
+    },
   );
   const result = document.getElementById("rule-test-result");
   result.textContent = t(matches ? "ruleMatches" : "ruleNoMatch");
@@ -866,8 +911,9 @@ async function moveRule(direction) {
   [ids[from], ids[to]] = [ids[to], ids[from]];
   await reorderQuickSendRules(ids);
   renderRulesList((await loadStore()).quickSendRules);
-  document.getElementById("rule-up").disabled = to === 0;
-  document.getElementById("rule-down").disabled = to === ids.length - 1;
+  /** @type {HTMLButtonElement} */ (document.getElementById("rule-up")).disabled = to === 0;
+  /** @type {HTMLButtonElement} */ (document.getElementById("rule-down")).disabled =
+    to === ids.length - 1;
   showStatus(t("saved"));
 }
 document
@@ -898,8 +944,11 @@ themeSelect.addEventListener("change", async () => {
 
 async function saveNotifications() {
   const mode = notificationSelect.value;
+  const grantBtn = /** @type {HTMLButtonElement} */ (
+    document.getElementById("grant-notification-permission")
+  );
   notificationSelect.disabled = true;
-  document.getElementById("grant-notification-permission").disabled = true;
+  grantBtn.disabled = true;
   try {
     // Call from the change gesture before any other await.
     if (mode !== "off" && !(await chrome.permissions.request({ permissions: ["notifications"] })))
@@ -912,7 +961,7 @@ async function saveNotifications() {
     showStatus(t(error.message), true);
   } finally {
     notificationSelect.disabled = false;
-    document.getElementById("grant-notification-permission").disabled = false;
+    grantBtn.disabled = false;
     await refreshNotificationPermission();
   }
 }

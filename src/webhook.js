@@ -133,9 +133,12 @@ export async function executeRequest(request, responseConfig = {}) {
  * @param {object} config - Webhook configuration
  * @param {string} config.url - The webhook URL
  * @param {string} config.method - HTTP method (GET/POST/PUT/PATCH/DELETE)
- * @param {Array<{key: string, value: string}>} config.params - Key-value params
+ * @param {Array<{key: string, value: string, resolve?: boolean}>} config.params - Key-value params
+ * @param {Array<{key: string, value: string}>} [config.headers] - Custom headers
+ * @param {object} [config.response] - Response receipt configuration
  * @param {object} context - Template variable context
- * @returns {Promise<{ok: boolean, status?: number, error?: string}>}
+ * @param {boolean} [alreadyResolved]
+ * @returns {Promise<{ok: boolean, status?: number, state?: string, error?: string, receipt?: object}>}
  */
 export async function executeWebhook(config, context, alreadyResolved = false) {
   try {
