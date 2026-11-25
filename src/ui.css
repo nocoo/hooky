@@ -311,13 +311,13 @@ svg.icon {
 }
 .hidden,
 [hidden] {
-  display: none;
+  display: none !important;
 }
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
   *::after {
-    transition: none;
-    animation: none;
+    transition: none !important;
+    animation: none !important;
   }
 }
