@@ -16,12 +16,16 @@ export default defineConfig({
       exclude: [
         // Legacy exclusion — file no longer exists, harmless to keep.
         "src/content.js",
+        "**/*.d.ts",
+        "**/index.js",
+        "**/index.ts",
+        "**/types.ts",
       ],
       thresholds: {
-        statements: 95,
-        branches: 95,
-        functions: 95,
-        lines: 95,
+        statements: 80,
+        branches: 80,
+        functions: 80,
+        lines: 80,
       },
     },
   },

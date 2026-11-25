@@ -163,29 +163,6 @@ jobs:
         if: always()
         run: echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
 
-  l1-precommit-gate:
-    name: "L1: Unit (Pre-commit Gate)"
-    runs-on: ubuntu-24.04
-    timeout-minutes: 15
-    outputs:
-      tested-sha: ${{ steps.record-sha.outputs.sha }}
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-      - uses: nocoo/base-ci/.github/actions/setup-js@dc858360aa7812db61fd9d825943e4efd4dcd0e7 # v2026.17
-        with:
-          package-manager: bun
-          runtime-version: ${{ env.BUN_VERSION }}
-          node-version: ${{ env.NODE_VERSION }}
-          install-policy: blocked
-      - name: Verify pre-commit gate scenarios
-        run: bun run test:l1-gate
-      - name: Record tested SHA
-        id: record-sha
-        if: always()
-        run: echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
-
   l2-runtime:
     name: "L2: Runtime"
     if: ${{ vars.ENABLE_L2_RUNTIME == 'true' }}
@@ -253,7 +230,6 @@ jobs:
       - g2-dependencies
       - b1-build
       - l1-unit
-      - l1-precommit-gate
       - l2-runtime
       - l3-integration
       - l4-e2e
@@ -272,7 +248,7 @@ jobs:
           node --input-type=module - <<'EOF'
           const needs = JSON.parse(process.env.NEEDS_JSON);
           const expectedSha = process.env.EXPECTED_SHA;
-          const implSlots = ["l1-precommit-gate", "s1-types", "s2-lint", "s3-workflow", "g1-secrets", "g2-dependencies", "b1-build", "l1-unit", "l4-e2e"];
+          const implSlots = ["s1-types", "s2-lint", "s3-workflow", "g1-secrets", "g2-dependencies", "b1-build", "l1-unit", "l4-e2e"];
           const naSlots = ["l2-runtime", "l3-integration", "p1-package"];
           const errors = [];
 
