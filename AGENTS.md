@@ -37,7 +37,7 @@ Set `PUPPETEER_EXECUTABLE_PATH` only to select an installed Chrome. `bun run mat
 
 ## Quality & Local Gates
 
-Follows `system1-quality`; CI runs `.github/workflows/ci.yml` -> `.github/workflows/quality-slots.yml` with pinned `base-ci` actions (`quality / Z1: Gate` required on `main`, checking all `enforced` slots and tested-SHA match). Status vocabulary: `enforced`, `planned`, `manual`, `N/A`.
+Follows `system1-quality`; CI runs `.github/workflows/pipeline.yml` -> `.github/workflows/quality-slots.yml` with pinned `base-ci` (`v2026.24`) actions (`quality / Z1: Gate` required on `main`, checking all `enforced` slots and tested-SHA match), with no automated CD workflow (manual ZIP / Chrome Web Store release only). Status vocabulary: `enforced`, `planned`, `manual`, `N/A`.
 
 - **Floors**: Vitest v8 (`vitest.config.js`) enforces `>= 80%` statements/branches/functions/lines and rejects `.only`/`.skip`/empty suites; Biome runs `biome check --error-on-warnings`; TypeScript runs `tsc --noEmit` (`allowJs: true`, `checkJs: true`, `strict: false`, `@types/chrome`).
 - **N/A slots**: `P1 Package` (extension ZIP, not npm).
