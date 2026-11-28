@@ -11,7 +11,7 @@ Run from root with Bun/Node (versions in `.github/workflows/quality-slots.yml`; 
 bun install --frozen-lockfile
 bun run typecheck          # S1: tsc --noEmit (checkJs across src/**/*.js)
 bun run lint               # S2: check-only, 0 warnings
-bun run test:coverage      # L1: Vitest v8 >= 80% all metrics, no .only/.skip
+bun run test:coverage      # L1: Vitest v8 >= 90/85% (st/fn/ln 90%, br 85%), no .only/.skip
 bun run test:l1-gate       # Pre-commit index-snapshot probes (disposable repos)
 bun run build              # B1: dist/hooky-<version>.zip (no store publish)
 bunx puppeteer browsers install chrome
@@ -39,7 +39,7 @@ Set `PUPPETEER_EXECUTABLE_PATH` only to select an installed Chrome. `bun run mat
 
 Follows `system1-quality`; CI runs `.github/workflows/pipeline.yml` -> `.github/workflows/quality-slots.yml` with pinned `base-ci` (`v2026.24`) actions (`quality / Z1: Gate` required on `main`, checking all `enforced` slots and tested-SHA match), with no automated CD workflow (manual ZIP / Chrome Web Store release only). Status vocabulary: `enforced`, `planned`, `manual`, `N/A`.
 
-- **Floors**: Vitest v8 (`vitest.config.js`) enforces `>= 80%` statements/branches/functions/lines and rejects `.only`/`.skip`/empty suites; Biome runs `biome check --error-on-warnings`; TypeScript runs `tsc --noEmit` (`allowJs: true`, `checkJs: true`, `strict: false`, `@types/chrome`).
+- **Floors**: Vitest v8 (`vitest.config.js`) enforces `>= 90%` statements/functions/lines and `>= 85%` branches and rejects `.only`/`.skip`/empty suites; Biome runs `biome check --error-on-warnings`; TypeScript runs `tsc --noEmit` (`allowJs: true`, `checkJs: true`, `strict: false`, `@types/chrome`).
 - **N/A slots**: `P1 Package` (extension ZIP, not npm).
 - **N/A runtime/service**: `L2 Runtime` (Chrome MV3 extension); `L3 Integration` (no standalone HTTP service; E2E runs in `L4` via Puppeteer local receiver).
 - **Manual checks**: Chrome Web Store submission/approval, live CDN/R2 behavior, and real-toolbar/OS acceptance remain `manual` ([TESTING.md](TESTING.md)).
